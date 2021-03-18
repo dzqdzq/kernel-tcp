@@ -1,34 +1,34 @@
 
 /*
-ÕâÀïÃæÓĞlinuxµÄÈ«Ì×²Î¿¼×ÊÁÏ
+è¿™é‡Œé¢æœ‰linuxçš„å…¨å¥—å‚è€ƒèµ„æ–™
 http://bbs.chinaunix.net/thread-1930079-1-1.html
 http://bbs.chinaunix.net/thread-1930079-1-1.html
 
 
-netfilter Á¬½Ó¸ú×Ù:http://blog.csdn.net/ye_shizhe/article/details/17331947
+netfilter è¿æ¥è·Ÿè¸ª:http://blog.csdn.net/ye_shizhe/article/details/17331947
 
-ip_queue netfilter ÓÃ»§¿Õ¼ä ÄÚºË¿Õ¼äÍ¨ĞÅ  ²Î¿¼http://bbs.chinaunix.net/thread-2013041-1-1.html
-
-
+ip_queue netfilter ç”¨æˆ·ç©ºé—´ å†…æ ¸ç©ºé—´é€šä¿¡  å‚è€ƒhttp://bbs.chinaunix.net/thread-2013041-1-1.html
 
 
-linuxÄÚºËĞ­ÒéÕ»£¬·Ö²ã½á¹¹£¬BSD socket,INET socket²ãµÈ£¬²Î¿¼:http://blog.csdn.net/yming0221/article/details/7488828
+
+
+linuxå†…æ ¸åè®®æ ˆï¼Œåˆ†å±‚ç»“æ„ï¼ŒBSD socket,INET socketå±‚ç­‰ï¼Œå‚è€ƒ:http://blog.csdn.net/yming0221/article/details/7488828
 http://blog.csdn.net/column/details/linux-kernel-net.html
 
-ÄÇÄÚºËÖĞÌ×½Ó×Östruct socket¡¢struct sock¡¢struct inet_sock¡¢struct tcp_sock¡¢struct raw_sock¡¢struct udp_sock¡¢struct inet_connection_sock¡¢struct inet_timewait_sockºÍstruct tcp_timewait_sockµÄ¹ØÏµÊÇÔõÑùµÄÄØ£¿
-*struct socketÕâ¸öÊÇBSD²ãµÄsocket£¬Ó¦ÓÃ³ÌĞò»áÓÃ¹ıÏµÍ³µ÷ÓÃÊ×ÏÈ´´½¨¸ÃÀàĞÍÌ×½Ó×Ö£¬ËüºÍ¾ßÌåĞ­ÒéÎŞ¹Ø¡£
+é‚£å†…æ ¸ä¸­å¥—æ¥å­—struct socketã€struct sockã€struct inet_sockã€struct tcp_sockã€struct raw_sockã€struct udp_sockã€struct inet_connection_sockã€struct inet_timewait_sockå’Œstruct tcp_timewait_sockçš„å…³ç³»æ˜¯æ€æ ·çš„å‘¢ï¼Ÿ
+*struct socketè¿™ä¸ªæ˜¯BSDå±‚çš„socketï¼Œåº”ç”¨ç¨‹åºä¼šç”¨è¿‡ç³»ç»Ÿè°ƒç”¨é¦–å…ˆåˆ›å»ºè¯¥ç±»å‹å¥—æ¥å­—ï¼Œå®ƒå’Œå…·ä½“åè®®æ— å…³ã€‚
 
-*struct inet_sockÊÇINETĞ­Òé×åÊ¹ÓÃµÄsocket½á¹¹£¬¿ÉÒÔ¿´³ÉÎ»ÓÚINET²ã£¬ÊÇstruct sockµÄÒ»¸öÀ©Õ¹¡£ËüµÄµÚÒ»¸öÊôĞÔ¾ÍÊÇstruct sock½á¹¹¡£
+*struct inet_sockæ˜¯INETåè®®æ—ä½¿ç”¨çš„socketç»“æ„ï¼Œå¯ä»¥çœ‹æˆä½äºINETå±‚ï¼Œæ˜¯struct sockçš„ä¸€ä¸ªæ‰©å±•ã€‚å®ƒçš„ç¬¬ä¸€ä¸ªå±æ€§å°±æ˜¯struct sockç»“æ„ã€‚
 
-*struct sockÊÇÓë¾ßÌå´«Êä²ãĞ­ÒéÏà¹ØµÄÌ×½Ó×Ö£¬ËùÓĞÄÚºËµÄ²Ù×÷¶¼»ùÓÚÕâ¸öÌ×½Ó×Ö¡£
+*struct sockæ˜¯ä¸å…·ä½“ä¼ è¾“å±‚åè®®ç›¸å…³çš„å¥—æ¥å­—ï¼Œæ‰€æœ‰å†…æ ¸çš„æ“ä½œéƒ½åŸºäºè¿™ä¸ªå¥—æ¥å­—ã€‚
 
-*struct tcp_sockÊÇTCPĞ­ÒéµÄÌ×½Ó×Ö±íÊ¾£¬ËüÊÇ¶Ôstruct inet_connection_sockµÄÀ©Õ¹£¬ÆäµÚÒ»¸öÊôĞÔ¾ÍÊÇstruct inet_connection_sock inet_conn¡£
+*struct tcp_sockæ˜¯TCPåè®®çš„å¥—æ¥å­—è¡¨ç¤ºï¼Œå®ƒæ˜¯å¯¹struct inet_connection_sockçš„æ‰©å±•ï¼Œå…¶ç¬¬ä¸€ä¸ªå±æ€§å°±æ˜¯struct inet_connection_sock inet_connã€‚
 
-*struct raw_sockÊÇÔ­Ê¼ÀàĞÍµÄÌ×½Ó×Ö±íÊ¾£¬ICMPĞ­Òé¾ÍÊ¹ÓÃÕâÖÖÌ×½Ó×Ö£¬ÆäÊÇ¶Ôstruct sockµÄÀ©Õ¹¡£
+*struct raw_sockæ˜¯åŸå§‹ç±»å‹çš„å¥—æ¥å­—è¡¨ç¤ºï¼ŒICMPåè®®å°±ä½¿ç”¨è¿™ç§å¥—æ¥å­—ï¼Œå…¶æ˜¯å¯¹struct sockçš„æ‰©å±•ã€‚
 
-*struct udp_sockÊÇUDPĞ­ÒéÌ×½Ó×Ö±íÊ¾£¬ÆäÊÇ¶Ôstruct inet_sockÌ×½Ó×ÖµÄÀ©Õ¹¡£
+*struct udp_sockæ˜¯UDPåè®®å¥—æ¥å­—è¡¨ç¤ºï¼Œå…¶æ˜¯å¯¹struct inet_sockå¥—æ¥å­—çš„æ‰©å±•ã€‚
 
-*struct inet_connetction_sockÊÇËùÓĞÃæÏòÁ¬½ÓĞ­ÒéµÄÌ×½Ó×Ö£¬ÊÇ¶Ôstruct inet_sockÌ×½Ó×ÖÀ©Õ¹¡£
+*struct inet_connetction_sockæ˜¯æ‰€æœ‰é¢å‘è¿æ¥åè®®çš„å¥—æ¥å­—ï¼Œæ˜¯å¯¹struct inet_sockå¥—æ¥å­—æ‰©å±•ã€‚
 
 
 struct tcp_sock { 
@@ -50,70 +50,70 @@ struct inet_sock {
 
 
 
-linuxÄÚºËnetlink´úÂëÀí½â£¬²Î¿¼µØÖ·:http://blog.chinaunix.net/uid-21768364-id-3244600.html
+linuxå†…æ ¸netlinkä»£ç ç†è§£ï¼Œå‚è€ƒåœ°å€:http://blog.chinaunix.net/uid-21768364-id-3244600.html
 
 
-socketÏµÍ³µ÷ÓÃµÄÄÚºË·ÖÎö  http://blog.chinaunix.net/uid-20357359-id-1963464.html
-Ó¦ÓÃ²ã´´½¨socket»á½øÈë/NETÄ¿Â¼ÏÂÃæµÄ socket.cº¯Êı   
+socketç³»ç»Ÿè°ƒç”¨çš„å†…æ ¸åˆ†æ  http://blog.chinaunix.net/uid-20357359-id-1963464.html
+åº”ç”¨å±‚åˆ›å»ºsocketä¼šè¿›å…¥/NETç›®å½•ä¸‹é¢çš„ socket.cå‡½æ•°   
 SYSCALL_DEFINE3(socket, int, family, int, type, int, protocol)
 
-TCPÈı´ÎÎÕÊÖ  ²Î¿¼µØÖ·:http://blog.csdn.net/qy532846454/article/details/7882819
+TCPä¸‰æ¬¡æ¡æ‰‹  å‚è€ƒåœ°å€:http://blog.csdn.net/qy532846454/article/details/7882819
 
 
-PF_INETĞ­Òé×å£¬Ó¦ÓÃ²ã´´½¨Ì×½Ó×Ö£¬ÄÚºË´¦Àí¹ı³Ì£¬²Î¿¼http://jianshu.io/p/5d82a685b5b6
+PF_INETåè®®æ—ï¼Œåº”ç”¨å±‚åˆ›å»ºå¥—æ¥å­—ï¼Œå†…æ ¸å¤„ç†è¿‡ç¨‹ï¼Œå‚è€ƒhttp://jianshu.io/p/5d82a685b5b6
 
 
-netlinkÏêÏ¸Á÷³Ì·ÖÎö£¬´óÌåÁ÷³Ì£¬ºÜºÃ:<netlinkÊµÏÖ·ÖÎö>  http://wenku.baidu.com/link?url=uUzbboQ-xcQp_7UGIdijovfc9n92beFpaccQfaj8wQ08PN_vaXBQA4ZjY44MdF3s_VbZr7ncoEdRNfjPHdS3swljlwMqw5bbeCTJI593fKS
-
-
-
-
-´Ó·®¶«¶«P119¿ÉÒÔ¿´³ö£¬NETFILTER¼Ü¹¹ÊÇÔÚIPÍøÂç²ãºÍ´«Êä²ãÖ®¼ä½øĞĞ´¦Àí¡£
+netlinkè¯¦ç»†æµç¨‹åˆ†æï¼Œå¤§ä½“æµç¨‹ï¼Œå¾ˆå¥½:<netlinkå®ç°åˆ†æ>  http://wenku.baidu.com/link?url=uUzbboQ-xcQp_7UGIdijovfc9n92beFpaccQfaj8wQ08PN_vaXBQA4ZjY44MdF3s_VbZr7ncoEdRNfjPHdS3swljlwMqw5bbeCTJI593fKS
 
 
 
 
+ä»æ¨Šä¸œä¸œP119å¯ä»¥çœ‹å‡ºï¼ŒNETFILTERæ¶æ„æ˜¯åœ¨IPç½‘ç»œå±‚å’Œä¼ è¾“å±‚ä¹‹é—´è¿›è¡Œå¤„ç†ã€‚
 
-===========================================================PPPĞ­Òé=========================================================================
 
-ppp²Î¿¼×ÊÁÏ: ²Î¿¼:http://blog.csdn.net/istone107/article/details/8065758
-pppÄÚºË¼Ü¹¹Í¼£¬¿ÉÒÔ²Î¿¼:http://blog.csdn.net/vfatfish/article/details/9283703  Linux PPPÊµÏÖÔ´Âë·ÖÎö
-ppp´Ó´®¿Ú½ÓÊÕÊı¾İ£¬ÔÚÏßÂ·¹æ³Ì´´½¨µÄÊ±ºòÓÃppp_sync_openÊµÏÖppp_sync_process,ppp_input  Êı¾İÊÕ·¢Á÷³Ì²Î¿¼http://blog.csdn.net/absurd/article/details/1596496
 
-pppdºÍÄÚºË¹ØÏµÈçÏÂ:
-1.Ê×ÏÈ/dev/ttys0µÄÊ±ºò»áÔÚÄÚºË´´½¨Ïß³Ì¹æ»®½á¹¹struct asyncppp£¬²¢ÎªÆä´´½¨struct channel½á¹¹£¬Ò»¸ö´®¿Ú¶ÔÓ¦Ò»¸öchannel¡£
-2.°ÑÉÏÃæ/dev/pppÎÄ¼şµÄfdºÍchannel¹ØÁª¡£ioctlµÄÊ±ºò£¬Ó¦ÓÃ³öÏÖµÄfd»áÖ´ĞĞÄÚºË²¿·Öchannel
-3.´´½¨unit£¬´´½¨ÄÚºËstruct ppp½á¹¹£¬²¢°ÑÔÙ´Î´ÓĞÂ´ò¿ªµÄ/dev/pppµÄppp_dev_fdÁ¬½Óµ½ÄÚºË¶ÔÓ¦µÄunit£¬ppp_dev_fd¾ÍºÍÄÚºËunit¹ØÁªÁË¡£
-http://blog.csdn.net/efan_linux/article/details/4594489 pppÖ¡µÄ·¢ËÍ£¬¿ÉÒÔÁË½âpppÖ¡Í·Ñ¹Ëõ£¬¼ÓÑ¹ËõµÈĞÅÏ¢
 
-PPPÑ¹ËõÏà¹Ø²Î¿¼:http://www.csdn123.com/html/20130308/51/d25bba0e39ecad98206ca042e8d40d98.htm PPPĞ­ÒéÉæ¼°µ½µÄ¼¸¸öµäĞÍÑ¹Ëõ¼¼Êõ
-TCPÍ·²¿Ñ¹Ëõ  http://wenku.baidu.com/link?url=F6TfSsu4DHrakjn6uhrIUNibqnartKJu4i7PZ6SlcumCR877IKKx7hyjvH0bONRo73cMjEy48bxo1PMNbgUffa8K9yvB4z7LhJ6_4jXNb17
-TCPÍ·²¿Ñ¹Ëõ:http://blog.csdn.net/wisage/article/details/7059257   ¶àÁ´Â·PPPÀ¦°óËã·¨ÑĞ¾¿¼°¸Ä½øÎÄµµ¶ÔÑ¹ËõÓĞÏêÏ¸ËµÃ÷
-´ÓÏÂ²ãµ½ÉÏ²ã×ßÏò:tty->asyn_ppp(ÏßÂ·¹æ³Ì Í¨µÀ)->ppp²¿·Ö->Ğ­ÒéÕ»
-´Ótty½ÓÊÜÊı¾İÊ±ÓĞÏßÂ·¹æ³Ì´¦´¦Àí£¬ËùÒÔÓ¦¸ÃÊÇÔÚÉèÖÃÏßÂ·¹æ³ÌµÄÊ±ºò»ñÈ¡ttyÊı¾İ£¬Ğ­ÒéÕ»Í¨¹ıunit·¢ËÍÊı¾İ£¬»áÏÈµ½ppp£¬ËùÒÔ»áÔÚ´´½¨unitµÄÊ±ºò×¢²á·¢ËÍº¯Êı
-²Î¿¼:LinuxÍøÂçÇı¶¯¿ª·¢²½Öè
-de.pdf56Ò³  MPP¿ÉÒÔ²Î¿¼Õâ¸ö£¬¸ÃÎÄµµ¶ÔLCP NCP¶¼ÓĞÏêÏ¸ËµÃ÷  ppp
+
+===========================================================PPPåè®®=========================================================================
+
+pppå‚è€ƒèµ„æ–™: å‚è€ƒ:http://blog.csdn.net/istone107/article/details/8065758
+pppå†…æ ¸æ¶æ„å›¾ï¼Œå¯ä»¥å‚è€ƒ:http://blog.csdn.net/vfatfish/article/details/9283703  Linux PPPå®ç°æºç åˆ†æ
+pppä»ä¸²å£æ¥æ”¶æ•°æ®ï¼Œåœ¨çº¿è·¯è§„ç¨‹åˆ›å»ºçš„æ—¶å€™ç”¨ppp_sync_openå®ç°ppp_sync_process,ppp_input  æ•°æ®æ”¶å‘æµç¨‹å‚è€ƒhttp://blog.csdn.net/absurd/article/details/1596496
+
+pppdå’Œå†…æ ¸å…³ç³»å¦‚ä¸‹:
+1.é¦–å…ˆ/dev/ttys0çš„æ—¶å€™ä¼šåœ¨å†…æ ¸åˆ›å»ºçº¿ç¨‹è§„åˆ’ç»“æ„struct asyncpppï¼Œå¹¶ä¸ºå…¶åˆ›å»ºstruct channelç»“æ„ï¼Œä¸€ä¸ªä¸²å£å¯¹åº”ä¸€ä¸ªchannelã€‚
+2.æŠŠä¸Šé¢/dev/pppæ–‡ä»¶çš„fdå’Œchannelå…³è”ã€‚ioctlçš„æ—¶å€™ï¼Œåº”ç”¨å‡ºç°çš„fdä¼šæ‰§è¡Œå†…æ ¸éƒ¨åˆ†channel
+3.åˆ›å»ºunitï¼Œåˆ›å»ºå†…æ ¸struct pppç»“æ„ï¼Œå¹¶æŠŠå†æ¬¡ä»æ–°æ‰“å¼€çš„/dev/pppçš„ppp_dev_fdè¿æ¥åˆ°å†…æ ¸å¯¹åº”çš„unitï¼Œppp_dev_fdå°±å’Œå†…æ ¸unitå…³è”äº†ã€‚
+http://blog.csdn.net/efan_linux/article/details/4594489 pppå¸§çš„å‘é€ï¼Œå¯ä»¥äº†è§£pppå¸§å¤´å‹ç¼©ï¼ŒåŠ å‹ç¼©ç­‰ä¿¡æ¯
+
+PPPå‹ç¼©ç›¸å…³å‚è€ƒ:http://www.csdn123.com/html/20130308/51/d25bba0e39ecad98206ca042e8d40d98.htm PPPåè®®æ¶‰åŠåˆ°çš„å‡ ä¸ªå…¸å‹å‹ç¼©æŠ€æœ¯
+TCPå¤´éƒ¨å‹ç¼©  http://wenku.baidu.com/link?url=F6TfSsu4DHrakjn6uhrIUNibqnartKJu4i7PZ6SlcumCR877IKKx7hyjvH0bONRo73cMjEy48bxo1PMNbgUffa8K9yvB4z7LhJ6_4jXNb17
+TCPå¤´éƒ¨å‹ç¼©:http://blog.csdn.net/wisage/article/details/7059257   å¤šé“¾è·¯PPPæ†ç»‘ç®—æ³•ç ”ç©¶åŠæ”¹è¿›æ–‡æ¡£å¯¹å‹ç¼©æœ‰è¯¦ç»†è¯´æ˜
+ä»ä¸‹å±‚åˆ°ä¸Šå±‚èµ°å‘:tty->asyn_ppp(çº¿è·¯è§„ç¨‹ é€šé“)->pppéƒ¨åˆ†->åè®®æ ˆ
+ä»ttyæ¥å—æ•°æ®æ—¶æœ‰çº¿è·¯è§„ç¨‹å¤„å¤„ç†ï¼Œæ‰€ä»¥åº”è¯¥æ˜¯åœ¨è®¾ç½®çº¿è·¯è§„ç¨‹çš„æ—¶å€™è·å–ttyæ•°æ®ï¼Œåè®®æ ˆé€šè¿‡unitå‘é€æ•°æ®ï¼Œä¼šå…ˆåˆ°pppï¼Œæ‰€ä»¥ä¼šåœ¨åˆ›å»ºunitçš„æ—¶å€™æ³¨å†Œå‘é€å‡½æ•°
+å‚è€ƒ:Linuxç½‘ç»œé©±åŠ¨å¼€å‘æ­¥éª¤
+de.pdf56é¡µ  MPPå¯ä»¥å‚è€ƒè¿™ä¸ªï¼Œè¯¥æ–‡æ¡£å¯¹LCP NCPéƒ½æœ‰è¯¦ç»†è¯´æ˜  ppp
 */
 
 
 
 
 /*
-ºóĞø´ıÁË½âÖªÊ¶µã:
-skb½á¹¹ÖĞµÄ·ÇÏßĞÔ¿Õ¼ä£¬skb_shinfo
-ÃüÃû¿Õ¼äname space
-ÈíÖĞ¶ÏÔ­Àí
-·®¶«¶«µÚÎåÕÂ
-×¢Òânetfilter¹³×ÓÉÏ¾¿¾¹ÓĞÄÄĞ©º¯Êı£¬¾¿¾¹ÓÃÀ´×öÊ²Ã´
-Â·ÓÉ±íÏî´æ´¢²éÑ¯¹ı³Ì :http://blog.csdn.net/qy532846454/article/details/7568994
-Àí½âlisten(ÄÚºËÎªinet_listen)¹ı³ÌÖĞµÄsk_max_ack_backlog£¬Ò²¾ÍÊÇlistenº¯ÊıµÄµÚ¶ş¸ö²ÎÊı
-select poll epoll ²Î¿¼:http://blog.csdn.net/dianhuiren/article/details/6764190  http://blog.csdn.net/21aspnet/article/details/2627662
-linux i/oÄ£ĞÍ http://blog.sina.com.cn/s/blog_4697cdcd0100s3uh.html 
+åç»­å¾…äº†è§£çŸ¥è¯†ç‚¹:
+skbç»“æ„ä¸­çš„éçº¿æ€§ç©ºé—´ï¼Œskb_shinfo
+å‘½åç©ºé—´name space
+è½¯ä¸­æ–­åŸç†
+æ¨Šä¸œä¸œç¬¬äº”ç« 
+æ³¨æ„netfilteré’©å­ä¸Šç©¶ç«Ÿæœ‰å“ªäº›å‡½æ•°ï¼Œç©¶ç«Ÿç”¨æ¥åšä»€ä¹ˆ
+è·¯ç”±è¡¨é¡¹å­˜å‚¨æŸ¥è¯¢è¿‡ç¨‹ :http://blog.csdn.net/qy532846454/article/details/7568994
+ç†è§£listen(å†…æ ¸ä¸ºinet_listen)è¿‡ç¨‹ä¸­çš„sk_max_ack_backlogï¼Œä¹Ÿå°±æ˜¯listenå‡½æ•°çš„ç¬¬äºŒä¸ªå‚æ•°
+select poll epoll å‚è€ƒ:http://blog.csdn.net/dianhuiren/article/details/6764190  http://blog.csdn.net/21aspnet/article/details/2627662
+linux i/oæ¨¡å‹ http://blog.sina.com.cn/s/blog_4697cdcd0100s3uh.html 
 http://www.cnblogs.com/fora/archive/2011/06/30/2094324.html
 http://www.cnblogs.com/hustcat/archive/2009/09/18/1569661.html
 http://blog.csdn.net/tonyxf121/article/details/7878313
-GSO TSO,²Î¿¼xuexizongjie.cºÍhttp://www.cnblogs.com/yizhinantian/archive/2011/04/03/2004266.html£¬×îºÃÄÜºÃºÃÀí½â¡£
-http://blog.aliyun.com/673?spm=0.0.0.0.WFJJGP  Ñ§Ï°°¢ÀïÔÆ²úÆ·ÖĞµÄ:¸ßĞÔÄÜÍøÂç±à³Ì£¨1£©¡ªaccept½¨Á¢Á¬½Ó?   Ò»¹²ÊÇ7ÕÂ¡£
+GSO TSO,å‚è€ƒxuexizongjie.cå’Œhttp://www.cnblogs.com/yizhinantian/archive/2011/04/03/2004266.htmlï¼Œæœ€å¥½èƒ½å¥½å¥½ç†è§£ã€‚
+http://blog.aliyun.com/673?spm=0.0.0.0.WFJJGP  å­¦ä¹ é˜¿é‡Œäº‘äº§å“ä¸­çš„:é«˜æ€§èƒ½ç½‘ç»œç¼–ç¨‹ï¼ˆ1ï¼‰â€•acceptå»ºç«‹è¿æ¥?   ä¸€å…±æ˜¯7ç« ã€‚
 http://blog.csdn.net/russell_tao/article/details/18711023
 
 */

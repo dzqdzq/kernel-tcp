@@ -86,26 +86,26 @@ SOCK_DEBUG(struct sock *sk, const char *msg, ...)
  */
  
 /*
- * ÊµÏÖ¿ØÖÆÓÃ»§½ø³ÌºÍÏÂ°ë²¿ (ÀıÈçÓ¦ÓÃ³ÌĞò·¢ËÍÊı¾İµÄÊ±ºò£¬È»ºó½øÈëÏµÍ³µ÷¶Èµ½ÄÚºË²¿·Ö£¬ÕâÊ±ºò£¬ÄÚºËÓÖÊÕµ½ÁË¶Ô·½À´µÄÊı¾İ£¬¾ÍºÃ²úÉúÓ²¼şÖĞ¶Ï£¬Ó²¼şÖĞ¶ÏÉÏ°ë²¿Ö´ĞĞÍêºó£¬Ö´ĞĞÏÂ°ë²¿µÄÊ±ºò¾Í»áÓÃµ½¸Õ²Å±»ÇÀ×ßµÄ·¢ËÍÊı¾İµÄsock£¬´Ó¶ø»á·ÃÎÊÏàÍ¬µÄÊı¾İ¿Õ¼ä£¬ËùÒÔĞèÒª¼ÏËø)
- ÒÔ¼°ÏÂ°ë²¿Ö®¼ä(ÀıÈçÄÚºËÓ²¼şÖĞ¶Ï½ÓÊÕÊı¾İºó½øÈëÈíÖĞ¶Ï´¦Àí¹ı³ÌÖĞ£¬ÓÖÊÕµ½ÁË¶Ô·½À´µÄÊı¾İ²úÉúÖĞ¶Ï¡£)
- * ¼äÍ¬²½Ëø¶¼ÊÇÓÉsocket_lock_t½á¹¹ÃèÊöµÄ
+ * å®ç°æ§åˆ¶ç”¨æˆ·è¿›ç¨‹å’Œä¸‹åŠéƒ¨ (ä¾‹å¦‚åº”ç”¨ç¨‹åºå‘é€æ•°æ®çš„æ—¶å€™ï¼Œç„¶åè¿›å…¥ç³»ç»Ÿè°ƒåº¦åˆ°å†…æ ¸éƒ¨åˆ†ï¼Œè¿™æ—¶å€™ï¼Œå†…æ ¸åˆæ”¶åˆ°äº†å¯¹æ–¹æ¥çš„æ•°æ®ï¼Œå°±å¥½äº§ç”Ÿç¡¬ä»¶ä¸­æ–­ï¼Œç¡¬ä»¶ä¸­æ–­ä¸ŠåŠéƒ¨æ‰§è¡Œå®Œåï¼Œæ‰§è¡Œä¸‹åŠéƒ¨çš„æ—¶å€™å°±ä¼šç”¨åˆ°åˆšæ‰è¢«æŠ¢èµ°çš„å‘é€æ•°æ®çš„sockï¼Œä»è€Œä¼šè®¿é—®ç›¸åŒçš„æ•°æ®ç©ºé—´ï¼Œæ‰€ä»¥éœ€è¦æ·é”)
+ ä»¥åŠä¸‹åŠéƒ¨ä¹‹é—´(ä¾‹å¦‚å†…æ ¸ç¡¬ä»¶ä¸­æ–­æ¥æ”¶æ•°æ®åè¿›å…¥è½¯ä¸­æ–­å¤„ç†è¿‡ç¨‹ä¸­ï¼Œåˆæ”¶åˆ°äº†å¯¹æ–¹æ¥çš„æ•°æ®äº§ç”Ÿä¸­æ–­ã€‚)
+ * é—´åŒæ­¥é”éƒ½æ˜¯ç”±socket_lock_tç»“æ„æè¿°çš„
  */
 typedef struct {
        /*
-        * ÓÃÀ´ÊµÏÖÏÂ°ë²¿¼äµÄÍ¬²½Ëø,Í¬Ê±Ò²ÓÃÓÚ±£»¤ownedµÄĞ´²Ù×÷
+        * ç”¨æ¥å®ç°ä¸‹åŠéƒ¨é—´çš„åŒæ­¥é”,åŒæ—¶ä¹Ÿç”¨äºä¿æŠ¤ownedçš„å†™æ“ä½œ
         */
     spinlock_t      slock;
        /* 
-        * ÉèÖÃownedÊ±ĞèÒªÍ¨¹ı×ÔĞıËøslockÀ´±£»¤£¬
-        * Îª0±íÊ¾Î´±»ÓÃ»§½ø³ÌËø¶¨£¬Îª1±íÊ¾
-        * ±»ÓÃ»§½ø³ÌÈ·¶¨
+        * è®¾ç½®ownedæ—¶éœ€è¦é€šè¿‡è‡ªæ—‹é”slockæ¥ä¿æŠ¤ï¼Œ
+        * ä¸º0è¡¨ç¤ºæœªè¢«ç”¨æˆ·è¿›ç¨‹é”å®šï¼Œä¸º1è¡¨ç¤º
+        * è¢«ç”¨æˆ·è¿›ç¨‹ç¡®å®š
         */
     int         owned;
        /*
-        * µÈ´ı¶ÓÁĞ¡£µ±½ø³Ìµ÷ÓÃlock_sock¶Ô´«Êä¿ØÖÆ¿é½øĞĞÉÏËøÊ±£¬
-        * Èç¹û´ËÊ±´«Êä¿ØÖÆ¿éÒÑ±»ÈíÖĞ¶ÏËø¶¨£¬Ôò´ËÊ±½ø³ÌÖ»ÄÜ
-        * Ë¯Ãß£¬²¢½«½ø³ÌĞÅÏ¢Ìí¼Óµ½´Ë¶ÓÁĞÖĞ£¬µ±ÈíÖĞ¶Ï½âËø
-        * ´«Êä¿ØÖÆ¿éÊ±£¬»á»½ĞÑ´Ë¶ÓÁĞÉÏµÄ½ø³Ì
+        * ç­‰å¾…é˜Ÿåˆ—ã€‚å½“è¿›ç¨‹è°ƒç”¨lock_sockå¯¹ä¼ è¾“æ§åˆ¶å—è¿›è¡Œä¸Šé”æ—¶ï¼Œ
+        * å¦‚æœæ­¤æ—¶ä¼ è¾“æ§åˆ¶å—å·²è¢«è½¯ä¸­æ–­é”å®šï¼Œåˆ™æ­¤æ—¶è¿›ç¨‹åªèƒ½
+        * ç¡çœ ï¼Œå¹¶å°†è¿›ç¨‹ä¿¡æ¯æ·»åŠ åˆ°æ­¤é˜Ÿåˆ—ä¸­ï¼Œå½“è½¯ä¸­æ–­è§£é”
+        * ä¼ è¾“æ§åˆ¶å—æ—¶ï¼Œä¼šå”¤é†’æ­¤é˜Ÿåˆ—ä¸Šçš„è¿›ç¨‹
         */
     wait_queue_head_t   wq;
     /*
@@ -144,74 +144,74 @@ struct net;
  *	This is the minimal network layer representation of sockets, the header
  *	for struct sock and struct inet_timewait_sock.
  */
-/*Ì×½Ó×ÖÖĞ±¾¶ÎºÍ¶Ô¶ËµÄÏà¹ØĞÅÏ¢¶¼·ÅÔÚinet_sockÖĞ£¬¿ÉÒÔ±£Ö¤ºÍĞ­ÒéÎŞ¹Ø£¬¸÷ÖÖĞ­Òé¶¼ÓÃ¸Ã½á¹¹´æ´¢±¾µØµØÖ·¶Ë¿ÚºÍ¶Ô¶ËµØÖ·¶Ë¿ÚÒÑ¾­Á¬½Ó×´Ì¬µÈ
-ÒÔtcpÎªÀı£¬struct tcp_sock°üº¬struct inet_connection_sock,inet_connection_sock°üº¬ struct inet_sock£¬struct inet_sock°üº¬struct sock, struct sockºóÃæÊÇ struct sock_common¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct tcp_sock)
-ÒÔudpÎªÀı£¬struct udp_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock£¬ struct sockºóÃæÊÇ struct sock_common¡£¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct udp_sock)
-ÒÔrawÎªÀı£¬struct raw_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock£¬ struct sockºóÃæÊÇ struct sock_common¡£¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct raw_sock)
-struct sockÀïÃæ°üº¬struct sock_common
-tcp_sock->inet_connection_sock->inet_sock->sock(socketÀïÃæµÄskÖ¸Ïòsock)*/
+/*å¥—æ¥å­—ä¸­æœ¬æ®µå’Œå¯¹ç«¯çš„ç›¸å…³ä¿¡æ¯éƒ½æ”¾åœ¨inet_sockä¸­ï¼Œå¯ä»¥ä¿è¯å’Œåè®®æ— å…³ï¼Œå„ç§åè®®éƒ½ç”¨è¯¥ç»“æ„å­˜å‚¨æœ¬åœ°åœ°å€ç«¯å£å’Œå¯¹ç«¯åœ°å€ç«¯å£å·²ç»è¿æ¥çŠ¶æ€ç­‰
+ä»¥tcpä¸ºä¾‹ï¼Œstruct tcp_sockåŒ…å«struct inet_connection_sock,inet_connection_sockåŒ…å« struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sock, struct sockåé¢æ˜¯ struct sock_commonã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct tcp_sock)
+ä»¥udpä¸ºä¾‹ï¼Œstruct udp_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockï¼Œ struct sockåé¢æ˜¯ struct sock_commonã€‚ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct udp_sock)
+ä»¥rawä¸ºä¾‹ï¼Œstruct raw_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockï¼Œ struct sockåé¢æ˜¯ struct sock_commonã€‚ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct raw_sock)
+struct socké‡Œé¢åŒ…å«struct sock_common
+tcp_sock->inet_connection_sock->inet_sock->sock(socketé‡Œé¢çš„skæŒ‡å‘sock)*/
 
 /*
- * ¸Ã½á¹¹ÊÇ´«Êä¿ØÖÆ¿éĞÅÏ¢µÄ×îĞ¡¼¯ºÏ£¬ÓÉsockºÍinet_timewait_sock½á¹¹
- * Ç°ÃæÏàÍ¬²¿·Öµ¥¶À¹¹³É£¬Òò´ËÖ»ÓÃÀ´¹¹³ÉÕâÁ½ÖÖ½á¹¹
+ * è¯¥ç»“æ„æ˜¯ä¼ è¾“æ§åˆ¶å—ä¿¡æ¯çš„æœ€å°é›†åˆï¼Œç”±sockå’Œinet_timewait_sockç»“æ„
+ * å‰é¢ç›¸åŒéƒ¨åˆ†å•ç‹¬æ„æˆï¼Œå› æ­¤åªç”¨æ¥æ„æˆè¿™ä¸¤ç§ç»“æ„
  */
- //tcp_timewait_sock°üº¬inet_timewait_sock£¬inet_timewait_sock°üº¬sock_common
-/* struct sockÀïÃæ°üº¬struct sock_common
-ÒÔtcpÎªÀı£¬struct tcp_sock°üº¬struct inet_connection_sock,inet_connection_sock°üº¬ struct inet_sock£¬struct inet_sock°üº¬struct sock, struct sockºóÃæÊÇ struct sock_common¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct tcp_sock)
-ÒÔudpÎªÀı£¬struct udp_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock£¬ struct sockºóÃæÊÇ struct sock_common¡£¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct udp_sock)
-ÒÔrawÎªÀı£¬struct raw_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock£¬ struct sockºóÃæÊÇ struct sock_common¡£¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct raw_sock)
-//tcp_timewait_sock°üº¬inet_timewait_sock£¬inet_timewait_sock°üº¬sock_common
-tcp_request_sock°üº¬inet_request_sock£¬inet_request_sock°üº¬request_sock*/
-//sock_commonÊÇ´«Êä¿ØÖÆ¿éĞÅÏ¢×îĞ¡¼¯ºÏ struct sockÊÇ±È½ÏÍ¨ÓÃµÄÍøÂç²ãÃèÊö¿é£¬Óë¾ßÌåµÄĞ­Òé×åÎŞ¹Ø£¬ËûÃèÊö¸ö¸÷¸ö²»Í¬Ğ­Òé×å´«Êä²ãµÄ¹«¹²ĞÅÏ¢
+ //tcp_timewait_sockåŒ…å«inet_timewait_sockï¼Œinet_timewait_sockåŒ…å«sock_common
+/* struct socké‡Œé¢åŒ…å«struct sock_common
+ä»¥tcpä¸ºä¾‹ï¼Œstruct tcp_sockåŒ…å«struct inet_connection_sock,inet_connection_sockåŒ…å« struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sock, struct sockåé¢æ˜¯ struct sock_commonã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct tcp_sock)
+ä»¥udpä¸ºä¾‹ï¼Œstruct udp_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockï¼Œ struct sockåé¢æ˜¯ struct sock_commonã€‚ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct udp_sock)
+ä»¥rawä¸ºä¾‹ï¼Œstruct raw_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockï¼Œ struct sockåé¢æ˜¯ struct sock_commonã€‚ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct raw_sock)
+//tcp_timewait_sockåŒ…å«inet_timewait_sockï¼Œinet_timewait_sockåŒ…å«sock_common
+tcp_request_sockåŒ…å«inet_request_sockï¼Œinet_request_sockåŒ…å«request_sock*/
+//sock_commonæ˜¯ä¼ è¾“æ§åˆ¶å—ä¿¡æ¯æœ€å°é›†åˆ struct sockæ˜¯æ¯”è¾ƒé€šç”¨çš„ç½‘ç»œå±‚æè¿°å—ï¼Œä¸å…·ä½“çš„åè®®æ—æ— å…³ï¼Œä»–æè¿°ä¸ªå„ä¸ªä¸åŒåè®®æ—ä¼ è¾“å±‚çš„å…¬å…±ä¿¡æ¯
 struct sock_common {
     /*
      * first fields are not copied in sock_copy()
      */
     /*
-     * TCPÎ¬»¤Ò»¸öËùÓĞTCP´«Êä¿ØÖÆ¿éµÄÉ¢ÁĞ±ítcp_hashinfo,
-     * ¶øskc_nodeÓÃÀ´½«ËùÊôTCP´«Êä¿ØÖÆ¿éÁ´½Óµ½¸ÃÉ¢ÁĞ±í£¬
-       udpµÄhashinfoÎªudp_table
+     * TCPç»´æŠ¤ä¸€ä¸ªæ‰€æœ‰TCPä¼ è¾“æ§åˆ¶å—çš„æ•£åˆ—è¡¨tcp_hashinfo,
+     * è€Œskc_nodeç”¨æ¥å°†æ‰€å±TCPä¼ è¾“æ§åˆ¶å—é“¾æ¥åˆ°è¯¥æ•£åˆ—è¡¨ï¼Œ
+       udpçš„hashinfoä¸ºudp_table
      */
-    union { //udpÃ»ÓĞ¼ÓÈëµ½ÕâÀïÃæÈÎºÎÒ»¸ölistÖĞ     ±¾¶ÎÎª·şÎñÆ÷¶ËµÄÊ±ºòtcpºÍrawÔÚlistenµÄÊ±ºòµ÷ÓÃinet_csk_listen_start°Ñstruct sockÌí¼Óµ½¶ÔÓ¦Ğ­ÒéµÄstruct proto¶ÔÓ¦µÄh³ÉÔ±(hashinfo)ÖĞ
-        struct hlist_node   skc_node;//rawÍ¨¹ıraw_hash_sk°Ñsk¼ÓÈëµ½raw_hashinfoµÄht   
-        struct hlist_nulls_node skc_nulls_node; //tcpÍ¨¹ıinet_hash°Ñsk->skc_nulls_node¼ÓÈëµ½tcp_hashinfo½á¹¹ÖĞµÄlistening_hash
+    union { //udpæ²¡æœ‰åŠ å…¥åˆ°è¿™é‡Œé¢ä»»ä½•ä¸€ä¸ªlistä¸­     æœ¬æ®µä¸ºæœåŠ¡å™¨ç«¯çš„æ—¶å€™tcpå’Œrawåœ¨listençš„æ—¶å€™è°ƒç”¨inet_csk_listen_startæŠŠstruct sockæ·»åŠ åˆ°å¯¹åº”åè®®çš„struct protoå¯¹åº”çš„hæˆå‘˜(hashinfo)ä¸­
+        struct hlist_node   skc_node;//rawé€šè¿‡raw_hash_skæŠŠskåŠ å…¥åˆ°raw_hashinfoçš„ht   
+        struct hlist_nulls_node skc_nulls_node; //tcpé€šè¿‡inet_hashæŠŠsk->skc_nulls_nodeåŠ å…¥åˆ°tcp_hashinfoç»“æ„ä¸­çš„listening_hash
     };
     /* 
-     * ÒıÓÃ¼ÆÊı£¬µ±ÒıÓÃ¼ÆÊıÎª0Ê±²ÅÄÜ±»ÊÍ·Å
+     * å¼•ç”¨è®¡æ•°ï¼Œå½“å¼•ç”¨è®¡æ•°ä¸º0æ—¶æ‰èƒ½è¢«é‡Šæ”¾
      */
     atomic_t        skc_refcnt;
 
     /*
-     * ´æ´¢TCP×´Ì¬ÎªestablishedÊ±¼ÓÈëµ½É¢ÁĞ±íµÄ¹Ø¼ü×Ö¼üÖµ¡£
-     * ÓÉÓÚ¼ÆËã¼üÖµÏà¶ÔºÄÊ±£¬Òò´ËÓÃÒ»¸ö³ÉÔ±À´´æ´¢¼üÖµÓĞÀû
-     * ÓÚÌá¸ßĞ§ÂÊ
+     * å­˜å‚¨TCPçŠ¶æ€ä¸ºestablishedæ—¶åŠ å…¥åˆ°æ•£åˆ—è¡¨çš„å…³é”®å­—é”®å€¼ã€‚
+     * ç”±äºè®¡ç®—é”®å€¼ç›¸å¯¹è€—æ—¶ï¼Œå› æ­¤ç”¨ä¸€ä¸ªæˆå‘˜æ¥å­˜å‚¨é”®å€¼æœ‰åˆ©
+     * äºæé«˜æ•ˆç‡
      */
     unsigned int        skc_hash;
     /*
-     * ËùÊôĞ­Òé×å
+     * æ‰€å±åè®®æ—
      */
     unsigned short      skc_family;
     /*
-     * µÈÍ¬ÓÚTCPµÄ×´Ì¬  ¼ûTCPF_ESTABLISHED
+     * ç­‰åŒäºTCPçš„çŠ¶æ€  è§TCPF_ESTABLISHED
      */
     volatile unsigned char  skc_state;
     /*
-     * ÊÇ·ñ¿ÉÒÔÖØÓÃµØÖ·ºÍ¶Ë¿Ú  ÔÚSO_REUSEADDRÖĞÉèÖÃ£¬linxuÏµÍ³ÖĞÉèÖÃµØÖ·¿ÉÖØÓÃ£¬¶Ë¿ÚÒ²¿ÉÒÔÖØÓÃ
-     ¶Ë¿Ú¸´ÓÃÊÇÓĞÌõ¼şµÄ£¬¾ÍÊÇskÈç¹û´«Êä¿ØÖÆ¿éÔÊĞí¸´ÓÃ²¢ÇÒ²»ÊÇ¼àÌı×´Ì¬sk->sk_state != TCP_LISTEN£¬¼ûinet_csk_get_port
+     * æ˜¯å¦å¯ä»¥é‡ç”¨åœ°å€å’Œç«¯å£  åœ¨SO_REUSEADDRä¸­è®¾ç½®ï¼Œlinxuç³»ç»Ÿä¸­è®¾ç½®åœ°å€å¯é‡ç”¨ï¼Œç«¯å£ä¹Ÿå¯ä»¥é‡ç”¨
+     ç«¯å£å¤ç”¨æ˜¯æœ‰æ¡ä»¶çš„ï¼Œå°±æ˜¯skå¦‚æœä¼ è¾“æ§åˆ¶å—å…è®¸å¤ç”¨å¹¶ä¸”ä¸æ˜¯ç›‘å¬çŠ¶æ€sk->sk_state != TCP_LISTENï¼Œè§inet_csk_get_port
      */
     unsigned char       skc_reuse;
-    /* Èç¹û²»Îª0£¬¼´ÎªÊä³ö±¨ÎÄµÄÍøÂçÉè±¸Ë÷ÒıºÅ */
-    int         skc_bound_dev_if; //Í¨¹ıÓ¦ÓÃ³ÌĞòµÄsetsockoptÀïÃæµÄÑ¡ÏîÉèÖÃ
+    /* å¦‚æœä¸ä¸º0ï¼Œå³ä¸ºè¾“å‡ºæŠ¥æ–‡çš„ç½‘ç»œè®¾å¤‡ç´¢å¼•å· */
+    int         skc_bound_dev_if; //é€šè¿‡åº”ç”¨ç¨‹åºçš„setsockopté‡Œé¢çš„é€‰é¡¹è®¾ç½®
     /*
-     * ÒÑ°ó¶¨¶Ë¿ÚµÄ´«Êä¿ØÖÆÄ£¿éÀûÓÃ¸Ã×Ö¶Î²åÈëµ½ÓëÖ®°ó¶¨
-     * ¶Ë¿ÚĞÅÏ¢½á¹¹ÎªÍ·½áµãµÄÁ´±íÖĞ¡£ÊÍ·Å¶Ë¿ÚÊ±£¬»á´ÓÖĞ
-     * É¾³ı¡£½öÓÃÓÚ»ùÓÚÁ¬½ÓµÄ´«Êä¿ØÖÆ¿é£¬ÈçTCP
-     *inet_bind_bucket¼ÓÈëµ½µÄsk->sk_bind_nodeÖĞ£¬¼ûinet_bind_hash
-     struct sock±»Ìí¼Óµ½inet_bind_bucket½á¹¹µÄownersÁ´±íÖĞ(inet_bind_hash)£¬È»ºó¸Ãinet_bind_bucketÍ¨¹ınode½Úµã¼ÓÈëµ½tcp_hashinfoÖĞ
+     * å·²ç»‘å®šç«¯å£çš„ä¼ è¾“æ§åˆ¶æ¨¡å—åˆ©ç”¨è¯¥å­—æ®µæ’å…¥åˆ°ä¸ä¹‹ç»‘å®š
+     * ç«¯å£ä¿¡æ¯ç»“æ„ä¸ºå¤´ç»“ç‚¹çš„é“¾è¡¨ä¸­ã€‚é‡Šæ”¾ç«¯å£æ—¶ï¼Œä¼šä»ä¸­
+     * åˆ é™¤ã€‚ä»…ç”¨äºåŸºäºè¿æ¥çš„ä¼ è¾“æ§åˆ¶å—ï¼Œå¦‚TCP
+     *inet_bind_bucketåŠ å…¥åˆ°çš„sk->sk_bind_nodeä¸­ï¼Œè§inet_bind_hash
+     struct sockè¢«æ·»åŠ åˆ°inet_bind_bucketç»“æ„çš„ownersé“¾è¡¨ä¸­(inet_bind_hash)ï¼Œç„¶åè¯¥inet_bind_bucketé€šè¿‡nodeèŠ‚ç‚¹åŠ å…¥åˆ°tcp_hashinfoä¸­
      */
     struct hlist_node   skc_bind_node;
-    struct hlist_nulls_node skc_portaddr_node;//Í¨¹ıº¯Êı ip4_datagram_connectÖĞµÄudp_v4_rehashÌí¼Ó°ÑudpĞ­ÒéµÄstruct sockÌí¼Óµ½udp_table,
-    /* Ö¸ÏòÍøÂç½Ó¿Ú²ãµÄÖ¸Õë,Èç¹ûÊÇTCPÌ×½Ó×Ö£¬Îªtcp_prot udp_prot¡£raw_prot */
+    struct hlist_nulls_node skc_portaddr_node;//é€šè¿‡å‡½æ•° ip4_datagram_connectä¸­çš„udp_v4_rehashæ·»åŠ æŠŠudpåè®®çš„struct sockæ·»åŠ åˆ°udp_table,
+    /* æŒ‡å‘ç½‘ç»œæ¥å£å±‚çš„æŒ‡é’ˆ,å¦‚æœæ˜¯TCPå¥—æ¥å­—ï¼Œä¸ºtcp_prot udp_protã€‚raw_prot */
     struct proto        *skc_prot;
 #ifdef CONFIG_NET_NS
     struct net      *skc_net;
@@ -316,436 +316,436 @@ struct sock_common1 {
   *	@sk_backlog_rcv: callback to process the backlog
   *	@sk_destruct: called at sock freeing time, i.e. when all refcnt == 0
  */
- /*struct sockÊÇÓë¾ßÌå´«Êä²ãĞ­ÒéÏà¹ØµÄÌ×½Ó×Ö£¬ËùÓĞÄÚºËµÄ²Ù×÷¶¼»ùÓÚÕâ¸öÌ×½Ó×Ö¡£
- //´«Êä¿ØÖÆ¿é  struct socketÀïÃæµÄstruct sockÖ¸ÏòÁËÕâÀï
- //ÔÚinet_createÖĞÎª¸Ã½á¹¹Ìå·ÖÅä¿Õ¼ä²¢¸³³õÖµ¡£
- /*Ì×½Ó×ÖÖĞ±¾¶ÎºÍ¶Ô¶ËµÄÏà¹ØĞÅÏ¢¶¼·ÅÔÚinet_sockÖĞ£¬¿ÉÒÔ±£Ö¤ºÍĞ­ÒéÎŞ¹Ø£¬¸÷ÖÖĞ­Òé¶¼ÓÃ¸Ã½á¹¹´æ´¢±¾µØµØÖ·¶Ë¿ÚºÍ¶Ô¶ËµØÖ·¶Ë¿ÚÒÑ¾­Á¬½Ó×´Ì¬µÈ
-ÒÔtcpÎªÀı£¬struct tcp_sock°üº¬struct inet_connection_sock,inet_connection_sock°üº¬ struct inet_sock£¬struct inet_sock°üº¬struct sock¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct tcp_sock)
-ÒÔudpÎªÀı£¬struct udp_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct udp_sock)
-ÒÔrawÎªÀı£¬struct raw_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct raw_sock)
+ /*struct sockæ˜¯ä¸å…·ä½“ä¼ è¾“å±‚åè®®ç›¸å…³çš„å¥—æ¥å­—ï¼Œæ‰€æœ‰å†…æ ¸çš„æ“ä½œéƒ½åŸºäºè¿™ä¸ªå¥—æ¥å­—ã€‚
+ //ä¼ è¾“æ§åˆ¶å—  struct socketé‡Œé¢çš„struct sockæŒ‡å‘äº†è¿™é‡Œ
+ //åœ¨inet_createä¸­ä¸ºè¯¥ç»“æ„ä½“åˆ†é…ç©ºé—´å¹¶èµ‹åˆå€¼ã€‚
+ /*å¥—æ¥å­—ä¸­æœ¬æ®µå’Œå¯¹ç«¯çš„ç›¸å…³ä¿¡æ¯éƒ½æ”¾åœ¨inet_sockä¸­ï¼Œå¯ä»¥ä¿è¯å’Œåè®®æ— å…³ï¼Œå„ç§åè®®éƒ½ç”¨è¯¥ç»“æ„å­˜å‚¨æœ¬åœ°åœ°å€ç«¯å£å’Œå¯¹ç«¯åœ°å€ç«¯å£å·²ç»è¿æ¥çŠ¶æ€ç­‰
+ä»¥tcpä¸ºä¾‹ï¼Œstruct tcp_sockåŒ…å«struct inet_connection_sock,inet_connection_sockåŒ…å« struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct tcp_sock)
+ä»¥udpä¸ºä¾‹ï¼Œstruct udp_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct udp_sock)
+ä»¥rawä¸ºä¾‹ï¼Œstruct raw_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct raw_sock)
 
-struct sockÀïÃæ°üº¬struct sock_common
-/*ÒÔtcpÎªÀı£¬struct tcp_sock°üº¬struct inet_connection_sock,inet_connection_sock°üº¬ struct inet_sock£¬struct inet_sock°üº¬struct sock, struct sockºóÃæÊÇ struct sock_common¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct tcp_sock)
-ÒÔudpÎªÀı£¬struct udp_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock£¬ struct sockºóÃæÊÇ struct sock_common¡£¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct udp_sock)
-ÒÔrawÎªÀı£¬struct raw_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock£¬ struct sockºóÃæÊÇ struct sock_common¡£¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct raw_sock)
-//tcp_timewait_sock°üº¬inet_timewait_sock£¬inet_timewait_sock°üº¬sock_common
-tcp_request_sock°üº¬inet_request_sock£¬inet_request_sock°üº¬request_sock
+struct socké‡Œé¢åŒ…å«struct sock_common
+/*ä»¥tcpä¸ºä¾‹ï¼Œstruct tcp_sockåŒ…å«struct inet_connection_sock,inet_connection_sockåŒ…å« struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sock, struct sockåé¢æ˜¯ struct sock_commonã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct tcp_sock)
+ä»¥udpä¸ºä¾‹ï¼Œstruct udp_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockï¼Œ struct sockåé¢æ˜¯ struct sock_commonã€‚ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct udp_sock)
+ä»¥rawä¸ºä¾‹ï¼Œstruct raw_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockï¼Œ struct sockåé¢æ˜¯ struct sock_commonã€‚ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct raw_sock)
+//tcp_timewait_sockåŒ…å«inet_timewait_sockï¼Œinet_timewait_sockåŒ…å«sock_common
+tcp_request_sockåŒ…å«inet_request_sockï¼Œinet_request_sockåŒ…å«request_sock
 
-tcp_sock->inet_connection_sock->inet_sock->sock(socketÀïÃæµÄskÖ¸Ïòsock)*/
-//sock_commonÊÇ´«Êä¿ØÖÆ¿éĞÅÏ¢×îĞ¡¼¯ºÏ struct sockÊÇ±È½ÏÍ¨ÓÃµÄÍøÂç²ãÃèÊö¿é£¬Óë¾ßÌåµÄĞ­Òé×åÎŞ¹Ø£¬ËûÃèÊö¸ö¸÷¸ö²»Í¬Ğ­Òé×å´«Êä²ãµÄ¹«¹²ĞÅÏ¢
+tcp_sock->inet_connection_sock->inet_sock->sock(socketé‡Œé¢çš„skæŒ‡å‘sock)*/
+//sock_commonæ˜¯ä¼ è¾“æ§åˆ¶å—ä¿¡æ¯æœ€å°é›†åˆ struct sockæ˜¯æ¯”è¾ƒé€šç”¨çš„ç½‘ç»œå±‚æè¿°å—ï¼Œä¸å…·ä½“çš„åè®®æ—æ— å…³ï¼Œä»–æè¿°ä¸ªå„ä¸ªä¸åŒåè®®æ—ä¼ è¾“å±‚çš„å…¬å…±ä¿¡æ¯
 
 
-//Õâ¸östruct sock×îºó¸ù¾İ²»Í¬Ğ­Òé·Ö±ğÌí¼Óµ½raw_hashinfo   tcp_hashinfo ×ö¿Í»§¶ËµÄÊ±ºòÊÇÔÚconnectµÄÊ±ºò£¬Í¨¹ısk_bind_node³ÉÔ±¼ÓÈë£¬×ö·şÎñÆ÷¶ËµÄÊ±ºòÍ¨¹ı
-//sk_node»òÕßsk_nulls_node¼ÓÈëµ½
+//è¿™ä¸ªstruct sockæœ€åæ ¹æ®ä¸åŒåè®®åˆ†åˆ«æ·»åŠ åˆ°raw_hashinfo   tcp_hashinfo åšå®¢æˆ·ç«¯çš„æ—¶å€™æ˜¯åœ¨connectçš„æ—¶å€™ï¼Œé€šè¿‡sk_bind_nodeæˆå‘˜åŠ å…¥ï¼ŒåšæœåŠ¡å™¨ç«¯çš„æ—¶å€™é€šè¿‡
+//sk_nodeæˆ–è€…sk_nulls_nodeåŠ å…¥åˆ°
 
 //inet = inet_sk(sk);tp = tcp_sk(sk);  
-struct sock { //TCPÇé¿öÏÂµÄstruct sock°üÀ¨Á½ÖÖ£¬Ò»ÖÖ³ÆÎª"¸¸"£¬ÁíÒ»ÖÖÎª"×Ó"£¬µ±Ó¦ÓÃ²ãµ÷ÓÃsockº¯ÊıµÄÊ±ºò£¬ÄÚºË´´½¨µÄÊÇ¸¸£¬µ±Èı´ÎÎÕÊÖ³É¹¦µÄµÚÈı²½ºó»á´´½¨ĞÂµÄstruct sock,acceptµÄÊ±ºò»áÈ¡×ßÕâ¸ösock£¬Õâ¸öÊÇ×Ó
+struct sock { //TCPæƒ…å†µä¸‹çš„struct sockåŒ…æ‹¬ä¸¤ç§ï¼Œä¸€ç§ç§°ä¸º"çˆ¶"ï¼Œå¦ä¸€ç§ä¸º"å­"ï¼Œå½“åº”ç”¨å±‚è°ƒç”¨sockå‡½æ•°çš„æ—¶å€™ï¼Œå†…æ ¸åˆ›å»ºçš„æ˜¯çˆ¶ï¼Œå½“ä¸‰æ¬¡æ¡æ‰‹æˆåŠŸçš„ç¬¬ä¸‰æ­¥åä¼šåˆ›å»ºæ–°çš„struct sock,acceptçš„æ—¶å€™ä¼šå–èµ°è¿™ä¸ªsockï¼Œè¿™ä¸ªæ˜¯å­
     /*
      * Now struct inet_timewait_sock also uses sock_common, so please just
      * don't add nothing before this first member (__sk_common) --acme
      */
     struct sock_common  __sk_common;
-#define sk_node			__sk_common.skc_node //rawÍ¨¹ıraw_hash_sk  sk->sk_node¼ÓÈëµ½raw_hashinfoµÄht,Ïàµ±ÓÚstruct sockÁ¬½Óµ½ÁËraw_hashinfoÖĞ
-#define sk_nulls_node		__sk_common.skc_nulls_node //tcpÍ¨¹ıinet_hash°Ñsk->skc_nulls_node¼ÓÈëµ½tcp_hashinfo½á¹¹ÖĞµÄlistening_hash¡£¼û__sk_nulls_add_node_rcu
+#define sk_node			__sk_common.skc_node //rawé€šè¿‡raw_hash_sk  sk->sk_nodeåŠ å…¥åˆ°raw_hashinfoçš„ht,ç›¸å½“äºstruct sockè¿æ¥åˆ°äº†raw_hashinfoä¸­
+#define sk_nulls_node		__sk_common.skc_nulls_node //tcpé€šè¿‡inet_hashæŠŠsk->skc_nulls_nodeåŠ å…¥åˆ°tcp_hashinfoç»“æ„ä¸­çš„listening_hashã€‚è§__sk_nulls_add_node_rcu
 #define sk_refcnt		__sk_common.skc_refcnt
 
 #define sk_copy_start		__sk_common.skc_hash 
 #define sk_hash			__sk_common.skc_hash
 #define sk_family		__sk_common.skc_family
 
-//////sk_flagsÈ¡ÖµÎªsock_flags£¬ ×´Ì¬×°»»Í¼ÎªÇ°ÃæµÄsk_state£¬È¡ÖµÎªTCP_SYN_RECVµÈ          sk_stateÔÚtcp_set_stateÖĞ¸³Öµ
-#define sk_state		__sk_common.skc_state //´´½¨skµÄÊ±ºò£¬Ä¬ÈÏÎªTCP_CLOSE sock_init_data
+//////sk_flagså–å€¼ä¸ºsock_flagsï¼Œ çŠ¶æ€è£…æ¢å›¾ä¸ºå‰é¢çš„sk_stateï¼Œå–å€¼ä¸ºTCP_SYN_RECVç­‰          sk_stateåœ¨tcp_set_stateä¸­èµ‹å€¼
+#define sk_state		__sk_common.skc_state //åˆ›å»ºskçš„æ—¶å€™ï¼Œé»˜è®¤ä¸ºTCP_CLOSE sock_init_data
 #define sk_reuse		__sk_common.skc_reuse
 #define sk_bound_dev_if		__sk_common.skc_bound_dev_if
 
-//¿Í»§¶ËtcpÔÚconncetµÄÊ±ºò°ÑskÍ¨¹ıinet_bind_bucket¼ÓÈëµ½tcp_hashinfoÖĞ       inet_bind_bucketÒ²±»Ìí¼Óµ½inet_connection_sockÖĞµÄicsk_bind_hash 
-//²Î¿¼  sk_add_bind_node
-#define sk_bind_node		__sk_common.skc_bind_node //¼ûinet_bind_hash    struct sock±»Ìí¼Óµ½inet_bind_bucket½á¹¹µÄownersÁ´±íÖĞ(inet_bind_hash)£¬È»ºó¸Ãinet_bind_bucketÍ¨¹ınode½Úµã¼ÓÈëµ½tcp_hashinfoÖĞ
-/* Ö¸ÏòÍøÂç½Ó¿Ú²ãµÄÖ¸Õë,Èç¹ûÊÇTCPÌ×½Ó×Ö£¬Îªtcp_prot
- * Èç¹ûÊÇUDPÌ×½Ó×ÖÎªudp_prot¡£raw_prot
+//å®¢æˆ·ç«¯tcpåœ¨conncetçš„æ—¶å€™æŠŠské€šè¿‡inet_bind_bucketåŠ å…¥åˆ°tcp_hashinfoä¸­       inet_bind_bucketä¹Ÿè¢«æ·»åŠ åˆ°inet_connection_sockä¸­çš„icsk_bind_hash 
+//å‚è€ƒ  sk_add_bind_node
+#define sk_bind_node		__sk_common.skc_bind_node //è§inet_bind_hash    struct sockè¢«æ·»åŠ åˆ°inet_bind_bucketç»“æ„çš„ownersé“¾è¡¨ä¸­(inet_bind_hash)ï¼Œç„¶åè¯¥inet_bind_bucketé€šè¿‡nodeèŠ‚ç‚¹åŠ å…¥åˆ°tcp_hashinfoä¸­
+/* æŒ‡å‘ç½‘ç»œæ¥å£å±‚çš„æŒ‡é’ˆ,å¦‚æœæ˜¯TCPå¥—æ¥å­—ï¼Œä¸ºtcp_prot
+ * å¦‚æœæ˜¯UDPå¥—æ¥å­—ä¸ºudp_protã€‚raw_prot
  * */
 #define sk_prot			__sk_common.skc_prot
 #define sk_net			__sk_common.skc_net
     kmemcheck_bitfield_begin(flags);
     /*
-     * ¹Ø±ÕÌ×½Ó¿ÚµÄ±êÖ¾£¬ÏÂÁĞÖµÖ®Ò»:
-     * RCV_SHUTDOWN: ½ÓÊÕÍ¨µÀ¹Ø±Õ£¬²»ÔÊĞí¼ÌĞø½ÓÊÕÊı¾İ  ÔÚ½ÓÊÕµ½FIN²¢·¢ËÍACKµÄÊ±ºò£¬½Ó²»ÄÜÔÙ½ÓÊÕÊı¾İÁË(Ò»ÖÖÊÇÖ÷¶¯¹Ø±Õ¶ËµÄµÚÈı²½FINºÍµÚËÄ²½ACK£¬ÁíÒ»ÖÖÊÇ±»¶¯½ÓÊÕµ½µÚÒ»²½FIN²¢·¢ËÍACK)¡£
-     * SEND_SHUTDOWN: ·¢ËÍÍ¨µÀ¹Ø±Õ£¬²»ÔÊĞí¼ÌĞø·¢ËÍÊı¾İ  ÔÚ·¢ËÍFIN²¢½ÓÊÕµ½ACKµÄÊ±ºò£¬¾Í²»ÄÜÔÙ·¢ËÍÊı¾İÁË¡£(Ò»ÖÖÊÇÖ÷¶¯¹Ø±ÕµÄÒ»¶Î·¢ËÍµÚÒ»²½FIN²¢ÊÜµ½ACK£¬ÁíÒ»ÖÖÊÇ±»¶¯¶Ë·¢ËÍµÚÈı²½FIN²¢ÊÜµ½ACK)
-     * SHUTDOWN_MASK: ±íÊ¾ÍêÈ«¹Ø±Õ
-     */ //Èç¹ûÉèÖÃÁËRCV_SHUTDOWN£¬Ôò²»ÔÊĞí½ÓÊÕÊı¾İ         Èç¹ûÉèÖÃÁËSEND_SHUTDOWNÔò²»ÔÊĞí½ÓÊÕÊı¾İ
-     //Êµ¼ÊÆğ×÷ÓÃµÄµØ·½ÊÇ¾ö¶¨ÊÇ·ñÄÜ½ÓÊÕ·¢ËÍÊı¾İ
-    unsigned int        sk_shutdown  : 2, //ÔÚËÄ´Î»ÓÊÖ¹ı³ÌÖĞ¿ÉÄÜ»áÓÃµ½  
+     * å…³é—­å¥—æ¥å£çš„æ ‡å¿—ï¼Œä¸‹åˆ—å€¼ä¹‹ä¸€:
+     * RCV_SHUTDOWN: æ¥æ”¶é€šé“å…³é—­ï¼Œä¸å…è®¸ç»§ç»­æ¥æ”¶æ•°æ®  åœ¨æ¥æ”¶åˆ°FINå¹¶å‘é€ACKçš„æ—¶å€™ï¼Œæ¥ä¸èƒ½å†æ¥æ”¶æ•°æ®äº†(ä¸€ç§æ˜¯ä¸»åŠ¨å…³é—­ç«¯çš„ç¬¬ä¸‰æ­¥FINå’Œç¬¬å››æ­¥ACKï¼Œå¦ä¸€ç§æ˜¯è¢«åŠ¨æ¥æ”¶åˆ°ç¬¬ä¸€æ­¥FINå¹¶å‘é€ACK)ã€‚
+     * SEND_SHUTDOWN: å‘é€é€šé“å…³é—­ï¼Œä¸å…è®¸ç»§ç»­å‘é€æ•°æ®  åœ¨å‘é€FINå¹¶æ¥æ”¶åˆ°ACKçš„æ—¶å€™ï¼Œå°±ä¸èƒ½å†å‘é€æ•°æ®äº†ã€‚(ä¸€ç§æ˜¯ä¸»åŠ¨å…³é—­çš„ä¸€æ®µå‘é€ç¬¬ä¸€æ­¥FINå¹¶å—åˆ°ACKï¼Œå¦ä¸€ç§æ˜¯è¢«åŠ¨ç«¯å‘é€ç¬¬ä¸‰æ­¥FINå¹¶å—åˆ°ACK)
+     * SHUTDOWN_MASK: è¡¨ç¤ºå®Œå…¨å…³é—­
+     */ //å¦‚æœè®¾ç½®äº†RCV_SHUTDOWNï¼Œåˆ™ä¸å…è®¸æ¥æ”¶æ•°æ®         å¦‚æœè®¾ç½®äº†SEND_SHUTDOWNåˆ™ä¸å…è®¸æ¥æ”¶æ•°æ®
+     //å®é™…èµ·ä½œç”¨çš„åœ°æ–¹æ˜¯å†³å®šæ˜¯å¦èƒ½æ¥æ”¶å‘é€æ•°æ®
+    unsigned int        sk_shutdown  : 2, //åœ¨å››æ¬¡æŒ¥æ‰‹è¿‡ç¨‹ä¸­å¯èƒ½ä¼šç”¨åˆ°  
     /*
-     * ±êÊ¶ÊÇ·ñ¶ÔRAWºÍUDP½øĞĞĞ£ÑéºÍ£¬ÏÂÁĞÖµÖ®Ò»:
-     * UDP_CSUM_NOXMIT: ²»Ö´ĞĞĞ£ÑéºÍ
-     * UDP_CSUM_NORCV: Ö»ÓÃÓÚSunRPC
-     * UDP_CSUM_DEFAULT: Ä¬ÈÏÖ´ĞĞĞ£ÑéºÍ
+     * æ ‡è¯†æ˜¯å¦å¯¹RAWå’ŒUDPè¿›è¡Œæ ¡éªŒå’Œï¼Œä¸‹åˆ—å€¼ä¹‹ä¸€:
+     * UDP_CSUM_NOXMIT: ä¸æ‰§è¡Œæ ¡éªŒå’Œ
+     * UDP_CSUM_NORCV: åªç”¨äºSunRPC
+     * UDP_CSUM_DEFAULT: é»˜è®¤æ‰§è¡Œæ ¡éªŒå’Œ
      */
-                sk_no_check  : 2, //ÔÚsetsockopsÖĞÉèÖÃÎªSO_NO_CHECKµÄÊ±ºòÉúĞ§
+                sk_no_check  : 2, //åœ¨setsockopsä¸­è®¾ç½®ä¸ºSO_NO_CHECKçš„æ—¶å€™ç”Ÿæ•ˆ
      /*
-      * ±êÊ¶´«Êä²ãµÄÒ»Ğ©×´Ì¬£¬ÏÂÁĞÖµÖ®Ò»:
-      * SOCK_SNDBUF_LOCK: ÓÃ»§Í¨¹ıÌ×½Ó¿ÚÑ¡ÏîÉèÖÃÁË·¢ËÍ»º³åÇø´óĞ¡
-      * SOCK_RCVBUF_LOCK: ÓÃ»§Í¨¹ıÌ×½Ó¿ÚÑ¡ÏîÉèÖÃÁË½ÓÊÕ»º³åÇø´óĞ¡
-      * SOCK_BINDADDR_LOCK: ÒÑ¾­°ó¶¨ÁË±¾µØµØÖ·
-      * SOCK_BINDPORT_LOCK: ÒÑ¾­°ó¶¨ÁË±¾µØ¶Ë¿Ú
+      * æ ‡è¯†ä¼ è¾“å±‚çš„ä¸€äº›çŠ¶æ€ï¼Œä¸‹åˆ—å€¼ä¹‹ä¸€:
+      * SOCK_SNDBUF_LOCK: ç”¨æˆ·é€šè¿‡å¥—æ¥å£é€‰é¡¹è®¾ç½®äº†å‘é€ç¼“å†²åŒºå¤§å°
+      * SOCK_RCVBUF_LOCK: ç”¨æˆ·é€šè¿‡å¥—æ¥å£é€‰é¡¹è®¾ç½®äº†æ¥æ”¶ç¼“å†²åŒºå¤§å°
+      * SOCK_BINDADDR_LOCK: å·²ç»ç»‘å®šäº†æœ¬åœ°åœ°å€
+      * SOCK_BINDPORT_LOCK: å·²ç»ç»‘å®šäº†æœ¬åœ°ç«¯å£
       */
                 sk_userlocks : 4,
      /*
-      * µ±Ç°ÓòÖĞÌ×½Ó×ÖËùÊôµÄĞ­Òé  IPPROTO_TCPµÈ
+      * å½“å‰åŸŸä¸­å¥—æ¥å­—æ‰€å±çš„åè®®  IPPROTO_TCPç­‰
       */
                 sk_protocol  : 8,
       /* 
-       * ËùÊôµÄÌ×½Ó×ÖÀàĞÍ£¬ÈçSOCK_STREAM
+       * æ‰€å±çš„å¥—æ¥å­—ç±»å‹ï¼Œå¦‚SOCK_STREAM
        */
                 sk_type      : 16;
     kmemcheck_bitfield_end(flags);
-    /* ½ÓÊÕ»º³åÇø´óĞ¡µÄÉÏÏŞ£¬Ä¬ÈÏÖµÊÇsysctl_rmem_default(sock_init_data)£¬¼´32767£¬ Ò²¾ÍÊÇIPÊ×²¿16Î»³¤¶È(×î´ó65535)µÄÒ»°ë*/
-    //µ±sock½ÓÊÕµ½Ò»¸ö°üµÄÊ±ºò£¬»áÔÚsock_queue_rcv_skbÖĞÅĞ¶Ïµ±Ç°¶ÓÁĞÖĞÒÑÓĞµÄskbÕ¼ÓÃµÄbufferºÍÕâ¸öĞÂÀ´µÄbuffÖ®ºóÊÇ·ñ³¬¹ıÁËsk_rcvbuf
-    int         sk_rcvbuf; //sk_rcvqueues_fullº¯Êı¶Ô½ÓÊÕµÄ°ü»á×öÒ»ÏÂ¼ì²é   setsockopsÖĞÉèÖÃ  ¡£²¢ÄÜÍ¨¹ıtcp_rmemµ÷Õû¡£ 
+    /* æ¥æ”¶ç¼“å†²åŒºå¤§å°çš„ä¸Šé™ï¼Œé»˜è®¤å€¼æ˜¯sysctl_rmem_default(sock_init_data)ï¼Œå³32767ï¼Œ ä¹Ÿå°±æ˜¯IPé¦–éƒ¨16ä½é•¿åº¦(æœ€å¤§65535)çš„ä¸€åŠ*/
+    //å½“sockæ¥æ”¶åˆ°ä¸€ä¸ªåŒ…çš„æ—¶å€™ï¼Œä¼šåœ¨sock_queue_rcv_skbä¸­åˆ¤æ–­å½“å‰é˜Ÿåˆ—ä¸­å·²æœ‰çš„skbå ç”¨çš„bufferå’Œè¿™ä¸ªæ–°æ¥çš„buffä¹‹åæ˜¯å¦è¶…è¿‡äº†sk_rcvbuf
+    int         sk_rcvbuf; //sk_rcvqueues_fullå‡½æ•°å¯¹æ¥æ”¶çš„åŒ…ä¼šåšä¸€ä¸‹æ£€æŸ¥   setsockopsä¸­è®¾ç½®  ã€‚å¹¶èƒ½é€šè¿‡tcp_rmemè°ƒæ•´ã€‚ 
     
     /*
-     * Í¬²½Ëø£¬ÆäÖĞ°üÀ¨ÁËÁ½ÖÖËø:Ò»ÊÇÓÃÓÚÓÃ»§½ø³Ì¶ÁÈ¡Êı¾İ
-     * ºÍÍøÂç²ãÏò´«Êä²ã´«µİÊı¾İÖ®¼äµÄÍ¬²½Ëø£»¶şÊÇ¿ØÖÆLinux
-     * ÏÂ°ë²¿·ÃÎÊ±¾´«Êä¿ØÖÆ¿éµÄÍ¬²½Ëø£¬ÒÔÃâ¶à¸öÏÂ°ë²¿Í¬
-     * Ê±·ÃÎÊ±¾´«Êä¿ØÖÆ¿é
+     * åŒæ­¥é”ï¼Œå…¶ä¸­åŒ…æ‹¬äº†ä¸¤ç§é”:ä¸€æ˜¯ç”¨äºç”¨æˆ·è¿›ç¨‹è¯»å–æ•°æ®
+     * å’Œç½‘ç»œå±‚å‘ä¼ è¾“å±‚ä¼ é€’æ•°æ®ä¹‹é—´çš„åŒæ­¥é”ï¼›äºŒæ˜¯æ§åˆ¶Linux
+     * ä¸‹åŠéƒ¨è®¿é—®æœ¬ä¼ è¾“æ§åˆ¶å—çš„åŒæ­¥é”ï¼Œä»¥å…å¤šä¸ªä¸‹åŠéƒ¨åŒ
+     * æ—¶è®¿é—®æœ¬ä¼ è¾“æ§åˆ¶å—
      */
-    socket_lock_t       sk_lock;//±»lock_sockÊ¹ÓÃ
+    socket_lock_t       sk_lock;//è¢«lock_sockä½¿ç”¨
     /*
      * The backlog queue is special, it is always used with
      * the per-socket spinlock held and requires low latency
      * access. Therefore we special case it's implementation.
      */
     /*
-     * ºó±¸½ÓÊÕ¶ÓÁĞ£¬Ä¿Ç°Ö»ÓÃÓÚTCP.´«Êä¿ØÖÆ¿é±»ÉÏËøºó(ÈçÓ¦ÓÃ²ã
-     * ¶ÁÈ¡Êı¾İÊ±),µ±ÓĞĞÂµÄ±¨ÎÄ´«µİµ½´«Êä¿ØÖÆ¿éÊ±£¬Ö»ÄÜ°Ñ±¨ÎÄ
-     * ·Åµ½ºó±¸½ÓÊÜ¶ÓÁĞÖĞ£¬Ö®ºóÓĞÓÃ»§½ø³Ì¶ÁÈ¡TCPÊı¾İÊ±£¬ÔÙ´Ó
-     * ¸Ã¶ÓÁĞÖĞÈ¡³ö¸´ÖÆµ½ÓÃ»§¿Õ¼äÖĞ.
-     * Ò»µ©ÓÃ»§½ø³Ì½âËø´«Êä¿ØÖÆ¿é£¬¾Í»áÁ¢¼´´¦Àí
-     * ºó±¸¶ÓÁĞ£¬½«TCP¶Î´¦ÀíÖ®ºóÌí¼Óµ½½ÓÊÕ¶ÓÁĞÖĞ¡£
+     * åå¤‡æ¥æ”¶é˜Ÿåˆ—ï¼Œç›®å‰åªç”¨äºTCP.ä¼ è¾“æ§åˆ¶å—è¢«ä¸Šé”å(å¦‚åº”ç”¨å±‚
+     * è¯»å–æ•°æ®æ—¶),å½“æœ‰æ–°çš„æŠ¥æ–‡ä¼ é€’åˆ°ä¼ è¾“æ§åˆ¶å—æ—¶ï¼Œåªèƒ½æŠŠæŠ¥æ–‡
+     * æ”¾åˆ°åå¤‡æ¥å—é˜Ÿåˆ—ä¸­ï¼Œä¹‹åæœ‰ç”¨æˆ·è¿›ç¨‹è¯»å–TCPæ•°æ®æ—¶ï¼Œå†ä»
+     * è¯¥é˜Ÿåˆ—ä¸­å–å‡ºå¤åˆ¶åˆ°ç”¨æˆ·ç©ºé—´ä¸­.
+     * ä¸€æ—¦ç”¨æˆ·è¿›ç¨‹è§£é”ä¼ è¾“æ§åˆ¶å—ï¼Œå°±ä¼šç«‹å³å¤„ç†
+     * åå¤‡é˜Ÿåˆ—ï¼Œå°†TCPæ®µå¤„ç†ä¹‹åæ·»åŠ åˆ°æ¥æ”¶é˜Ÿåˆ—ä¸­ã€‚
      */
     struct {
         struct sk_buff *head;
         struct sk_buff *tail;
     } sk_backlog;
     /*
-     * ½ø³ÌµÈ´ı¶ÓÁĞ¡£½ø³ÌµÈ´ıÁ¬½Ó¡¢µÈ´ıÊä³ö»º³åÇø¡¢µÈ´ı
-     * ¶ÁÊı¾İÊ±£¬¶¼»á½«½ø³ÌÔİ´æµ½´Ë¶ÓÁĞÖĞ¡£Õâ¸ö³ÉÔ±×î³õ
-     * ÊÇÔÚsk_clone()ÖĞ³õÊ¼»¯ÎªNULL£¬¸Ã³ÉÔ±Êµ¼Ê´æ´¢µÄsocket½á¹¹
-     * ÖĞµÄwait³ÉÔ±£¬Õâ¸ö²Ù×÷ÔÚsock_init_data()ÖĞÍê³É¡£ ÓĞµÄ°æ±¾ÕâÀïÖ±½ÓÊÇwait, »½ĞÑ¸Ã¶ÓÁĞÉÏµÄ½ø³Ìº¯ÊıÊÇsock_def_wakeup
+     * è¿›ç¨‹ç­‰å¾…é˜Ÿåˆ—ã€‚è¿›ç¨‹ç­‰å¾…è¿æ¥ã€ç­‰å¾…è¾“å‡ºç¼“å†²åŒºã€ç­‰å¾…
+     * è¯»æ•°æ®æ—¶ï¼Œéƒ½ä¼šå°†è¿›ç¨‹æš‚å­˜åˆ°æ­¤é˜Ÿåˆ—ä¸­ã€‚è¿™ä¸ªæˆå‘˜æœ€åˆ
+     * æ˜¯åœ¨sk_clone()ä¸­åˆå§‹åŒ–ä¸ºNULLï¼Œè¯¥æˆå‘˜å®é™…å­˜å‚¨çš„socketç»“æ„
+     * ä¸­çš„waitæˆå‘˜ï¼Œè¿™ä¸ªæ“ä½œåœ¨sock_init_data()ä¸­å®Œæˆã€‚ æœ‰çš„ç‰ˆæœ¬è¿™é‡Œç›´æ¥æ˜¯wait, å”¤é†’è¯¥é˜Ÿåˆ—ä¸Šçš„è¿›ç¨‹å‡½æ•°æ˜¯sock_def_wakeup
      */
     wait_queue_head_t   *sk_sleep;
     /*
-     * Ä¿µÄÂ·ÓÉÏî»º´æ£¬Ò»°ã¶¼ÊÇÔÚ´´½¨´«Êä¿ØÖÆ¿é·¢ËÍ
-     * Êı¾İ±¨ÎÄÊ±£¬·¢ÏÖÎ´ÉèÖÃ¸Ã×Ö¶Î²Å´ÓÂ·ÓÉ±í»òÂ·ÓÉ
-     * »º´æÖĞ²éÑ¯µ½ÏàÓ¦µÄÂ·ÓÉÏîÀ´ÉèÖÃĞÂ×Ö¶Î£¬ÕâÑù¿ÉÒÔ
-     * ¼ÓËÙÊı¾İµÄÊä³ö£¬ºóĞøÊı¾İµÄÊä³ö²»±ØÔÙ²éÑ¯Ä¿µÄ
-     * Â·ÓÉ¡£Ä³Ğ©Çé¿öÏÂ»áË¢ĞÂ´ËÄ¿µÄÂ·ÓÉ»º´æ£¬±ÈÈç¶Ï¿ª
-     * Á¬½Ó¡¢ÖØĞÂ½øĞĞÁËÁ¬½Ó¡¢TCPÖØ´«¡¢ÖØĞÂ°ó¶¨¶Ë¿Ú
-     * µÈ²Ù×÷
+     * ç›®çš„è·¯ç”±é¡¹ç¼“å­˜ï¼Œä¸€èˆ¬éƒ½æ˜¯åœ¨åˆ›å»ºä¼ è¾“æ§åˆ¶å—å‘é€
+     * æ•°æ®æŠ¥æ–‡æ—¶ï¼Œå‘ç°æœªè®¾ç½®è¯¥å­—æ®µæ‰ä»è·¯ç”±è¡¨æˆ–è·¯ç”±
+     * ç¼“å­˜ä¸­æŸ¥è¯¢åˆ°ç›¸åº”çš„è·¯ç”±é¡¹æ¥è®¾ç½®æ–°å­—æ®µï¼Œè¿™æ ·å¯ä»¥
+     * åŠ é€Ÿæ•°æ®çš„è¾“å‡ºï¼Œåç»­æ•°æ®çš„è¾“å‡ºä¸å¿…å†æŸ¥è¯¢ç›®çš„
+     * è·¯ç”±ã€‚æŸäº›æƒ…å†µä¸‹ä¼šåˆ·æ–°æ­¤ç›®çš„è·¯ç”±ç¼“å­˜ï¼Œæ¯”å¦‚æ–­å¼€
+     * è¿æ¥ã€é‡æ–°è¿›è¡Œäº†è¿æ¥ã€TCPé‡ä¼ ã€é‡æ–°ç»‘å®šç«¯å£
+     * ç­‰æ“ä½œ
      */
     struct dst_entry    *sk_dst_cache;
 #ifdef CONFIG_XFRM
-    /* ÓëIPSeeÏà¹ØµÄ´«Êä²ßÂÔ */
+    /* ä¸IPSeeç›¸å…³çš„ä¼ è¾“ç­–ç•¥ */
     struct xfrm_policy  *sk_policy[2];
 #endif
-    /* ²Ù×÷Ä¿µÄÂ·ÓÉ»º´æµÄ¶ÁĞ´Ëø */
+    /* æ“ä½œç›®çš„è·¯ç”±ç¼“å­˜çš„è¯»å†™é” */
     rwlock_t        sk_dst_lock;
-    /* ½ÓÊÕ¶ÓÁĞsk_receive_queueÖĞËùÓĞ±¨ÎÄÊı¾İµÄ×Ü³¤¶È .¸Ã³ÉÔ±ÔÚskb_set_owner_r()º¯ÊıÖĞ»á¸üĞÂ*/ //Êµ¼ÊÔÚ½ÓÊÕSKB¿ª±Ù¿Õ¼äµÄÊ±ºò£¬»á°Ñ¸ÃÖµºÍsk_rcvbuf´óĞ¡×ö±È½Ï
+    /* æ¥æ”¶é˜Ÿåˆ—sk_receive_queueä¸­æ‰€æœ‰æŠ¥æ–‡æ•°æ®çš„æ€»é•¿åº¦ .è¯¥æˆå‘˜åœ¨skb_set_owner_r()å‡½æ•°ä¸­ä¼šæ›´æ–°*/ //å®é™…åœ¨æ¥æ”¶SKBå¼€è¾Ÿç©ºé—´çš„æ—¶å€™ï¼Œä¼šæŠŠè¯¥å€¼å’Œsk_rcvbufå¤§å°åšæ¯”è¾ƒ
 
-    ////Õâ¸öÖ»Õë¶Ô½ÓÊÕÊı¾İ£¬·¢ËÍÊı¾İ¶ÔÓ¦µÄÊÇsk_rmem_alloc£¬ 
-    //ÔÄ¶Áº¯Êı__sk_mem_schedule¿ÉÒÔÁË½âprotoµÄÄÚ´æÇé¿öÅĞ¶Ï·½·¨
-    atomic_t        sk_rmem_alloc; //±íÊ¾½ÓÊÕ¶ÓÁĞÖĞËùÓĞskbµÄ×Ü³¤¶È£¬ÔÚsock_queue_rcv_skbº¯ÊıµÄskb_set_owner_rÖĞÔö¼Ó
+    ////è¿™ä¸ªåªé’ˆå¯¹æ¥æ”¶æ•°æ®ï¼Œå‘é€æ•°æ®å¯¹åº”çš„æ˜¯sk_rmem_allocï¼Œ 
+    //é˜…è¯»å‡½æ•°__sk_mem_scheduleå¯ä»¥äº†è§£protoçš„å†…å­˜æƒ…å†µåˆ¤æ–­æ–¹æ³•
+    atomic_t        sk_rmem_alloc; //è¡¨ç¤ºæ¥æ”¶é˜Ÿåˆ—ä¸­æ‰€æœ‰skbçš„æ€»é•¿åº¦ï¼Œåœ¨sock_queue_rcv_skbå‡½æ•°çš„skb_set_owner_rä¸­å¢åŠ 
 
-    /* ËùÔÚ´«Êä¿ØÖÆ¿éÖĞ£¬Îª·¢ËÍ¶ø·ÖÅäµÄËùÓĞSKBÊı¾İÇøµÄ×Ü³¤¶È¡£Õâ¸ö³ÉÔ±ºÍ
-     * sk_wmem_queued²»Í¬£¬ËùÓĞÒòÎª·¢ËÍ¶ø·ÖÅäµÄSKBÊı¾İÇøµÄÄÚ´æ¶¼»áÍ³¼Æµ½
-     * sk_wmem_alloc³ÉÔ±ÖĞ¡£ÀıÈç£¬ÔÚtcp_transmit_skb()ÖĞ»á¿ËÂ¡·¢ËÍ¶ÓÁĞÖĞµÄ
-     * SKB£¬¿ËÂ¡³öÀ´µÄSKBËùÕ¼µÄÄÚ´æ»áÍ³¼Æµ½sk_wmem_alloc£¬¶ø²»ÊÇsk_wmem_queuedÖĞ¡£
+    /* æ‰€åœ¨ä¼ è¾“æ§åˆ¶å—ä¸­ï¼Œä¸ºå‘é€è€Œåˆ†é…çš„æ‰€æœ‰SKBæ•°æ®åŒºçš„æ€»é•¿åº¦ã€‚è¿™ä¸ªæˆå‘˜å’Œ
+     * sk_wmem_queuedä¸åŒï¼Œæ‰€æœ‰å› ä¸ºå‘é€è€Œåˆ†é…çš„SKBæ•°æ®åŒºçš„å†…å­˜éƒ½ä¼šç»Ÿè®¡åˆ°
+     * sk_wmem_allocæˆå‘˜ä¸­ã€‚ä¾‹å¦‚ï¼Œåœ¨tcp_transmit_skb()ä¸­ä¼šå…‹éš†å‘é€é˜Ÿåˆ—ä¸­çš„
+     * SKBï¼Œå…‹éš†å‡ºæ¥çš„SKBæ‰€å çš„å†…å­˜ä¼šç»Ÿè®¡åˆ°sk_wmem_allocï¼Œè€Œä¸æ˜¯sk_wmem_queuedä¸­ã€‚
      *  
-     * ÊÍ·Åsock½á¹¹Ê±£¬»áÏÈ½«sk_wmem_alloc³ÉÔ±¼õ1£¬Èç¹ûÎª0£¬ËµÃ÷Ã»ÓĞ´ı
-     * ·¢ËÍµÄÊı¾İ£¬²Å»áÕæÕıÊÍ·Å¡£ËùÒÔÕâÀïÒªÏÈ½«Æä³õÊ¼»¯Îª1   ,²Î¼û 
-     * sk_alloc()¡£
-     * ¸Ã³ÉÔ±ÔÚskb_set_owner_w()ÖĞ»á¸üĞÂ¡£
-     *///Í¨¹ıÔÄ¶Áº¯Êısock_alloc_send_pskb¿ÉÒÔÀí½â¸Ä±äÁ¿µÄ×÷ÓÃ  Ã¿¿ª±ÙÒ»¸öSKBµÄÊ±ºòµ±Ó¦ÓÃ³ÌĞòÍ¨¹ıÌ×½Ó¿Ú´«Êı¾İµÄÊ±ºò£¬×îÖÕ»á°ÑÊı¾İ´«Êäµ½SKBÖĞ£¬È»ºó°ÑÊı¾İ³¤¶È+header³¤¶ÈµÄÖµ¸³Öµ¸ø¸Ã±äÁ¿ÖĞ£¬±íÊ¾µ±Ç°¸ÃÌ×½Ó×ÖÖĞÎ´·¢ËÍµÄÊı¾İÎª¶àÉÙ
-// ¼ûsock_alloc_send_pskbÖĞµÄskb_set_owner_w   ÔÚ¿ª±Ù¿Õ¼äÇ°ÒªºÍsk_sndbuf×ö±È½Ï
-//ÔÚsk_allocµÄÊ±ºò³õÊ¼»¯ÉèÖÃÎª1£¬È»ºóÔÚskb_set_owner_w¼ÓÉÏSKB³¤¶È£¬µ±SKB·¢ËÍ³öÈ¥ºó£¬ÔÚ¼õÈ¥¸ÃSKBµÄ³¤¶È£¬ËùÒÔÕâ¸öÖµµ±Êı¾İ·¢ËÍºóÆäÖµÊ¼ÖÕÊÇ1£¬²»»áÖ´ĞĞsock_wfree
-//Õâ¸öÎª·¢ËÍ¶ÓÁĞ(°üÀ¨¿ËÂ¡µÄ)·ÖÅäµÄÊµ¼Ê¿Õ¼ä£¬sk_forward_allocÊÇÌáÇ°Ô¤·ÖÅäµÄ£¬Êµ¼ÊÉÏ²¢Ã»ÓĞ·ÖÆ¬¿Õ¼ä£¬Ö»ÊÇËµÏÈÈ·¶¨ÏÂÀ´¿ÉÒÔÓÃÕâÃ´¶à¿Õ¼ä£¬¾ÍÊÇºóÃæ·ÖÆ¬¿Õ¼äµÄÊ±ºò×î¶à¿ÉÒÔ·ÖÆ¬ÕâÃ´¶à¿Õ¼ä¡£
-    atomic_t        sk_wmem_alloc; //Õâ¸öÖ»Õë¶Ô·¢ËÍÊı¾İ£¬½ÓÊÕÊı¾İ¶ÔÓ¦µÄÊÇsk_rmem_alloc£¬   //ÔÄ¶Áº¯Êı__sk_mem_schedule¿ÉÒÔÁË½âprotoµÄÄÚ´æÇé¿öÅĞ¶Ï·½·¨
+     * é‡Šæ”¾sockç»“æ„æ—¶ï¼Œä¼šå…ˆå°†sk_wmem_allocæˆå‘˜å‡1ï¼Œå¦‚æœä¸º0ï¼Œè¯´æ˜æ²¡æœ‰å¾…
+     * å‘é€çš„æ•°æ®ï¼Œæ‰ä¼šçœŸæ­£é‡Šæ”¾ã€‚æ‰€ä»¥è¿™é‡Œè¦å…ˆå°†å…¶åˆå§‹åŒ–ä¸º1   ,å‚è§ 
+     * sk_alloc()ã€‚
+     * è¯¥æˆå‘˜åœ¨skb_set_owner_w()ä¸­ä¼šæ›´æ–°ã€‚
+     *///é€šè¿‡é˜…è¯»å‡½æ•°sock_alloc_send_pskbå¯ä»¥ç†è§£æ”¹å˜é‡çš„ä½œç”¨  æ¯å¼€è¾Ÿä¸€ä¸ªSKBçš„æ—¶å€™å½“åº”ç”¨ç¨‹åºé€šè¿‡å¥—æ¥å£ä¼ æ•°æ®çš„æ—¶å€™ï¼Œæœ€ç»ˆä¼šæŠŠæ•°æ®ä¼ è¾“åˆ°SKBä¸­ï¼Œç„¶åæŠŠæ•°æ®é•¿åº¦+headeré•¿åº¦çš„å€¼èµ‹å€¼ç»™è¯¥å˜é‡ä¸­ï¼Œè¡¨ç¤ºå½“å‰è¯¥å¥—æ¥å­—ä¸­æœªå‘é€çš„æ•°æ®ä¸ºå¤šå°‘
+// è§sock_alloc_send_pskbä¸­çš„skb_set_owner_w   åœ¨å¼€è¾Ÿç©ºé—´å‰è¦å’Œsk_sndbufåšæ¯”è¾ƒ
+//åœ¨sk_allocçš„æ—¶å€™åˆå§‹åŒ–è®¾ç½®ä¸º1ï¼Œç„¶ååœ¨skb_set_owner_wåŠ ä¸ŠSKBé•¿åº¦ï¼Œå½“SKBå‘é€å‡ºå»åï¼Œåœ¨å‡å»è¯¥SKBçš„é•¿åº¦ï¼Œæ‰€ä»¥è¿™ä¸ªå€¼å½“æ•°æ®å‘é€åå…¶å€¼å§‹ç»ˆæ˜¯1ï¼Œä¸ä¼šæ‰§è¡Œsock_wfree
+//è¿™ä¸ªä¸ºå‘é€é˜Ÿåˆ—(åŒ…æ‹¬å…‹éš†çš„)åˆ†é…çš„å®é™…ç©ºé—´ï¼Œsk_forward_allocæ˜¯æå‰é¢„åˆ†é…çš„ï¼Œå®é™…ä¸Šå¹¶æ²¡æœ‰åˆ†ç‰‡ç©ºé—´ï¼Œåªæ˜¯è¯´å…ˆç¡®å®šä¸‹æ¥å¯ä»¥ç”¨è¿™ä¹ˆå¤šç©ºé—´ï¼Œå°±æ˜¯åé¢åˆ†ç‰‡ç©ºé—´çš„æ—¶å€™æœ€å¤šå¯ä»¥åˆ†ç‰‡è¿™ä¹ˆå¤šç©ºé—´ã€‚
+    atomic_t        sk_wmem_alloc; //è¿™ä¸ªåªé’ˆå¯¹å‘é€æ•°æ®ï¼Œæ¥æ”¶æ•°æ®å¯¹åº”çš„æ˜¯sk_rmem_allocï¼Œ   //é˜…è¯»å‡½æ•°__sk_mem_scheduleå¯ä»¥äº†è§£protoçš„å†…å­˜æƒ…å†µåˆ¤æ–­æ–¹æ³•
     /* 
-     * ·ÖÅä¸¨Öú»º³åÇøµÄÉÏÏŞ£¬¸¨ÖúÊı¾İ°üÀ¨½øĞĞÉèÖÃÑ¡Ïî¡¢
-     * ÉèÖÃ¹ıÂËÊ±·ÖÅäµ½µÄÄÚ´æºÍ×é²¥ÉèÖÃµÈ
+     * åˆ†é…è¾…åŠ©ç¼“å†²åŒºçš„ä¸Šé™ï¼Œè¾…åŠ©æ•°æ®åŒ…æ‹¬è¿›è¡Œè®¾ç½®é€‰é¡¹ã€
+     * è®¾ç½®è¿‡æ»¤æ—¶åˆ†é…åˆ°çš„å†…å­˜å’Œç»„æ’­è®¾ç½®ç­‰
      */
     atomic_t        sk_omem_alloc;
     /*
-     * ·¢ËÍ»º³åÇø³¤¶ÈµÄÉÏÏŞ£¬·¢ËÍ¶ÓÁĞÖĞ±¨ÎÄÊı¾İ×Ü³¤¶È²»ÄÜ
-     * ³¬¹ı¸ÃÖµ.Ä¬ÈÏÖµÊÇsysctl_wmem_default£¬¼´32767¡£ÔÚÍ¨¹ısetsockopsÉèÖÃÊ±£¬ÆäÖµ×î´óÎªsysctl_wmem_maxµÄÁ½±¶
-     */ //·¢ËÍ»º³åÇø»á¸ù¾İ¸ÃprotoÊ¹ÓÃµÄÄÚ´æÇé¿ö£¬½øĞĞµ÷Õû£¬¼û__sk_mem_scheduleÖĞµÄsk_stream_moderate_sndbuf        ²¢ÄÜÍ¨¹ıtcp_rmemµ÷Õû¡£ 
-    int         sk_sndbuf; //setsockopsÖĞÉèÖÃ   Õâ¸öÊÇ±¾sock·¢ËÍ»º´æµÄ×î´óÖµ£¬Õû¸ötcp_prot»òÕßudp_protµÄÄÚ´æÇé¿ö±È½Ï£¬²Î¿¼protoÏà¹Ø×Ö¶Î
+     * å‘é€ç¼“å†²åŒºé•¿åº¦çš„ä¸Šé™ï¼Œå‘é€é˜Ÿåˆ—ä¸­æŠ¥æ–‡æ•°æ®æ€»é•¿åº¦ä¸èƒ½
+     * è¶…è¿‡è¯¥å€¼.é»˜è®¤å€¼æ˜¯sysctl_wmem_defaultï¼Œå³32767ã€‚åœ¨é€šè¿‡setsockopsè®¾ç½®æ—¶ï¼Œå…¶å€¼æœ€å¤§ä¸ºsysctl_wmem_maxçš„ä¸¤å€
+     */ //å‘é€ç¼“å†²åŒºä¼šæ ¹æ®è¯¥protoä½¿ç”¨çš„å†…å­˜æƒ…å†µï¼Œè¿›è¡Œè°ƒæ•´ï¼Œè§__sk_mem_scheduleä¸­çš„sk_stream_moderate_sndbuf        å¹¶èƒ½é€šè¿‡tcp_rmemè°ƒæ•´ã€‚ 
+    int         sk_sndbuf; //setsockopsä¸­è®¾ç½®   è¿™ä¸ªæ˜¯æœ¬sockå‘é€ç¼“å­˜çš„æœ€å¤§å€¼ï¼Œæ•´ä¸ªtcp_protæˆ–è€…udp_protçš„å†…å­˜æƒ…å†µæ¯”è¾ƒï¼Œå‚è€ƒprotoç›¸å…³å­—æ®µ
     /*
-     * ½ÓÊÕ¶ÓÁĞ£¬µÈ´ıÓÃ»§½ø³Ì¶ÁÈ¡¡£TCP±È½ÏÌØ±ğ£¬
-     * µ±½ÓÊÕµ½µÄÊı¾İ²»ÄÜÖ±½Ó¸´ÖÆµ½ÓÃ»§¿Õ¼äÊ±²Å»á
-     * »º´æÔÚ´Ë
+     * æ¥æ”¶é˜Ÿåˆ—ï¼Œç­‰å¾…ç”¨æˆ·è¿›ç¨‹è¯»å–ã€‚TCPæ¯”è¾ƒç‰¹åˆ«ï¼Œ
+     * å½“æ¥æ”¶åˆ°çš„æ•°æ®ä¸èƒ½ç›´æ¥å¤åˆ¶åˆ°ç”¨æˆ·ç©ºé—´æ—¶æ‰ä¼š
+     * ç¼“å­˜åœ¨æ­¤
      */
     struct sk_buff_head sk_receive_queue;
     /*
-     * ·¢ËÍ¶ÓÁĞ£¬ÔÚTCPÖĞ£¬´Ë¶ÓÁĞÍ¬Ê±Ò²ÊÇÖØ´«¶ÓÁĞ£¬
-     * ÔÚsk_send_headÖ®Ç°ÎªÖØ´«¶ÓÁĞ£¬Ö®ºóÎª·¢ËÍ
-     * ¶ÓÁĞ£¬²Î¼ûsk_send_head
-     */ //ÕâÉÏÃæ´æµÄÊÇ·¢ËÍSKBÁ´±í£¬¼´Ê¹µ÷ÓÃÁËdev_queue_xmitºó,¸ÃSKBº£ÔÚ¸ÃÁ´±íÉÏÃæ£¬ÖªµÀÊÕµ½¶Ô·½ack¡£
-     //Í¼ĞÎ»¯Àí½â²Î¿¼·®¶«¶«ÏÂP866
+     * å‘é€é˜Ÿåˆ—ï¼Œåœ¨TCPä¸­ï¼Œæ­¤é˜Ÿåˆ—åŒæ—¶ä¹Ÿæ˜¯é‡ä¼ é˜Ÿåˆ—ï¼Œ
+     * åœ¨sk_send_headä¹‹å‰ä¸ºé‡ä¼ é˜Ÿåˆ—ï¼Œä¹‹åä¸ºå‘é€
+     * é˜Ÿåˆ—ï¼Œå‚è§sk_send_head
+     */ //è¿™ä¸Šé¢å­˜çš„æ˜¯å‘é€SKBé“¾è¡¨ï¼Œå³ä½¿è°ƒç”¨äº†dev_queue_xmitå,è¯¥SKBæµ·åœ¨è¯¥é“¾è¡¨ä¸Šé¢ï¼ŒçŸ¥é“æ”¶åˆ°å¯¹æ–¹ackã€‚
+     //å›¾å½¢åŒ–ç†è§£å‚è€ƒæ¨Šä¸œä¸œä¸‹P866
     struct sk_buff_head sk_write_queue;
 #ifdef CONFIG_NET_DMA
-    /* ÓëÍøÂçÉè±¸µÄDMAÏà¹Ø */
+    /* ä¸ç½‘ç»œè®¾å¤‡çš„DMAç›¸å…³ */
     struct sk_buff_head sk_async_wait_queue;
 #endif
-    /* ·¢ËÍ¶ÓÁĞÖĞËùÓĞ±¨ÎÄÊı¾İµÄ×Ü³¤¶È£¬Ä¿Ç°Ö»ÓÃÓÚTCP ¡£ÕâÀï
-     * Í³¼ÆµÄÊÇ·¢ËÍ¶ÓÁĞÖĞËùÓĞ±¨ÎÄµÄ³¤¶È£¬²»°üÀ¨ÒòÎª·¢ËÍ¶ø¿ËÂ¡
-     * ³öÀ´µÄSKBÕ¼ÓÃµÄÄÚ´æ¡£ÊÇÕæÕıµÄÕ¼ÓÃ¿Õ¼äµÄ·¢ËÍ¶ÓÁĞÊı¾İ³¤¶È¡£¼ûskb_entail
+    /* å‘é€é˜Ÿåˆ—ä¸­æ‰€æœ‰æŠ¥æ–‡æ•°æ®çš„æ€»é•¿åº¦ï¼Œç›®å‰åªç”¨äºTCP ã€‚è¿™é‡Œ
+     * ç»Ÿè®¡çš„æ˜¯å‘é€é˜Ÿåˆ—ä¸­æ‰€æœ‰æŠ¥æ–‡çš„é•¿åº¦ï¼Œä¸åŒ…æ‹¬å› ä¸ºå‘é€è€Œå…‹éš†
+     * å‡ºæ¥çš„SKBå ç”¨çš„å†…å­˜ã€‚æ˜¯çœŸæ­£çš„å ç”¨ç©ºé—´çš„å‘é€é˜Ÿåˆ—æ•°æ®é•¿åº¦ã€‚è§skb_entail
      * */
-    int         sk_wmem_queued; //skb_entailÖĞ»á¸³Öµ
+    int         sk_wmem_queued; //skb_entailä¸­ä¼šèµ‹å€¼
     /* 
-     * Ô¤·ÖÅä»º´æ³¤¶È£¬ÕâÖ»ÊÇÒ»¸ö±êÊ¶£¬Ä¿Ç° Ö»ÓÃÓÚTCP¡£
-     * µ±·ÖÅäµÄ»º´æĞ¡ÓÚ¸ÃÖµÊ±£¬·ÖÅä±ØÈ»³É¹¦£¬·ñÔòĞèÒª
-     * ÖØĞÂÈ·ÈÏ·ÖÅäµÄ»º´æÊÇ·ñÓĞĞ§¡£²Î¼û__sk_mem_schedule().
-     * ÔÚsk_clone()ÖĞ£¬sk_forward_alloc±»³õÊ¼»¯Îª0.
+     * é¢„åˆ†é…ç¼“å­˜é•¿åº¦ï¼Œè¿™åªæ˜¯ä¸€ä¸ªæ ‡è¯†ï¼Œç›®å‰ åªç”¨äºTCPã€‚
+     * å½“åˆ†é…çš„ç¼“å­˜å°äºè¯¥å€¼æ—¶ï¼Œåˆ†é…å¿…ç„¶æˆåŠŸï¼Œå¦åˆ™éœ€è¦
+     * é‡æ–°ç¡®è®¤åˆ†é…çš„ç¼“å­˜æ˜¯å¦æœ‰æ•ˆã€‚å‚è§__sk_mem_schedule().
+     * åœ¨sk_clone()ä¸­ï¼Œsk_forward_allocè¢«åˆå§‹åŒ–ä¸º0.
      * 
-     * update:sk_forward_alloc±íÊ¾Ô¤·ÖÅä³¤¶È¡£µ±ÎÒÃÇµÚÒ»´ÎÒªÎª
-     * ·¢ËÍ»º³å¶ÓÁĞ·ÖÅäÒ»¸östruct sk_buffÊ±£¬ÎÒÃÇ²¢²»ÊÇÖ±½Ó
-     * ·ÖÅäĞèÒªµÄÄÚ´æ´óĞ¡£¬¶øÊÇ»áÒÔÄÚ´æÒ³Îªµ¥Î»½øĞĞ
-     * Ô¤·ÖÅä(´ËÊ±²¢²»ÊÇÕæµÄ·ÖÅäÄÚ´æ)¡£µ±°ÑÕâ¸öĞÂ·ÖÅä
-     * ³É¹¦µÄstruct sk_buff·ÅÈë»º³å¶ÓÁĞsk_write_queueºó£¬´Ósk_forward_alloc
-     * ÖĞ¼õÈ¥¸Ãsk_buffµÄtruesizeÖµ¡£µÚ¶ş´Î·ÖÅästruct sk_buffÊ±£¬Ö»ÒªÔÙ
-     * ´Ósk_forward_allocÖĞ¼õÈ¥ĞÂµÄsk_buffµÄtruesize¼´¿É£¬Èç¹ûsk_forward_alloc
-     * ÒÑ¾­Ğ¡ÓÚµ±Ç°µÄtruesize£¬Ôò½«ÆäÔÙ¼ÓÉÏÒ»¸öÒ³µÄÕûÊı±¶Öµ£¬
-     * ²¢ÀÛ¼ÓÈçtcp_memory_allocated¡£
+     * update:sk_forward_allocè¡¨ç¤ºé¢„åˆ†é…é•¿åº¦ã€‚å½“æˆ‘ä»¬ç¬¬ä¸€æ¬¡è¦ä¸º
+     * å‘é€ç¼“å†²é˜Ÿåˆ—åˆ†é…ä¸€ä¸ªstruct sk_buffæ—¶ï¼Œæˆ‘ä»¬å¹¶ä¸æ˜¯ç›´æ¥
+     * åˆ†é…éœ€è¦çš„å†…å­˜å¤§å°ï¼Œè€Œæ˜¯ä¼šä»¥å†…å­˜é¡µä¸ºå•ä½è¿›è¡Œ
+     * é¢„åˆ†é…(æ­¤æ—¶å¹¶ä¸æ˜¯çœŸçš„åˆ†é…å†…å­˜)ã€‚å½“æŠŠè¿™ä¸ªæ–°åˆ†é…
+     * æˆåŠŸçš„struct sk_buffæ”¾å…¥ç¼“å†²é˜Ÿåˆ—sk_write_queueåï¼Œä»sk_forward_alloc
+     * ä¸­å‡å»è¯¥sk_buffçš„truesizeå€¼ã€‚ç¬¬äºŒæ¬¡åˆ†é…struct sk_buffæ—¶ï¼Œåªè¦å†
+     * ä»sk_forward_allocä¸­å‡å»æ–°çš„sk_buffçš„truesizeå³å¯ï¼Œå¦‚æœsk_forward_alloc
+     * å·²ç»å°äºå½“å‰çš„truesizeï¼Œåˆ™å°†å…¶å†åŠ ä¸Šä¸€ä¸ªé¡µçš„æ•´æ•°å€å€¼ï¼Œ
+     * å¹¶ç´¯åŠ å¦‚tcp_memory_allocatedã€‚
      
-     *   Ò²¾ÍÊÇËµ£¬Í¨¹ısk_forward_allocÊ¹È«¾Ö±äÁ¿tcp_memory_allocated±£´æ
-     * µ±Ç°tcpĞ­Òé×ÜµÄ»º³åÇø·ÖÅäÄÚ´æµÄ´óĞ¡£¬²¢ÇÒ¸Ã´óĞ¡ÊÇ
-     * Ò³±ß½ç¶ÔÆëµÄ¡£
-     */ //ÕâÊÇ±¾sockµÄ»º´æ´óĞ¡£¬Èç¹ûÒª¿´Õû¸ötcp sockµÄ»º´æ´óĞ¡£¬Òª²Î¿¼tcp_protÖĞµÄmemory_allocated³ÉÔ±
-     ////ÔÄ¶Áº¯Êı__sk_mem_schedule¿ÉÒÔÁË½âprotoµÄÄÚ´æÇé¿öÅĞ¶Ï·½·¨ ¡£  ×¢ÒâºÍÉÏÃæµÄsk_wmem_allocµÄÇø±ğ
-    int         sk_forward_alloc; //skb_entailÖĞµÄsk_mem_chargeÀïÃæ»á¶ÔĞÂ·ÖÅäµÄSKB¿Õ¼ä×öÒ»´Î¼õ·¨£¬±íÊ¾Ô¤·ÖÅä»º´æ¿Õ¼äÉÙÁË   ÔÚÕæÕı·ÖÅä¿Õ¼äÖ®Ç°ĞèÒª±È½ÏÕâ¸öÖµ£¬¿´ÄÚ´æ¿Õ¼äÊÍ·ÅÊ¹ÓÃ´ïµ½ÏŞ¶È
-    //ÔÚÓ¦ÓÃ²ãsend_msgµÄÊ±ºò£¬»áÔÚº¯Êı__sk_mem_scheduleÖĞ¿ª±Ù¿Õ¼ä£¬Îªsk_forward_allocÔö¼Óamt * SK_MEM_QUANTUM;Èç¹û·¢ËÍµÄÊı¾İ³¤¶ÈĞ¡ÓÚ¸ÃÖµ£¬¿Ï¶¨³¬¹ı£¬Èô¹û´óÓÚ¸ÃÖµ
-    //Ôò»áÔö¼Ósk_forward_allocÓµÓĞµÄÄÚ´æ¿Õ¼ä£¬¼ûsk_wmem_schedule
-    //¸Ã±äÁ¿±íÊ¾µÄÊÇµ±Ç°skµÄ¿ÉÓÃ¿Õ¼ä£¬Ô¤·ÖÅäºóµÄ¿ÉÓÃ¿Õ¼ä¡£ÀıÈçÓ¦ÓÃ²ãsend£¬ÔÚÄÚºË·ÖÅäksbµÄÊ±ºò¿Õ¼ä×ö¼õ·¨£¬±íÊ¾¿ÉÓÃ¿Õ¼äÉÙÁËÕâ²¿·Ö³¤¶È£¬µ±·¢ËÍ³öÈ¥ÊÍ·Åskbºó£¬×ö¼Ó·¨£¬ÕâÊ±±íÊ¾¿ÉÓÃ¿Õ¼äÓĞ¶àÁË
+     *   ä¹Ÿå°±æ˜¯è¯´ï¼Œé€šè¿‡sk_forward_allocä½¿å…¨å±€å˜é‡tcp_memory_allocatedä¿å­˜
+     * å½“å‰tcpåè®®æ€»çš„ç¼“å†²åŒºåˆ†é…å†…å­˜çš„å¤§å°ï¼Œå¹¶ä¸”è¯¥å¤§å°æ˜¯
+     * é¡µè¾¹ç•Œå¯¹é½çš„ã€‚
+     */ //è¿™æ˜¯æœ¬sockçš„ç¼“å­˜å¤§å°ï¼Œå¦‚æœè¦çœ‹æ•´ä¸ªtcp sockçš„ç¼“å­˜å¤§å°ï¼Œè¦å‚è€ƒtcp_protä¸­çš„memory_allocatedæˆå‘˜
+     ////é˜…è¯»å‡½æ•°__sk_mem_scheduleå¯ä»¥äº†è§£protoçš„å†…å­˜æƒ…å†µåˆ¤æ–­æ–¹æ³• ã€‚  æ³¨æ„å’Œä¸Šé¢çš„sk_wmem_allocçš„åŒºåˆ«
+    int         sk_forward_alloc; //skb_entailä¸­çš„sk_mem_chargeé‡Œé¢ä¼šå¯¹æ–°åˆ†é…çš„SKBç©ºé—´åšä¸€æ¬¡å‡æ³•ï¼Œè¡¨ç¤ºé¢„åˆ†é…ç¼“å­˜ç©ºé—´å°‘äº†   åœ¨çœŸæ­£åˆ†é…ç©ºé—´ä¹‹å‰éœ€è¦æ¯”è¾ƒè¿™ä¸ªå€¼ï¼Œçœ‹å†…å­˜ç©ºé—´é‡Šæ”¾ä½¿ç”¨è¾¾åˆ°é™åº¦
+    //åœ¨åº”ç”¨å±‚send_msgçš„æ—¶å€™ï¼Œä¼šåœ¨å‡½æ•°__sk_mem_scheduleä¸­å¼€è¾Ÿç©ºé—´ï¼Œä¸ºsk_forward_allocå¢åŠ amt * SK_MEM_QUANTUM;å¦‚æœå‘é€çš„æ•°æ®é•¿åº¦å°äºè¯¥å€¼ï¼Œè‚¯å®šè¶…è¿‡ï¼Œè‹¥æœå¤§äºè¯¥å€¼
+    //åˆ™ä¼šå¢åŠ sk_forward_allocæ‹¥æœ‰çš„å†…å­˜ç©ºé—´ï¼Œè§sk_wmem_schedule
+    //è¯¥å˜é‡è¡¨ç¤ºçš„æ˜¯å½“å‰skçš„å¯ç”¨ç©ºé—´ï¼Œé¢„åˆ†é…åçš„å¯ç”¨ç©ºé—´ã€‚ä¾‹å¦‚åº”ç”¨å±‚sendï¼Œåœ¨å†…æ ¸åˆ†é…ksbçš„æ—¶å€™ç©ºé—´åšå‡æ³•ï¼Œè¡¨ç¤ºå¯ç”¨ç©ºé—´å°‘äº†è¿™éƒ¨åˆ†é•¿åº¦ï¼Œå½“å‘é€å‡ºå»é‡Šæ”¾skbåï¼ŒåšåŠ æ³•ï¼Œè¿™æ—¶è¡¨ç¤ºå¯ç”¨ç©ºé—´æœ‰å¤šäº†
     
     /*
-     * ÄÚ´æ·ÖÅä·½Ê½£¬²Î¼ûinclude\linux\gfp.h¡£ÖµÎª__GFP_DMAµÈ
+     * å†…å­˜åˆ†é…æ–¹å¼ï¼Œå‚è§include\linux\gfp.hã€‚å€¼ä¸º__GFP_DMAç­‰
      */
     gfp_t           sk_allocation;
     /*
-     * Ä¿µÄÂ·ÓÉÍøÂçÉè±¸µÄÌØĞÔ£¬ÔÚsk_setup_caps()ÖĞ¸ù¾İ
-     * net_device½á¹¹µÄfeatures³ÉÔ±ÉèÖÃ
-     */ //²Î¿¼//Èç¹ûÍø¿ÚÉè±¸devÉèÖÃÁËdev->features |= NETIF_F_TSO£¬ÔòÖ§³ÖTSO      ²Î¿¼e1000Íø¿¨µÄÕâÀïenic_ethtool_ops
+     * ç›®çš„è·¯ç”±ç½‘ç»œè®¾å¤‡çš„ç‰¹æ€§ï¼Œåœ¨sk_setup_caps()ä¸­æ ¹æ®
+     * net_deviceç»“æ„çš„featuresæˆå‘˜è®¾ç½®
+     */ //å‚è€ƒ//å¦‚æœç½‘å£è®¾å¤‡devè®¾ç½®äº†dev->features |= NETIF_F_TSOï¼Œåˆ™æ”¯æŒTSO      å‚è€ƒe1000ç½‘å¡çš„è¿™é‡Œenic_ethtool_ops
     int         sk_route_caps;
     /*
-     * ´«Êä²ãÖ§³ÖµÄGSOÀàĞÍ£¬ÈçSKB_GSO_TCPV4µÈ  Ä¬ÈÏ¸ÃÖµÎªSKB_GSO_TCPV4
+     * ä¼ è¾“å±‚æ”¯æŒçš„GSOç±»å‹ï¼Œå¦‚SKB_GSO_TCPV4ç­‰  é»˜è®¤è¯¥å€¼ä¸ºSKB_GSO_TCPV4
      */
     int         sk_gso_type;//tcp_v4_connect
     /*
-     * Õâ¸ö³ÉÔ±ÔÚsk_setup_caps()ÖĞ³õÊ¼»¯£¬±íÊ¾×î´óTCP·Ö¶ÎµÄ´óĞ¡¡£
-     * ×¢Òâ£¬Õâ¸ö´óĞ¡°üÀ¨IPÊ×²¿³¤¶È³¤¶È¡¢IPÑ¡Ïî³¤¶È¼°TCPÊ×²¿ºÍÑ¡Ïî£¬
-     * ÁíÍâ»¹Òª¼õ1(Õâ¸ö¼õ1²»ÖªµÀÊÇÎªÊ²Ã´¡£¡£¡£¡£)
+     * è¿™ä¸ªæˆå‘˜åœ¨sk_setup_caps()ä¸­åˆå§‹åŒ–ï¼Œè¡¨ç¤ºæœ€å¤§TCPåˆ†æ®µçš„å¤§å°ã€‚
+     * æ³¨æ„ï¼Œè¿™ä¸ªå¤§å°åŒ…æ‹¬IPé¦–éƒ¨é•¿åº¦é•¿åº¦ã€IPé€‰é¡¹é•¿åº¦åŠTCPé¦–éƒ¨å’Œé€‰é¡¹ï¼Œ
+     * å¦å¤–è¿˜è¦å‡1(è¿™ä¸ªå‡1ä¸çŸ¥é“æ˜¯ä¸ºä»€ä¹ˆã€‚ã€‚ã€‚ã€‚)
      */
     unsigned int        sk_gso_max_size;
     /*
-     * ±êÊ¶½ÓÊÕ»º´æÏÂÏŞÖµ
+     * æ ‡è¯†æ¥æ”¶ç¼“å­˜ä¸‹é™å€¼
      */
     int         sk_rcvlowat;
     /*
-     * ±êÖ¾Î»£¬¿ÉÄÜµÄÈ¡Öµ²Î¼ûÃ¶¾ÙÀàĞÍsock_flags.
-     * ÅĞ¶ÏÄ³¸ö±êÖ¾ÊÇ·ñÉèÖÃµ÷ÓÃsock_flagº¯ÊıÀ´
-     * ÅĞ¶Ï£¬¶ø²»ÊÇÖ±½ÓÊ¹ÓÃÎ»²Ù×÷¡£
+     * æ ‡å¿—ä½ï¼Œå¯èƒ½çš„å–å€¼å‚è§æšä¸¾ç±»å‹sock_flags.
+     * åˆ¤æ–­æŸä¸ªæ ‡å¿—æ˜¯å¦è®¾ç½®è°ƒç”¨sock_flagå‡½æ•°æ¥
+     * åˆ¤æ–­ï¼Œè€Œä¸æ˜¯ç›´æ¥ä½¿ç”¨ä½æ“ä½œã€‚
      */
-    unsigned long       sk_flags; //////sk_flagsÈ¡ÖµÎªsock_flags£¬ ×´Ì¬×°»»Í¼ÎªÇ°ÃæµÄsk_state£¬È¡ÖµÎªTCP_SYN_RECVµÈ
-    /* ¹Ø±ÕÌ×½Ó×ÖÇ°·¢ËÍÊ£ÓàÊı¾İµÄÊ±¼ä*/
-    unsigned long           sk_lingertime; //setsockopsÖĞÉèÖÃ SO_LINGER
+    unsigned long       sk_flags; //////sk_flagså–å€¼ä¸ºsock_flagsï¼Œ çŠ¶æ€è£…æ¢å›¾ä¸ºå‰é¢çš„sk_stateï¼Œå–å€¼ä¸ºTCP_SYN_RECVç­‰
+    /* å…³é—­å¥—æ¥å­—å‰å‘é€å‰©ä½™æ•°æ®çš„æ—¶é—´*/
+    unsigned long           sk_lingertime; //setsockopsä¸­è®¾ç½® SO_LINGER
     /* 
-     * ´íÎóÁ´±í£¬´æ·ÅÏêÏ¸µÄ³ö´íĞÅÏ¢¡£Ó¦ÓÃ³ÌĞòÍ¨¹ısetsockopt
-     * ÏµÍ³µ÷ÓÃÉèÖÃIP_RECVERRÑ¡Ïî£¬¼´Ğè»ñÈ¡ÏêÏ¸³ö´íĞÅÏ¢¡£µ±
-     * ÓĞ´íÎó·¢ÉúÊ±£¬¿ÉÍ¨¹ırecvmsg()£¬²ÎÊıflagsÎªMSG_ERRQUEUE
-     * À´»ñÈ¡ÏêÏ¸µÄ³ö´íĞÅÏ¢
+     * é”™è¯¯é“¾è¡¨ï¼Œå­˜æ”¾è¯¦ç»†çš„å‡ºé”™ä¿¡æ¯ã€‚åº”ç”¨ç¨‹åºé€šè¿‡setsockopt
+     * ç³»ç»Ÿè°ƒç”¨è®¾ç½®IP_RECVERRé€‰é¡¹ï¼Œå³éœ€è·å–è¯¦ç»†å‡ºé”™ä¿¡æ¯ã€‚å½“
+     * æœ‰é”™è¯¯å‘ç”Ÿæ—¶ï¼Œå¯é€šè¿‡recvmsg()ï¼Œå‚æ•°flagsä¸ºMSG_ERRQUEUE
+     * æ¥è·å–è¯¦ç»†çš„å‡ºé”™ä¿¡æ¯
      * update:
-     * sk_error_queueÓÃÓÚ±£´æ´íÎóÏûÏ¢£¬µ±ICMP½ÓÊÕµ½²î´íÏûÏ¢»òÕß
-     * UDPÌ×½Ó×ÖºÍRAWÌ×½Ó×ÖÊä³ö±¨ÎÄ³ö´íÊ±£¬»á²úÉúÃèÊö´íÎóĞÅÏ¢µÄ
-     * SKBÌí¼Óµ½¸Ã¶ÓÁĞÉÏ¡£Ó¦ÓÃ³ÌĞòÎªÄÜÍ¨¹ıÏµÍ³µ÷ÓÃ»ñÈ¡ÏêÏ¸µÄ
-     * ´íÎóÏûÏ¢£¬ĞèÒªÉèÖÃIP_RECVERRÌ×½Ó×ÖÑ¡Ïî£¬Ö®ºó¿ÉÍ¨¹ı²ÎÊı
-     * flagsÎªMSG_ERRQUEUEµÄrecvmsgÏµÍ³µ÷ÓÃÀ´»ñÈ¡ÏêÏ¸µÄ³ö´í
-     * ĞÅÏ¢¡£
-     * UDPÌ×½Ó×ÖºÍRAWÌ×½Ó×ÖÔÚµ÷ÓÃrecvmsg½ÓÊÕÊı¾İÊ±£¬¿ÉÒÔÉèÖÃ
-     * MSG_ERRQUEUE±êÖ¾£¬Ö»´ÓÌ×½Ó×ÖµÄ´íÎó¶ÓÁĞÉÏ½ÓÊÕ´íÎó¶ø²»
-     * ½ÓÊÕÆäËûÊı¾İ¡£ÊµÏÖÕâ¸ö¹¦ÄÜÊÇÍ¨¹ıip_recv_error()À´Íê³ÉµÄ¡£
-     * ÔÚ»ùÓÚÁ¬½ÓµÄÌ×½Ó×ÖÉÏ£¬IP_RECVERRÒâÒåÔò»áÓĞËù²»Í¬¡£²¢²»
-     * ±£´æ´íÎóĞÅÏ¢µ½´íÎó¶ÓÁĞÖĞ£¬¶øÊÇÁ¢¼´´«µİËùÓĞÊÕµ½µÄ´íÎóĞÅÏ¢
-     * ¸øÓÃ»§½ø³Ì¡£Õâ¶ÔÓÚ»ùÓÚ¶ÌÁ¬½ÓµÄTCPÓ¦ÓÃÊÇºÜÓĞÓÃµÄ£¬ÒòÎª
-     * TCPÒªÇó¿ìËÙµÄ´íÎó´¦Àí¡£ĞèÒª×¢ÒâµÄÊÇ£¬TCPÃ»ÓĞ´íÎó¶ÓÁĞ£¬
-     * MSG_ERRQUEUE¶ÔÓÚ»ùÓÚÁ¬½ÓµÄÌ×½Ó×ÖÊÇÎŞĞ§µÄ¡£
-     * ´íÎóĞÅÏ¢´«µİ¸øÓÃ»§½ø³ÌÊ±£¬²¢²»½«´íÎóĞÅÏ¢×÷Îª±¨ÎÄµÄÄÚÈİ´«µİ
-     * ¸øÓÃ»§½ø³Ì£¬¶øÊÇÒÔ´íÎóĞÅÏ¢¿éµÄĞÎÊ½±£´æÔÚSKB¿ØÖÆ¿éÖĞ£¬
-     * Í¨³£Í¨¹ıSKB_EXT_ERRÀ´·ÃÎÊSKB¿ØÖÆ¿éÖĞµÄ´íÎóĞÅÏ¢¿é¡£
-     * ²Î¼ûsock_exterr_skb½á¹¹¡£
+     * sk_error_queueç”¨äºä¿å­˜é”™è¯¯æ¶ˆæ¯ï¼Œå½“ICMPæ¥æ”¶åˆ°å·®é”™æ¶ˆæ¯æˆ–è€…
+     * UDPå¥—æ¥å­—å’ŒRAWå¥—æ¥å­—è¾“å‡ºæŠ¥æ–‡å‡ºé”™æ—¶ï¼Œä¼šäº§ç”Ÿæè¿°é”™è¯¯ä¿¡æ¯çš„
+     * SKBæ·»åŠ åˆ°è¯¥é˜Ÿåˆ—ä¸Šã€‚åº”ç”¨ç¨‹åºä¸ºèƒ½é€šè¿‡ç³»ç»Ÿè°ƒç”¨è·å–è¯¦ç»†çš„
+     * é”™è¯¯æ¶ˆæ¯ï¼Œéœ€è¦è®¾ç½®IP_RECVERRå¥—æ¥å­—é€‰é¡¹ï¼Œä¹‹åå¯é€šè¿‡å‚æ•°
+     * flagsä¸ºMSG_ERRQUEUEçš„recvmsgç³»ç»Ÿè°ƒç”¨æ¥è·å–è¯¦ç»†çš„å‡ºé”™
+     * ä¿¡æ¯ã€‚
+     * UDPå¥—æ¥å­—å’ŒRAWå¥—æ¥å­—åœ¨è°ƒç”¨recvmsgæ¥æ”¶æ•°æ®æ—¶ï¼Œå¯ä»¥è®¾ç½®
+     * MSG_ERRQUEUEæ ‡å¿—ï¼Œåªä»å¥—æ¥å­—çš„é”™è¯¯é˜Ÿåˆ—ä¸Šæ¥æ”¶é”™è¯¯è€Œä¸
+     * æ¥æ”¶å…¶ä»–æ•°æ®ã€‚å®ç°è¿™ä¸ªåŠŸèƒ½æ˜¯é€šè¿‡ip_recv_error()æ¥å®Œæˆçš„ã€‚
+     * åœ¨åŸºäºè¿æ¥çš„å¥—æ¥å­—ä¸Šï¼ŒIP_RECVERRæ„ä¹‰åˆ™ä¼šæœ‰æ‰€ä¸åŒã€‚å¹¶ä¸
+     * ä¿å­˜é”™è¯¯ä¿¡æ¯åˆ°é”™è¯¯é˜Ÿåˆ—ä¸­ï¼Œè€Œæ˜¯ç«‹å³ä¼ é€’æ‰€æœ‰æ”¶åˆ°çš„é”™è¯¯ä¿¡æ¯
+     * ç»™ç”¨æˆ·è¿›ç¨‹ã€‚è¿™å¯¹äºåŸºäºçŸ­è¿æ¥çš„TCPåº”ç”¨æ˜¯å¾ˆæœ‰ç”¨çš„ï¼Œå› ä¸º
+     * TCPè¦æ±‚å¿«é€Ÿçš„é”™è¯¯å¤„ç†ã€‚éœ€è¦æ³¨æ„çš„æ˜¯ï¼ŒTCPæ²¡æœ‰é”™è¯¯é˜Ÿåˆ—ï¼Œ
+     * MSG_ERRQUEUEå¯¹äºåŸºäºè¿æ¥çš„å¥—æ¥å­—æ˜¯æ— æ•ˆçš„ã€‚
+     * é”™è¯¯ä¿¡æ¯ä¼ é€’ç»™ç”¨æˆ·è¿›ç¨‹æ—¶ï¼Œå¹¶ä¸å°†é”™è¯¯ä¿¡æ¯ä½œä¸ºæŠ¥æ–‡çš„å†…å®¹ä¼ é€’
+     * ç»™ç”¨æˆ·è¿›ç¨‹ï¼Œè€Œæ˜¯ä»¥é”™è¯¯ä¿¡æ¯å—çš„å½¢å¼ä¿å­˜åœ¨SKBæ§åˆ¶å—ä¸­ï¼Œ
+     * é€šå¸¸é€šè¿‡SKB_EXT_ERRæ¥è®¿é—®SKBæ§åˆ¶å—ä¸­çš„é”™è¯¯ä¿¡æ¯å—ã€‚
+     * å‚è§sock_exterr_skbç»“æ„ã€‚
      */
     struct sk_buff_head sk_error_queue;
     /*
-     * Ô­Ê¼ÍøÂçĞ­Òé¿éÖ¸Õë¡£ÒòÎª´«Êä¿ØÖÆ¿éÖĞµÄÁíÒ»¸öÍøÂç
-     * Ğ­Òé¿éÖ¸Õësk_protÔÚIPv6µÄIPV6_ADDRFORMÌ×½Ó×ÖÑ¡Ïî
-     * ÉèÖÃÊ±±»ĞŞ¸Ä
+     * åŸå§‹ç½‘ç»œåè®®å—æŒ‡é’ˆã€‚å› ä¸ºä¼ è¾“æ§åˆ¶å—ä¸­çš„å¦ä¸€ä¸ªç½‘ç»œ
+     * åè®®å—æŒ‡é’ˆsk_protåœ¨IPv6çš„IPV6_ADDRFORMå¥—æ¥å­—é€‰é¡¹
+     * è®¾ç½®æ—¶è¢«ä¿®æ”¹
      */
     struct proto        *sk_prot_creator;
     /*
-     * È·±£´«Êä¿ØÖÆ¿éÖĞÒ»Ğ©³ÉÔ±Í¬²½·ÃÎÊµÄËø¡£ÒòÎªÓĞĞ©³ÉÔ±ÔÚÈí
-     * ÖĞ¶ÏÖĞ±»·ÃÎÊ£¬´æÔÚÒì²½·ÃÎÊµÄÎÊÌâ
+     * ç¡®ä¿ä¼ è¾“æ§åˆ¶å—ä¸­ä¸€äº›æˆå‘˜åŒæ­¥è®¿é—®çš„é”ã€‚å› ä¸ºæœ‰äº›æˆå‘˜åœ¨è½¯
+     * ä¸­æ–­ä¸­è¢«è®¿é—®ï¼Œå­˜åœ¨å¼‚æ­¥è®¿é—®çš„é—®é¢˜
      *
      */
     rwlock_t        sk_callback_lock;
     /*
-     * ¼ÇÂ¼µ±Ç°´«Êä²ãÖĞ·¢ÉúµÄ×îºóÒ»´ÎÖÂÃü´íÎóµÄ´íÎóÂë£¬µ«
-     * Ó¦ÓÃ²ã¶ÁÈ¡ºó»á×Ô¶¯»Ö¸´Îª³õÊ¼Õı³£×´Ì¬.
-     * ´íÎóÂëµÄÉèÖÃÊÇÓÉtcp_v4_err()º¯ÊıÍê³ÉµÄ¡£
+     * è®°å½•å½“å‰ä¼ è¾“å±‚ä¸­å‘ç”Ÿçš„æœ€åä¸€æ¬¡è‡´å‘½é”™è¯¯çš„é”™è¯¯ç ï¼Œä½†
+     * åº”ç”¨å±‚è¯»å–åä¼šè‡ªåŠ¨æ¢å¤ä¸ºåˆå§‹æ­£å¸¸çŠ¶æ€.
+     * é”™è¯¯ç çš„è®¾ç½®æ˜¯ç”±tcp_v4_err()å‡½æ•°å®Œæˆçš„ã€‚
      */
     int         sk_err,
     /*
-     * ÓÃÓÚ¼ÇÂ¼·ÇÖÂÃüĞÔ´íÎó£¬»òÕßÓÃ×÷ÔÚ´«Êä¿ØÖÆ¿é±»
-     * Ëø¶¨Ê±¼ÇÂ¼´íÎóµÄºó±¸³ÉÔ±
+     * ç”¨äºè®°å½•éè‡´å‘½æ€§é”™è¯¯ï¼Œæˆ–è€…ç”¨ä½œåœ¨ä¼ è¾“æ§åˆ¶å—è¢«
+     * é”å®šæ—¶è®°å½•é”™è¯¯çš„åå¤‡æˆå‘˜
      */
                 sk_err_soft;
     atomic_t        sk_drops;
-    /* µ±Ç°ÒÑ½¨Á¢µÄÁ¬½ÓÊı */  //±íÊ¾Ì×½Ó¿ÚÉÏ¿ÉÒÔÅÅ¶ÓµÈ´ıÁ¬½ÓµÄÁ¬½ÓÊıÃÅÏŞÖµ
-    //ÔÚÈı´ÎÎÕÊÖ³É¹¦µÄµÚÈı²½ACK³É¹¦ºó£¬»á´Ólisten_sockÀïÃæµÄsyn_table hashÖĞÈ¡³ö£¬ÈÃºó¼ÓÈëµ½request_sock_queueµÄrskq_accept_headÖĞ£¬
-//Í¬Ê±Ôö¼ÓÒÑÁ¬½Ó³É¹¦Öµ£¬µ±Ó¦ÓÃ³ÌĞòµ÷ÓÃacceptµÄÊ±ºò£¬»á´ÓÀïÃæÈ¡³öÕâ¸öÒÑÁ¬½ÓĞÅÏ¢£¬È»ºóÔÙ¼õĞ¡¸ÄÖÆ£¬Í¬Ê±ÊÍ·ÅÕâ¸örequest_sock
-//Õâ¸öÊÇ´Ó°ëÁ¬½Ó¶ÓÁĞÈ¡³örequest_sockºó¼ÓÈëµ½ÒÑÁ¬½Ó¶ÓÁĞÖĞµÄrequest_sock¸öÊı£¬sk_ack_backlogÊÇÒÑ¾­Íê³ÉÁËÈı´ÎÎÕÊÖ£¬µ«ÊÇ»¹Ã»ÓĞ±»acceptÏµÍ³µ÷ÓÃ´¦ÀíµÄÁ¬½ÓÇëÇóÊıÁ¿£»sk_max_ack_backlog¾ÍÊÇÎÒÃÇ¾­³£ÊìÏ¤µÄlistenµÄ²ÎÊı¡£
-    unsigned short      sk_ack_backlog;  //½¨Á¢Á¬½ÓµÄ¹ı³ÌÖĞ¼Ó1£¬ÔÚreqsk_queue_addÖĞ¸³Öµ ¼õ1ÔÚreqsk_queue_get_child
-    /* Á¬½Ó¶ÓÁĞ³¤¶ÈµÄÉÏÏŞ £¬ÆäÖµÊÇÓÃ»§Ö¸¶¨µÄÁ¬½Ó
-     * ¶ÓÁĞ³¤¶ÈÓë/proc/sys/net/core/somaxconn(Ä¬ÈÏÖµÊÇ128)Ö®¼äµÄ½ÏĞ¡Öµ¡£±íÊ¾¸ÃsockÉÏÃæ×î¶à¿ÉÒÔÓÉ¶àÉÙ¸öÁ¬½Ó£¬¼ûtcp_v4_conn_requestÖĞµÄsk_acceptq_is_full
-     * ÓÃÕâ¸ö±äÁ¿µÄskÓ¦¸ÃÊÇacceptÇ°µÄÄÇ¸ösk
+    /* å½“å‰å·²å»ºç«‹çš„è¿æ¥æ•° */  //è¡¨ç¤ºå¥—æ¥å£ä¸Šå¯ä»¥æ’é˜Ÿç­‰å¾…è¿æ¥çš„è¿æ¥æ•°é—¨é™å€¼
+    //åœ¨ä¸‰æ¬¡æ¡æ‰‹æˆåŠŸçš„ç¬¬ä¸‰æ­¥ACKæˆåŠŸåï¼Œä¼šä»listen_socké‡Œé¢çš„syn_table hashä¸­å–å‡ºï¼Œè®©ååŠ å…¥åˆ°request_sock_queueçš„rskq_accept_headä¸­ï¼Œ
+//åŒæ—¶å¢åŠ å·²è¿æ¥æˆåŠŸå€¼ï¼Œå½“åº”ç”¨ç¨‹åºè°ƒç”¨acceptçš„æ—¶å€™ï¼Œä¼šä»é‡Œé¢å–å‡ºè¿™ä¸ªå·²è¿æ¥ä¿¡æ¯ï¼Œç„¶åå†å‡å°æ”¹åˆ¶ï¼ŒåŒæ—¶é‡Šæ”¾è¿™ä¸ªrequest_sock
+//è¿™ä¸ªæ˜¯ä»åŠè¿æ¥é˜Ÿåˆ—å–å‡ºrequest_sockååŠ å…¥åˆ°å·²è¿æ¥é˜Ÿåˆ—ä¸­çš„request_sockä¸ªæ•°ï¼Œsk_ack_backlogæ˜¯å·²ç»å®Œæˆäº†ä¸‰æ¬¡æ¡æ‰‹ï¼Œä½†æ˜¯è¿˜æ²¡æœ‰è¢«acceptç³»ç»Ÿè°ƒç”¨å¤„ç†çš„è¿æ¥è¯·æ±‚æ•°é‡ï¼›sk_max_ack_backlogå°±æ˜¯æˆ‘ä»¬ç»å¸¸ç†Ÿæ‚‰çš„listençš„å‚æ•°ã€‚
+    unsigned short      sk_ack_backlog;  //å»ºç«‹è¿æ¥çš„è¿‡ç¨‹ä¸­åŠ 1ï¼Œåœ¨reqsk_queue_addä¸­èµ‹å€¼ å‡1åœ¨reqsk_queue_get_child
+    /* è¿æ¥é˜Ÿåˆ—é•¿åº¦çš„ä¸Šé™ ï¼Œå…¶å€¼æ˜¯ç”¨æˆ·æŒ‡å®šçš„è¿æ¥
+     * é˜Ÿåˆ—é•¿åº¦ä¸/proc/sys/net/core/somaxconn(é»˜è®¤å€¼æ˜¯128)ä¹‹é—´çš„è¾ƒå°å€¼ã€‚è¡¨ç¤ºè¯¥sockä¸Šé¢æœ€å¤šå¯ä»¥ç”±å¤šå°‘ä¸ªè¿æ¥ï¼Œè§tcp_v4_conn_requestä¸­çš„sk_acceptq_is_full
+     * ç”¨è¿™ä¸ªå˜é‡çš„skåº”è¯¥æ˜¯acceptå‰çš„é‚£ä¸ªsk
      */
-    unsigned short      sk_max_ack_backlog;//ÔÚinet_listen¸³Öµ£¬ÎªlistenµÄµÚÈı¸ö²ÎÊıÏòÉÏÈ¡µÃµÄ2´ÎÃÜreqsk_queue_alloc£¬Õâ¸öÖµºÍ°ëÁ¬½ÓÀïÃæµÄlisten_sockÖĞµÄnr_table_entriesÏàÍ¬
-    /* ÓÃÓÚÉèÖÃÓÉ´ËÌ×½Ó×ÖÊä³öÊı¾İ°üµÄQoSÀà±ğ */
-    __u32           sk_priority; //SKB->priority¾ÍÊÇÓÃµÄ¸Ã×Ö¶Î
-    /* ·µ»ØÁ¬½ÓÖÁ¸ÃÌ×½Ó×ÖµÄÍâ²¿½ø³ÌµÄÉí·İÑéÖ¤£¬Ä¿Ç°Ö÷ÒªÓÃÓÚPF_UNIXĞ­Òé×å*/
+    unsigned short      sk_max_ack_backlog;//åœ¨inet_listenèµ‹å€¼ï¼Œä¸ºlistençš„ç¬¬ä¸‰ä¸ªå‚æ•°å‘ä¸Šå–å¾—çš„2æ¬¡å¯†reqsk_queue_allocï¼Œè¿™ä¸ªå€¼å’ŒåŠè¿æ¥é‡Œé¢çš„listen_sockä¸­çš„nr_table_entriesç›¸åŒ
+    /* ç”¨äºè®¾ç½®ç”±æ­¤å¥—æ¥å­—è¾“å‡ºæ•°æ®åŒ…çš„QoSç±»åˆ« */
+    __u32           sk_priority; //SKB->priorityå°±æ˜¯ç”¨çš„è¯¥å­—æ®µ
+    /* è¿”å›è¿æ¥è‡³è¯¥å¥—æ¥å­—çš„å¤–éƒ¨è¿›ç¨‹çš„èº«ä»½éªŒè¯ï¼Œç›®å‰ä¸»è¦ç”¨äºPF_UNIXåè®®æ—*/
     struct ucred        sk_peercred;
     /* 
-     * Ì×½Ó×Ö²ã½ÓÊÕ³¬Ê±£¬³õÊ¼ÖµÎªMAX_SCHEDULE_TIMEOUT¡£
-     * ¿ÉÒÔÍ¨¹ıÌ×½Ó×ÖÑ¡ÏîSO_RCVTIMEOÀ´ÉèÖÃ½ÓÊÕµÄ³¬Ê±Ê±¼ä¡£ sock_init_dataÉèÖÃÎªÎŞÏŞ´ó£¬Ò²¾ÍÊÇacceptµÄÊ±ºòÄ¬ÈÏÊÇÎŞÏŞ×èÈûµÄ£¬¼ûinet_csk_accept
-     * Èç¹ûÏëÉèÖÃÎª·Ç×èÈû£¬¿ÉÒÔÍ¨¹ıSO_RCVTIMEO²ÎÊıÉèÖÃ
+     * å¥—æ¥å­—å±‚æ¥æ”¶è¶…æ—¶ï¼Œåˆå§‹å€¼ä¸ºMAX_SCHEDULE_TIMEOUTã€‚
+     * å¯ä»¥é€šè¿‡å¥—æ¥å­—é€‰é¡¹SO_RCVTIMEOæ¥è®¾ç½®æ¥æ”¶çš„è¶…æ—¶æ—¶é—´ã€‚ sock_init_dataè®¾ç½®ä¸ºæ— é™å¤§ï¼Œä¹Ÿå°±æ˜¯acceptçš„æ—¶å€™é»˜è®¤æ˜¯æ— é™é˜»å¡çš„ï¼Œè§inet_csk_accept
+     * å¦‚æœæƒ³è®¾ç½®ä¸ºéé˜»å¡ï¼Œå¯ä»¥é€šè¿‡SO_RCVTIMEOå‚æ•°è®¾ç½®
      */
     long            sk_rcvtimeo;
     /* 
-     * Ì×½Ó×Ö²ã·¢ËÍ³¬Ê±,³õÊ¼ÖµÎªMAX_SCHEDULE_TIMEOUT¡£
-     * ¿ÉÒÔÍ¨¹ıÌ×½Ó×ÖÑ¡ÏîSO_SNDTIMEOÀ´ÉèÖÃ·¢ËÍµÄ³¬Ê±Ê±¼ä¡£ connectµÄÊ±ºòÅĞ¶ÏÊÇ·ñconnect³¬Ê±ÓÃµÄ¾ÍÊÇÕâ¸öÖµ  Ê¹ÓÃ¸ÃÖµµÄµØ·½ÔÚsock_sndtimeo
+     * å¥—æ¥å­—å±‚å‘é€è¶…æ—¶,åˆå§‹å€¼ä¸ºMAX_SCHEDULE_TIMEOUTã€‚
+     * å¯ä»¥é€šè¿‡å¥—æ¥å­—é€‰é¡¹SO_SNDTIMEOæ¥è®¾ç½®å‘é€çš„è¶…æ—¶æ—¶é—´ã€‚ connectçš„æ—¶å€™åˆ¤æ–­æ˜¯å¦connectè¶…æ—¶ç”¨çš„å°±æ˜¯è¿™ä¸ªå€¼  ä½¿ç”¨è¯¥å€¼çš„åœ°æ–¹åœ¨sock_sndtimeo
      */
     long            sk_sndtimeo;
     /* 
-     * Ì×½Ó×Ö¹ıÂËÆ÷¡£ÔÚ´«Êä²ã¶ÔÊäÈëµÄÊı¾İ°üÍ¨¹ıBPF¹ıÂË´úÂë½øĞĞ¹ıÂË£¬
-     * Ö»¶ÔÉèÖÃÁËÌ×½Ó×Ö¹ıÂËÆ÷µÄ½ø³ÌÓĞĞ§¡£
+     * å¥—æ¥å­—è¿‡æ»¤å™¨ã€‚åœ¨ä¼ è¾“å±‚å¯¹è¾“å…¥çš„æ•°æ®åŒ…é€šè¿‡BPFè¿‡æ»¤ä»£ç è¿›è¡Œè¿‡æ»¤ï¼Œ
+     * åªå¯¹è®¾ç½®äº†å¥—æ¥å­—è¿‡æ»¤å™¨çš„è¿›ç¨‹æœ‰æ•ˆã€‚
      */
     struct sk_filter        *sk_filter;
     /* 
-     * ´«Êä¿ØÖÆ¿é´æ·ÅË½ÓĞÊı¾İµÄÖ¸Õë
+     * ä¼ è¾“æ§åˆ¶å—å­˜æ”¾ç§æœ‰æ•°æ®çš„æŒ‡é’ˆ
      */
     void            *sk_protinfo;
     /*
-     * Í¨¹ıTCPµÄ²»Í¬×´Ì¬£¬À´ÊµÏÖÁ¬½Ó¶¨Ê±Æ÷¡¢FIN_WAIT_2¶¨Ê±Æ÷(¸Ã¶¨Ê±Æ÷ÔÚTCPËÄ´Î»ÓÊÖ¹ı³ÌÖĞ½áÊø£¬¼ûtcp_rcv_state_process)ÒÔ¼°
-     * TCP±£»î¶¨Ê±Æ÷£¬ÔÚtcp_keepalive_timerÖĞÊµÏÖ
-     * ¶¨Ê±Æ÷´¦Àíº¯ÊıÎªtcp_keepalive_timer(),²Î¼ûtcp_v4_init_sock()
-     * ºÍtcp_init_xmit_timers()¡£
+     * é€šè¿‡TCPçš„ä¸åŒçŠ¶æ€ï¼Œæ¥å®ç°è¿æ¥å®šæ—¶å™¨ã€FIN_WAIT_2å®šæ—¶å™¨(è¯¥å®šæ—¶å™¨åœ¨TCPå››æ¬¡æŒ¥æ‰‹è¿‡ç¨‹ä¸­ç»“æŸï¼Œè§tcp_rcv_state_process)ä»¥åŠ
+     * TCPä¿æ´»å®šæ—¶å™¨ï¼Œåœ¨tcp_keepalive_timerä¸­å®ç°
+     * å®šæ—¶å™¨å¤„ç†å‡½æ•°ä¸ºtcp_keepalive_timer(),å‚è§tcp_v4_init_sock()
+     * å’Œtcp_init_xmit_timers()ã€‚
      */
     struct timer_list   sk_timer;//inet_csk_init_xmit_timers  sock_init_data
     /* 
-     * ÔÚÎ´ÆôÓÃSOCK_RCVTSTAMPÌ×½Ó×ÖÑ¡ÏîÊ±£¬¼ÇÂ¼±¨ÎÄ½ÓÊÕÊı¾İµ½
-     * Ó¦ÓÃ²ãµÄÊ±¼ä´Á¡£ÔÚÆôÓÃSOCK_RCVTSTAMPÌ×½Ó×ÖÑ¡ÏîÊ±£¬½ÓÊÕ
-     * Êı¾İµ½Ó¦ÓÃ²ãµÄÊ±¼ä´Á¼ÇÂ¼ÔÚSKBµÄtstampÖĞ
+     * åœ¨æœªå¯ç”¨SOCK_RCVTSTAMPå¥—æ¥å­—é€‰é¡¹æ—¶ï¼Œè®°å½•æŠ¥æ–‡æ¥æ”¶æ•°æ®åˆ°
+     * åº”ç”¨å±‚çš„æ—¶é—´æˆ³ã€‚åœ¨å¯ç”¨SOCK_RCVTSTAMPå¥—æ¥å­—é€‰é¡¹æ—¶ï¼Œæ¥æ”¶
+     * æ•°æ®åˆ°åº”ç”¨å±‚çš„æ—¶é—´æˆ³è®°å½•åœ¨SKBçš„tstampä¸­
      */
     ktime_t         sk_stamp;
-    /* Ö¸Ïò¶ÔÓ¦Ì×½Ó×ÖµÄÖ¸Õë */
+    /* æŒ‡å‘å¯¹åº”å¥—æ¥å­—çš„æŒ‡é’ˆ */
     struct socket       *sk_socket;
-    /* RPC²ã´æ·ÅË½ÓĞÊı¾İµÄÖ¸Õë £¬IPv4ÖĞÎ´Ê¹ÓÃ */
+    /* RPCå±‚å­˜æ”¾ç§æœ‰æ•°æ®çš„æŒ‡é’ˆ ï¼ŒIPv4ä¸­æœªä½¿ç”¨ */
     void            *sk_user_data;
     /* 
-     * Ö¸ÏòÎª±¾´«Êä¿ØÖÆ¿é×î½üÒ»´Î·ÖÅäµÄÒ³Ãæ£¬Í¨³£
-     * ÊÇµ±Ç°Ì×½Ó×Ö·¢ËÍ¶ÓÁĞÖĞ×îºóÒ»¸öSKBµÄ·ÖÆ¬Êı¾İµÄ
-     * ×îºóÒ»Ò³£¬µ«ÔÚÄ³ÖÖÌØÊâµÄ×´Ì¬ÏÂÒ²ÓĞ¿ÉÄÜ²»ÊÇ(
-     * ±ÈÈç£¬ÔÚtcp_sendmsgÖĞ³É¹¦·ÖÅäÁËÒ³Ãæ£¬µ«¸´ÖÆÊı¾İÊ§°ÜÁË)¡£
-     * Í¬Ê±»¹ÓÃÓÚÇø·ÖÏµÍ³µÄÒ³ÃæºÍÖ÷¶¯·ÖÅäµÄÒ³Ãæ£¬Èç¹ûÊÇÏµÍ³
-     * µÄÒ³Ãæ£¬ÊÇ²»ÄÜÔÚÒ³ÃæÖĞ×öĞŞ¸ÄµÄ£¬¶øÈç¹ûÊÇÔÚ·¢ËÍ¹ı³Ì
-     * ÖĞÖ÷¶¯·ÖÅäµÄÒ³Ãæ£¬Ôò¿ÉÒÔ¶ÔÒ³ÃæÖĞµÄÊı¾İ½øĞĞĞŞ¸Ä»òÌí¼Ó£¬
-     * ²Î¼ûtcp_sendmsg.
+     * æŒ‡å‘ä¸ºæœ¬ä¼ è¾“æ§åˆ¶å—æœ€è¿‘ä¸€æ¬¡åˆ†é…çš„é¡µé¢ï¼Œé€šå¸¸
+     * æ˜¯å½“å‰å¥—æ¥å­—å‘é€é˜Ÿåˆ—ä¸­æœ€åä¸€ä¸ªSKBçš„åˆ†ç‰‡æ•°æ®çš„
+     * æœ€åä¸€é¡µï¼Œä½†åœ¨æŸç§ç‰¹æ®Šçš„çŠ¶æ€ä¸‹ä¹Ÿæœ‰å¯èƒ½ä¸æ˜¯(
+     * æ¯”å¦‚ï¼Œåœ¨tcp_sendmsgä¸­æˆåŠŸåˆ†é…äº†é¡µé¢ï¼Œä½†å¤åˆ¶æ•°æ®å¤±è´¥äº†)ã€‚
+     * åŒæ—¶è¿˜ç”¨äºåŒºåˆ†ç³»ç»Ÿçš„é¡µé¢å’Œä¸»åŠ¨åˆ†é…çš„é¡µé¢ï¼Œå¦‚æœæ˜¯ç³»ç»Ÿ
+     * çš„é¡µé¢ï¼Œæ˜¯ä¸èƒ½åœ¨é¡µé¢ä¸­åšä¿®æ”¹çš„ï¼Œè€Œå¦‚æœæ˜¯åœ¨å‘é€è¿‡ç¨‹
+     * ä¸­ä¸»åŠ¨åˆ†é…çš„é¡µé¢ï¼Œåˆ™å¯ä»¥å¯¹é¡µé¢ä¸­çš„æ•°æ®è¿›è¡Œä¿®æ”¹æˆ–æ·»åŠ ï¼Œ
+     * å‚è§tcp_sendmsg.
      * 
-     * sk_sndmsg_pageºÍsk_sndmsg_offÖ÷ÒªÆğ»º´æµÄ×÷ÓÃ£¬¿ÉÒÔÖ±½ÓÕÒµ½
-     * ×îºóÒ»¸öÒ³Ãæ£¬È»ºó³¢ÊÔ°ÑÊı¾İ×·¼Óµ½¸ÃÒ³ÖĞ£¬Èç¹û²»ĞĞ£¬Ôò·ÖÅä
-     * ĞÂÒ³Ãæ£¬È»ºóÏòĞÂÒ³¸´ÖÆÊı¾İ£¬²¢¸üĞÂsk_sndmsg_pageºÍsk_sndmsg_off
-     * µÄÖµ
-     */////ÔÚtcp_sendmsgÖĞ¿ª±Ù¿Õ¼äºó£¬²¢¸´ÖÆ£¬¼ûÀïÃæµÄTCP_PAGE(sk) = page
+     * sk_sndmsg_pageå’Œsk_sndmsg_offä¸»è¦èµ·ç¼“å­˜çš„ä½œç”¨ï¼Œå¯ä»¥ç›´æ¥æ‰¾åˆ°
+     * æœ€åä¸€ä¸ªé¡µé¢ï¼Œç„¶åå°è¯•æŠŠæ•°æ®è¿½åŠ åˆ°è¯¥é¡µä¸­ï¼Œå¦‚æœä¸è¡Œï¼Œåˆ™åˆ†é…
+     * æ–°é¡µé¢ï¼Œç„¶åå‘æ–°é¡µå¤åˆ¶æ•°æ®ï¼Œå¹¶æ›´æ–°sk_sndmsg_pageå’Œsk_sndmsg_off
+     * çš„å€¼
+     */////åœ¨tcp_sendmsgä¸­å¼€è¾Ÿç©ºé—´åï¼Œå¹¶å¤åˆ¶ï¼Œè§é‡Œé¢çš„TCP_PAGE(sk) = page
     struct page     *sk_sndmsg_page;
     /*
-     * Ö¸Ïòsk_write_queue¶ÓÁĞÖĞµÚÒ»¸öÎ´·¢ËÍµÄ½áµã£¬Èç¹ûsk_send_head
-     * Îª¿ÕÔò±íÊ¾·¢ËÍ¶ÓÁĞÊÇ¿ÕµÄ£¬·¢ËÍ¶ÓÁĞÉÏµÄ±¨ÎÄÒÑÈ«²¿·¢ËÍ¡£
+     * æŒ‡å‘sk_write_queueé˜Ÿåˆ—ä¸­ç¬¬ä¸€ä¸ªæœªå‘é€çš„ç»“ç‚¹ï¼Œå¦‚æœsk_send_head
+     * ä¸ºç©ºåˆ™è¡¨ç¤ºå‘é€é˜Ÿåˆ—æ˜¯ç©ºçš„ï¼Œå‘é€é˜Ÿåˆ—ä¸Šçš„æŠ¥æ–‡å·²å…¨éƒ¨å‘é€ã€‚
      */
-    struct sk_buff      *sk_send_head; //±íÊ¾sk_write_queue¶ÓÁĞÖĞ»¹Î´µ÷ÓÃdev_queue_xmitµÄ×îÇ°ÃæÒ»¸öSKBµÄµØ·½
+    struct sk_buff      *sk_send_head; //è¡¨ç¤ºsk_write_queueé˜Ÿåˆ—ä¸­è¿˜æœªè°ƒç”¨dev_queue_xmitçš„æœ€å‰é¢ä¸€ä¸ªSKBçš„åœ°æ–¹
     /* 
-     * ±íÊ¾Êı¾İÎ²¶ËÔÚ×îºóÒ»Ò³·ÖÆ¬ÄÚµÄÒ³ÄÚÆ«ÒÆ£¬
-     * ĞÂµÄÊı¾İ¿ÉÒÔÖ±½Ó´ÓÕâ¸öÎ»ÖÃ¸´ÖÆµ½¸Ã·ÖÆ¬ÖĞ
-     */ //ÔÚtcp_sendmsgÖĞ¿ª±Ù¿Õ¼äºó£¬²¢¸´ÖÆ£¬¼ûÀïÃæµÄTCP_OFF(sk) = off + copy;
+     * è¡¨ç¤ºæ•°æ®å°¾ç«¯åœ¨æœ€åä¸€é¡µåˆ†ç‰‡å†…çš„é¡µå†…åç§»ï¼Œ
+     * æ–°çš„æ•°æ®å¯ä»¥ç›´æ¥ä»è¿™ä¸ªä½ç½®å¤åˆ¶åˆ°è¯¥åˆ†ç‰‡ä¸­
+     */ //åœ¨tcp_sendmsgä¸­å¼€è¾Ÿç©ºé—´åï¼Œå¹¶å¤åˆ¶ï¼Œè§é‡Œé¢çš„TCP_OFF(sk) = off + copy;
     __u32           sk_sndmsg_off;
-    /* ±êÊ¶ÓĞÊı¾İ¼´½«Ğ´ÈëÌ×½Ó¿Ú£¬
-     * Ò²¾ÍÊÇÓĞĞ´Êı¾İµÄÇëÇó*/
+    /* æ ‡è¯†æœ‰æ•°æ®å³å°†å†™å…¥å¥—æ¥å£ï¼Œ
+     * ä¹Ÿå°±æ˜¯æœ‰å†™æ•°æ®çš„è¯·æ±‚*/
     int         sk_write_pending;
 #ifdef CONFIG_SECURITY
-    /* Ö¸Ïòsk_security_struct½á¹¹£¬°²È«Ä£¿éÊ¹ÓÃ*/
+    /* æŒ‡å‘sk_security_structç»“æ„ï¼Œå®‰å…¨æ¨¡å—ä½¿ç”¨*/
     void            *sk_security;
 #endif
     __u32           sk_mark;
     /* XXX 4 bytes hole on 64 bit */
     /*
-     * µ±´«Êä¿ØÖÆ¿éµÄ×´Ì¬·¢Éú±ä»¯Ê±£¬»½ĞÑÄÄĞ©µÈ´ı±¾Ì×½Ó×ÖµÄ½ø³Ì¡£
-     * ÔÚ´´½¨Ì×½Ó×ÖÊ±³õÊ¼»¯£¬IPv4ÖĞÎªsock_def_wakeup()  Í¨³£µ±´«Êä ×´Ì¬·¢Éú±ä»¯Ê±µ÷ÓÃ
+     * å½“ä¼ è¾“æ§åˆ¶å—çš„çŠ¶æ€å‘ç”Ÿå˜åŒ–æ—¶ï¼Œå”¤é†’å“ªäº›ç­‰å¾…æœ¬å¥—æ¥å­—çš„è¿›ç¨‹ã€‚
+     * åœ¨åˆ›å»ºå¥—æ¥å­—æ—¶åˆå§‹åŒ–ï¼ŒIPv4ä¸­ä¸ºsock_def_wakeup()  é€šå¸¸å½“ä¼ è¾“ çŠ¶æ€å‘ç”Ÿå˜åŒ–æ—¶è°ƒç”¨
      */
     void            (*sk_state_change)(struct sock *sk);
     /*
-     * µ±ÓĞÊı¾İµ½´ï½ÓÊÕ´¦ÀíÊ±£¬»½ĞÑ»ò·¢ËÍĞÅºÅÍ¨Öª×¼±¸¶Á±¾Ì×½Ó×ÖµÄ
-     * ½ø³Ì¡£ÔÚ´´½¨Ì×½Ó×ÖÊ±±»³õÊ¼»¯£¬IPv4ÖĞÎªsock_def_readable()¡£Èç¹û
-     * ÊÇnetlinkÌ×½Ó×Ö£¬ÔòÎªnetlink_data_ready()¡£ Í¨³£µ±´«Êä¿ØÖÆ¿é½ÓÊÕµ½Êı¾İ°ü£¬´æÔÚ¿É¶ÁµÄÊı¾İÖ®ºó±»µ÷ÓÃ
+     * å½“æœ‰æ•°æ®åˆ°è¾¾æ¥æ”¶å¤„ç†æ—¶ï¼Œå”¤é†’æˆ–å‘é€ä¿¡å·é€šçŸ¥å‡†å¤‡è¯»æœ¬å¥—æ¥å­—çš„
+     * è¿›ç¨‹ã€‚åœ¨åˆ›å»ºå¥—æ¥å­—æ—¶è¢«åˆå§‹åŒ–ï¼ŒIPv4ä¸­ä¸ºsock_def_readable()ã€‚å¦‚æœ
+     * æ˜¯netlinkå¥—æ¥å­—ï¼Œåˆ™ä¸ºnetlink_data_ready()ã€‚ é€šå¸¸å½“ä¼ è¾“æ§åˆ¶å—æ¥æ”¶åˆ°æ•°æ®åŒ…ï¼Œå­˜åœ¨å¯è¯»çš„æ•°æ®ä¹‹åè¢«è°ƒç”¨
      */
-    void            (*sk_data_ready)(struct sock *sk, int bytes); //ÄÚºË´´½¨netlink sockµÄÊ±ºò£¬¶ÔÓ¦µÄÊÇnetlink_kernel_create->netlink_data_ready
+    void            (*sk_data_ready)(struct sock *sk, int bytes); //å†…æ ¸åˆ›å»ºnetlink sockçš„æ—¶å€™ï¼Œå¯¹åº”çš„æ˜¯netlink_kernel_create->netlink_data_ready
     /*
-     * ÔÚ·¢ËÍ»º´æ´óĞ¡·¢Éú±ä»¯»òÌ×½Ó×Ö±»ÊÍ·ÅÊ±£¬»½ĞÑÒòµÈ´ı±¾Ì×½Ó×Ö¶ø
-     * ´¦ÓÚË¯Ãß×´Ì¬µÄ½ø³Ì£¬°üÀ¨sk_sleep¶ÓÁĞÒÔ¼°fasync_list¶ÓÁĞÉÏµÄ
-     * ½ø³Ì¡£´´½¨Ì×½Ó×ÖÊ±³õÊ¼»¯£¬IPv4ÖĞÄ¬ÈÏÎªsock_def_write_space(),
-     * TCPÖĞÎªsk_stream_write_space().   ½ø³Ì´¦ÓÚĞİÃß×´Ì¬µÄµØ·½ÔÚsock_alloc_send_pskbÀïÃæµÄsock_wait_for_wmem
+     * åœ¨å‘é€ç¼“å­˜å¤§å°å‘ç”Ÿå˜åŒ–æˆ–å¥—æ¥å­—è¢«é‡Šæ”¾æ—¶ï¼Œå”¤é†’å› ç­‰å¾…æœ¬å¥—æ¥å­—è€Œ
+     * å¤„äºç¡çœ çŠ¶æ€çš„è¿›ç¨‹ï¼ŒåŒ…æ‹¬sk_sleepé˜Ÿåˆ—ä»¥åŠfasync_listé˜Ÿåˆ—ä¸Šçš„
+     * è¿›ç¨‹ã€‚åˆ›å»ºå¥—æ¥å­—æ—¶åˆå§‹åŒ–ï¼ŒIPv4ä¸­é»˜è®¤ä¸ºsock_def_write_space(),
+     * TCPä¸­ä¸ºsk_stream_write_space().   è¿›ç¨‹å¤„äºä¼‘çœ çŠ¶æ€çš„åœ°æ–¹åœ¨sock_alloc_send_pskbé‡Œé¢çš„sock_wait_for_wmem
      */
-    void            (*sk_write_space)(struct sock *sk); //¸Ãº¯ÊıÔÚÊÍ·ÅSKBµÄÊ±ºòÖ´ĞĞ£¬¼ûsock_wfree sock_rfree
+    void            (*sk_write_space)(struct sock *sk); //è¯¥å‡½æ•°åœ¨é‡Šæ”¾SKBçš„æ—¶å€™æ‰§è¡Œï¼Œè§sock_wfree sock_rfree
     /*
-     * ±¨¸æ´íÎóµÄ»Øµ÷º¯Êı£¬Èç¹ûµÈ´ı¸Ã´«Êä¿ØÖÆ¿éµÄ½ø³ÌÕıÔÚË¯Ãß£¬
-     * Ôò½«Æä»½ĞÑ(ÀıÈçMSG_ERRQUEUE).ÔÚ´´½¨Ì×½Ó×ÖÊ±±»³õÊ¼»¯£¬
-     * IPv4ÖĞÎªsock_def_error_report(). Í¨³£µ±´«Êä¿ØÖÆ¿é·¢Éú´íÎóÊ±±»µ÷ÓÃ
+     * æŠ¥å‘Šé”™è¯¯çš„å›è°ƒå‡½æ•°ï¼Œå¦‚æœç­‰å¾…è¯¥ä¼ è¾“æ§åˆ¶å—çš„è¿›ç¨‹æ­£åœ¨ç¡çœ ï¼Œ
+     * åˆ™å°†å…¶å”¤é†’(ä¾‹å¦‚MSG_ERRQUEUE).åœ¨åˆ›å»ºå¥—æ¥å­—æ—¶è¢«åˆå§‹åŒ–ï¼Œ
+     * IPv4ä¸­ä¸ºsock_def_error_report(). é€šå¸¸å½“ä¼ è¾“æ§åˆ¶å—å‘ç”Ÿé”™è¯¯æ—¶è¢«è°ƒç”¨
      */
     void            (*sk_error_report)(struct sock *sk);
     /*
-     * ÓÃÓÚTCPºÍPPPoEÖĞ¡£ÔÚTCPÖĞ£¬ÓÃÓÚ½ÓÊÕÔ¤±¸¶ÓÁĞºÍºó±¸¶ÓÁĞÖĞµÄ
-     * TCP¶Î£¬TCPµÄsk_backlog_rcv½Ó¿ÚÎªtcp_v4_do_rcv()¡£Èç¹ûÔ¤±¸
-     * ¶ÓÁĞÖĞ»¹´æÔÚTCP¶Î£¬Ôòµ÷ÓÃtcp_prequeue_process()Ô¤´¦Àí£¬ÔÚ
-     * ¸Ãº¯ÊıÖĞ»á»Øµ÷sk_backlog_rcv()¡£Èç¹ûºó±¸¶ÓÁĞÖĞ»¹´æÔÚTCP¶Î£¬
-     * Ôòµ÷ÓÃrelease_sock()´¦Àí£¬Ò²»á»Øµ÷sk_backlog_rcv()¡£¸Ãº¯Êı
-     * Ö¸ÕëÔÚ´´½¨Ì×½Ó×ÖµÄ´«Êä¿ØÖÆ¿éÊ±ÓÉ´«Êä²ãbacklog_rcv½Ó¿Ú³õÊ¼»¯
+     * ç”¨äºTCPå’ŒPPPoEä¸­ã€‚åœ¨TCPä¸­ï¼Œç”¨äºæ¥æ”¶é¢„å¤‡é˜Ÿåˆ—å’Œåå¤‡é˜Ÿåˆ—ä¸­çš„
+     * TCPæ®µï¼ŒTCPçš„sk_backlog_rcvæ¥å£ä¸ºtcp_v4_do_rcv()ã€‚å¦‚æœé¢„å¤‡
+     * é˜Ÿåˆ—ä¸­è¿˜å­˜åœ¨TCPæ®µï¼Œåˆ™è°ƒç”¨tcp_prequeue_process()é¢„å¤„ç†ï¼Œåœ¨
+     * è¯¥å‡½æ•°ä¸­ä¼šå›è°ƒsk_backlog_rcv()ã€‚å¦‚æœåå¤‡é˜Ÿåˆ—ä¸­è¿˜å­˜åœ¨TCPæ®µï¼Œ
+     * åˆ™è°ƒç”¨release_sock()å¤„ç†ï¼Œä¹Ÿä¼šå›è°ƒsk_backlog_rcv()ã€‚è¯¥å‡½æ•°
+     * æŒ‡é’ˆåœ¨åˆ›å»ºå¥—æ¥å­—çš„ä¼ è¾“æ§åˆ¶å—æ—¶ç”±ä¼ è¾“å±‚backlog_rcvæ¥å£åˆå§‹åŒ–
      */
     int         (*sk_backlog_rcv)(struct sock *sk,
                           struct sk_buff *skb);  
     /*
-     * ½øĞĞ´«Êä¿ØÖÆ¿éµÄÏú»Ù£¬ÔÚÊÍ·Å´«Êä¿ØÖÆ¿éÇ°ÊÍ·ÅÒ»Ğ©ÆäËû×ÊÔ´£¬ÔÚ
-     * sk_free()ÊÍ·Å´«Êä¿ØÖÆ¿éÊ±µ÷ÓÃ¡£µ±´«Êä¿ØÖÆ¿éµÄÒıÓÃ¼ÆÊıÆ÷Îª0Ê±£¬
-     * ²ÅÕæÕıÊÍ·Å¡£IPv4ÖĞÎªinet_sock_destruct().
+     * è¿›è¡Œä¼ è¾“æ§åˆ¶å—çš„é”€æ¯ï¼Œåœ¨é‡Šæ”¾ä¼ è¾“æ§åˆ¶å—å‰é‡Šæ”¾ä¸€äº›å…¶ä»–èµ„æºï¼Œåœ¨
+     * sk_free()é‡Šæ”¾ä¼ è¾“æ§åˆ¶å—æ—¶è°ƒç”¨ã€‚å½“ä¼ è¾“æ§åˆ¶å—çš„å¼•ç”¨è®¡æ•°å™¨ä¸º0æ—¶ï¼Œ
+     * æ‰çœŸæ­£é‡Šæ”¾ã€‚IPv4ä¸­ä¸ºinet_sock_destruct().
      */
     void                    (*sk_destruct)(struct sock *sk);
 };
 
 
- //*struct sockÊÇÓë¾ßÌå´«Êä²ãĞ­ÒéÏà¹ØµÄÌ×½Ó×Ö£¬ËùÓĞÄÚºËµÄ²Ù×÷¶¼»ùÓÚÕâ¸öÌ×½Ó×Ö¡£
- //´«Êä¿ØÖÆ¿é  struct socketÀïÃæµÄstruct sockÖ¸ÏòÁËÕâÀï
- //ÔÚinet_createÖĞÎª¸Ã½á¹¹Ìå·ÖÅä¿Õ¼ä²¢¸³³õÖµ¡£
- /*Ì×½Ó×ÖÖĞ±¾¶ÎºÍ¶Ô¶ËµÄÏà¹ØĞÅÏ¢¶¼·ÅÔÚinet_sockÖĞ£¬¿ÉÒÔ±£Ö¤ºÍĞ­ÒéÎŞ¹Ø£¬¸÷ÖÖĞ­Òé¶¼ÓÃ¸Ã½á¹¹´æ´¢±¾µØµØÖ·¶Ë¿ÚºÍ¶Ô¶ËµØÖ·¶Ë¿ÚÒÑ¾­Á¬½Ó×´Ì¬µÈ
-ÒÔtcpÎªÀı£¬struct tcp_sock°üº¬struct inet_connection_sock,inet_connection_sock°üº¬ struct inet_sock£¬struct inet_sock°üº¬struct sock ¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct tcp_sock)
-ÒÔudpÎªÀı£¬struct udp_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock ¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct udp_sock)
-ÒÔrawÎªÀı£¬struct raw_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock ¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct raw_sock)
-tcp_sock->inet_connection_sock->inet_sock->sock(socketÀïÃæµÄskÖ¸Ïòsock)*/
+ //*struct sockæ˜¯ä¸å…·ä½“ä¼ è¾“å±‚åè®®ç›¸å…³çš„å¥—æ¥å­—ï¼Œæ‰€æœ‰å†…æ ¸çš„æ“ä½œéƒ½åŸºäºè¿™ä¸ªå¥—æ¥å­—ã€‚
+ //ä¼ è¾“æ§åˆ¶å—  struct socketé‡Œé¢çš„struct sockæŒ‡å‘äº†è¿™é‡Œ
+ //åœ¨inet_createä¸­ä¸ºè¯¥ç»“æ„ä½“åˆ†é…ç©ºé—´å¹¶èµ‹åˆå€¼ã€‚
+ /*å¥—æ¥å­—ä¸­æœ¬æ®µå’Œå¯¹ç«¯çš„ç›¸å…³ä¿¡æ¯éƒ½æ”¾åœ¨inet_sockä¸­ï¼Œå¯ä»¥ä¿è¯å’Œåè®®æ— å…³ï¼Œå„ç§åè®®éƒ½ç”¨è¯¥ç»“æ„å­˜å‚¨æœ¬åœ°åœ°å€ç«¯å£å’Œå¯¹ç«¯åœ°å€ç«¯å£å·²ç»è¿æ¥çŠ¶æ€ç­‰
+ä»¥tcpä¸ºä¾‹ï¼Œstruct tcp_sockåŒ…å«struct inet_connection_sock,inet_connection_sockåŒ…å« struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sock ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct tcp_sock)
+ä»¥udpä¸ºä¾‹ï¼Œstruct udp_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sock ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct udp_sock)
+ä»¥rawä¸ºä¾‹ï¼Œstruct raw_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sock ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct raw_sock)
+tcp_sock->inet_connection_sock->inet_sock->sock(socketé‡Œé¢çš„skæŒ‡å‘sock)*/
 struct sock1 { 
 	/*
 	 * Now struct inet_timewait_sock also uses sock_common, so please just
@@ -764,13 +764,13 @@ struct sock1 {
 #define sk_reuse		__sk_common.skc_reuse
 #define sk_bound_dev_if		__sk_common.skc_bound_dev_if
 #define sk_bind_node		__sk_common.skc_bind_node
-#define sk_prot			__sk_common.skc_prot//tcp_prot¡¢udp_prot»òÕßnetlink_protoµÈ  inet_createÖĞ¸³Öµ
+#define sk_prot			__sk_common.skc_prot//tcp_protã€udp_protæˆ–è€…netlink_protoç­‰  inet_createä¸­èµ‹å€¼
 #define sk_net			__sk_common.skc_net
 	kmemcheck_bitfield_begin(flags);
 	unsigned int		sk_shutdown  : 2,
 				sk_no_check  : 2,
 				sk_userlocks : 4,
-				sk_protocol  : 8,//Ò²¾ÍÊÇÓ¦ÓÃ²ãsockº¯ÊıµÄµÚÈı¸ö²ÎÊı£¬±íÊ¾Ğ­ÒéÀàĞÍ£¬Èç¹ûÎªnetlink£¬Ò²¾ÍÊÇ×î´óÎª32
+				sk_protocol  : 8,//ä¹Ÿå°±æ˜¯åº”ç”¨å±‚sockå‡½æ•°çš„ç¬¬ä¸‰ä¸ªå‚æ•°ï¼Œè¡¨ç¤ºåè®®ç±»å‹ï¼Œå¦‚æœä¸ºnetlinkï¼Œä¹Ÿå°±æ˜¯æœ€å¤§ä¸º32
 				sk_type      : 16;
 	kmemcheck_bitfield_end(flags);
 	int			sk_rcvbuf;
@@ -795,7 +795,7 @@ struct sock1 {
 	atomic_t		sk_wmem_alloc;
 	atomic_t		sk_omem_alloc;
 	int			sk_sndbuf;
-	struct sk_buff_head	sk_receive_queue;//Ó¦ÓÃ²ãsendµÄÊ±ºò£¬»áÔÚÄÚºË¿ª±ÙSKB¿Õ¼ä£¬È»ºóÌí¼Óµ½¸ÃÁ´±íÖĞ
+	struct sk_buff_head	sk_receive_queue;//åº”ç”¨å±‚sendçš„æ—¶å€™ï¼Œä¼šåœ¨å†…æ ¸å¼€è¾ŸSKBç©ºé—´ï¼Œç„¶åæ·»åŠ åˆ°è¯¥é“¾è¡¨ä¸­
 	struct sk_buff_head	sk_write_queue;
 #ifdef CONFIG_NET_DMA
 	struct sk_buff_head	sk_async_wait_queue;
@@ -813,7 +813,7 @@ struct sock1 {
 #endif
 	unsigned long 		sk_flags;
 	unsigned long	        sk_lingertime;
-	struct sk_buff_head	sk_error_queue; //icmp²î´íĞÅÏ¢»áÌí¼Óµ½¸ÃÁ´±íÖĞ ²Î¿¼·®¶«¶«P229 P230
+	struct sk_buff_head	sk_error_queue; //icmpå·®é”™ä¿¡æ¯ä¼šæ·»åŠ åˆ°è¯¥é“¾è¡¨ä¸­ å‚è€ƒæ¨Šä¸œä¸œP229 P230
 	struct proto		*sk_prot_creator;
 	rwlock_t		sk_callback_lock;
 	int			sk_err,
@@ -1074,31 +1074,31 @@ enum sock_flags1 {
 */
     /* Sock flags */
     enum sock_flags {
-        SOCK_DEAD, /* Á¬½ÓÒÑ¶Ï¿ª£¬Ì×½Ó×Ö¼´½«¹Ø±Õ  //tcp_closeÀïÃæµÄsock_orphanÖ´ĞĞÕâ¸ö*/
-        SOCK_DONE, /* ±êÊ¶TCP»á»°¼´½«½áÊø£¬ÔÚ½ÓÊÕµ½FIN±¨ÎÄÊ±ÉèÖÃ*/
-        SOCK_URGINLINE, /* ´øÍâÊı¾İ·ÅÈëÕı³£Êı¾İÁ÷£¬ÔÚÆÕÍ¨Êı¾İÁ÷ÖĞ½ÓÊÕ´øÍâÊı¾İ*/
-        SOCK_KEEPOPEN, /* ÆôÓÃTCP´«Êä²ãµÄ±£»î¶¨Ê±*/
-        /* ¹Ø±ÕÌ×½Ó×ÖÇ°·¢ËÍÊ£ÓàÊı¾İµÄÊ±¼ä£¬Èç¹ûÉèÖÃÁË¸Ã±ê¼Ç£¬Ó¦ÓÃ²ãCLOSEµÄÊ±ºò²»»áÁ¢Âí·µ»Ø£¬
-        »áµÈ´ıÉèÖÃ¸Ã±êÖ¾µÄÊ±ºòĞ¯´øµÄµÈ´ıÊ±¼äºó²Å·µ»Ø£¬Èç¹ûÕâ¸öÊ±¼ä´óÓÚ0£¬Ôò»áµÈ´ı£¬µÈ´ı¹ı³ÌÖĞ£¬»º³åÇøµÄÊı¾İ¾Í¿ÉÒÔ·¢ËÍ³öÈ¥£¬
-        Èç¹ûµÈ´ıÊ±¼äÎª0£¬ÔòÖ±½ÓÉ¾³ıÎ´·¢ËÍµÄÊı¾İ£¬¼ûinet_release   tcp_close*/
+        SOCK_DEAD, /* è¿æ¥å·²æ–­å¼€ï¼Œå¥—æ¥å­—å³å°†å…³é—­  //tcp_closeé‡Œé¢çš„sock_orphanæ‰§è¡Œè¿™ä¸ª*/
+        SOCK_DONE, /* æ ‡è¯†TCPä¼šè¯å³å°†ç»“æŸï¼Œåœ¨æ¥æ”¶åˆ°FINæŠ¥æ–‡æ—¶è®¾ç½®*/
+        SOCK_URGINLINE, /* å¸¦å¤–æ•°æ®æ”¾å…¥æ­£å¸¸æ•°æ®æµï¼Œåœ¨æ™®é€šæ•°æ®æµä¸­æ¥æ”¶å¸¦å¤–æ•°æ®*/
+        SOCK_KEEPOPEN, /* å¯ç”¨TCPä¼ è¾“å±‚çš„ä¿æ´»å®šæ—¶*/
+        /* å…³é—­å¥—æ¥å­—å‰å‘é€å‰©ä½™æ•°æ®çš„æ—¶é—´ï¼Œå¦‚æœè®¾ç½®äº†è¯¥æ ‡è®°ï¼Œåº”ç”¨å±‚CLOSEçš„æ—¶å€™ä¸ä¼šç«‹é©¬è¿”å›ï¼Œ
+        ä¼šç­‰å¾…è®¾ç½®è¯¥æ ‡å¿—çš„æ—¶å€™æºå¸¦çš„ç­‰å¾…æ—¶é—´åæ‰è¿”å›ï¼Œå¦‚æœè¿™ä¸ªæ—¶é—´å¤§äº0ï¼Œåˆ™ä¼šç­‰å¾…ï¼Œç­‰å¾…è¿‡ç¨‹ä¸­ï¼Œç¼“å†²åŒºçš„æ•°æ®å°±å¯ä»¥å‘é€å‡ºå»ï¼Œ
+        å¦‚æœç­‰å¾…æ—¶é—´ä¸º0ï¼Œåˆ™ç›´æ¥åˆ é™¤æœªå‘é€çš„æ•°æ®ï¼Œè§inet_release   tcp_close*/
         SOCK_LINGER, 
-        SOCK_DESTROY, /* Ğ­Òé¿ØÖÆ¿éÒÑ¾­ÊÍ·Å£¬IPv4Ğ­Òé×åÎ´Ê¹ÓÃ */
-        SOCK_BROADCAST, /* Ì×½Ó¿ÚÖ§³ÖÊÕ·¢¹ã²¥±¨ÎÄ*/
-        SOCK_TIMESTAMP, /* ±êÊ¶ÊÇ·ñÆôÓÃ¶ÎµÄ½ÓÊÕÊ±¼ä×÷ÎªÊ±¼ä´Á*/
-        SOCK_ZAPPED, /* ÔÚax25ºÍipxĞ­Òé×åÖĞ±êÊ¶½¨Á¢ÁËÁ¬½Ó¡£IPv4Ğ­Òé×åÎ´Ê¹ÓÃ*/
+        SOCK_DESTROY, /* åè®®æ§åˆ¶å—å·²ç»é‡Šæ”¾ï¼ŒIPv4åè®®æ—æœªä½¿ç”¨ */
+        SOCK_BROADCAST, /* å¥—æ¥å£æ”¯æŒæ”¶å‘å¹¿æ’­æŠ¥æ–‡*/
+        SOCK_TIMESTAMP, /* æ ‡è¯†æ˜¯å¦å¯ç”¨æ®µçš„æ¥æ”¶æ—¶é—´ä½œä¸ºæ—¶é—´æˆ³*/
+        SOCK_ZAPPED, /* åœ¨ax25å’Œipxåè®®æ—ä¸­æ ‡è¯†å»ºç«‹äº†è¿æ¥ã€‚IPv4åè®®æ—æœªä½¿ç”¨*/
         /* 
-         * ±êÊ¶ÊÇ·ñ³õÊ¼»¯ÁË´«Êä¿ØÖÆ¿éÖĞµÄsk_write_space()Ö¸Õë£¬ÕâÑùÔÚ
-         * sock_wfree()ÖĞsk_write_space¿ÉÒÔ±»µ÷ÓÃ
+         * æ ‡è¯†æ˜¯å¦åˆå§‹åŒ–äº†ä¼ è¾“æ§åˆ¶å—ä¸­çš„sk_write_space()æŒ‡é’ˆï¼Œè¿™æ ·åœ¨
+         * sock_wfree()ä¸­sk_write_spaceå¯ä»¥è¢«è°ƒç”¨
          */
         SOCK_USE_WRITE_QUEUE, /* whether to call sk->sk_write_space in sock_wfree */
-        /* ¼ÇÂ¼Ì×½Ó×ÖµÄµ÷ÊÔĞÅÏ¢*/
+        /* è®°å½•å¥—æ¥å­—çš„è°ƒè¯•ä¿¡æ¯*/
         SOCK_DBG, /* %SO_DEBUG setting */
-        /* Êı¾İ°üµÄ½ÓÊÕÊ±¼ä×÷ÎªÊ±¼ä´Á*/
+        /* æ•°æ®åŒ…çš„æ¥æ”¶æ—¶é—´ä½œä¸ºæ—¶é—´æˆ³*/
         SOCK_RCVTSTAMP, /* %SO_TIMESTAMP setting */
         SOCK_RCVTSTAMPNS, /* %SO_TIMESTAMPNS setting */
-        /* Ê¹ÓÃ±¾µØÂ·ÓÉ±í»¹ÊÇ²ßÂÔÂ·ÓÉ±í*/
+        /* ä½¿ç”¨æœ¬åœ°è·¯ç”±è¡¨è¿˜æ˜¯ç­–ç•¥è·¯ç”±è¡¨*/
         SOCK_LOCALROUTE, /* route locally only, %SO_DONTROUTE setting */
-        /* ·¢ËÍ¶ÓÁĞµÄ»º´æÇø×î½üÊÇ·ñËõĞ¡¹ı */
+        /* å‘é€é˜Ÿåˆ—çš„ç¼“å­˜åŒºæœ€è¿‘æ˜¯å¦ç¼©å°è¿‡ */
         SOCK_QUEUE_SHRUNK, /* write queue has been shrunk recently */
         SOCK_TIMESTAMPING_TX_HARDWARE,  /* %SOF_TIMESTAMPING_TX_HARDWARE */
         SOCK_TIMESTAMPING_TX_SOFTWARE,  /* %SOF_TIMESTAMPING_TX_SOFTWARE */
@@ -1128,21 +1128,21 @@ static inline int sock_flag(struct sock *sk, enum sock_flags flag)
 {
 	return test_bit(flag, &sk->sk_flags);
 }
-//ÔÚÈı´ÎÎÕÊÖ³É¹¦µÄµÚÈı²½ACK³É¹¦ºó£¬»á´Ólisten_sockÀïÃæµÄsyn_table hashÖĞÈ¡³ö£¬ÈÃºó¼ÓÈëµ½request_sock_queueµÄrskq_accept_headÖĞ£¬
-//Í¬Ê±Ôö¼ÓÒÑÁ¬½Ó³É¹¦Öµ£¬µ±Ó¦ÓÃ³ÌĞòµ÷ÓÃacceptµÄÊ±ºò£¬»á´ÓÀïÃæÈ¡³öÕâ¸öÒÑÁ¬½ÓĞÅÏ¢£¬È»ºóÔÙ¼õĞ¡¸ÄÖÆ£¬Í¬Ê±ÊÍ·ÅÕâ¸örequest_sock
+//åœ¨ä¸‰æ¬¡æ¡æ‰‹æˆåŠŸçš„ç¬¬ä¸‰æ­¥ACKæˆåŠŸåï¼Œä¼šä»listen_socké‡Œé¢çš„syn_table hashä¸­å–å‡ºï¼Œè®©ååŠ å…¥åˆ°request_sock_queueçš„rskq_accept_headä¸­ï¼Œ
+//åŒæ—¶å¢åŠ å·²è¿æ¥æˆåŠŸå€¼ï¼Œå½“åº”ç”¨ç¨‹åºè°ƒç”¨acceptçš„æ—¶å€™ï¼Œä¼šä»é‡Œé¢å–å‡ºè¿™ä¸ªå·²è¿æ¥ä¿¡æ¯ï¼Œç„¶åå†å‡å°æ”¹åˆ¶ï¼ŒåŒæ—¶é‡Šæ”¾è¿™ä¸ªrequest_sock
 static inline void sk_acceptq_removed(struct sock *sk)
 {
 	sk->sk_ack_backlog--;
 }
 
-//ÔÚÈı´ÎÎÕÊÖ³É¹¦µÄµÚÈı²½ACK³É¹¦ºó£¬»á´Ólisten_sockÀïÃæµÄsyn_table hashÖĞÈ¡³ö£¬ÈÃºó¼ÓÈëµ½request_sock_queueµÄrskq_accept_headÖĞ£¬
-//Í¬Ê±Ôö¼ÓÒÑÁ¬½Ó³É¹¦Öµ£¬µ±Ó¦ÓÃ³ÌĞòµ÷ÓÃacceptµÄÊ±ºò£¬»á´ÓÀïÃæÈ¡³öÕâ¸öÒÑÁ¬½ÓĞÅÏ¢£¬È»ºóÔÙ¼õĞ¡¸ÄÖÆ£¬Í¬Ê±ÊÍ·ÅÕâ¸örequest_sock
+//åœ¨ä¸‰æ¬¡æ¡æ‰‹æˆåŠŸçš„ç¬¬ä¸‰æ­¥ACKæˆåŠŸåï¼Œä¼šä»listen_socké‡Œé¢çš„syn_table hashä¸­å–å‡ºï¼Œè®©ååŠ å…¥åˆ°request_sock_queueçš„rskq_accept_headä¸­ï¼Œ
+//åŒæ—¶å¢åŠ å·²è¿æ¥æˆåŠŸå€¼ï¼Œå½“åº”ç”¨ç¨‹åºè°ƒç”¨acceptçš„æ—¶å€™ï¼Œä¼šä»é‡Œé¢å–å‡ºè¿™ä¸ªå·²è¿æ¥ä¿¡æ¯ï¼Œç„¶åå†å‡å°æ”¹åˆ¶ï¼ŒåŒæ—¶é‡Šæ”¾è¿™ä¸ªrequest_sock
 static inline void sk_acceptq_added(struct sock *sk)
 {
 	sk->sk_ack_backlog++;
 }
 
-//sk_ack_backlogÊÇÒÑ¾­Íê³ÉÁËÈı´ÎÎÕÊÖ£¬µ«ÊÇ»¹Ã»ÓĞ±»acceptÏµÍ³µ÷ÓÃ´¦ÀíµÄÁ¬½ÓÇëÇóÊıÁ¿ÊÇ·ñÒÑ¾­´ïµ½×î´óÏŞÖÆ
+//sk_ack_backlogæ˜¯å·²ç»å®Œæˆäº†ä¸‰æ¬¡æ¡æ‰‹ï¼Œä½†æ˜¯è¿˜æ²¡æœ‰è¢«acceptç³»ç»Ÿè°ƒç”¨å¤„ç†çš„è¿æ¥è¯·æ±‚æ•°é‡æ˜¯å¦å·²ç»è¾¾åˆ°æœ€å¤§é™åˆ¶
 static inline int sk_acceptq_is_full(struct sock *sk)
 {
 	return sk->sk_ack_backlog > sk->sk_max_ack_backlog;
@@ -1271,8 +1271,8 @@ struct raw_hashinfo;
 /* Networking protocol blocks we attach to sockets.
  * socket layer -> transport layer interface
  * transport -> network interface is defined by struct inet_proto
- */ //ÍøÂç²ã½Ó¿Ú£¬¶ÔÓ¦tcp_prot  udp_prot  raw_prot
- //struct inet_protosw½á¹¹ÖĞÓĞ½á¹¹
+ */ //ç½‘ç»œå±‚æ¥å£ï¼Œå¯¹åº”tcp_prot  udp_prot  raw_prot
+ //struct inet_protoswç»“æ„ä¸­æœ‰ç»“æ„
 struct proto {
 	void			(*close)(struct sock *sk, 
 					long timeout);
@@ -1285,8 +1285,8 @@ struct proto {
 
 	int			(*ioctl)(struct sock *sk, int cmd,
 					 unsigned long arg);
-	int			(*init)(struct sock *sk); /* ´«Êä²ã³õÊ¼»¯½Ó¿Ú£¬ÔÚ´´½¨Ì×½Ó¿ÚÊ±£¬ÔÚinet_createÖĞµ÷ÓÃ */
-	void			(*destroy)(struct sock *sk); /* ¹Ø±ÕÌ×½Ó¿ÚµÄÊ±ºòµ÷ÓÃ */
+	int			(*init)(struct sock *sk); /* ä¼ è¾“å±‚åˆå§‹åŒ–æ¥å£ï¼Œåœ¨åˆ›å»ºå¥—æ¥å£æ—¶ï¼Œåœ¨inet_createä¸­è°ƒç”¨ */
+	void			(*destroy)(struct sock *sk); /* å…³é—­å¥—æ¥å£çš„æ—¶å€™è°ƒç”¨ */
 	void			(*shutdown)(struct sock *sk, int how);
 	int			(*setsockopt)(struct sock *sk, int level, 
 					int optname, char __user *optval,
@@ -1316,24 +1316,24 @@ struct proto {
 					struct sockaddr *uaddr, int addr_len);
 
 
-/* ÒıÈëÕâ¸öºó±¸¶ÓÁĞµÄÔ­Òò:ÀıÈçTCP¶Î½ÓÊÕ¹ı³ÌÖĞ£¬Èç¹û´«Êä¿ØÖÆ¿éÎ´±»ÓÃ»§½ø³ÌÉÏËø£¬Ôò½«TCP¶ÎÊäÈëµ½½ÓÊÕ¶ÓÁĞÖĞ£¬·ñÔò½ÓÊÕµ½ºó±¸¶ÓÁĞÖĞ,Èç¹ûÃ»ÓĞºó±¸¶ÓÁĞ£¬Èç¹ıÓÃ»§½ø³ÌÔÚrecvÊı¾İµÄÊ±ºò£¬½øÈëÏµÍ³ÄÚºËµ÷¶ÈÖĞÖ´ĞĞ£¬Èç¹ûÕâÊ±ºòÇı¶¯½ÓÊÕµ½Êı¾İ
-Ö´ĞĞÍêÓ²¼şÖĞ¶Ï¿ªÊ¼Ö´ĞĞÏÂ°ë²¿µÄÊ±ºò£¬Èç¹ûÖ±½ÓÓÃÒÑÓĞ¶ÓÁĞ¾Í»á¶Ô¹²ÏíÄÚ´æÊı¾İÔì³ÉÓ°Ïì*/
+/* å¼•å…¥è¿™ä¸ªåå¤‡é˜Ÿåˆ—çš„åŸå› :ä¾‹å¦‚TCPæ®µæ¥æ”¶è¿‡ç¨‹ä¸­ï¼Œå¦‚æœä¼ è¾“æ§åˆ¶å—æœªè¢«ç”¨æˆ·è¿›ç¨‹ä¸Šé”ï¼Œåˆ™å°†TCPæ®µè¾“å…¥åˆ°æ¥æ”¶é˜Ÿåˆ—ä¸­ï¼Œå¦åˆ™æ¥æ”¶åˆ°åå¤‡é˜Ÿåˆ—ä¸­,å¦‚æœæ²¡æœ‰åå¤‡é˜Ÿåˆ—ï¼Œå¦‚è¿‡ç”¨æˆ·è¿›ç¨‹åœ¨recvæ•°æ®çš„æ—¶å€™ï¼Œè¿›å…¥ç³»ç»Ÿå†…æ ¸è°ƒåº¦ä¸­æ‰§è¡Œï¼Œå¦‚æœè¿™æ—¶å€™é©±åŠ¨æ¥æ”¶åˆ°æ•°æ®
+æ‰§è¡Œå®Œç¡¬ä»¶ä¸­æ–­å¼€å§‹æ‰§è¡Œä¸‹åŠéƒ¨çš„æ—¶å€™ï¼Œå¦‚æœç›´æ¥ç”¨å·²æœ‰é˜Ÿåˆ—å°±ä¼šå¯¹å…±äº«å†…å­˜æ•°æ®é€ æˆå½±å“*/
 	int			(*backlog_rcv) (struct sock *sk, 
-						struct sk_buff *skb); /* ÓÃÓÚ½ÓÊÕÔ¤±¸¶ÓÁĞºÍºó±¸¶ÓÁĞÖĞµÄÊı¾İ */
+						struct sk_buff *skb); /* ç”¨äºæ¥æ”¶é¢„å¤‡é˜Ÿåˆ—å’Œåå¤‡é˜Ÿåˆ—ä¸­çš„æ•°æ® */
 
     /* 
-     * hashÎªÌí¼Óµ½¹ÜÀí´«Êä¿ØÖÆ¿éÉ¢ÁĞ±íµÄ½Ó¿Ú£¬unhashÎª´Ó¹ÜÀí´«Êä¿ØÖÆ¿éÉ¢ÁĞ±íÖĞÉ¾³ıµÄ½Ó¿Ú¡£ÓÉÓÚ²»Í¬µÄ´«Êä²ãĞ­Òé×éÖ¯¹ÜÀí´«Êä¿ØÖÆ¿éÒ²²»Ò»Ñù£¬
-     * Òò´ËĞèÒªÌá¹©²»Í¬µÄ·½·¨£¬±ÈÈç,ÔÚTCPÖĞÊµÏÖ½Ó¿Úº¯Êı·Ö±ğÎªinet_hashºÍinet_unhash¡£¶øUDP´«Êä¿ØÖÆ¿éµÄ¹ÜÀíÏà¶Ô±È½Ï¼òµ¥£¬Ö»ÓĞ°ó¶¨¶Ë¿ÚµÄ´«Êä
-     * ¿ØÖÆ¿é²Å»áÌí¼Óµ½É¢ÁĞ±íÖĞ£¬ÕâÓÉ°ó¶¨¹ı³ÌÀ´Íê³É£¬Òò´Ë²»ĞèÒªÊµÏÖhash½Ó¿Ú£¬Ö»ĞèÊµÏÖunhash½Ó¿Ú¼´¿É(2.6.32ÖĞÊÇudp_lib_hashºÍudp_lib_unhash£¬
-     ²Î¼ûudp_prot)
+     * hashä¸ºæ·»åŠ åˆ°ç®¡ç†ä¼ è¾“æ§åˆ¶å—æ•£åˆ—è¡¨çš„æ¥å£ï¼Œunhashä¸ºä»ç®¡ç†ä¼ è¾“æ§åˆ¶å—æ•£åˆ—è¡¨ä¸­åˆ é™¤çš„æ¥å£ã€‚ç”±äºä¸åŒçš„ä¼ è¾“å±‚åè®®ç»„ç»‡ç®¡ç†ä¼ è¾“æ§åˆ¶å—ä¹Ÿä¸ä¸€æ ·ï¼Œ
+     * å› æ­¤éœ€è¦æä¾›ä¸åŒçš„æ–¹æ³•ï¼Œæ¯”å¦‚,åœ¨TCPä¸­å®ç°æ¥å£å‡½æ•°åˆ†åˆ«ä¸ºinet_hashå’Œinet_unhashã€‚è€ŒUDPä¼ è¾“æ§åˆ¶å—çš„ç®¡ç†ç›¸å¯¹æ¯”è¾ƒç®€å•ï¼Œåªæœ‰ç»‘å®šç«¯å£çš„ä¼ è¾“
+     * æ§åˆ¶å—æ‰ä¼šæ·»åŠ åˆ°æ•£åˆ—è¡¨ä¸­ï¼Œè¿™ç”±ç»‘å®šè¿‡ç¨‹æ¥å®Œæˆï¼Œå› æ­¤ä¸éœ€è¦å®ç°hashæ¥å£ï¼Œåªéœ€å®ç°unhashæ¥å£å³å¯(2.6.32ä¸­æ˜¯udp_lib_hashå’Œudp_lib_unhashï¼Œ
+     å‚è§udp_prot)
      */
 	/* Keeping track of sk's, looking them up, and port selection methods. */
-	void			(*hash)(struct sock *sk); //½«¸Ã´«Êä¿ØÖÆ¿ésocketÌí¼Óµ½tcp_hashinfoµÄehashÖĞ
+	void			(*hash)(struct sock *sk); //å°†è¯¥ä¼ è¾“æ§åˆ¶å—socketæ·»åŠ åˆ°tcp_hashinfoçš„ehashä¸­
 	void			(*unhash)(struct sock *sk);
 	void			(*rehash)(struct sock *sk);
 
 /*
- * ÊµÏÖµØÖ·Óë¶Ë¿ÚµÄ°ó¶¨¡£²ÎÊıskÎª½øĞĞ°ó¶¨²Ù×÷µÄ´«Êä¿ØÖÆ¿é£¬snumÎª½øĞĞ°ó¶¨µÄ¶Ë¿ÚºÅ(Èç¹ûÎª0£¬¶Ë¿ÚºÅÔÚ°ó¶¨Ê±×Ô¶¯Ñ¡Ôñ)¡£TCPÖĞÎª inet_csk_get_port,UDPÖĞÎªudp_v4_get_port¡£
+ * å®ç°åœ°å€ä¸ç«¯å£çš„ç»‘å®šã€‚å‚æ•°skä¸ºè¿›è¡Œç»‘å®šæ“ä½œçš„ä¼ è¾“æ§åˆ¶å—ï¼Œsnumä¸ºè¿›è¡Œç»‘å®šçš„ç«¯å£å·(å¦‚æœä¸º0ï¼Œç«¯å£å·åœ¨ç»‘å®šæ—¶è‡ªåŠ¨é€‰æ‹©)ã€‚TCPä¸­ä¸º inet_csk_get_port,UDPä¸­ä¸ºudp_v4_get_portã€‚
  */
 	int			(*get_port)(struct sock *sk, unsigned short snum);
 
@@ -1343,32 +1343,32 @@ struct proto {
 #endif
 
     /*
-     * Ä¿Ç°Ö»ÓĞTCPÊ¹ÓÃ£¬µ±Ç°Õû¸öTCP´«Êä²ãÖĞÎª»º³åÇø·ÖÅäµÄÄÚ´æ³¬¹ıtcp_mem[1]£¬±ã½øÈëÁË¾¯¸æ×´Ì¬£¬»áµ÷ÓÃ´Ë½Ó¿ÚÉèÖÃ¾¯¸æ×´Ì¬¡£ÔÚTCPÖĞËüÖ¸Ïòtcp_enter_memory_pressure.
+     * ç›®å‰åªæœ‰TCPä½¿ç”¨ï¼Œå½“å‰æ•´ä¸ªTCPä¼ è¾“å±‚ä¸­ä¸ºç¼“å†²åŒºåˆ†é…çš„å†…å­˜è¶…è¿‡tcp_mem[1]ï¼Œä¾¿è¿›å…¥äº†è­¦å‘ŠçŠ¶æ€ï¼Œä¼šè°ƒç”¨æ­¤æ¥å£è®¾ç½®è­¦å‘ŠçŠ¶æ€ã€‚åœ¨TCPä¸­å®ƒæŒ‡å‘tcp_enter_memory_pressure.
      */
 	/* Memory pressure */
 	void			(*enter_memory_pressure)(struct sock *sk);
 
 	/*
-     * Ä¿Ç°Ö»ÓĞTCPÊ¹ÓÃ£¬±íÊ¾µ±Ç°Õû¸öTCP´«Êä²ãÖĞÎª»º³åÇø·ÖÅäµÄÄÚ´æ (°üÀ¨ÊäÈë»º³å¶ÓÁĞ)¡£ÔÚTCPÖĞËüÖ¸Ïò±äÁ¿tcp_memory_allocated
+     * ç›®å‰åªæœ‰TCPä½¿ç”¨ï¼Œè¡¨ç¤ºå½“å‰æ•´ä¸ªTCPä¼ è¾“å±‚ä¸­ä¸ºç¼“å†²åŒºåˆ†é…çš„å†…å­˜ (åŒ…æ‹¬è¾“å…¥ç¼“å†²é˜Ÿåˆ—)ã€‚åœ¨TCPä¸­å®ƒæŒ‡å‘å˜é‡tcp_memory_allocated
      * 
-     * update:Èç¹ûÊÇTCP²ã£¬ËüÖ¸Ïò±äÁ¿tcp_memory_allocated£¬±íÊ¾µ±Ç°Õû¸öTCP´«Êä²ãÎª»º³åÇø·ÖÅäµÄÄÚ´æÒ³ÃæÊı£¬ÊÇÏµÍ³ÖĞ
-     * ËùÓĞTCP´«Êä¿éµÄsk_forward_allocµÄ×ÜºÍ£¬²¢²»ÊÇËùÓĞ´«Êä¿ØÖÆ¿éµÄ·¢ËÍºÍ½ÓÊÕ»º³åÇø×ÛºÏ£¬ÇĞ¼Ç!
+     * update:å¦‚æœæ˜¯TCPå±‚ï¼Œå®ƒæŒ‡å‘å˜é‡tcp_memory_allocatedï¼Œè¡¨ç¤ºå½“å‰æ•´ä¸ªTCPä¼ è¾“å±‚ä¸ºç¼“å†²åŒºåˆ†é…çš„å†…å­˜é¡µé¢æ•°ï¼Œæ˜¯ç³»ç»Ÿä¸­
+     * æ‰€æœ‰TCPä¼ è¾“å—çš„sk_forward_allocçš„æ€»å’Œï¼Œå¹¶ä¸æ˜¯æ‰€æœ‰ä¼ è¾“æ§åˆ¶å—çš„å‘é€å’Œæ¥æ”¶ç¼“å†²åŒºç»¼åˆï¼Œåˆ‡è®°!
      */
      /*
- * ÎŞÂÛÊÇÎª·¢ËÍ¶ø·ÖÅäSKB£¬»¹ÊÇ½«±¨ÎÄ½ÓÊÕµ½TCP
- * ´«Êä²ã£¬¶¼ĞèÒª¶ÔĞÂ½øÈë´«Êä¿ØÖÆ¿éµÄ»º´æ½øĞĞ
- * È·ÈÏ¡£È·ÈÏÊ±Èç¹ûÌ×½Ó×Ö»º´æÖĞµÄÊı¾İ³¤¶È´óÓÚ
- * Ô¤·ÖÅäÁ¿£¬ÔòĞè½øĞĞÈ«ÃæµÄÈ·ÈÏ£¬Õâ¸ö¹ı³ÌÓÉ
- * __sk_mem_schedule()ÊµÏÖ¡£
- * @size:ÒªÈ·ÈÏµÄ»º´æ³¤¶È
- * @kind:ÀàĞÍ£¬0Îª·¢ËÍ»º´æ£¬1Îª½ÓÊÕ»º´æ¡£
+ * æ— è®ºæ˜¯ä¸ºå‘é€è€Œåˆ†é…SKBï¼Œè¿˜æ˜¯å°†æŠ¥æ–‡æ¥æ”¶åˆ°TCP
+ * ä¼ è¾“å±‚ï¼Œéƒ½éœ€è¦å¯¹æ–°è¿›å…¥ä¼ è¾“æ§åˆ¶å—çš„ç¼“å­˜è¿›è¡Œ
+ * ç¡®è®¤ã€‚ç¡®è®¤æ—¶å¦‚æœå¥—æ¥å­—ç¼“å­˜ä¸­çš„æ•°æ®é•¿åº¦å¤§äº
+ * é¢„åˆ†é…é‡ï¼Œåˆ™éœ€è¿›è¡Œå…¨é¢çš„ç¡®è®¤ï¼Œè¿™ä¸ªè¿‡ç¨‹ç”±
+ * __sk_mem_schedule()å®ç°ã€‚
+ * @size:è¦ç¡®è®¤çš„ç¼“å­˜é•¿åº¦
+ * @kind:ç±»å‹ï¼Œ0ä¸ºå‘é€ç¼“å­˜ï¼Œ1ä¸ºæ¥æ”¶ç¼“å­˜ã€‚
  */
-     ////µ±tcp_memory_allocated´óÓÚsysctl_tcp_mem[1]Ê±£¬TCP»º´æ¹ÜÀí½øÈë¾¯¸æ×´Ì¬£¬tcp_memory_pressureÖÃÎª1¡£ Õâ¼¸¸ö±äÁ¿´æµ½protoÖĞµÄ¶ÔÓ¦±äÁ¿ÖĞ¡£
-//µ±tcp_memory_allocatedĞ¡ÓÚsysctl_tcp_mem[0]Ê±£¬TCP»º´æ¹ÜÀíÍË³ö¾¯¸æ×´Ì¬£¬tcp_memory_pressureÖÃÎª0¡£ 
-	atomic_t		*memory_allocated;	/* Current allocated memory. */  //¼û__sk_mem_schedule
+     ////å½“tcp_memory_allocatedå¤§äºsysctl_tcp_mem[1]æ—¶ï¼ŒTCPç¼“å­˜ç®¡ç†è¿›å…¥è­¦å‘ŠçŠ¶æ€ï¼Œtcp_memory_pressureç½®ä¸º1ã€‚ è¿™å‡ ä¸ªå˜é‡å­˜åˆ°protoä¸­çš„å¯¹åº”å˜é‡ä¸­ã€‚
+//å½“tcp_memory_allocatedå°äºsysctl_tcp_mem[0]æ—¶ï¼ŒTCPç¼“å­˜ç®¡ç†é€€å‡ºè­¦å‘ŠçŠ¶æ€ï¼Œtcp_memory_pressureç½®ä¸º0ã€‚ 
+	atomic_t		*memory_allocated;	/* Current allocated memory. */  //è§__sk_mem_schedule
 
 	/*
-     * ±íÊ¾µ±Ç°Õû¸öTCP´«Êä²ãÖĞÒÑ´´½¨µÄÌ×½Ó×ÖµÄÊıÄ¿¡£Ä¿Ç°Ö»ÔÚTCPÖĞÊ¹ÓÃ£¬ËüÖ¸Ïò±äÁ¿tcp_sockets_allocated
+     * è¡¨ç¤ºå½“å‰æ•´ä¸ªTCPä¼ è¾“å±‚ä¸­å·²åˆ›å»ºçš„å¥—æ¥å­—çš„æ•°ç›®ã€‚ç›®å‰åªåœ¨TCPä¸­ä½¿ç”¨ï¼Œå®ƒæŒ‡å‘å˜é‡tcp_sockets_allocated
      */
 	struct percpu_counter	*sockets_allocated;	/* Current number of sockets. */
 	/*
@@ -1378,51 +1378,51 @@ struct proto {
 	 * is strict, actions are advisory and have some latency.
 	 */
 	/*
-	 * Ä¿Ç°Ö»ÓĞTCPÊ¹ÓÃ£¬ÔÚTCP´«Êä²ãÖĞ»º³å´óĞ¡½øÈë¾¯¸æ×´Ì¬Ê±£¬ËüÖÃÎª1£¬
-	 * ·ñÔòÖÃÎª0.Ä¿Ç°Ö»ÔÚTCPÖĞÊ¹ÓÃ£¬ËüÖ¸Ïò±äÁ¿tcp_memory_pressure.
+	 * ç›®å‰åªæœ‰TCPä½¿ç”¨ï¼Œåœ¨TCPä¼ è¾“å±‚ä¸­ç¼“å†²å¤§å°è¿›å…¥è­¦å‘ŠçŠ¶æ€æ—¶ï¼Œå®ƒç½®ä¸º1ï¼Œ
+	 * å¦åˆ™ç½®ä¸º0.ç›®å‰åªåœ¨TCPä¸­ä½¿ç”¨ï¼Œå®ƒæŒ‡å‘å˜é‡tcp_memory_pressure.
 	 */
-	 ////µ±tcp_memory_allocated´óÓÚtcp_mem[1]Ê±£¬TCP»º´æ¹ÜÀí½øÈë¾¯¸æ×´Ì¬£¬tcp_memory_pressureÖÃÎª1¡£ Õâ¼¸¸ö±äÁ¿´æµ½protoÖĞµÄ¶ÔÓ¦±äÁ¿ÖĞ¡£
-//µ±tcp_memory_allocatedĞ¡ÓÚtcp_mem[0]Ê±£¬TCP»º´æ¹ÜÀíÍË³ö¾¯¸æ×´Ì¬£¬tcp_memory_pressureÖÃÎª0¡£ 
-////ÔÄ¶Áº¯Êı__sk_mem_schedule¿ÉÒÔÁË½âprotoµÄÄÚ´æÇé¿öÅĞ¶Ï·½·¨
+	 ////å½“tcp_memory_allocatedå¤§äºtcp_mem[1]æ—¶ï¼ŒTCPç¼“å­˜ç®¡ç†è¿›å…¥è­¦å‘ŠçŠ¶æ€ï¼Œtcp_memory_pressureç½®ä¸º1ã€‚ è¿™å‡ ä¸ªå˜é‡å­˜åˆ°protoä¸­çš„å¯¹åº”å˜é‡ä¸­ã€‚
+//å½“tcp_memory_allocatedå°äºtcp_mem[0]æ—¶ï¼ŒTCPç¼“å­˜ç®¡ç†é€€å‡ºè­¦å‘ŠçŠ¶æ€ï¼Œtcp_memory_pressureç½®ä¸º0ã€‚ 
+////é˜…è¯»å‡½æ•°__sk_mem_scheduleå¯ä»¥äº†è§£protoçš„å†…å­˜æƒ…å†µåˆ¤æ–­æ–¹æ³•
 	int			*memory_pressure;
-    /* Ö¸Ïòsysctl_tcp_memÊı×é£¬²Î¼ûsysctl_tcp_memÏµÍ³²ÎÊı */
-    ////ÔÄ¶Áº¯Êı__sk_mem_schedule¿ÉÒÔÁË½âprotoµÄÄÚ´æÇé¿öÅĞ¶Ï·½·¨
+    /* æŒ‡å‘sysctl_tcp_memæ•°ç»„ï¼Œå‚è§sysctl_tcp_memç³»ç»Ÿå‚æ•° */
+    ////é˜…è¯»å‡½æ•°__sk_mem_scheduleå¯ä»¥äº†è§£protoçš„å†…å­˜æƒ…å†µåˆ¤æ–­æ–¹æ³•
 	int			*sysctl_mem;
-    /* Ö¸Ïòsysctl_tcp_wmemÊı×é£¬²Î¼ûsysctl_tcp_wmemÏµÍ³²ÎÊı */
-    //ÔÄ¶Áº¯Êı__sk_mem_schedule¿ÉÒÔÁË½âprotoµÄÄÚ´æÇé¿öÅĞ¶Ï·½·¨
+    /* æŒ‡å‘sysctl_tcp_wmemæ•°ç»„ï¼Œå‚è§sysctl_tcp_wmemç³»ç»Ÿå‚æ•° */
+    //é˜…è¯»å‡½æ•°__sk_mem_scheduleå¯ä»¥äº†è§£protoçš„å†…å­˜æƒ…å†µåˆ¤æ–­æ–¹æ³•
 	int			*sysctl_wmem;
-    /* Ö¸Ïòsysctl_tcp_rmemÊı×é£¬²Î¼ûsysctl_tcp_rmemÏµÍ³²ÎÊı */
-    //ÔÄ¶Áº¯Êı__sk_mem_schedule¿ÉÒÔÁË½âprotoµÄÄÚ´æÇé¿öÅĞ¶Ï·½·¨
+    /* æŒ‡å‘sysctl_tcp_rmemæ•°ç»„ï¼Œå‚è§sysctl_tcp_rmemç³»ç»Ÿå‚æ•° */
+    //é˜…è¯»å‡½æ•°__sk_mem_scheduleå¯ä»¥äº†è§£protoçš„å†…å­˜æƒ…å†µåˆ¤æ–­æ–¹æ³•
 	int			*sysctl_rmem;
-    /* Ä¿Ç°Ö»ÓĞTCPÊ¹ÓÃ£¬TCPÊ×²¿µÄ×î´ó³¤¶È£¬¿¼ÂÇÁËËùÓĞµÄÑ¡Ïî  ÖµÎªMAX_TCP_HEADER*/
+    /* ç›®å‰åªæœ‰TCPä½¿ç”¨ï¼ŒTCPé¦–éƒ¨çš„æœ€å¤§é•¿åº¦ï¼Œè€ƒè™‘äº†æ‰€æœ‰çš„é€‰é¡¹  å€¼ä¸ºMAX_TCP_HEADER*/
 	int			max_header;
 
-    /* ÓÃÓÚ·ÖÅä´«Êä¿ØÖÆ¿éµÄslab¸ßËÙ»º´æ£¬ÔÚ×¢²á¶ÔÓ¦´«Êä²ãĞ­ÒéÊ±½¨Á¢ */
+    /* ç”¨äºåˆ†é…ä¼ è¾“æ§åˆ¶å—çš„slabé«˜é€Ÿç¼“å­˜ï¼Œåœ¨æ³¨å†Œå¯¹åº”ä¼ è¾“å±‚åè®®æ—¶å»ºç«‹ */
 	struct kmem_cache	*slab;
 
 	
 	 /*
-     * ±êÊ¶´«Êä¿ØÖÆ¿éµÄ´óĞ¡£¬Èç¹ûÔÚ³õÊ¼»¯Ê±½¨Á¢·ÖÅä´«Êä¿ØÖÆ¿éµÄslab
-     * »º´æÊ§°Ü£¬ÔòÍ¨¹ıkmalloc·ÖÅäobj_size´óĞ¡µÄ¿Õ¼äÀ´Íê³É´«Êä¿ØÖÆ
-     * ¿éµÄ·ÖÅä¡£¼ûinet_initÖĞµÄproto_register
+     * æ ‡è¯†ä¼ è¾“æ§åˆ¶å—çš„å¤§å°ï¼Œå¦‚æœåœ¨åˆå§‹åŒ–æ—¶å»ºç«‹åˆ†é…ä¼ è¾“æ§åˆ¶å—çš„slab
+     * ç¼“å­˜å¤±è´¥ï¼Œåˆ™é€šè¿‡kmallocåˆ†é…obj_sizeå¤§å°çš„ç©ºé—´æ¥å®Œæˆä¼ è¾“æ§åˆ¶
+     * å—çš„åˆ†é…ã€‚è§inet_initä¸­çš„proto_register
      */
 	unsigned int		obj_size;
 	int			slab_flags;
 
      /*
-     * Ä¿Ç°Ö»ÔÚTCPÖĞÊ¹ÓÃ£¬±íÊ¾Õû¸öTCP´«Êä²ãÖĞ´ıÏú»ÙµÄÌ×½Ó×ÖµÄÊıÄ¿¡£ÔÚTCPÖĞ£¬ËüÖ¸Ïò±äÁ¿tcp_orphan_count.
-     *///ÔÚtcp_closeµÄÊ±ºòÒªÅĞ¶ÏÕâ¸öÖµÊÇ·ñ³¬¹ı·§Öµsysctl_tcp_max_orphans£¬¼ûtcp_too_many_orphans
+     * ç›®å‰åªåœ¨TCPä¸­ä½¿ç”¨ï¼Œè¡¨ç¤ºæ•´ä¸ªTCPä¼ è¾“å±‚ä¸­å¾…é”€æ¯çš„å¥—æ¥å­—çš„æ•°ç›®ã€‚åœ¨TCPä¸­ï¼Œå®ƒæŒ‡å‘å˜é‡tcp_orphan_count.
+     *///åœ¨tcp_closeçš„æ—¶å€™è¦åˆ¤æ–­è¿™ä¸ªå€¼æ˜¯å¦è¶…è¿‡é˜€å€¼sysctl_tcp_max_orphansï¼Œè§tcp_too_many_orphans
 	struct percpu_counter	*orphan_count;
 
     /*
-     * Ä¿Ç°Ö»ÔÚTCPÖĞÊ¹ÓÃ£¬Ö¸ÏòÁ¬½ÓÇëÇó´¦Àí½Ó¿Ú¼¯ºÏ£¬°üÀ¨ ·¢ËÍSYN+ACKµÈÊµÏÖ
+     * ç›®å‰åªåœ¨TCPä¸­ä½¿ç”¨ï¼ŒæŒ‡å‘è¿æ¥è¯·æ±‚å¤„ç†æ¥å£é›†åˆï¼ŒåŒ…æ‹¬ å‘é€SYN+ACKç­‰å®ç°
      */
 	struct request_sock_ops	*rsk_prot;
 
 	/*
-     * Ä¿Ç°Ö»ÔÚTCPÖĞÊ¹ÓÃ£¬Ö¸Ïòtimewait¿ØÖÆ¿é²Ù×÷½Ó¿Ú£¬TCPÖĞµÄÊµÀıÎªtcp_timewait_sock_ops.timewait_sock_ops½á¹¹Ìá¹©
-     * ÁËÁ½¸ö²Ù×÷½Ó¿Ú£¬tcp_twsk_unique()ÓÃÓÚ¼ì²â±»timewait¿ØÖÆ¿é°ó¶¨µÄ¶Ë¿ÚÊÇ·ñ¿ÉÓÃ£¬¶øtcp_twsk_destructorÓÃÓÚÔÚÊÍ·Å
-     * timewait¿ØÖÆ¿éÊ±£¬ÔÚÆôÓÃMD5Êı×ÖÇ©ÃûµÄÇé¿öÏÂ×öÒ»Ğ©ÇåÀí¹¤×÷
+     * ç›®å‰åªåœ¨TCPä¸­ä½¿ç”¨ï¼ŒæŒ‡å‘timewaitæ§åˆ¶å—æ“ä½œæ¥å£ï¼ŒTCPä¸­çš„å®ä¾‹ä¸ºtcp_timewait_sock_ops.timewait_sock_opsç»“æ„æä¾›
+     * äº†ä¸¤ä¸ªæ“ä½œæ¥å£ï¼Œtcp_twsk_unique()ç”¨äºæ£€æµ‹è¢«timewaitæ§åˆ¶å—ç»‘å®šçš„ç«¯å£æ˜¯å¦å¯ç”¨ï¼Œè€Œtcp_twsk_destructorç”¨äºåœ¨é‡Šæ”¾
+     * timewaitæ§åˆ¶å—æ—¶ï¼Œåœ¨å¯ç”¨MD5æ•°å­—ç­¾åçš„æƒ…å†µä¸‹åšä¸€äº›æ¸…ç†å·¥ä½œ
      */
 	struct timewait_sock_ops *twsk_prot;
 
@@ -1434,10 +1434,10 @@ struct proto {
 
 	struct module		*owner;
 
-    /* ±êÊ¶´«Êä²ãµÄÃû³Æ£¬TCPĞ­ÒéÎª"TCP",UDPĞ­ÒéÔòÎª"UDP" */
+    /* æ ‡è¯†ä¼ è¾“å±‚çš„åç§°ï¼ŒTCPåè®®ä¸º"TCP",UDPåè®®åˆ™ä¸º"UDP" */
 	char			name[32];
 
-    /* Í¨¹ınode×¢²áµ½proto_listÖĞ */
+    /* é€šè¿‡nodeæ³¨å†Œåˆ°proto_listä¸­ */
 	struct list_head	node;
 #ifdef SOCK_REFCNT_DEBUG
 	atomic_t		socks;
@@ -1500,11 +1500,11 @@ static inline void __sk_prot_rehash(struct sock *sk)
 /* Sockets 0-1023 can't be bound to unless you are superuser */
 #define PROT_SOCK	1024
 
-/* ±íÊ¾ÍêÈ«¹Ø±Õ */
-#define SHUTDOWN_MASK	3  //tcp_closeÓ¦ÓÃ³ÌĞòµ÷ÓÃclose¿Ï¶¨ÊÇÍêÈ«¹Ø±Õ£¬Èç¹ûÊÇshutdownÔò¿ÉÑ¡°ë¹Ø±Õ»¹ÊÇÍêÈ«¹Ø±Õ
-/* ½ÓÊÕÍ¨µÀ¹Ø±Õ£¬²»ÔÊĞí¼ÌĞø½ÓÊÕÊı¾İ*/
+/* è¡¨ç¤ºå®Œå…¨å…³é—­ */
+#define SHUTDOWN_MASK	3  //tcp_closeåº”ç”¨ç¨‹åºè°ƒç”¨closeè‚¯å®šæ˜¯å®Œå…¨å…³é—­ï¼Œå¦‚æœæ˜¯shutdownåˆ™å¯é€‰åŠå…³é—­è¿˜æ˜¯å®Œå…¨å…³é—­
+/* æ¥æ”¶é€šé“å…³é—­ï¼Œä¸å…è®¸ç»§ç»­æ¥æ”¶æ•°æ®*/
 #define RCV_SHUTDOWN	1
-/* ·¢ËÍÍ¨µÀ¹Ø±Õ£¬²»ÔÊĞí¼ÌĞø·¢ËÍÊı¾İ*/
+/* å‘é€é€šé“å…³é—­ï¼Œä¸å…è®¸ç»§ç»­å‘é€æ•°æ®*/
 #define SEND_SHUTDOWN	2
 
 
@@ -1536,9 +1536,9 @@ static inline struct kiocb *siocb_to_kiocb(struct sock_iocb *si)
 	return si->kiocb;
 }
 /*
-Ì×½Ó¿ÚÎÄ¼şÏµÍ³inode½áµãºÍÌ×½Ó¿ÚÊÇÒ»Ò»¶ÔÓ¦µÄ£¬Òò´ËÌ×½Ó¿ÚÎÄ¼şÏµÍ³µÄi½áµãºÍ·ÖÅäÊÇ±È½ÏÌØÊâµÄ£¬·ÖÅäµÄ²¢²»ÊÇÒ»¸öµ¥´¿µÄi½áµã£¬¶øÊÇi½áµãºÍ
-socket½á¹¹µÄ×éºÏÌå£¬¼´socket_calloc½á¹¹£¬ÕâÑù¿ÉÒÔÊ¹Ì×½Ó¿ÚµÄ·ÖÅä¼°ÓëÖ®°ó¶¨µÄÌ×½Ó¿ÚÎÄ¼şµÄi½áµãµÄ·ÖÅäÍ¬Ê±½øĞĞ¡£ÔÚÓ¦ÓÃ²ã·ÃÎÊÌ×½Ó¿ÚÒªÍ¨¹ıÎÄ¼şÃèÊö·û
-£¬ÕâÑù¾Í¿ÉÒÔ¿ìËÙµØÍ¨¹ıÎÄ¼şÃèÊö·û¶¨Î»ÓëÖ®°ó¶¨µÄÌ×½Ó¿Ú¡£
+å¥—æ¥å£æ–‡ä»¶ç³»ç»Ÿinodeç»“ç‚¹å’Œå¥—æ¥å£æ˜¯ä¸€ä¸€å¯¹åº”çš„ï¼Œå› æ­¤å¥—æ¥å£æ–‡ä»¶ç³»ç»Ÿçš„iç»“ç‚¹å’Œåˆ†é…æ˜¯æ¯”è¾ƒç‰¹æ®Šçš„ï¼Œåˆ†é…çš„å¹¶ä¸æ˜¯ä¸€ä¸ªå•çº¯çš„iç»“ç‚¹ï¼Œè€Œæ˜¯iç»“ç‚¹å’Œ
+socketç»“æ„çš„ç»„åˆä½“ï¼Œå³socket_callocç»“æ„ï¼Œè¿™æ ·å¯ä»¥ä½¿å¥—æ¥å£çš„åˆ†é…åŠä¸ä¹‹ç»‘å®šçš„å¥—æ¥å£æ–‡ä»¶çš„iç»“ç‚¹çš„åˆ†é…åŒæ—¶è¿›è¡Œã€‚åœ¨åº”ç”¨å±‚è®¿é—®å¥—æ¥å£è¦é€šè¿‡æ–‡ä»¶æè¿°ç¬¦
+ï¼Œè¿™æ ·å°±å¯ä»¥å¿«é€Ÿåœ°é€šè¿‡æ–‡ä»¶æè¿°ç¬¦å®šä½ä¸ä¹‹ç»‘å®šçš„å¥—æ¥å£ã€‚
 */
 struct socket_alloc {
 	struct socket socket;
@@ -1594,11 +1594,11 @@ static inline int sk_rmem_schedule(struct sock *sk, int size)
 }
 
 /*
- * ÔÚ¶àÖÖÇé¿öÏÂ»áµ÷ÓÃsk_mem_reclaim()À´»ØÊÕ»º´æ£¬ÈçÔÚ
- * ¶Ï¿ªÁ¬½Ó¡¢ÊÍ·Å´«Êä¿ØÖÆ¿é¡¢¹Ø±ÕTCPÌ×½Ó×ÖÊ±ÊÍ·Å
- * ·¢ËÍ»ò½ÓÊÕ¶ÓÁĞÖĞµÄSKB¡£sk_mem_reclaim()Ö»ÔÚÔ¤·ÖÅäÁ¿
- * ´óÓÚÒ»¸öÒ³ÃæÊ±£¬²Åµ÷ÓÃ__sk_mem_reclaim()½øĞĞÕæÕıµÄ
- * »º´æ»ØÊÕ¡£
+ * åœ¨å¤šç§æƒ…å†µä¸‹ä¼šè°ƒç”¨sk_mem_reclaim()æ¥å›æ”¶ç¼“å­˜ï¼Œå¦‚åœ¨
+ * æ–­å¼€è¿æ¥ã€é‡Šæ”¾ä¼ è¾“æ§åˆ¶å—ã€å…³é—­TCPå¥—æ¥å­—æ—¶é‡Šæ”¾
+ * å‘é€æˆ–æ¥æ”¶é˜Ÿåˆ—ä¸­çš„SKBã€‚sk_mem_reclaim()åªåœ¨é¢„åˆ†é…é‡
+ * å¤§äºä¸€ä¸ªé¡µé¢æ—¶ï¼Œæ‰è°ƒç”¨__sk_mem_reclaim()è¿›è¡ŒçœŸæ­£çš„
+ * ç¼“å­˜å›æ”¶ã€‚
  */
 static inline void sk_mem_reclaim(struct sock *sk)
 {
@@ -1615,8 +1615,8 @@ static inline void sk_mem_reclaim_partial(struct sock *sk)
 	if (sk->sk_forward_alloc > SK_MEM_QUANTUM)
 		__sk_mem_reclaim(sk);
 }
-//skb_entail»á°ÑskbÌí¼Óµ½skµÄ·¢ËÍ¶ÓÁĞÎ²²¿£¬È»ºóµ÷ÓÃsk_mem_chargeµ÷Õûsk_wmem_quequedºÍsk_forward_alloc¡£Ç°Ôò½«Ôö¼Ó¸ÃskbÖĞÊı¾İµÄ³¤¶È£¬¶øºóÔòÔò¼õÉÙ¸ÃskbÖĞÊı¾İµÄ³¤¶È
-//ÔÚ·¢ËÍÊ±»áµ÷ÓÃskb_set_owner_wÉèÖÃ¸ÃskbµÄËŞÖ÷£¬Í¬Ê±ÉèÖÃÊÍ·ÅÊÇµÄ»Øµ÷º¯ÊıÎªsock_wfree£¬×îºósk_wmem_alloc½«Ôö¼Ó¸ÃskbÖĞÊı¾İµÄ³¤¶È¡£
+//skb_entailä¼šæŠŠskbæ·»åŠ åˆ°skçš„å‘é€é˜Ÿåˆ—å°¾éƒ¨ï¼Œç„¶åè°ƒç”¨sk_mem_chargeè°ƒæ•´sk_wmem_quequedå’Œsk_forward_allocã€‚å‰åˆ™å°†å¢åŠ è¯¥skbä¸­æ•°æ®çš„é•¿åº¦ï¼Œè€Œååˆ™åˆ™å‡å°‘è¯¥skbä¸­æ•°æ®çš„é•¿åº¦
+//åœ¨å‘é€æ—¶ä¼šè°ƒç”¨skb_set_owner_wè®¾ç½®è¯¥skbçš„å®¿ä¸»ï¼ŒåŒæ—¶è®¾ç½®é‡Šæ”¾æ˜¯çš„å›è°ƒå‡½æ•°ä¸ºsock_wfreeï¼Œæœ€åsk_wmem_allocå°†å¢åŠ è¯¥skbä¸­æ•°æ®çš„é•¿åº¦ã€‚
 static inline void sk_mem_charge(struct sock *sk, int size)
 {
 	if (!sk_has_account(sk))
@@ -1654,14 +1654,14 @@ static inline void sk_wmem_free_skb(struct sock *sk, struct sk_buff *skb)
  */
  
 /*
- * ÈíÖĞ¶ÏÔÚ·ÃÎÊ´«Êä¿ØÖÆ¿éÊ±ĞèÒªÍ¨¹ısock_owned_by_user
- * ºêÀ´¼ì²â¸Ã¿ØÖÆ¿éÊÇ·ñÒÑ¾­±»½ø³ÌËø¶¨£¬Èç¹ûÃ»ÓĞ
- * Ëø¶¨£¬Ôò¿ÉÖ±½Ó·ÃÎÊ¶øÎŞĞèÍ¨¹ılock_sockÀ´ÉÏËø¡£ÒòÎª
- * ÈíÖĞ¶ÏµÄÓÅÏÈ¼¶±È½ø³ÌµÄÓÅÏÈ¼¶¸ßµÃ¶à£¬Ö»ÓĞÈíÖĞ¶Ï
- * ÄÜÖĞ¶Ï½ø³ÌµÄÖ´ĞĞ£¬¶ø½ø³Ì¾ö²»ÄÜÖĞ¶ÏÈíÖĞ¶ÏµÄÖ´ĞĞ¡£
- * ÀıÈç£¬ÔÚTCP¶Î½ÓÊÕ¹ı³ÌÖĞ£¬Èç¹û´«Êä¿ØÖÆ¿éÎ´±»ÓÃ»§
- * ½ø³ÌÉÏËø£¬Ôò½«TCP¶ÎÊäÈëµ½½ÓÊÕ¶ÓÁĞÖĞ£¬·ñÔò½ÓÊÕ
- * µ½ºó±¸¶ÓÁĞÖĞ        ÄÚºËµ÷¶ÈÓÅÏÈ¼¶²Î¿¼:http://blog.csdn.net/allen6268198/article/details/7567679
+ * è½¯ä¸­æ–­åœ¨è®¿é—®ä¼ è¾“æ§åˆ¶å—æ—¶éœ€è¦é€šè¿‡sock_owned_by_user
+ * å®æ¥æ£€æµ‹è¯¥æ§åˆ¶å—æ˜¯å¦å·²ç»è¢«è¿›ç¨‹é”å®šï¼Œå¦‚æœæ²¡æœ‰
+ * é”å®šï¼Œåˆ™å¯ç›´æ¥è®¿é—®è€Œæ— éœ€é€šè¿‡lock_sockæ¥ä¸Šé”ã€‚å› ä¸º
+ * è½¯ä¸­æ–­çš„ä¼˜å…ˆçº§æ¯”è¿›ç¨‹çš„ä¼˜å…ˆçº§é«˜å¾—å¤šï¼Œåªæœ‰è½¯ä¸­æ–­
+ * èƒ½ä¸­æ–­è¿›ç¨‹çš„æ‰§è¡Œï¼Œè€Œè¿›ç¨‹å†³ä¸èƒ½ä¸­æ–­è½¯ä¸­æ–­çš„æ‰§è¡Œã€‚
+ * ä¾‹å¦‚ï¼Œåœ¨TCPæ®µæ¥æ”¶è¿‡ç¨‹ä¸­ï¼Œå¦‚æœä¼ è¾“æ§åˆ¶å—æœªè¢«ç”¨æˆ·
+ * è¿›ç¨‹ä¸Šé”ï¼Œåˆ™å°†TCPæ®µè¾“å…¥åˆ°æ¥æ”¶é˜Ÿåˆ—ä¸­ï¼Œå¦åˆ™æ¥æ”¶
+ * åˆ°åå¤‡é˜Ÿåˆ—ä¸­        å†…æ ¸è°ƒåº¦ä¼˜å…ˆçº§å‚è€ƒ:http://blog.csdn.net/allen6268198/article/details/7567679
  */
 #define sock_owned_by_user(sk)	((sk)->sk_lock.owned)
 
@@ -1687,19 +1687,19 @@ do {									\
 extern void lock_sock_nested(struct sock *sk, int subclass);
 
 /*
- * ÓÃÓÚ½ø³Ì¼ÓËø´«Êä¿ØÖÆ¿é£¬µ±½ø³Ìµ÷ÓÃÍøÂçÏà¹ØµÄ
- * ÏµÍ³µ÷ÓÃÊ±£¬ÔÚ·ÃÎÊ´«Êä¿ØÖÆ¿éÖ®Ç°¶¼»áµ÷ÓÃ´Ëº¯Êı£¬
- * ¼ÓËø´«Êä¿ØÖÆ¿é¡£
- * ×¢ÒâÕâÀïÔÚlock_sock_nested()ÖĞÖ»ÊÇÏÈ»ñÈ¡ÁË×ÔĞıËø£¬È»ºóÉèÖÃowned³ÉÔ±
- * ±íÊ¾µ±Ç°´«Êä¿é±»ÓÃ»§½ø³ÌËø¶¨£¬È»ºóÓÖÊÍ·ÅÁË×ÔĞıËø¡£ËùÒÔÔÚ
- * ÈíÖĞ¶Ï´¦ÀíÖĞ(ÀıÈçtcp_v4_rcv())»áÏÈ»ñÈ¡Ëø£¬È»ºó¼ì²éowned³ÉÔ±ÊÇ·ñÉèÖÃ
- * ¼´´«Êä¿ØÖÆ¿éÊÇ·ñ±»ÓÃ»§½ø³ÌËø¶¨¡£
+ * ç”¨äºè¿›ç¨‹åŠ é”ä¼ è¾“æ§åˆ¶å—ï¼Œå½“è¿›ç¨‹è°ƒç”¨ç½‘ç»œç›¸å…³çš„
+ * ç³»ç»Ÿè°ƒç”¨æ—¶ï¼Œåœ¨è®¿é—®ä¼ è¾“æ§åˆ¶å—ä¹‹å‰éƒ½ä¼šè°ƒç”¨æ­¤å‡½æ•°ï¼Œ
+ * åŠ é”ä¼ è¾“æ§åˆ¶å—ã€‚
+ * æ³¨æ„è¿™é‡Œåœ¨lock_sock_nested()ä¸­åªæ˜¯å…ˆè·å–äº†è‡ªæ—‹é”ï¼Œç„¶åè®¾ç½®ownedæˆå‘˜
+ * è¡¨ç¤ºå½“å‰ä¼ è¾“å—è¢«ç”¨æˆ·è¿›ç¨‹é”å®šï¼Œç„¶ååˆé‡Šæ”¾äº†è‡ªæ—‹é”ã€‚æ‰€ä»¥åœ¨
+ * è½¯ä¸­æ–­å¤„ç†ä¸­(ä¾‹å¦‚tcp_v4_rcv())ä¼šå…ˆè·å–é”ï¼Œç„¶åæ£€æŸ¥ownedæˆå‘˜æ˜¯å¦è®¾ç½®
+ * å³ä¼ è¾“æ§åˆ¶å—æ˜¯å¦è¢«ç”¨æˆ·è¿›ç¨‹é”å®šã€‚
  */
 
 /*
- * ÊµÏÖ¿ØÖÆÓÃ»§½ø³ÌºÍÏÂ°ë²¿ (ÀıÈçÓ¦ÓÃ³ÌĞò·¢ËÍÊı¾İµÄÊ±ºò£¬È»ºó½øÈëÏµÍ³µ÷¶Èµ½ÄÚºË²¿·Ö£¬ÕâÊ±ºò£¬ÄÚºËÓÖÊÕµ½ÁË¶Ô·½À´µÄÊı¾İ£¬¾ÍºÃ²úÉúÓ²¼şÖĞ¶Ï£¬Ó²¼şÖĞ¶ÏÉÏ°ë²¿Ö´ĞĞÍêºó£¬Ö´ĞĞÏÂ°ë²¿µÄÊ±ºò¾Í»áÓÃµ½¸Õ²Å±»ÇÀ×ßµÄ·¢ËÍÊı¾İµÄsock£¬´Ó¶ø»á·ÃÎÊÏàÍ¬µÄÊı¾İ¿Õ¼ä£¬ËùÒÔĞèÒª¼ÏËø)
- ÒÔ¼°ÏÂ°ë²¿Ö®¼ä(ÀıÈç¶àºË»·¾³ÏÂ£¬ÄÚºËÓ²¼şÖĞ¶Ï½ÓÊÕÊı¾İºó½øÈëÈíÖĞ¶Ï´¦Àí¹ı³ÌÖĞ£¬ÓÖÊÕµ½ÁË¶Ô·½À´µÄÊı¾İ²úÉúÖĞ¶Ï¡£)
- * ¼äÍ¬²½Ëø¶¼ÊÇÓÉsocket_lock_t½á¹¹ÃèÊöµÄ
+ * å®ç°æ§åˆ¶ç”¨æˆ·è¿›ç¨‹å’Œä¸‹åŠéƒ¨ (ä¾‹å¦‚åº”ç”¨ç¨‹åºå‘é€æ•°æ®çš„æ—¶å€™ï¼Œç„¶åè¿›å…¥ç³»ç»Ÿè°ƒåº¦åˆ°å†…æ ¸éƒ¨åˆ†ï¼Œè¿™æ—¶å€™ï¼Œå†…æ ¸åˆæ”¶åˆ°äº†å¯¹æ–¹æ¥çš„æ•°æ®ï¼Œå°±å¥½äº§ç”Ÿç¡¬ä»¶ä¸­æ–­ï¼Œç¡¬ä»¶ä¸­æ–­ä¸ŠåŠéƒ¨æ‰§è¡Œå®Œåï¼Œæ‰§è¡Œä¸‹åŠéƒ¨çš„æ—¶å€™å°±ä¼šç”¨åˆ°åˆšæ‰è¢«æŠ¢èµ°çš„å‘é€æ•°æ®çš„sockï¼Œä»è€Œä¼šè®¿é—®ç›¸åŒçš„æ•°æ®ç©ºé—´ï¼Œæ‰€ä»¥éœ€è¦æ·é”)
+ ä»¥åŠä¸‹åŠéƒ¨ä¹‹é—´(ä¾‹å¦‚å¤šæ ¸ç¯å¢ƒä¸‹ï¼Œå†…æ ¸ç¡¬ä»¶ä¸­æ–­æ¥æ”¶æ•°æ®åè¿›å…¥è½¯ä¸­æ–­å¤„ç†è¿‡ç¨‹ä¸­ï¼Œåˆæ”¶åˆ°äº†å¯¹æ–¹æ¥çš„æ•°æ®äº§ç”Ÿä¸­æ–­ã€‚)
+ * é—´åŒæ­¥é”éƒ½æ˜¯ç”±socket_lock_tç»“æ„æè¿°çš„
  */
 static inline void lock_sock(struct sock *sk)
 {
@@ -1934,7 +1934,7 @@ static inline wait_queue_head_t *sk_sleep(struct sock *sk)
  * we do not release it in this function, because protocol
  * probably wants some additional cleanups or even continuing
  * to work with this socket (TCP).
- *///tcp_closeÀïÃæÖ´ĞĞÕâ¸ö
+ *///tcp_closeé‡Œé¢æ‰§è¡Œè¿™ä¸ª
 static inline void sock_orphan(struct sock *sk)
 {
 	write_lock_bh(&sk->sk_callback_lock);
@@ -2035,7 +2035,7 @@ extern struct dst_entry *__sk_dst_check(struct sock *sk, u32 cookie);
 
 extern struct dst_entry *sk_dst_check(struct sock *sk, u32 cookie);
 
-////TSOÊÇtcp segment offloadµÄËõĞ´£¬GSOÊÇ generic segmentation offload µÄËõĞ´¡£ Í¨¹ıÃüÁîethtool -k eth0²é¿´ÊÇ·ñÖ§³Ögso»òÕßtso ¡£²Î¿¼skb_shared_info
+////TSOæ˜¯tcp segment offloadçš„ç¼©å†™ï¼ŒGSOæ˜¯ generic segmentation offload çš„ç¼©å†™ã€‚ é€šè¿‡å‘½ä»¤ethtool -k eth0æŸ¥çœ‹æ˜¯å¦æ”¯æŒgsoæˆ–è€…tso ã€‚å‚è€ƒskb_shared_info
 static inline int sk_can_gso(const struct sock *sk)
 {
 	return net_gso_ok(sk->sk_route_caps, sk->sk_gso_type);
@@ -2182,20 +2182,20 @@ static inline void sock_poll_wait(struct file *filp,
  *	packet ever received.
  */
 /* 
- * Ã¿¸öÓÃÓÚÊä³öµÄSKB¶¼Òª¹ØÁªµ½Ò»¸ö´«Êä¿ØÖÆ¿éÉÏ£¬
- * ÕâÑù¿ÉÒÔµ÷Õû¸Ã´«Êä¿ØÖÆ¿éÎª·¢ËÍ¶ø·ÖÅäµÄËùÓĞ
- * SKBÊı¾İÇøµÄ×Ü´óĞ¡£¬²¢ÉèÖÃ´ËSKBµÄÏú»Ùº¯Êı¡£
+ * æ¯ä¸ªç”¨äºè¾“å‡ºçš„SKBéƒ½è¦å…³è”åˆ°ä¸€ä¸ªä¼ è¾“æ§åˆ¶å—ä¸Šï¼Œ
+ * è¿™æ ·å¯ä»¥è°ƒæ•´è¯¥ä¼ è¾“æ§åˆ¶å—ä¸ºå‘é€è€Œåˆ†é…çš„æ‰€æœ‰
+ * SKBæ•°æ®åŒºçš„æ€»å¤§å°ï¼Œå¹¶è®¾ç½®æ­¤SKBçš„é”€æ¯å‡½æ•°ã€‚
  */
- //Ì×½Ó×Ö·¢ËÍÊı¾İµÄÊ±ºò£¬struct sockºÍSKBµÄ¹ØÏµ¿ÉÒÔÍ¨¹ısock_alloc_send_pskb(UDPºÍRAWÌ×½Ó×ÖÓÃÕâ¸ö)º¯ÊıÏêÏ¸ÁË½â¡£TCPÔÚ¹¹ÔìSYN+ACKÊ±Ê¹ÓÃsock_wmalloc£¬·¢ËÍÓÃ»§Êı¾İÊ±Í¨³£Ê¹ÓÃsk_stream_alloc_skb()·ÖÅä·¢ËÍ»º´æ
-//TCPÔÚÁ¬½Ó½¨Á¢ºó·¢ËÍÊı¾İµÄÊ±ºòÔÚtcp_transmit_skbÖĞµ÷ÓÃ¸Ãº¯Êı£¬¶øÔÚTCP¹¹Ôì¹ı³ÌÖĞÍ¨¹ısock_wmallocµ÷ÓÃ¸Ãº¯Êı£¬UDPºÍRAWÔòÔÚsock_alloc_send_pskbÖĞµ÷ÓÃ¸Ãº¯Êı
+ //å¥—æ¥å­—å‘é€æ•°æ®çš„æ—¶å€™ï¼Œstruct sockå’ŒSKBçš„å…³ç³»å¯ä»¥é€šè¿‡sock_alloc_send_pskb(UDPå’ŒRAWå¥—æ¥å­—ç”¨è¿™ä¸ª)å‡½æ•°è¯¦ç»†äº†è§£ã€‚TCPåœ¨æ„é€ SYN+ACKæ—¶ä½¿ç”¨sock_wmallocï¼Œå‘é€ç”¨æˆ·æ•°æ®æ—¶é€šå¸¸ä½¿ç”¨sk_stream_alloc_skb()åˆ†é…å‘é€ç¼“å­˜
+//TCPåœ¨è¿æ¥å»ºç«‹åå‘é€æ•°æ®çš„æ—¶å€™åœ¨tcp_transmit_skbä¸­è°ƒç”¨è¯¥å‡½æ•°ï¼Œè€Œåœ¨TCPæ„é€ è¿‡ç¨‹ä¸­é€šè¿‡sock_wmallocè°ƒç”¨è¯¥å‡½æ•°ï¼ŒUDPå’ŒRAWåˆ™åœ¨sock_alloc_send_pskbä¸­è°ƒç”¨è¯¥å‡½æ•°
 
-//skb_entail»á°ÑskbÌí¼Óµ½skµÄ·¢ËÍ¶ÓÁĞÎ²²¿£¬È»ºóµ÷ÓÃsk_mem_chargeµ÷Õûsk_wmem_quequedºÍsk_forward_alloc¡£Ç°Ôò½«Ôö¼Ó¸ÃskbÖĞÊı¾İµÄ³¤¶È£¬¶øºóÔòÔò¼õÉÙ¸ÃskbÖĞÊı¾İµÄ³¤¶È
-//ÔÚ·¢ËÍÊ±»áµ÷ÓÃskb_set_owner_wÉèÖÃ¸ÃskbµÄËŞÖ÷£¬Í¬Ê±ÉèÖÃÊÍ·ÅÊÇµÄ»Øµ÷º¯ÊıÎªsock_wfree£¬×îºósk_wmem_alloc½«Ôö¼Ó¸ÃskbÖĞÊı¾İµÄ³¤¶È¡£
+//skb_entailä¼šæŠŠskbæ·»åŠ åˆ°skçš„å‘é€é˜Ÿåˆ—å°¾éƒ¨ï¼Œç„¶åè°ƒç”¨sk_mem_chargeè°ƒæ•´sk_wmem_quequedå’Œsk_forward_allocã€‚å‰åˆ™å°†å¢åŠ è¯¥skbä¸­æ•°æ®çš„é•¿åº¦ï¼Œè€Œååˆ™åˆ™å‡å°‘è¯¥skbä¸­æ•°æ®çš„é•¿åº¦
+//åœ¨å‘é€æ—¶ä¼šè°ƒç”¨skb_set_owner_wè®¾ç½®è¯¥skbçš„å®¿ä¸»ï¼ŒåŒæ—¶è®¾ç½®é‡Šæ”¾æ˜¯çš„å›è°ƒå‡½æ•°ä¸ºsock_wfreeï¼Œæœ€åsk_wmem_allocå°†å¢åŠ è¯¥skbä¸­æ•°æ®çš„é•¿åº¦ã€‚
 static inline void skb_set_owner_w(struct sk_buff *skb, struct sock *sk)
 {
 	skb_orphan(skb);
 	skb->sk = sk;
-	skb->destructor = sock_wfree; ////ÔÚsk_allocµÄÊ±ºò³õÊ¼»¯ÉèÖÃÎª1£¬È»ºóÔÚskb_set_owner_w¼ÓÉÏSKB³¤¶È£¬µ±SKB·¢ËÍ³öÈ¥ºó£¬ÔÚ¼õÈ¥¸ÃSKBµÄ³¤¶È£¬ËùÒÔÕâ¸öÖµµ±Êı¾İ·¢ËÍºóÆäÖµÊ¼ÖÕÊÇ1£¬²»»áÖ´ĞĞsock_wfree
+	skb->destructor = sock_wfree; ////åœ¨sk_allocçš„æ—¶å€™åˆå§‹åŒ–è®¾ç½®ä¸º1ï¼Œç„¶ååœ¨skb_set_owner_wåŠ ä¸ŠSKBé•¿åº¦ï¼Œå½“SKBå‘é€å‡ºå»åï¼Œåœ¨å‡å»è¯¥SKBçš„é•¿åº¦ï¼Œæ‰€ä»¥è¿™ä¸ªå€¼å½“æ•°æ®å‘é€åå…¶å€¼å§‹ç»ˆæ˜¯1ï¼Œä¸ä¼šæ‰§è¡Œsock_wfree
 	/*
 	 * We used to take a refcount on sk, but following operation
 	 * is enough to guarantee sk_free() wont free this sock until
@@ -2205,10 +2205,10 @@ static inline void skb_set_owner_w(struct sk_buff *skb, struct sock *sk)
 }
 
 /*
- * µ±TCP¶ÎµÄSKB´«µİµ½TCP´«Êä¿ØÖÆ¿éÖĞ£¬±ã»áµ÷ÓÃ
- * sk_stream_set_owner_r()ÉèÖÃ¸ÃSKBµÄËŞÖ÷£¬²¢ÉèÖÃ´ËSKB
- * µÄÏú»Ùº¯Êı£¬»¹Òª¸üĞÂ½ÓÊÕ¶ÓÁĞÖĞËùÓĞ±¨ÎÄÊı¾İ
- * µÄ×Ü³¤¶È£¬ÒÔ¼°Ô¤·ÖÅä»º´æ³¤¶È
+ * å½“TCPæ®µçš„SKBä¼ é€’åˆ°TCPä¼ è¾“æ§åˆ¶å—ä¸­ï¼Œä¾¿ä¼šè°ƒç”¨
+ * sk_stream_set_owner_r()è®¾ç½®è¯¥SKBçš„å®¿ä¸»ï¼Œå¹¶è®¾ç½®æ­¤SKB
+ * çš„é”€æ¯å‡½æ•°ï¼Œè¿˜è¦æ›´æ–°æ¥æ”¶é˜Ÿåˆ—ä¸­æ‰€æœ‰æŠ¥æ–‡æ•°æ®
+ * çš„æ€»é•¿åº¦ï¼Œä»¥åŠé¢„åˆ†é…ç¼“å­˜é•¿åº¦
  */
 static inline void skb_set_owner_r(struct sk_buff *skb, struct sock *sk)
 {
@@ -2254,16 +2254,16 @@ static inline unsigned long sock_wspace(struct sock *sk)
 }
 
 /*
- * ÓÃÀ´½«SIGIO»òSIGURGĞÅºÅ·¢ËÍ¸ø¸ÃÌ×½Ó×ÖÉÏµÄ½ø³Ì£¬
- * Í¨Öª¸Ã½ø³Ì¿ÉÒÔ¶Ô¸ÃÎÄ¼ş½øĞĞ¶Á»òĞ´¡£
+ * ç”¨æ¥å°†SIGIOæˆ–SIGURGä¿¡å·å‘é€ç»™è¯¥å¥—æ¥å­—ä¸Šçš„è¿›ç¨‹ï¼Œ
+ * é€šçŸ¥è¯¥è¿›ç¨‹å¯ä»¥å¯¹è¯¥æ–‡ä»¶è¿›è¡Œè¯»æˆ–å†™ã€‚
  *
- * @sk: Í¨Öª½ø³Ì¿ÉÔËĞĞI/O´¦ÀíµÄ´«Êä¿ØÖÆ¿é
- * @how: Í¨Öª½ø³Ì·½Ê½£¬È¡ÖµÎªSOCK_WAKE_IOµÈ
- * @band:  Í¨Öª½ø³ÌµÄI/O¶ÁĞ´ÀàĞÍ£¬È¡ÖµÎªPOLL_INµÈ
+ * @sk: é€šçŸ¥è¿›ç¨‹å¯è¿è¡ŒI/Oå¤„ç†çš„ä¼ è¾“æ§åˆ¶å—
+ * @how: é€šçŸ¥è¿›ç¨‹æ–¹å¼ï¼Œå–å€¼ä¸ºSOCK_WAKE_IOç­‰
+ * @band:  é€šçŸ¥è¿›ç¨‹çš„I/Oè¯»å†™ç±»å‹ï¼Œå–å€¼ä¸ºPOLL_INç­‰
  */
 
-//Ö´ĞĞ¸Ãº¯Êısk_wake_async(½«SIGIO»òSIGURGĞÅºÅ·¢ËÍ¸ø¸ÃÌ×½Ó×ÖÉÏµÄ½ø³Ì,ÕâÊÇÒì²½I/O»úÖÆ)µÄµØ·½ÓĞsk_send_sigurg(½ÓÊÕµ½´øÍâÊı¾İ)£¬sock_def_write_spaceºÍsk_stream_write_space(·¢ËÍ»º³åÇø·¢Éú±ä»¯)£¬ÓĞĞÂµÄÊı¾İµ½À´(sock_def_readable)
-//sock_def_error_report´«Êä¿ØÖÆ¿é·¢ÉúÄ³ÖÖ´íÎó£¬sock_def_wakeup´«Êä×´Ì¬·¢Éú±ä»¯, tcp_fin
+//æ‰§è¡Œè¯¥å‡½æ•°sk_wake_async(å°†SIGIOæˆ–SIGURGä¿¡å·å‘é€ç»™è¯¥å¥—æ¥å­—ä¸Šçš„è¿›ç¨‹,è¿™æ˜¯å¼‚æ­¥I/Oæœºåˆ¶)çš„åœ°æ–¹æœ‰sk_send_sigurg(æ¥æ”¶åˆ°å¸¦å¤–æ•°æ®)ï¼Œsock_def_write_spaceå’Œsk_stream_write_space(å‘é€ç¼“å†²åŒºå‘ç”Ÿå˜åŒ–)ï¼Œæœ‰æ–°çš„æ•°æ®åˆ°æ¥(sock_def_readable)
+//sock_def_error_reportä¼ è¾“æ§åˆ¶å—å‘ç”ŸæŸç§é”™è¯¯ï¼Œsock_def_wakeupä¼ è¾“çŠ¶æ€å‘ç”Ÿå˜åŒ–, tcp_fin
 static inline void sk_wake_async(struct sock *sk, int how, int band)
 {
 	if (sock_flag(sk, SOCK_FASYNC))
@@ -2319,7 +2319,7 @@ static inline long sock_sndtimeo(const struct sock *sk, int noblock)
 }
 
 /*
- * ¸ù¾İÊÇ·ñÉèÖÃMSG_WAITALL±êÖ¾À´È·¶¨±¾´Îµ÷ÓÃĞèÒª½ÓÊÕÊı¾İµÄ³¤¶È.Èç¹ûÉèÖÃÁËMSG_WAITALL±êÖ¾,Ôò¶ÁÈ¡Êı¾İ³¤¶ÈÎªÓÃ»§µ÷ÓÃÊ±µÄÊäÈë²ÎÊılen.
+ * æ ¹æ®æ˜¯å¦è®¾ç½®MSG_WAITALLæ ‡å¿—æ¥ç¡®å®šæœ¬æ¬¡è°ƒç”¨éœ€è¦æ¥æ”¶æ•°æ®çš„é•¿åº¦.å¦‚æœè®¾ç½®äº†MSG_WAITALLæ ‡å¿—,åˆ™è¯»å–æ•°æ®é•¿åº¦ä¸ºç”¨æˆ·è°ƒç”¨æ—¶çš„è¾“å…¥å‚æ•°len.
  */
 static inline int sock_rcvlowat(const struct sock *sk, int waitall, int len)
 {
@@ -2480,16 +2480,16 @@ extern int net_msg_warn;
 #define LIMIT_NETDEBUG(fmt, args...) \
 	do { if (net_msg_warn && net_ratelimit()) printk(fmt,##args); } while(0)
 
-//ÏÂÃæÕâÁ½¸öÖµµÄ³õÊ¼»¯ÔÚsk_initº¯ÊıÖĞ£¬ÆäÖµ»áÊÕÄÚ´æµÄÓ°Ïì£¬Ä¬ÈÏÖµ¿ÉÄÜ²»Ò»Ñù
+//ä¸‹é¢è¿™ä¸¤ä¸ªå€¼çš„åˆå§‹åŒ–åœ¨sk_initå‡½æ•°ä¸­ï¼Œå…¶å€¼ä¼šæ”¶å†…å­˜çš„å½±å“ï¼Œé»˜è®¤å€¼å¯èƒ½ä¸ä¸€æ ·
 extern __u32 sysctl_wmem_max;
 extern __u32 sysctl_rmem_max;
 
 extern void sk_init(void);
 
-/* ÓÃÓÚ¿ØÖÆ´«Êä¿ØÖÆ¿é·ÖÅäµÄÑ¡Ïî»º´æ£¬¸ÃÖµÎª¸¨Öú»º³åÇøµÄÉÏÏŞÖµ*/
+/* ç”¨äºæ§åˆ¶ä¼ è¾“æ§åˆ¶å—åˆ†é…çš„é€‰é¡¹ç¼“å­˜ï¼Œè¯¥å€¼ä¸ºè¾…åŠ©ç¼“å†²åŒºçš„ä¸Šé™å€¼*/
 extern int sysctl_optmem_max;
 
-extern __u32 sysctl_wmem_default;//·¢ËÍ»º³åÇøÄ¬ÈÏÖµ SK_WMEM_MAX
-extern __u32 sysctl_rmem_default;// ½ÓÊÕ»º³åÇø´óĞ¡µÄÉÏÏŞÎªSK_RMEM_MAX£¬Ä¬ÈÏÖµÊÇsysctl_rmem_default£¬¼´32767Ò²¾ÍÊÇIPÊ×²¿16Î»³¤¶È(×î´ó65535)µÄÒ»°ë
+extern __u32 sysctl_wmem_default;//å‘é€ç¼“å†²åŒºé»˜è®¤å€¼ SK_WMEM_MAX
+extern __u32 sysctl_rmem_default;// æ¥æ”¶ç¼“å†²åŒºå¤§å°çš„ä¸Šé™ä¸ºSK_RMEM_MAXï¼Œé»˜è®¤å€¼æ˜¯sysctl_rmem_defaultï¼Œå³32767ä¹Ÿå°±æ˜¯IPé¦–éƒ¨16ä½é•¿åº¦(æœ€å¤§65535)çš„ä¸€åŠ
 
 #endif	/* _SOCK_H */

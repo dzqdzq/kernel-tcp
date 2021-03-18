@@ -9,7 +9,7 @@
  * as published by the Free Software Foundation; either version
  * 2 of the License, or (at your option) any later version.
  *
- *///网络设备连接状态通知
+ *///缃戠粶璁惧杩炴帴鐘舵�侀�氱煡
 
 #include <linux/module.h>
 #include <linux/netdevice.h>

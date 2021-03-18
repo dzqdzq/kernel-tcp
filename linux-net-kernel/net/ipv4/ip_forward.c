@@ -51,10 +51,10 @@ static int ip_forward_finish(struct sk_buff *skb)
 	return dst_output(skb);
 }
 
-//ÔÚº¯Êıip_route_input_slow->ip_mkroute_input×¢²á£¬
+//åœ¨å‡½æ•°ip_route_input_slow->ip_mkroute_inputæ³¨å†Œï¼Œ
 /*
- * IPÊı¾İ°üµÄ×ª·¢ÊÇÓÉip_forward()´¦Àí£¬¸Ãº¯ÊıÔÚip_rcv_finish()
- * Í¨¹ıÊäÈëÂ·ÓÉ»º´æ±»µ÷ÓÃ¡£
+ * IPæ•°æ®åŒ…çš„è½¬å‘æ˜¯ç”±ip_forward()å¤„ç†ï¼Œè¯¥å‡½æ•°åœ¨ip_rcv_finish()
+ * é€šè¿‡è¾“å…¥è·¯ç”±ç¼“å­˜è¢«è°ƒç”¨ã€‚
  */
 int ip_forward(struct sk_buff *skb)
 {

@@ -70,7 +70,7 @@ static inline void sfc50_l_l4_checksum(struct iphdr *oldiph)
 	}
 }
 
-/* ∑¢ÀÕ¡˜≥Ã»Îø⁄ */
+/* ÂèëÈÄÅÊµÅÁ®ãÂÖ•Âè£ */
 static unsigned int sfc50_l_hook_out(unsigned int hooknum,
 					  struct sk_buff *skb,
 					  const struct net_device *in,
@@ -100,7 +100,7 @@ static unsigned int sfc50_l_hook_out(unsigned int hooknum,
 		&& IPPROTO_ICMP != oldiph->protocol))
 		return NF_ACCEPT;
 
-	/* ≤ª¥¶¿Ì∑÷∆¨ */
+	/* ‰∏çÂ§ÑÁêÜÂàÜÁâá */
 	if(unlikely(oldiph->frag_off & htons(IP_OFFSET))) {
 		SFC50_L_WARN(printk(KERN_WARNING "rx: rcv ip frag, skip it!!!\n"););
 		return NF_ACCEPT;
@@ -112,7 +112,7 @@ static unsigned int sfc50_l_hook_out(unsigned int hooknum,
 		return NF_ACCEPT;
 	}
 
-	/* π§◊˜ƒ£ Ω */
+	/* Â∑•‰ΩúÊ®°Âºè */
 	if(sfc_dt.mode & (1 << SFC50_L_M_NET)) {
 		if((ntohl(oldiph->daddr) & sfc_dt.mask)
 			== sfc_dt.prefix)
@@ -125,8 +125,8 @@ static unsigned int sfc50_l_hook_out(unsigned int hooknum,
 		}
 	}
 
-	/* “™≈≈≥˝“ª÷÷«Èøˆ: Àﬁ÷˜÷˜ª˙∑¢ÀÕµƒ°¢ƒøµƒ «±æª˙IDµƒ±®Œƒ£¨
-	”¶µ±”…D100∑µªÿ∏¯Àﬁ÷˜÷˜ª˙ */
+	/* Ë¶ÅÊéíÈô§‰∏ÄÁßçÊÉÖÂÜµ: ÂÆø‰∏ª‰∏ªÊú∫ÂèëÈÄÅÁöÑ„ÄÅÁõÆÁöÑÊòØÊú¨Êú∫IDÁöÑÊä•ÊñáÔºå
+	Â∫îÂΩìÁî±D100ËøîÂõûÁªôÂÆø‰∏ª‰∏ªÊú∫ */
 	if(sfc_dt.id == ntohl(oldiph->daddr)) {
     	SFC50_L_WARN(printk(KERN_WARNING "<%s, %d>: loopback to host, id=%08x, sip=%08x\n",
 			__FILE__, __LINE__, sfc_dt.id, ntohl(oldiph->saddr)););
@@ -138,7 +138,7 @@ static unsigned int sfc50_l_hook_out(unsigned int hooknum,
 			return NF_ACCEPT;
 		}
 
-	/* Õ¯πÿ≤È—Ø */
+	/* ÁΩëÂÖ≥Êü•ËØ¢ */
 	sfc50_l_data_lock();
 	if(NF_DROP == sfc50_l_gw_find(skb, oldiph, &newip)) {
 		sfc50_l_data_unlock();
@@ -146,7 +146,7 @@ static unsigned int sfc50_l_hook_out(unsigned int hooknum,
 	}
 	sfc50_l_data_unlock();
 
-	/* ø™ º∑‚◊∞ */
+	/* ÂºÄÂßãÂ∞ÅË£Ö */
 	max_headroom = sizeof(struct iphdr) + MTP_AUTH_INFO_LEN + LL_MAX_HEADER;
 	new_skb = skb_realloc_headroom(skb, max_headroom);
 	if (!new_skb) {
@@ -178,7 +178,7 @@ static unsigned int sfc50_l_hook_out(unsigned int hooknum,
 
 	if(sfc_dt.is_inside) {
 		memset((unsigned char *)newiph + sizeof(struct iphdr),
-			0, MTP_AUTH_INFO_LEN); /* ∆‘¥»œ÷§–≈œ¢ */
+			0, MTP_AUTH_INFO_LEN); /* Ëµ∑Ê∫êËÆ§ËØÅ‰ø°ÊÅØ */
 	}
 	else {
 		struct scatterlist sg;
@@ -234,7 +234,7 @@ crypto_er:
 	return NF_DROP;
 }
 
-/*- Ω” ’¡˜≥Ã -*/
+/*- Êé•Êî∂ÊµÅÁ®ã -*/
 /* erp rx */
 static unsigned int sfc50_l_erp_rx(struct sk_buff *skb)
 {
@@ -259,7 +259,7 @@ static unsigned int sfc50_l_erp_rx(struct sk_buff *skb)
 		return NF_DROP;
 	}
 
-	/* ICMPºÏ≤È */
+	/* ICMPÊ£ÄÊü• */
 	icmph = (struct icmphdr *)((unsigned char *)iph + (iph->ihl << 2));
 	checksum = icmph->checksum;
 	icmph->checksum = 0;
@@ -271,18 +271,18 @@ static unsigned int sfc50_l_erp_rx(struct sk_buff *skb)
 		return NF_DROP;
 	}
 
-	/* ≤ªø…¥Ô‘≠ ºIPÕ∑ */
+	/* ‰∏çÂèØËææÂéüÂßãIPÂ§¥ */
 	iph = (struct iphdr *)((unsigned char *)iph + (iph->ihl << 2) +
 		sizeof(struct icmphdr));
 
-	/* ΩˆΩˆƒ⁄Õ¯Ω«…´£¨–Ë“™Õ®÷™”√ªßø’º‰ */
+	/* ‰ªÖ‰ªÖÂÜÖÁΩëËßíËâ≤ÔºåÈúÄË¶ÅÈÄöÁü•Áî®Êà∑Á©∫Èó¥ */
 	if(sfc_dt.is_inside) {
 		sfc50_l_data_send(ntohl(iph->daddr));
 		SFC50_L_DBG(printk(KERN_DEBUG "<%s, %d>: ERP rx, notify user-space unreach: <dst:%08x>\n",
 			__FILE__, __LINE__, ntohl(iph->daddr)););
 	}
 
-	/* cache ∑¥¿° */
+	/* cache ÂèçÈ¶à */
 	sfc50_l_data_lock();
 	sfc50_l_cache_feedback(iph);
 	sfc50_l_data_unlock();
@@ -348,7 +348,7 @@ static unsigned int sfc50_l_mtp_rx(struct sk_buff *skb)
 	return NF_ACCEPT;
 }
 
-/* Ω” ’¡˜≥Ã»Îø⁄ */
+/* Êé•Êî∂ÊµÅÁ®ãÂÖ•Âè£ */
 static unsigned int sfc50_l_hook_in(unsigned int hooknum,
 					  struct sk_buff *skb,
 					  const struct net_device *in,
@@ -362,7 +362,7 @@ static unsigned int sfc50_l_hook_in(unsigned int hooknum,
 		return NF_ACCEPT;
 	}
 	
-	/* ≤ª¥¶¿Ì∑÷∆¨ */
+	/* ‰∏çÂ§ÑÁêÜÂàÜÁâá */
 	if(unlikely(ip_hdr(skb)->frag_off & htons(IP_OFFSET))) {
 		SFC50_L_WARN(printk(KERN_WARNING "rx: rcv ip frag, skip it!!!\n"););
 		return NF_ACCEPT;

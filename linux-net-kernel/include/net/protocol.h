@@ -32,58 +32,58 @@
 #define MAX_INET_PROTOS	256		/* Must be a power of 2		*/
 
 /* 
- * inet_add_protocolº¯ÊıÓÃÓÚ½«ÉÏÊö½á¹¹µÄÊµÀı(Ö¸Õë)
- * ´æ´¢µ½inet_protos Êı×éÖĞ
+ * inet_add_protocolå‡½æ•°ç”¨äºå°†ä¸Šè¿°ç»“æ„çš„å®ä¾‹(æŒ‡é’ˆ)
+ * å­˜å‚¨åˆ°inet_protos æ•°ç»„ä¸­
  * update:
- *  net_protocolÊÇÒ»¸ö·Ç³£ÖØÒªµÄ½á¹¹£¬¶¨ÒåÁËĞ­Òé×åÖĞÖ§³ÖµÄ
- * ´«Êä²ãĞ­ÒéÒÔ¼°´«Êä²ãµÄ±¨ÎÄ½ÓÊÕÊµÀı¡£´Ë½á¹¹ÊÇÍøÂç²ãºÍ
- * ´«Êä²ãÖ®¼äµÄÇÅÁº£¬µ±ÍøÂçÊı¾İ°ü´ÓÍøÂç²ãÁ÷Ïò´«Êä²ãÊ±£¬
- * »áµ÷ÓÃ´Ë½á¹¹ÖĞµÄ´«Êä²ãĞ­ÒéÊı¾İÊ±£¬»áµ÷ÓÃ´Ë½á¹¹ÖĞµÄ´«Êä²ã
- * Ğ­ÒéÊı¾İ±¨½ÓÊÕ´¦Àíº¯Êı¡£×¢Òâ£º´Ë´¦Ëµ"´«Êä²ã"²¢²»×¼È·£¬
- * ÊÂÊµÉÏ°üÀ¨ICMPºÍIGMPĞ­Òé¡£
+ *  net_protocolæ˜¯ä¸€ä¸ªéå¸¸é‡è¦çš„ç»“æ„ï¼Œå®šä¹‰äº†åè®®æ—ä¸­æ”¯æŒçš„
+ * ä¼ è¾“å±‚åè®®ä»¥åŠä¼ è¾“å±‚çš„æŠ¥æ–‡æ¥æ”¶å®ä¾‹ã€‚æ­¤ç»“æ„æ˜¯ç½‘ç»œå±‚å’Œ
+ * ä¼ è¾“å±‚ä¹‹é—´çš„æ¡¥æ¢ï¼Œå½“ç½‘ç»œæ•°æ®åŒ…ä»ç½‘ç»œå±‚æµå‘ä¼ è¾“å±‚æ—¶ï¼Œ
+ * ä¼šè°ƒç”¨æ­¤ç»“æ„ä¸­çš„ä¼ è¾“å±‚åè®®æ•°æ®æ—¶ï¼Œä¼šè°ƒç”¨æ­¤ç»“æ„ä¸­çš„ä¼ è¾“å±‚
+ * åè®®æ•°æ®æŠ¥æ¥æ”¶å¤„ç†å‡½æ•°ã€‚æ³¨æ„ï¼šæ­¤å¤„è¯´"ä¼ è¾“å±‚"å¹¶ä¸å‡†ç¡®ï¼Œ
+ * äº‹å®ä¸ŠåŒ…æ‹¬ICMPå’ŒIGMPåè®®ã€‚
  *
- * ÄÚºËÖĞÎªInternetĞ­Òé×å¶¨ÒåÁË4¸önet_protocol½á¹¹ÊµÀı---
- * icmp_protocol¡¢udp_protocol¡¢tcp_protocolºÍigmp_protocol
- * ,·Ö±ğÓëICMP¡¢UDP¡¢TCPºÍIGMPĞ­ÒéÒ»Ò»¶ÔÓ¦¡£ÔÚInternetĞ­Òé×å
- * ³õÊ¼»¯Ê±£¬µ÷ÓÃinet_add_protocol()½«ËüÃÇ×¢²áµ½net_protocol
- * ½á¹¹Ö¸ÕëÊı×éinet_protos[MAX_INET_PROTOS]ÖĞ¡£ÔÚÏµÍ³ÔËĞĞ
- * ¹ı³ÌÖĞ£¬ËæÊ±¿ÉÒÔÓÃÄÚºËÄ£¿é¼ÓÔØ/Ğ¶ÔØ·½Ê½£¬µ÷ÓÃº¯Êıinet_add_protocol()
- * /inet_del_protocol()½«net_protocol½á¹¹ÊµÀı×¢²áµ½inet_protos[]Êı×éÖĞ£¬
- * »ò´ÓÖĞÉ¾³ı¡£
- *///ops = rcu_dereference(inet_protos[proto]);Í¨¹ı¸Ãº¯Êı»ñÈ¡¶ÔÓ¦µÄĞ­Òéops
+ * å†…æ ¸ä¸­ä¸ºInternetåè®®æ—å®šä¹‰äº†4ä¸ªnet_protocolç»“æ„å®ä¾‹---
+ * icmp_protocolã€udp_protocolã€tcp_protocolå’Œigmp_protocol
+ * ,åˆ†åˆ«ä¸ICMPã€UDPã€TCPå’ŒIGMPåè®®ä¸€ä¸€å¯¹åº”ã€‚åœ¨Internetåè®®æ—
+ * åˆå§‹åŒ–æ—¶ï¼Œè°ƒç”¨inet_add_protocol()å°†å®ƒä»¬æ³¨å†Œåˆ°net_protocol
+ * ç»“æ„æŒ‡é’ˆæ•°ç»„inet_protos[MAX_INET_PROTOS]ä¸­ã€‚åœ¨ç³»ç»Ÿè¿è¡Œ
+ * è¿‡ç¨‹ä¸­ï¼Œéšæ—¶å¯ä»¥ç”¨å†…æ ¸æ¨¡å—åŠ è½½/å¸è½½æ–¹å¼ï¼Œè°ƒç”¨å‡½æ•°inet_add_protocol()
+ * /inet_del_protocol()å°†net_protocolç»“æ„å®ä¾‹æ³¨å†Œåˆ°inet_protos[]æ•°ç»„ä¸­ï¼Œ
+ * æˆ–ä»ä¸­åˆ é™¤ã€‚
+ *///ops = rcu_dereference(inet_protos[proto]);é€šè¿‡è¯¥å‡½æ•°è·å–å¯¹åº”çš„åè®®ops
 struct net_protocol {//icmp_protocol  tcp_protocol  udp_protocol
-       /* ·Ö×é½«´«µİµ½¸Ãº¯Êı½øĞĞ½øÒ»²½´¦Àí*/
+       /* åˆ†ç»„å°†ä¼ é€’åˆ°è¯¥å‡½æ•°è¿›è¡Œè¿›ä¸€æ­¥å¤„ç†*/
     /*
-     * ´«Êä²ãĞ­ÒéÊı¾İ°ü½ÓÊÕ´¦Àíº¯ÊıÖ¸Õë£¬µ±ÍøÂç²ã½ÓÊÕIPÊı¾İ°ü
-     * Ö®ºó£¬¸ù¾İIPÊı¾İ°üËùÖ¸Ê¾´«Êä²ãĞ­Òé£¬µ÷ÓÃ¶ÔÓ¦´«Êä²ã
-     * net_protocol½á¹¹µÄ¸ÃÀı³Ì½ÓÊÕ±¨ÎÄ¡£
-     * TCPĞ­ÒéµÄ½ÓÊÕº¯ÊıÎªtcp_v4_rcv()£¬UDPĞ­ÒéµÄ½ÓÊÕº¯ÊıÎª
-     * udp_rcv()£¬IGMPĞ­ÒéÎªigmp_rcv()£¬ICMPĞ­ÒéÎªicmp_rcv()¡£
+     * ä¼ è¾“å±‚åè®®æ•°æ®åŒ…æ¥æ”¶å¤„ç†å‡½æ•°æŒ‡é’ˆï¼Œå½“ç½‘ç»œå±‚æ¥æ”¶IPæ•°æ®åŒ…
+     * ä¹‹åï¼Œæ ¹æ®IPæ•°æ®åŒ…æ‰€æŒ‡ç¤ºä¼ è¾“å±‚åè®®ï¼Œè°ƒç”¨å¯¹åº”ä¼ è¾“å±‚
+     * net_protocolç»“æ„çš„è¯¥ä¾‹ç¨‹æ¥æ”¶æŠ¥æ–‡ã€‚
+     * TCPåè®®çš„æ¥æ”¶å‡½æ•°ä¸ºtcp_v4_rcv()ï¼ŒUDPåè®®çš„æ¥æ”¶å‡½æ•°ä¸º
+     * udp_rcv()ï¼ŒIGMPåè®®ä¸ºigmp_rcv()ï¼ŒICMPåè®®ä¸ºicmp_rcv()ã€‚
      */
 	int			(*handler)(struct sk_buff *skb);
        /* 
-        * ÔÚ½ÓÊÕµ½ICMP´íÎóĞÅÏ¢²¢ĞèÒª´«µİµ½¸ü¸ß²ãÊ±£¬
-        * µ÷ÓÃ¸Ãº¯Êı
+        * åœ¨æ¥æ”¶åˆ°ICMPé”™è¯¯ä¿¡æ¯å¹¶éœ€è¦ä¼ é€’åˆ°æ›´é«˜å±‚æ—¶ï¼Œ
+        * è°ƒç”¨è¯¥å‡½æ•°
         */
     /*
-     * ÔÚICMPÄ£¿éÖĞ½ÓÊÕµ½²î´í±¨ÎÄºó£¬»á½âÎö²î´í±¨ÎÄ£¬²¢¸ù¾İ
-     * ²î´í±¨ÎÄÖĞÔ­Ê¼µÄIPÊ×²¿£¬µ÷ÓÃ¶ÔÓ¦´«Êä²ãµÄÒì³£´¦Àí
-     * º¯Êıerr_handler¡£TCPĞ­ÒéÎªtcp_v4_err()£¬UDPÎª
-     * udp_err()£¬IGMPÔòÎŞ¡£
+     * åœ¨ICMPæ¨¡å—ä¸­æ¥æ”¶åˆ°å·®é”™æŠ¥æ–‡åï¼Œä¼šè§£æå·®é”™æŠ¥æ–‡ï¼Œå¹¶æ ¹æ®
+     * å·®é”™æŠ¥æ–‡ä¸­åŸå§‹çš„IPé¦–éƒ¨ï¼Œè°ƒç”¨å¯¹åº”ä¼ è¾“å±‚çš„å¼‚å¸¸å¤„ç†
+     * å‡½æ•°err_handlerã€‚TCPåè®®ä¸ºtcp_v4_err()ï¼ŒUDPä¸º
+     * udp_err()ï¼ŒIGMPåˆ™æ— ã€‚
      */
 	void			(*err_handler)(struct sk_buff *skb, u32 info);
     /*
-     * GSOÊÇÍøÂçÉè±¸Ö§³Ö´«Êä²ãµÄÒ»¸ö¹¦ÄÜ¡£
-     * µ±GSOÊı¾İ°üÊä³öÊ±µ½´ïÍøÂçÉè±¸£¬Èç¹ûÍøÂçÉè±¸²»Ö§³ÖGSOµÄ
-     * Çé¿ö£¬ÔòĞèÒª´«Êä²ã¶ÔÊä³öµÄÊı¾İ°üÖØĞÂ½øĞĞGSO·Ö¶ÎºÍ
-     * Ğ£ÑéºÍ¼ÆËã¡£Òò´ËĞèÒªÍøÂç²ãÌá¹©½Ó¿Ú¸øÉè±¸²ã£¬ÄÜ¹»
-     * ·ÃÎÊ´«Êä²ãµÄGSO·Ö¶ÎºÍĞ£ÑéºÍµÄ¼ÆËã¹¦ÄÜ£¬¶ÔÊä³öµÄÊı¾İ°ü
-     * ½øĞĞ·Ö¶ÎºÍÖ´ĞĞĞ£ÑéºÍ¡£
-     * gso_send_check½Ó¿Ú¾ÍÊÇ»Øµ÷´«Êä²ãÔÚ·Ö¶ÎÖ®Ç°¶ÔÎ±Ê×²¿
-     * ½øĞĞĞ£ÑéºÍµÄ¼ÆËã¡£
-     * gso_segment½Ó¿Ú¾ÍÊÇ»Øµ÷´«Êä²ãGSO·Ö¶Î·½·¨¶Ô´ó¶Î½øĞĞ·Ö¶Î¡£
-     * TCPÖĞÊµÏÖµÄº¯ÊıÎªtcp_v4_gso_send_check()ºÍtcp_tso_segment()¡£
-     * UDP²»Ö§³ÖGSO¡£
+     * GSOæ˜¯ç½‘ç»œè®¾å¤‡æ”¯æŒä¼ è¾“å±‚çš„ä¸€ä¸ªåŠŸèƒ½ã€‚
+     * å½“GSOæ•°æ®åŒ…è¾“å‡ºæ—¶åˆ°è¾¾ç½‘ç»œè®¾å¤‡ï¼Œå¦‚æœç½‘ç»œè®¾å¤‡ä¸æ”¯æŒGSOçš„
+     * æƒ…å†µï¼Œåˆ™éœ€è¦ä¼ è¾“å±‚å¯¹è¾“å‡ºçš„æ•°æ®åŒ…é‡æ–°è¿›è¡ŒGSOåˆ†æ®µå’Œ
+     * æ ¡éªŒå’Œè®¡ç®—ã€‚å› æ­¤éœ€è¦ç½‘ç»œå±‚æä¾›æ¥å£ç»™è®¾å¤‡å±‚ï¼Œèƒ½å¤Ÿ
+     * è®¿é—®ä¼ è¾“å±‚çš„GSOåˆ†æ®µå’Œæ ¡éªŒå’Œçš„è®¡ç®—åŠŸèƒ½ï¼Œå¯¹è¾“å‡ºçš„æ•°æ®åŒ…
+     * è¿›è¡Œåˆ†æ®µå’Œæ‰§è¡Œæ ¡éªŒå’Œã€‚
+     * gso_send_checkæ¥å£å°±æ˜¯å›è°ƒä¼ è¾“å±‚åœ¨åˆ†æ®µä¹‹å‰å¯¹ä¼ªé¦–éƒ¨
+     * è¿›è¡Œæ ¡éªŒå’Œçš„è®¡ç®—ã€‚
+     * gso_segmentæ¥å£å°±æ˜¯å›è°ƒä¼ è¾“å±‚GSOåˆ†æ®µæ–¹æ³•å¯¹å¤§æ®µè¿›è¡Œåˆ†æ®µã€‚
+     * TCPä¸­å®ç°çš„å‡½æ•°ä¸ºtcp_v4_gso_send_check()å’Œtcp_tso_segment()ã€‚
+     * UDPä¸æ”¯æŒGSOã€‚
      */
 	int			(*gso_send_check)(struct sk_buff *skb);
 	struct sk_buff	       *(*gso_segment)(struct sk_buff *skb,
@@ -92,8 +92,8 @@ struct net_protocol {//icmp_protocol  tcp_protocol  udp_protocol
 					       struct sk_buff *skb);
 	int			(*gro_complete)(struct sk_buff *skb);
     /*
-     * no_policy±êÊ¶ÔÚÂ·ÓÉÊ±ÊÇ·ñ½øĞĞ²ßÂÔÂ·ÓÉ¡£TCPºÍUDPÄ¬ÈÏ²»½øĞĞ
-     * ²ßÂÔÂ·ÓÉ¡£
+     * no_policyæ ‡è¯†åœ¨è·¯ç”±æ—¶æ˜¯å¦è¿›è¡Œç­–ç•¥è·¯ç”±ã€‚TCPå’ŒUDPé»˜è®¤ä¸è¿›è¡Œ
+     * ç­–ç•¥è·¯ç”±ã€‚
      */
 	unsigned int		no_policy:1,
 				netns_ok:1;
@@ -126,24 +126,24 @@ struct inet6_protocol {
 #endif
 
 /* This is used to register socket interfaces for IP protocols.  */
-struct inet_protosw { //²Î¼ûinetsw_array
+struct inet_protosw { //å‚è§inetsw_array
 	struct list_head list;
 
         /* These two fields form the lookup key.  */
-	unsigned short	 type;	   /* This is the 2nd argument to socket(2). ¼ûsock_typeÓëÓ¦ÓÃ³ÌĞò´´½¨Ì×½Ó×Ösockº¯ÊıµÄµÚ¶ş¸ö²ÎÊıÒ»ÖÂ */
-	unsigned short	 protocol; /* This is the L4 protocol number.IPPROTO_TCP UDPµÈ  */
+	unsigned short	 type;	   /* This is the 2nd argument to socket(2). è§sock_typeä¸åº”ç”¨ç¨‹åºåˆ›å»ºå¥—æ¥å­—sockå‡½æ•°çš„ç¬¬äºŒä¸ªå‚æ•°ä¸€è‡´ */
+	unsigned short	 protocol; /* This is the L4 protocol number.IPPROTO_TCP UDPç­‰  */
 
-	struct proto	 *prot;//Ì×½Ó¿ÚÍøÂç²ã½Ó¿Ú£¬¶ÔÓ¦tcp_prot  udp_prot  raw_prot
-	const struct proto_ops *ops; //Ì×½Ó¿Ú´«Êä²ã½Ó¿Ú¡£TCPÎªinet_stream_ops UDPÎªinet_dgram_ops Ô­Ê¼Ì×½Ó¿ÚÔòÎªinet_sockraw_ops
+	struct proto	 *prot;//å¥—æ¥å£ç½‘ç»œå±‚æ¥å£ï¼Œå¯¹åº”tcp_prot  udp_prot  raw_prot
+	const struct proto_ops *ops; //å¥—æ¥å£ä¼ è¾“å±‚æ¥å£ã€‚TCPä¸ºinet_stream_ops UDPä¸ºinet_dgram_ops åŸå§‹å¥—æ¥å£åˆ™ä¸ºinet_sockraw_ops
   
-	char             no_check;   /* checksum on rcv/xmit/none? */ //±íÊ¾ÊÇ·ñĞèÒªĞ£Ñé£¬TCPÎª0±íÊ¾ĞèÒªĞ£Ñé£¬UDPÎªUDP_CSUM_NOXMIT  UDP_CSUM_NORCVµÈ
-	unsigned char	 flags;      /* See INET_PROTOSW_* below.  */  //´«Êä¿ØÖÆ¿éµÄICSKÖĞÊ¹ÓÃ
+	char             no_check;   /* checksum on rcv/xmit/none? */ //è¡¨ç¤ºæ˜¯å¦éœ€è¦æ ¡éªŒï¼ŒTCPä¸º0è¡¨ç¤ºéœ€è¦æ ¡éªŒï¼ŒUDPä¸ºUDP_CSUM_NOXMIT  UDP_CSUM_NORCVç­‰
+	unsigned char	 flags;      /* See INET_PROTOSW_* below.  */  //ä¼ è¾“æ§åˆ¶å—çš„ICSKä¸­ä½¿ç”¨
 };
-#define INET_PROTOSW_REUSE 0x01	     /* Are ports automatically reusable?  ¶Ë¿ÚÖØÓÃ*/
-#define INET_PROTOSW_PERMANENT 0x02  /* Permanent protocols are unremovable. Ğ­Òé²»ÄÜ±»Ìæ»»ºÍĞ¶ÔØ  ÓĞ¸Ã±êÊ¶µÄÌ×½Ó¿Ú²»ÄÜÔÊĞíinet_unregister_protosw*/
-#define INET_PROTOSW_ICSK      0x04  /* Is this an inet_connection_sock? ±íÊ¾ÊÇ·ñÊÇÁ¬½ÓÀàĞÍµÄÌ×½Ó¿Ú*/
+#define INET_PROTOSW_REUSE 0x01	     /* Are ports automatically reusable?  ç«¯å£é‡ç”¨*/
+#define INET_PROTOSW_PERMANENT 0x02  /* Permanent protocols are unremovable. åè®®ä¸èƒ½è¢«æ›¿æ¢å’Œå¸è½½  æœ‰è¯¥æ ‡è¯†çš„å¥—æ¥å£ä¸èƒ½å…è®¸inet_unregister_protosw*/
+#define INET_PROTOSW_ICSK      0x04  /* Is this an inet_connection_sock? è¡¨ç¤ºæ˜¯å¦æ˜¯è¿æ¥ç±»å‹çš„å¥—æ¥å£*/
 
-extern const struct net_protocol *inet_protos[MAX_INET_PROTOS]; //²Î¿¼³õÊ¼»¯ÔÚinet_init£¬ÔÚº¯Êırcu_dereference(inet_protos[hash]);ÖĞ»ñÈ¡¶ÔÓ¦protocol(tcp_protocol udp_protocol raw_protocol)
+extern const struct net_protocol *inet_protos[MAX_INET_PROTOS]; //å‚è€ƒåˆå§‹åŒ–åœ¨inet_initï¼Œåœ¨å‡½æ•°rcu_dereference(inet_protos[hash]);ä¸­è·å–å¯¹åº”protocol(tcp_protocol udp_protocol raw_protocol)
 
 #if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
 extern const struct inet6_protocol *inet6_protos[MAX_INET_PROTOS];

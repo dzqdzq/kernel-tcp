@@ -1649,13 +1649,13 @@ static inline unsigned short guess_mtu(unsigned short old_mtu)
 }
 
 /*
- * �����յ�һ��ICMP��FRAGMENTATION NEEDED��Ϣʱ���������
- * ·�����PMTU���뱻����ΪICMP�ײ���ָ����MTU��ICMP
- * ģ�����ip_rt_frag_needed()������·�ɻ����
- * ����˵������:
- * @iph:ԭʼIP���ݰ��ײ�
- * @new_mtu:�����������һ����PMTU
- * ����ֵ�����µ�·�ɻ��������ֵ�е�PMTU��
+ * 当接收到一个ICMP的FRAGMENTATION NEEDED消息时，所有相关
+ * 路由项的PMTU必须被更新为ICMP首部中指定的MTU，ICMP
+ * 模块调用ip_rt_frag_needed()来更新路由缓存项。
+ * 参数说明如下:
+ * @iph:原始IP数据包首部
+ * @new_mtu:差错报文中下一跳的PMTU
+ * 返回值，更新到路由缓存项度量值中的PMTU。
  */
 unsigned short ip_rt_frag_needed(struct net *net, struct iphdr *iph,
 				 unsigned short new_mtu,
@@ -2153,7 +2153,7 @@ static int ip_route_input_slow(struct sk_buff *skb, __be32 daddr, __be32 saddr,
 	 */
 
 	if (ipv4_is_multicast(saddr) || ipv4_is_lbcast(saddr) ||
-	    ipv4_is_loopback(saddr))//�ಥ��ַ  �㲥��ַ   �ػ���ַ
+	    ipv4_is_loopback(saddr))//多播地址  广播地址   回环地址
 		goto martian_source;
 
 	if (daddr == htonl(0xFFFFFFFF) || (saddr == 0 && daddr == 0))
@@ -2184,7 +2184,7 @@ static int ip_route_input_slow(struct sk_buff *skb, __be32 daddr, __be32 saddr,
 	if (res.type == RTN_BROADCAST)
 		goto brd_input;
 
-	if (res.type == RTN_LOCAL) {//�����ص�
+	if (res.type == RTN_LOCAL) {//到本地的
 		int result;
 		result = fib_validate_source(saddr, daddr, tos,
 					     net->loopback_dev->ifindex,
@@ -2197,13 +2197,13 @@ static int ip_route_input_slow(struct sk_buff *skb, __be32 daddr, __be32 saddr,
 		goto local_input;
 	}
 
-    //��Ҫת����
+    //需要转发的
 	if (!IN_DEV_FORWARD(in_dev))
 		goto e_hostunreach;
 	if (res.type != RTN_UNICAST)
 		goto martian_destination;
 
-	err = ip_mkroute_input(skb, &res, &fl, in_dev, daddr, saddr, tos); //ip_forward�ڸú�����ע��
+	err = ip_mkroute_input(skb, &res, &fl, in_dev, daddr, saddr, tos); //ip_forward在该函数中注册
 done:
 	in_dev_put(in_dev);
 	if (free_res)
@@ -2257,7 +2257,7 @@ local_input:
 	rth->idev	= in_dev_get(rth->u.dst.dev);
 	rth->rt_gateway	= daddr;
 	rth->rt_spec_dst= spec_dst;
-	rth->u.dst.input= ip_local_deliver;//������local
+	rth->u.dst.input= ip_local_deliver;//到本地local
 	rth->rt_flags 	= flags|RTCF_LOCAL;
 	if (res.type == RTN_UNREACHABLE) {
 		rth->u.dst.input= ip_error;
@@ -2306,19 +2306,19 @@ martian_source:
 }
 
 /*
- * ��������ı���ͨ������ip_route_input()��·�ɻ����в���
- * ·�ɣ����������û��ƥ��·��ʱ������ip_route_input_slow()
- * ��·�ɱ��в���·�ɣ����������ͨ��������·�ɻ���
- * ������һ���������������Ĵ��������뱨�Ĵ���
- * ���ơ�
- * �˺����������뱨�ĵ�·�ɻ����ѯ����ʱ���ı�������
- * ����Ҫ��·�ɣ�����ARP����ĳЩԭ��ʹ��ip_route_input()��
- * ����local·�ɱ�����ʱ��skbӦ����һ�������ARP����
- * ����˵������:
- * @skb:����·�ɲ��ҵı���
- * @saddr��daddr:���ڲ��ҵ�Դ��ַ��Ŀ�ĵ�ַ
- * @tos:IP�ײ��е�TOS�ֶ�
- * @dev:��������ݰ��������豸��
+ * 对于输入的报文通常调用ip_route_input()在路由缓存中查找
+ * 路由，当缓存查找没有匹配路由时将调用ip_route_input_slow()
+ * 在路由表中查找路由，如果命中则通常还会在路由缓存
+ * 中添加一条表项。对于输出报文处理与输入报文处理
+ * 类似。
+ * 此函数用于输入报文的路由缓存查询。有时报文本身可能
+ * 不需要被路由，例如ARP出于某些原因使用ip_route_input()来
+ * 查找local路由表，这时的skb应当是一个输入的ARP请求。
+ * 参数说明如下:
+ * @skb:进行路由查找的报文
+ * @saddr和daddr:用于查找的源地址和目的地址
+ * @tos:IP首部中的TOS字段
+ * @dev:输入该数据包的网络设备。
  */
 int ip_route_input_common(struct sk_buff *skb, __be32 daddr, __be32 saddr,
 			   u8 tos, struct net_device *dev, bool noref)
@@ -2335,18 +2335,18 @@ int ip_route_input_common(struct sk_buff *skb, __be32 daddr, __be32 saddr,
 
 	tos &= IPTOS_RT_MASK;
 	/*
-	 * ����Ŀ�ĵ�ַ��Դ��ַ�����������豸�õ�
-	 * �洢��·�ɵ�ɢ��Ͱ��
+	 * 根据目的地址、源地址和输入网络设备得到
+	 * 存储该路由的散列桶。
 	 */
 	hash = rt_hash(daddr, saddr, iif, rt_genid(net));
 
     /*
-	 * ������Ͱ������Ŀ�ĵ�ַ��Դ��ַ����������
-	 * �豸��ƥ���·���ֱ���������л�����
-	 * β����������ڻ���������·����������
-	 * ��һ�α�ʹ�õ�ʱ������ñ����Ѿ���ʹ�õ�
-	 * �������Լ����������ʣ�Ȼ����������SKB��Ŀ
-	 * ��·����ں󷵻ء�
+	 * 遍历该桶查找与目的地址、源地址和输入网络
+	 * 设备相匹配的路由项，直至查找命中或到链表
+	 * 尾部。如果能在缓存中命中路由项，则更新最
+	 * 后一次被使用的时间戳、该表项已经被使用的
+	 * 次数，以及缓存命中率，然后设置输入SKB的目
+	 * 的路由入口后返回。
 	 */
 	rcu_read_lock();
 	for (rth = rcu_dereference(rt_hash_table[hash].chain); rth;
@@ -2387,13 +2387,13 @@ skip_cache:
 	   route cache entry is created eventually.
 	 */
 	/*
-	 * ����ڱ���Ŀ�ĵ�ַΪ�ಥʱ�������ʧ�ܣ�
-	 * ��ô������������ֻҪ��һ�����㣬�ñ���
-	 * �ͱ��͸��ಥ��������ip_route_input_mc()��������
-	 * ���������ش�����:
-	 * 1)Ŀ�ĵ�ַʱ�������õĶಥ��ַ������ͨ��ip_check_mc()������
-	 * 2)���ں˱���ʱ�����˶ಥ·��(CONFIG_IP_MROUTE)������£�Ŀ��
-	 *    ��ַ���Ǳ������ã����豸֧�ֶಥת����
+	 * 如果在报文目的地址为多播时缓存查找失败，
+	 * 那么以下两个条件只要有一个满足，该报文
+	 * 就被送给多播处理函数ip_route_input_mc()，否则不作
+	 * 处理，返回错误码:
+	 * 1)目的地址时本地配置的多播地址，这是通过ip_check_mc()来检查的
+	 * 2)在内核编译时启动了多播路由(CONFIG_IP_MROUTE)的情况下，目的
+	 *    地址不是本地配置，且设备支持多播转发。
 	 */
 	if (ipv4_is_multicast(daddr)) {
 		struct in_device *in_dev;
@@ -2419,8 +2419,8 @@ skip_cache:
 	}
 
 	/*
-	 * �����Ŀ�ĵ�ַ���Ƕಥ����»������ʧ�ܣ���
-	 * ����ip_route_input_slow()�ڲ���·�ɱ��в��ҡ�
+	 * 如果在目的地址不是多播情况下缓存查找失败，则
+	 * 调用ip_route_input_slow()在查找路由表中查找。
 	 */
 	return ip_route_input_slow(skb, daddr, saddr, tos, dev);
 }

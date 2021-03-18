@@ -346,7 +346,7 @@ static struct notifier_block dst_dev_notifier = {
 	.priority = -10, /* must be called after other network notifiers */
 };
 
-//³õÊ¼»¯Ä¿µÄÂ·ÓÉ»º´æ
+//åˆå§‹åŒ–ç›®çš„è·¯ç”±ç¼“å­˜
 void __init dst_init(void)
 {
 	register_netdevice_notifier(&dst_dev_notifier);

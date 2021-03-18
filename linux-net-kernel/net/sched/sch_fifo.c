@@ -19,10 +19,10 @@
 
 /* 1 band FIFO pseudo-"scheduler" */
 
-//Ë½ÓĞÊı¾İ£¬Ò²¾ÍÊÇfifoµÄ²ÎÊı
-struct fifo_sched_data //¸Ã½á¹¹½ô¸úÔÚQdiscºóÃæ£¬¼ûpfifo_enqueue->struct fifo_sched_data *q = qdisc_priv(sch);
+//ç§æœ‰æ•°æ®ï¼Œä¹Ÿå°±æ˜¯fifoçš„å‚æ•°
+struct fifo_sched_data //è¯¥ç»“æ„ç´§è·Ÿåœ¨Qdiscåé¢ï¼Œè§pfifo_enqueue->struct fifo_sched_data *q = qdisc_priv(sch);
 {
-	u32 limit; //Ä¬ÈÏÎª(MTU+ETH(14×Ö½Ú))*net_device.tx_queue_len  £¬¼ûfifo_init
+	u32 limit; //é»˜è®¤ä¸º(MTU+ETH(14å­—èŠ‚))*net_device.tx_queue_len  ï¼Œè§fifo_init
 };
 
 static int bfifo_enqueue(struct sk_buff *skb, struct Qdisc* sch)
@@ -39,10 +39,10 @@ static int pfifo_enqueue(struct sk_buff *skb, struct Qdisc* sch)
 {
 	struct fifo_sched_data *q = qdisc_priv(sch);
 
-	if (likely(skb_queue_len(&sch->q) < q->limit)) //Ö±½ÓÈëqdisc->q¶ÓÁĞ£¬ËùÒÔÊÇµäĞÍµÄÏÈ½øÏÈ³ö
+	if (likely(skb_queue_len(&sch->q) < q->limit)) //ç›´æ¥å…¥qdisc->qé˜Ÿåˆ—ï¼Œæ‰€ä»¥æ˜¯å…¸å‹çš„å…ˆè¿›å…ˆå‡º
 		return qdisc_enqueue_tail(skb, sch);
 
-	return qdisc_reshape_fail(skb, sch); //Èç¹û¶ÓÁĞ¹æÔòÖĞÏŞ¶¨µÄSKB´ïµ½ÉÏÏŞÁË£¬ÔòÖ±½Ó¶ªÆú¸ÃSKB
+	return qdisc_reshape_fail(skb, sch); //å¦‚æœé˜Ÿåˆ—è§„åˆ™ä¸­é™å®šçš„SKBè¾¾åˆ°ä¸Šé™äº†ï¼Œåˆ™ç›´æ¥ä¸¢å¼ƒè¯¥SKB
 }
 
 static int pfifo_tail_enqueue(struct sk_buff *skb, struct Qdisc* sch)
@@ -64,7 +64,7 @@ static int pfifo_tail_enqueue(struct sk_buff *skb, struct Qdisc* sch)
 
 	return NET_XMIT_CN;
 }
-//¼ûbfifo_qdisc_ops     fifo·½Ê½ÊÇ¼òµ¥µÄÏŞËÙ·½Ê½£¬ÔÊĞíQdisc µÄskb¶ÓÁĞÖĞ×î¶àÈİÄÉµÄSKB°ü¸öÊı£¬Èç¹û°üÀ´µÄÊ±ºò¸ÃSKB¶ÓÁĞÖĞµÄ°ü¸öÊı´ïµ½ÉÏÏŞ£¬ÔòÖ±½Ó¶ªÆú
+//è§bfifo_qdisc_ops     fifoæ–¹å¼æ˜¯ç®€å•çš„é™é€Ÿæ–¹å¼ï¼Œå…è®¸Qdisc çš„skbé˜Ÿåˆ—ä¸­æœ€å¤šå®¹çº³çš„SKBåŒ…ä¸ªæ•°ï¼Œå¦‚æœåŒ…æ¥çš„æ—¶å€™è¯¥SKBé˜Ÿåˆ—ä¸­çš„åŒ…ä¸ªæ•°è¾¾åˆ°ä¸Šé™ï¼Œåˆ™ç›´æ¥ä¸¢å¼ƒ
 static int fifo_init(struct Qdisc *sch, struct nlattr *opt)
 {
 	struct fifo_sched_data *q = qdisc_priv(sch);
@@ -100,11 +100,11 @@ nla_put_failure:
 	return -1;
 }
 
-/*pfifo_fast_ops pfifo_qdisc_ops tbf_qdisc_ops sfq_qdisc_ops prio_class_opsÕâ¼¸¸ö¶¼Îª³ö¿Ú£¬ingress_qdisc_opsÎªÈë¿Ú */
+/*pfifo_fast_ops pfifo_qdisc_ops tbf_qdisc_ops sfq_qdisc_ops prio_class_opsè¿™å‡ ä¸ªéƒ½ä¸ºå‡ºå£ï¼Œingress_qdisc_opsä¸ºå…¥å£ */
 struct Qdisc_ops pfifo_qdisc_ops {//__read_mostly = {
-	.id		=	"pfifo",  //Èç¹û¶ÓÁĞ¹æÔòÖĞÏŞ¶¨µÄSKB´ïµ½ÉÏÏŞÁË£¬ÔòÖ±½Ó¶ªÆú¸ÃSKB,Õâ¸öÉÏÏŞÎªÏÂÃæµÄpriv_sizeÖĞµÄlimit½øĞĞÅäÖÃ
+	.id		=	"pfifo",  //å¦‚æœé˜Ÿåˆ—è§„åˆ™ä¸­é™å®šçš„SKBè¾¾åˆ°ä¸Šé™äº†ï¼Œåˆ™ç›´æ¥ä¸¢å¼ƒè¯¥SKB,è¿™ä¸ªä¸Šé™ä¸ºä¸‹é¢çš„priv_sizeä¸­çš„limitè¿›è¡Œé…ç½®
 	.priv_size	=	sizeof(struct fifo_sched_data),
-	.enqueue	=	pfifo_enqueue, ////Ö±½ÓÈëqdisc->q¶ÓÁĞ£¬ËùÒÔÊÇµäĞÍµÄÏÈ½øÏÈ³ö
+	.enqueue	=	pfifo_enqueue, ////ç›´æ¥å…¥qdisc->qé˜Ÿåˆ—ï¼Œæ‰€ä»¥æ˜¯å…¸å‹çš„å…ˆè¿›å…ˆå‡º
 	.dequeue	=	qdisc_dequeue_head,
 	.peek		=	qdisc_peek_head,
 	.drop		=	qdisc_queue_drop,
@@ -116,7 +116,7 @@ struct Qdisc_ops pfifo_qdisc_ops {//__read_mostly = {
 };
 EXPORT_SYMBOL(pfifo_qdisc_ops);
 
-struct Qdisc_ops bfifo_qdisc_ops {//__read_mostly = {  fifo·½Ê½ÊÇ¼òµ¥µÄÏŞËÙ·½Ê½£¬ÔÊĞíQdisc µÄskb¶ÓÁĞÖĞ×î¶àÈİÄÉµÄSKB°ü¸öÊı£¬Èç¹û°üÀ´µÄÊ±ºò¸ÃSKB¶ÓÁĞÖĞµÄ°ü¸öÊı´ïµ½ÉÏÏŞ£¬ÔòÖ±½Ó¶ªÆú
+struct Qdisc_ops bfifo_qdisc_ops {//__read_mostly = {  fifoæ–¹å¼æ˜¯ç®€å•çš„é™é€Ÿæ–¹å¼ï¼Œå…è®¸Qdisc çš„skbé˜Ÿåˆ—ä¸­æœ€å¤šå®¹çº³çš„SKBåŒ…ä¸ªæ•°ï¼Œå¦‚æœåŒ…æ¥çš„æ—¶å€™è¯¥SKBé˜Ÿåˆ—ä¸­çš„åŒ…ä¸ªæ•°è¾¾åˆ°ä¸Šé™ï¼Œåˆ™ç›´æ¥ä¸¢å¼ƒ
 	.id		=	"bfifo",
 	.priv_size	=	sizeof(struct fifo_sched_data),
 	.enqueue	=	bfifo_enqueue,
@@ -131,7 +131,7 @@ struct Qdisc_ops bfifo_qdisc_ops {//__read_mostly = {  fifo·½Ê½ÊÇ¼òµ¥µÄÏŞËÙ·½Ê½£
 };
 EXPORT_SYMBOL(bfifo_qdisc_ops);
 
-struct Qdisc_ops pfifo_head_drop_qdisc_ops {//__read_mostly = {  fifo·½Ê½ÊÇ¼òµ¥µÄÏŞËÙ·½Ê½£¬ÔÊĞíQdisc µÄskb¶ÓÁĞÖĞ×î¶àÈİÄÉµÄSKB°ü¸öÊı
+struct Qdisc_ops pfifo_head_drop_qdisc_ops {//__read_mostly = {  fifoæ–¹å¼æ˜¯ç®€å•çš„é™é€Ÿæ–¹å¼ï¼Œå…è®¸Qdisc çš„skbé˜Ÿåˆ—ä¸­æœ€å¤šå®¹çº³çš„SKBåŒ…ä¸ªæ•°
 	.id		=	"pfifo_head_drop",
 	.priv_size	=	sizeof(struct fifo_sched_data),
 	.enqueue	=	pfifo_tail_enqueue,

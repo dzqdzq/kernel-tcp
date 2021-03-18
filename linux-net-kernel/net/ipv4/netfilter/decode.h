@@ -622,48 +622,48 @@ typedef struct _Packet
 {
 	struct sk_buff * skb;
 	struct pintercept_pkthdr *pkth;   /* BPF data */
-    u_int8_t *pkt;              /* base pointer to the raw packet data  yang Ö¸ÏòÊµ¼ÊdecodeµÄÊı¾İ*/
+    u_int8_t *pkt;              /* base pointer to the raw packet data  yang æŒ‡å‘å®é™…decodeçš„æ•°æ®*/
 
     EtherHdr *eh;               /* standard TCP/IP/Ethernet/ARP headers */
     
-    IPHdr *iph, *orig_iph;   /* and orig. headers for ICMP_*_UNREACH family  Ö¸ÏòÊµ¼ÊÊı¾İµÄIP²ã  */
-    u_int32_t ip_options_len;//IPÍ·²¿ÖĞ³¬¹ı20×Ö½ÚµÄ¿ÉÑ¡×Ö¶Î³¤¶È£¬ÀıÈçIPÍ·²¿×Ü¹²30×Ö½Ú£¬Ôò¸Ã×Ö¶ÎÎª30-20
-    u_int8_t *ip_options_data;//IPÍ·²¿ÓĞ¿ÉÄÜÓĞ¿ÉÑ¡×Ö¶Î£¬Õı³£Çé¿öIPÍ·²¿Îª20×Ö½Ú£¬Èç¹û³¬¹ı20×Ö½Ú£¬Ôòip_options_dataÖ¸ÏòĞÂµÄ³¬¹ı20×Ö½ÚÊı¾İ²¿·Ö
+    IPHdr *iph, *orig_iph;   /* and orig. headers for ICMP_*_UNREACH family  æŒ‡å‘å®é™…æ•°æ®çš„IPå±‚  */
+    u_int32_t ip_options_len;//IPå¤´éƒ¨ä¸­è¶…è¿‡20å­—èŠ‚çš„å¯é€‰å­—æ®µé•¿åº¦ï¼Œä¾‹å¦‚IPå¤´éƒ¨æ€»å…±30å­—èŠ‚ï¼Œåˆ™è¯¥å­—æ®µä¸º30-20
+    u_int8_t *ip_options_data;//IPå¤´éƒ¨æœ‰å¯èƒ½æœ‰å¯é€‰å­—æ®µï¼Œæ­£å¸¸æƒ…å†µIPå¤´éƒ¨ä¸º20å­—èŠ‚ï¼Œå¦‚æœè¶…è¿‡20å­—èŠ‚ï¼Œåˆ™ip_options_dataæŒ‡å‘æ–°çš„è¶…è¿‡20å­—èŠ‚æ•°æ®éƒ¨åˆ†
 
-    TCPHdr *tcph, *orig_tcph;//Ö¸ÏòÊµ¼ÊÊı¾İµÄTCP²ã
+    TCPHdr *tcph, *orig_tcph;//æŒ‡å‘å®é™…æ•°æ®çš„TCPå±‚
     u_int32_t tcp_options_len;
     u_int8_t *tcp_options_data;
 
-    UDPHdr *udph, *orig_udph;//Ö¸ÏòÊµ¼ÊÊı¾İµÄUDP
-	ICMPHdr *icmph, *orig_icmph;//Ö¸ÏòÊµ¼ÊÊı¾İµÄICMP
+    UDPHdr *udph, *orig_udph;//æŒ‡å‘å®é™…æ•°æ®çš„UDP
+	ICMPHdr *icmph, *orig_icmph;//æŒ‡å‘å®é™…æ•°æ®çš„ICMP
 
-    u_int8_t *data;         /* packet payload pointer ½â³ıËíµÀºó²¢È¥µôÊµ¼ÊÊı¾İµÄIP²ãUDP²ãºóµÄÓ¦ÓÃÊı¾İ */
-    u_int16_t dsize;        /* packet payload size  ½â³ıËíµÀºó²¢È¥µôÊµ¼ÊÊı¾İµÄIP²ãUDP²ãºóµÄÓ¦ÓÃÊı¾İ³¤¶È */
+    u_int8_t *data;         /* packet payload pointer è§£é™¤éš§é“åå¹¶å»æ‰å®é™…æ•°æ®çš„IPå±‚UDPå±‚åçš„åº”ç”¨æ•°æ® */
+    u_int16_t dsize;        /* packet payload size  è§£é™¤éš§é“åå¹¶å»æ‰å®é™…æ•°æ®çš„IPå±‚UDPå±‚åçš„åº”ç”¨æ•°æ®é•¿åº¦ */
     u_int16_t alt_dsize;    /* the dsize of a packet before munging (used for log)*/
 
-    u_int16_t actual_ip_len;/* for logging truncated packets (usually by a small snaplen)  IPÍ·²¿³¤¶È */
+    u_int16_t actual_ip_len;/* for logging truncated packets (usually by a small snaplen)  IPå¤´éƒ¨é•¿åº¦ */
 
-    u_int8_t frag_flag;     /* flag to indicate a fragmented packet   ±êÊ¾¸Ã°üÊÇ·ñÊÇ·ÖÅä°üµÄÒ»²¿·Ö */
+    u_int8_t frag_flag;     /* flag to indicate a fragmented packet   æ ‡ç¤ºè¯¥åŒ…æ˜¯å¦æ˜¯åˆ†é…åŒ…çš„ä¸€éƒ¨åˆ† */
 /*
-·ÖÆ¬²Î¿¼http://blog.csdn.net/zhaoneiep/article/details/5544595
+åˆ†ç‰‡å‚è€ƒhttp://blog.csdn.net/zhaoneiep/article/details/5544595
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |       Identification     |R|DF|MF|   Fragment Offset   |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |<-------------16-------------->|<--3-->|<---------13---------->| 
-Identification£º·¢ËÍ¶Ë·¢ËÍµÄIPÊı¾İ°ü±êÊ¶×Ö¶Î¶¼ÊÇÒ»¸öÎ¨Ò»Öµ£¬¸ÃÖµÔÚ·ÖÆ¬Ê±±»¸´ÖÆµ½Ã¿¸öÆ¬ÖĞ¡£ ¸ÃÖµÏàÍ¬±íÃæÊÇÍ¬Ò»¸öÊı¾İ°ü
-R£º±£ÁôÎ´ÓÃ¡£
-DF£ºDon't Fragment£¬¡°²»·ÖÆ¬¡±Î»£¬Èç¹û½«ÕâÒ»±ÈÌØÖÃ1 £¬IP²ã½«²»¶ÔÊı¾İ±¨½øĞĞ·ÖÆ¬¡£
-MF£ºMore Fragment£¬¡°¸ü¶àµÄÆ¬¡±£¬³ıÁË×îºóÒ»Æ¬Íâ£¬ÆäËûÃ¿¸ö×é³ÉÊı¾İ±¨µÄÆ¬¶¼Òª°Ñ¸Ã±ÈÌØÖÃ1¡£
-Fragment Offset£º¸ÃÆ¬Æ«ÒÆÔ­Ê¼Êı¾İ°ü¿ªÊ¼´¦µÄÎ»ÖÃ¡£Æ«ÒÆµÄ×Ö½ÚÊıÊÇ¸ÃÖµ³ËÒÔ8¡£±íÊ¾Ïà¶ÔµÚÒ»¸ö°üµÄÎ»ÖÃ£¬ÒÔ±ã½ÓÊÕÖ÷»ú¸ù¾İÆ«ÒÆÁ¿½øĞĞÊı¾İÖØ×é¡£
+Identificationï¼šå‘é€ç«¯å‘é€çš„IPæ•°æ®åŒ…æ ‡è¯†å­—æ®µéƒ½æ˜¯ä¸€ä¸ªå”¯ä¸€å€¼ï¼Œè¯¥å€¼åœ¨åˆ†ç‰‡æ—¶è¢«å¤åˆ¶åˆ°æ¯ä¸ªç‰‡ä¸­ã€‚ è¯¥å€¼ç›¸åŒè¡¨é¢æ˜¯åŒä¸€ä¸ªæ•°æ®åŒ…
+Rï¼šä¿ç•™æœªç”¨ã€‚
+DFï¼šDon't Fragmentï¼Œâ€œä¸åˆ†ç‰‡â€ä½ï¼Œå¦‚æœå°†è¿™ä¸€æ¯”ç‰¹ç½®1 ï¼ŒIPå±‚å°†ä¸å¯¹æ•°æ®æŠ¥è¿›è¡Œåˆ†ç‰‡ã€‚
+MFï¼šMore Fragmentï¼Œâ€œæ›´å¤šçš„ç‰‡â€ï¼Œé™¤äº†æœ€åä¸€ç‰‡å¤–ï¼Œå…¶ä»–æ¯ä¸ªç»„æˆæ•°æ®æŠ¥çš„ç‰‡éƒ½è¦æŠŠè¯¥æ¯”ç‰¹ç½®1ã€‚
+Fragment Offsetï¼šè¯¥ç‰‡åç§»åŸå§‹æ•°æ®åŒ…å¼€å§‹å¤„çš„ä½ç½®ã€‚åç§»çš„å­—èŠ‚æ•°æ˜¯è¯¥å€¼ä¹˜ä»¥8ã€‚è¡¨ç¤ºç›¸å¯¹ç¬¬ä¸€ä¸ªåŒ…çš„ä½ç½®ï¼Œä»¥ä¾¿æ¥æ”¶ä¸»æœºæ ¹æ®åç§»é‡è¿›è¡Œæ•°æ®é‡ç»„ã€‚
 */
-    u_int16_t frag_offset;  /* fragment offset number YANG IP²ãµÄ·ÖÆ¬ĞÅÏ¢  ×îÖÕ´æµÄÊÇ·ÖÆ¬ĞÅÏ¢µÄºó13Î» Èç¹ûÎª0±íÊ¾Õâ¸ö°ü¿ÉÄÜÊÇµÚÒ»¸ö·ÖÆ¬°ü£¬»òÕßºóÃæÃ»ÓĞ·ÖÆ¬°ü  p->frag_offset &= 0x1FFF;  ºó13Î»ÏàÍ¬Ôò±íÃ÷ÊÇÍ¬Ò»¸öÊı¾İ°ü */
+    u_int16_t frag_offset;  /* fragment offset number YANG IPå±‚çš„åˆ†ç‰‡ä¿¡æ¯  æœ€ç»ˆå­˜çš„æ˜¯åˆ†ç‰‡ä¿¡æ¯çš„å13ä½ å¦‚æœä¸º0è¡¨ç¤ºè¿™ä¸ªåŒ…å¯èƒ½æ˜¯ç¬¬ä¸€ä¸ªåˆ†ç‰‡åŒ…ï¼Œæˆ–è€…åé¢æ²¡æœ‰åˆ†ç‰‡åŒ…  p->frag_offset &= 0x1FFF;  å13ä½ç›¸åŒåˆ™è¡¨æ˜æ˜¯åŒä¸€ä¸ªæ•°æ®åŒ… */
 
-        //ÕâÈı¸ö±íÊ¾·ÖÆ¬µÄÇ°Èı¸öÎ»£¬²Î¿¼·ÖÆ¬Ïà¹ØÖªÊ¶  
-    u_int8_t mf;            /* more fragments flag Îª1±íÊ¾¸Ã°üºóÃæ»¹ÓĞÓĞ·ÖÆ¬°ü£¬Îª0±íÊ¾ºóÃæÃ»ÓĞ·ÖÆ¬ÁË£¬ */
+        //è¿™ä¸‰ä¸ªè¡¨ç¤ºåˆ†ç‰‡çš„å‰ä¸‰ä¸ªä½ï¼Œå‚è€ƒåˆ†ç‰‡ç›¸å…³çŸ¥è¯†  
+    u_int8_t mf;            /* more fragments flag ä¸º1è¡¨ç¤ºè¯¥åŒ…åé¢è¿˜æœ‰æœ‰åˆ†ç‰‡åŒ…ï¼Œä¸º0è¡¨ç¤ºåé¢æ²¡æœ‰åˆ†ç‰‡äº†ï¼Œ */
     u_int8_t df;            /* don't fragment flag */
     u_int8_t rf;                  /* IP reserved bit */
 
-    u_int16_t sp;           /* source port (TCP/UDP) ½â³ıËíµÀÍ·²¿ºóµÄ Öµ*/
+    u_int16_t sp;           /* source port (TCP/UDP) è§£é™¤éš§é“å¤´éƒ¨åçš„ å€¼*/
     u_int16_t dp;           /* dest port (TCP/UDP) */
     u_int16_t orig_sp;      /* source port (TCP/UDP) of original datagram */
     u_int16_t orig_dp;      /* dest port (TCP/UDP) of original datagram */
@@ -798,6 +798,6 @@ unsigned int DecodeIPOptions(u_int8_t *, u_int32_t, Packet *);
 extern int g_drop_pkt;
 extern int g_skip_pkt;
 
-#define MTP_AUTH_INFO_LEN 32//sizeof(m_d100_ah)×Ü¹²32×Ö½Ú
+#define MTP_AUTH_INFO_LEN 32//sizeof(m_d100_ah)æ€»å…±32å­—èŠ‚
 
 #endif                /* __DECODE_H__ */

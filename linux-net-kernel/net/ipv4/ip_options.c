@@ -82,7 +82,7 @@ void ip_options_build(struct sk_buff * skb, struct ip_options * opt,
  *
  * NOTE: dopt cannot point to skb.
  */
-//·¢ËÍÊı¾İÌî³äip_optionsÎªº¯Êıip_options_echo£¬ ½ÓÊÕSKBÖĞµÄIPÑ¡Ïî×Ö¶ÎÎªº¯Êıip_options_compile
+//å‘é€æ•°æ®å¡«å……ip_optionsä¸ºå‡½æ•°ip_options_echoï¼Œ æ¥æ”¶SKBä¸­çš„IPé€‰é¡¹å­—æ®µä¸ºå‡½æ•°ip_options_compile
 int ip_options_echo(struct ip_options * dopt, struct sk_buff * skb)
 {
 	struct ip_options *sopt;
@@ -245,7 +245,7 @@ void ip_options_fragment(struct sk_buff * skb)
  * Caller should clear *opt, and set opt->data.
  * If opt == NULL, then skb->data should point to IP header.
  */
-//·¢ËÍÊı¾İÌî³äip_optionsÎªº¯Êıip_options_echo£¬ ½ÓÊÕSKBÖĞµÄIPÑ¡Ïî×Ö¶ÎÎªº¯Êıip_options_compile
+//å‘é€æ•°æ®å¡«å……ip_optionsä¸ºå‡½æ•°ip_options_echoï¼Œ æ¥æ”¶SKBä¸­çš„IPé€‰é¡¹å­—æ®µä¸ºå‡½æ•°ip_options_compile
 int ip_options_compile(struct net *net,
 		       struct ip_options * opt, struct sk_buff * skb)
 {

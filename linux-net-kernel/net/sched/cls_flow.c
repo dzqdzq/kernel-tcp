@@ -675,7 +675,7 @@ skip:
 	}
 }
 
-//÷˜“™”–cls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
+//√ñ√∑√í¬™√ì√êcls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
 static struct tcf_proto_ops cls_flow_ops {//__read_mostly = {
 	.kind		= "flow",
 	.classify	= flow_classify,

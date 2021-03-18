@@ -7,9 +7,9 @@
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
- nf_conntrack_expect.cÎÄ¼şÖĞµÄnf_ct_expect_related_report(struct nf_conntrack_expect *expect, u32 pid, int report)À´×¢²ánf_conntrack_expect½á¹¹¡£
- ÆÚÍûÁ¬½ÓÊÇÖ¸¶ÔÓÚÄÇĞ©»î¶¯Ğ­Òé¶øÑÔ£¬ÀıÈç¶ÔFTPĞ­Òé£¬FTPĞ­ÒéµÄÁ¬½Ó·ÖÎª¿ØÖÆÁ¬½ÓºÍÊı¾İÁ¬½Ó£¬¶ÔÓÚÕâÖÖÀàĞÍµÄĞ­Òé£¬Á¬½Ó¸ú×ÙÈÏÎªÕâÁ½´ÎÁ¬½ÓÓ¦¸Ã¹é½áµ½Ò»¸ö¸ú×ÙÀï£¬ÕâÑù£¬µ±FTPµÄ¿ØÖÆÁ¬½Ó½¨Á¢ÆğÀ´ºó£¬ËüµÄÊı¾İÁ¬½Ó¾ÍÊÇ¿ØÖÆÁ¬½ÓµÄÆÚÍûÁ¬½Ó£¬¶øÊı¾İÁ¬½Ó¾ÍÊÇ¿ØÖÆÁ¬½ÓµÄmaster¡£ÆÚÍûÁ¬½Ó¿ÉÓÃÈçÏÂµÄÊı¾İ½á¹¹±íÊ¾£º
- ²Î¿¼:http://blog.csdn.net/ye_shizhe/article/details/17331947
+ nf_conntrack_expect.cæ–‡ä»¶ä¸­çš„nf_ct_expect_related_report(struct nf_conntrack_expect *expect, u32 pid, int report)æ¥æ³¨å†Œnf_conntrack_expectç»“æ„ã€‚
+ æœŸæœ›è¿æ¥æ˜¯æŒ‡å¯¹äºé‚£äº›æ´»åŠ¨åè®®è€Œè¨€ï¼Œä¾‹å¦‚å¯¹FTPåè®®ï¼ŒFTPåè®®çš„è¿æ¥åˆ†ä¸ºæ§åˆ¶è¿æ¥å’Œæ•°æ®è¿æ¥ï¼Œå¯¹äºè¿™ç§ç±»å‹çš„åè®®ï¼Œè¿æ¥è·Ÿè¸ªè®¤ä¸ºè¿™ä¸¤æ¬¡è¿æ¥åº”è¯¥å½’ç»“åˆ°ä¸€ä¸ªè·Ÿè¸ªé‡Œï¼Œè¿™æ ·ï¼Œå½“FTPçš„æ§åˆ¶è¿æ¥å»ºç«‹èµ·æ¥åï¼Œå®ƒçš„æ•°æ®è¿æ¥å°±æ˜¯æ§åˆ¶è¿æ¥çš„æœŸæœ›è¿æ¥ï¼Œè€Œæ•°æ®è¿æ¥å°±æ˜¯æ§åˆ¶è¿æ¥çš„masterã€‚æœŸæœ›è¿æ¥å¯ç”¨å¦‚ä¸‹çš„æ•°æ®ç»“æ„è¡¨ç¤ºï¼š
+ å‚è€ƒ:http://blog.csdn.net/ye_shizhe/article/details/17331947
 */
 
 #include <linux/types.h>
@@ -34,9 +34,9 @@
 
 
 /*
- nf_conntrack_expect.cÎÄ¼şÖĞµÄnf_ct_expect_related_report(struct nf_conntrack_expect *expect, u32 pid, int report)À´×¢²ánf_conntrack_expect½á¹¹¡£
- ÆÚÍûÁ¬½ÓÊÇÖ¸¶ÔÓÚÄÇĞ©»î¶¯Ğ­Òé¶øÑÔ£¬ÀıÈç¶ÔFTPĞ­Òé£¬FTPĞ­ÒéµÄÁ¬½Ó·ÖÎª¿ØÖÆÁ¬½ÓºÍÊı¾İÁ¬½Ó£¬¶ÔÓÚÕâÖÖÀàĞÍµÄĞ­Òé£¬Á¬½Ó¸ú×ÙÈÏÎªÕâÁ½´ÎÁ¬½ÓÓ¦¸Ã¹é½áµ½Ò»¸ö¸ú×ÙÀï£¬ÕâÑù£¬µ±FTPµÄ¿ØÖÆÁ¬½Ó½¨Á¢ÆğÀ´ºó£¬ËüµÄÊı¾İÁ¬½Ó¾ÍÊÇ¿ØÖÆÁ¬½ÓµÄÆÚÍûÁ¬½Ó£¬¶øÊı¾İÁ¬½Ó¾ÍÊÇ¿ØÖÆÁ¬½ÓµÄmaster¡£ÆÚÍûÁ¬½Ó¿ÉÓÃÈçÏÂµÄÊı¾İ½á¹¹±íÊ¾£º
- ²Î¿¼:http://blog.csdn.net/ye_shizhe/article/details/17331947
+ nf_conntrack_expect.cæ–‡ä»¶ä¸­çš„nf_ct_expect_related_report(struct nf_conntrack_expect *expect, u32 pid, int report)æ¥æ³¨å†Œnf_conntrack_expectç»“æ„ã€‚
+ æœŸæœ›è¿æ¥æ˜¯æŒ‡å¯¹äºé‚£äº›æ´»åŠ¨åè®®è€Œè¨€ï¼Œä¾‹å¦‚å¯¹FTPåè®®ï¼ŒFTPåè®®çš„è¿æ¥åˆ†ä¸ºæ§åˆ¶è¿æ¥å’Œæ•°æ®è¿æ¥ï¼Œå¯¹äºè¿™ç§ç±»å‹çš„åè®®ï¼Œè¿æ¥è·Ÿè¸ªè®¤ä¸ºè¿™ä¸¤æ¬¡è¿æ¥åº”è¯¥å½’ç»“åˆ°ä¸€ä¸ªè·Ÿè¸ªé‡Œï¼Œè¿™æ ·ï¼Œå½“FTPçš„æ§åˆ¶è¿æ¥å»ºç«‹èµ·æ¥åï¼Œå®ƒçš„æ•°æ®è¿æ¥å°±æ˜¯æ§åˆ¶è¿æ¥çš„æœŸæœ›è¿æ¥ï¼Œè€Œæ•°æ®è¿æ¥å°±æ˜¯æ§åˆ¶è¿æ¥çš„masterã€‚æœŸæœ›è¿æ¥å¯ç”¨å¦‚ä¸‹çš„æ•°æ®ç»“æ„è¡¨ç¤ºï¼š
+ å‚è€ƒ:http://blog.csdn.net/ye_shizhe/article/details/17331947
 */
 
 unsigned int nf_ct_expect_hsize __read_mostly;
@@ -79,7 +79,7 @@ static void nf_ct_expectation_timed_out(unsigned long ul_expect)
 	nf_ct_expect_put(exp);
 }
 
-//¼ÆËãorig_tupleÔÚnet.ct->expect_hash[]µÄ¼üÖµ
+//è®¡ç®—orig_tupleåœ¨net.ct->expect_hash[]çš„é”®å€¼
 static unsigned int nf_ct_expect_dst_hash(const struct nf_conntrack_tuple *tuple)
 {
 	unsigned int hash;
@@ -136,7 +136,7 @@ EXPORT_SYMBOL_GPL(nf_ct_expect_find_get);
 
 /* If an expectation for this connection is found, it gets delete from
  * global list then returned. */
- //Ê¹ÓÃorig_tupleÔÚnet.ct->expect_hash[]Í°ÀïÃæ²éÕÒexpectÏî
+ //ä½¿ç”¨orig_tupleåœ¨net.ct->expect_hash[]æ¡¶é‡Œé¢æŸ¥æ‰¾expecté¡¹
 struct nf_conntrack_expect *
 nf_ct_find_expectation(struct net *net, u16 zone,
 		       const struct nf_conntrack_tuple *tuple)
@@ -180,7 +180,7 @@ nf_ct_find_expectation(struct net *net, u16 zone,
 }
 
 /* delete all expectations for this conntrack */
-//ÊÍ·ÅctÁ¬½ÓÉÏµÄexpectÏî
+//é‡Šæ”¾ctè¿æ¥ä¸Šçš„expecté¡¹
 void nf_ct_remove_expectations(struct nf_conn *ct)
 {
 	struct nf_conn_help *help = nfct_help(ct);
@@ -257,7 +257,7 @@ struct nf_conntrack_expect *nf_ct_expect_alloc(struct nf_conn *me)
 }
 EXPORT_SYMBOL_GPL(nf_ct_expect_alloc);
 
-//¹¹½¨Ò»¸önf_conntrack_expect½á¹¹
+//æ„å»ºä¸€ä¸ªnf_conntrack_expectç»“æ„
 void nf_ct_expect_init(struct nf_conntrack_expect *exp, unsigned int class,
 		       u_int8_t family,
 		       const union nf_inet_addr *saddr,
@@ -319,7 +319,7 @@ static void nf_ct_expect_free_rcu(struct rcu_head *head)
 	kmem_cache_free(nf_ct_expect_cachep, exp);
 }
 
-//Èç¹ûexp->useÎª0£¬ÔòÊÍ·Åexp
+//å¦‚æœexp->useä¸º0ï¼Œåˆ™é‡Šæ”¾exp
 void nf_ct_expect_put(struct nf_conntrack_expect *exp)
 {
 	if (atomic_dec_and_test(&exp->use))
@@ -434,7 +434,7 @@ out:
 	return ret;
 }
 
-//½«expect¹ÒÔØµ½net->ct.expect_hash	
+//å°†expectæŒ‚è½½åˆ°net->ct.expect_hash	
 int nf_ct_expect_related_report(struct nf_conntrack_expect *expect, 
 				u32 pid, int report)
 {

@@ -34,14 +34,14 @@
  */
 int sysctl_max_syn_backlog = 256;
 /*
- * ÓÃÀ´·ÖÅäÁ¬½ÓÇëÇó¿éÉ¢ÁÐ±í£¬È»ºó½«ÆäÁ¬½Óµ½ËùÔÚ´«Êä¿ØÖÆ¿éµÄÇëÇó
- * ¿éÈÝÆ÷ÖÐ¡£
- ÊÜÒÔÏÂ¼¸¸ö²ÎÊýÓ°Ïì: ¼ûhttp://blog.chinaunix.net/uid-20662820-id-3776090.html
- £¨1£©net.core.somaxconn
-£¨2£©net.ipv4.tcp_max_syn_backlog
-£¨3£©listenÏµÍ³µ÷ÓÃµÄbacklog²ÎÊý
+ * ç”¨æ¥åˆ†é…è¿žæŽ¥è¯·æ±‚å—æ•£åˆ—è¡¨ï¼Œç„¶åŽå°†å…¶è¿žæŽ¥åˆ°æ‰€åœ¨ä¼ è¾“æŽ§åˆ¶å—çš„è¯·æ±‚
+ * å—å®¹å™¨ä¸­ã€‚
+ å—ä»¥ä¸‹å‡ ä¸ªå‚æ•°å½±å“: è§http://blog.chinaunix.net/uid-20662820-id-3776090.html
+ ï¼ˆ1ï¼‰net.core.somaxconn
+ï¼ˆ2ï¼‰net.ipv4.tcp_max_syn_backlog
+ï¼ˆ3ï¼‰listenç³»ç»Ÿè°ƒç”¨çš„backlogå‚æ•°
  */
-//¿ª±ÙµÄ¿Õ¼ä´óÐ¡ÊÇsizeof(struct listen_sock) + nr_table_entries * sizeof(struct request_sock *),ËùÒÔsyn_tableÖ¸ÏòºóÃæµÄnr_table_entries * sizeof(struct request_sock *)²¿·Ö£¬ÕâÖ»ÊÇhash±íÍ·µÄ¿Õ¼ä
+//å¼€è¾Ÿçš„ç©ºé—´å¤§å°æ˜¯sizeof(struct listen_sock) + nr_table_entries * sizeof(struct request_sock *),æ‰€ä»¥syn_tableæŒ‡å‘åŽé¢çš„nr_table_entries * sizeof(struct request_sock *)éƒ¨åˆ†ï¼Œè¿™åªæ˜¯hashè¡¨å¤´çš„ç©ºé—´
 int reqsk_queue_alloc(struct request_sock_queue *queue,
 		      unsigned int nr_table_entries)
 {
@@ -49,14 +49,14 @@ int reqsk_queue_alloc(struct request_sock_queue *queue,
 	struct listen_sock *lopt;
 
     /*
-	 * È¡ÓÃ»§Éè¶¨µÄÁ¬½Ó¶ÓÁÐ³¤¶È×î´óÖµ²ÎÊýnr_table_entriesºÍÏµÍ³×î¶à
-	 * ¿ÉÍ¬Ê±´æÔÚÎ´Íê³ÉÈý´ÎÎÕÊÖSYNÇëÇóÊýsysctl_max_syn_backlogÁ½ÕßµÄ
-	 * ×îÐ¡Öµ£¬ËûÃÇ¶¼ÓÃÀ´¿ØÖÆÁ¬½Ó¶ÓÁÐµÄ³¤¶È£¬Ö»ÊÇÇ°ÕßÕë¶ÔÄ³´«Êä¿ØÖÆ
-	 * ¿é£¬¶øºóÕß¿ØÖÆµÄÊÇÈ«¾ÖµÄ
+	 * å–ç”¨æˆ·è®¾å®šçš„è¿žæŽ¥é˜Ÿåˆ—é•¿åº¦æœ€å¤§å€¼å‚æ•°nr_table_entrieså’Œç³»ç»Ÿæœ€å¤š
+	 * å¯åŒæ—¶å­˜åœ¨æœªå®Œæˆä¸‰æ¬¡æ¡æ‰‹SYNè¯·æ±‚æ•°sysctl_max_syn_backlogä¸¤è€…çš„
+	 * æœ€å°å€¼ï¼Œä»–ä»¬éƒ½ç”¨æ¥æŽ§åˆ¶è¿žæŽ¥é˜Ÿåˆ—çš„é•¿åº¦ï¼Œåªæ˜¯å‰è€…é’ˆå¯¹æŸä¼ è¾“æŽ§åˆ¶
+	 * å—ï¼Œè€ŒåŽè€…æŽ§åˆ¶çš„æ˜¯å…¨å±€çš„
 
-	 ÕâÀï¿ÉÒÔ¿´³ölisten_sock->max_qlen_log Îªnr_table_entriesºÍsysctl_max_syn_backlogµÄ×îÐ¡Öµ¼Ó1
-   ²¢ÏòÉÏÈ¥Õûµ½2µÄ´Î·½ºóµÄlog¡£
-   ±ÈÈç£º nr_table_entries = 128 sysctl_max_syn_backlog=20480£¬
+	 è¿™é‡Œå¯ä»¥çœ‹å‡ºlisten_sock->max_qlen_log ä¸ºnr_table_entrieså’Œsysctl_max_syn_backlogçš„æœ€å°å€¼åŠ 1
+   å¹¶å‘ä¸ŠåŽ»æ•´åˆ°2çš„æ¬¡æ–¹åŽçš„logã€‚
+   æ¯”å¦‚ï¼š nr_table_entries = 128 sysctl_max_syn_backlog=20480ï¼Œ
                min(nr_table_entries, sysctl_max_syn_backlog)= 128
                roundup_pow_of_two(128+1)=256
                max_qlen_log=8
@@ -65,13 +65,13 @@ int reqsk_queue_alloc(struct request_sock_queue *queue,
 	nr_table_entries = min_t(u32, nr_table_entries, sysctl_max_syn_backlog);
 	nr_table_entries = max_t(u32, nr_table_entries, 8);
 	/*
-	 * µ÷ÓÃroundup_pow_of_twoÒÔÈ·±£nr_table_entriesµÄÖµÎª2µÄn´Î·½
+	 * è°ƒç”¨roundup_pow_of_twoä»¥ç¡®ä¿nr_table_entriesçš„å€¼ä¸º2çš„næ¬¡æ–¹
 	 */
 	nr_table_entries = roundup_pow_of_two(nr_table_entries + 1);
 	/*
-	 * ¼ÆËãÓÃÀ´±£´æSYNÇëÇóÁ¬½ÓµÄlisten_sock½á¹¹µÄ´óÐ¡
+	 * è®¡ç®—ç”¨æ¥ä¿å­˜SYNè¯·æ±‚è¿žæŽ¥çš„listen_sockç»“æž„çš„å¤§å°
 	 */
-	lopt_size += nr_table_entries * sizeof(struct request_sock *);//×¢Òâ(struct request_sock *)ÊÇÖ¸Õë£¬¿Õ¼ä´óÐ¡Îª4
+	lopt_size += nr_table_entries * sizeof(struct request_sock *);//æ³¨æ„(struct request_sock *)æ˜¯æŒ‡é’ˆï¼Œç©ºé—´å¤§å°ä¸º4
 	if (lopt_size > PAGE_SIZE)
 		lopt = __vmalloc(lopt_size,
 			GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO,
@@ -80,7 +80,7 @@ int reqsk_queue_alloc(struct request_sock_queue *queue,
 		lopt = kzalloc(lopt_size, GFP_KERNEL); 
 	if (lopt == NULL)
 		return -ENOMEM;
-    //¿ª±ÙµÄ¿Õ¼ä´óÐ¡ÊÇsizeof(struct listen_sock) + nr_table_entries * sizeof(struct request_sock *),ËùÒÔsyn_tableÖ¸ÏòºóÃæµÄnr_table_entries * sizeof(struct request_sock *)²¿·Ö£¬ÕâÖ»ÊÇhash±íÍ·µÄ¿Õ¼ä
+    //å¼€è¾Ÿçš„ç©ºé—´å¤§å°æ˜¯sizeof(struct listen_sock) + nr_table_entries * sizeof(struct request_sock *),æ‰€ä»¥syn_tableæŒ‡å‘åŽé¢çš„nr_table_entries * sizeof(struct request_sock *)éƒ¨åˆ†ï¼Œè¿™åªæ˜¯hashè¡¨å¤´çš„ç©ºé—´
 	for (lopt->max_qlen_log = 3;
 	     (1 << lopt->max_qlen_log) < nr_table_entries;
 	     lopt->max_qlen_log++);
@@ -91,7 +91,7 @@ int reqsk_queue_alloc(struct request_sock_queue *queue,
 	lopt->nr_table_entries = nr_table_entries;
 
 	write_lock_bh(&queue->syn_wait_lock);
-	queue->listen_opt = lopt; //queue->listen_optÖ¸Ïòrequest_sock
+	queue->listen_opt = lopt; //queue->listen_optæŒ‡å‘request_sock
 	write_unlock_bh(&queue->syn_wait_lock);
 
 	return 0;

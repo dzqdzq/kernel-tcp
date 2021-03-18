@@ -42,11 +42,11 @@
 #include <net/act_api.h>
 #include <net/pkt_cls.h>
 
-//Í¼ĞÎ»¯Àí½â²Î¿¼²Î¿¼TCÁ÷Á¿¿ØÖÆÊµÏÖ·ÖÎö(³õ²½)*/   //ÏêÏ¸Àí½âÒ²¿ÉÒÔ²Î¿¼<<LINUX¸ß¼¶Â·ÓÉºÍÁ÷Á¿¿ØÖÆ>>
-//tc_u_hnodeÀïÃæµÄhtÖ¸ÏòÕâÀï tc filter u32¹ıÂËÆ÷µÄ½á¹¹,ÆğÔ´½á¹¹ÔÚtcf_proto
-/*Ò»¸ötc_u_hnodeÉÏÃæ¿ÉÄÜ°üº¬¶àÌõµÄ¹ıÂËĞÅÏ¢£¬ÀıÈçÌí¼Ó¹ıÂËÆ÷µÄÊ±ºò¿ÉÒÔ¹ıÂËÔ´ Ä¿µÄ IP port maskµÈ£¬Ã¿¸öĞÅÏ¢¶¼´æÔÚÓÚtc_u_common
-µÄtc_u_knodeÊı×éht[]ÖĞ£¬È»ºóÕâĞ©¶àÌõÒ»ÆğÌí¼Óµ½tc_u_hnode£¬²Î¿¼u32_init¡£ÀıÈçtc filter add dev eth0 protocol ip parent 1:0 prio 1 u32 xxxxºó£¬
-¼ÌĞøÌí¼Ótc filter add dev eth0 protocol ip parent 1:0 prio 1 u32£¬ÕâÑùÌí¼ÓºÃ¼¸ÌõÕë¶Ôparent 1:0µÄ¹ıÂËÆ÷tc_u_common*/
+//å›¾å½¢åŒ–ç†è§£å‚è€ƒå‚è€ƒTCæµé‡æ§åˆ¶å®ç°åˆ†æ(åˆæ­¥)*/   //è¯¦ç»†ç†è§£ä¹Ÿå¯ä»¥å‚è€ƒ<<LINUXé«˜çº§è·¯ç”±å’Œæµé‡æ§åˆ¶>>
+//tc_u_hnodeé‡Œé¢çš„htæŒ‡å‘è¿™é‡Œ tc filter u32è¿‡æ»¤å™¨çš„ç»“æ„,èµ·æºç»“æ„åœ¨tcf_proto
+/*ä¸€ä¸ªtc_u_hnodeä¸Šé¢å¯èƒ½åŒ…å«å¤šæ¡çš„è¿‡æ»¤ä¿¡æ¯ï¼Œä¾‹å¦‚æ·»åŠ è¿‡æ»¤å™¨çš„æ—¶å€™å¯ä»¥è¿‡æ»¤æº ç›®çš„ IP port maskç­‰ï¼Œæ¯ä¸ªä¿¡æ¯éƒ½å­˜åœ¨äºtc_u_common
+çš„tc_u_knodeæ•°ç»„ht[]ä¸­ï¼Œç„¶åè¿™äº›å¤šæ¡ä¸€èµ·æ·»åŠ åˆ°tc_u_hnodeï¼Œå‚è€ƒu32_initã€‚ä¾‹å¦‚tc filter add dev eth0 protocol ip parent 1:0 prio 1 u32 xxxxåï¼Œ
+ç»§ç»­æ·»åŠ tc filter add dev eth0 protocol ip parent 1:0 prio 1 u32ï¼Œè¿™æ ·æ·»åŠ å¥½å‡ æ¡é’ˆå¯¹parent 1:0çš„è¿‡æ»¤å™¨tc_u_common*/
 struct tc_u_knode
 {
 	struct tc_u_knode	*next;
@@ -57,7 +57,7 @@ struct tc_u_knode
 	char                     indev[IFNAMSIZ];
 #endif
 	u8			fshift;
-	struct tcf_result	res; //u32¹ıÂËÆ÷ÔÚÆ¥ÅäSKBÄÚÈİµÄÊ±ºò£¬½á¹û·µ»Ø¸ø¸ÃÖµ
+	struct tcf_result	res; //u32è¿‡æ»¤å™¨åœ¨åŒ¹é…SKBå†…å®¹çš„æ—¶å€™ï¼Œç»“æœè¿”å›ç»™è¯¥å€¼
 	struct tc_u_hnode	*ht_down;
 #ifdef CONFIG_CLS_U32_PERF
 	struct tc_u32_pcnt	*pf;
@@ -66,33 +66,33 @@ struct tc_u_knode
 	struct tc_u32_mark	mark;
 #endif
 	struct tc_u32_sel	sel;
-}; //¸Ã½á¹¹ÊÇ¼ÓÈëµ½prio_sched_dataÖĞµÄfilter_listÁ´±íÖĞ  Ã¿µ÷ÓÃÒ»´Îtc filter add¾Í»á´´½¨Ò»¸ötcf_proto½á¹¹£¬µ÷ÓÃ¶à¸ötc filter addµÄÊ±ºò¾Í´´½¨¶à¸ötcf_proto½á¹¹£¬Í¨¹ınextÁ¬½Ó
+}; //è¯¥ç»“æ„æ˜¯åŠ å…¥åˆ°prio_sched_dataä¸­çš„filter_listé“¾è¡¨ä¸­  æ¯è°ƒç”¨ä¸€æ¬¡tc filter addå°±ä¼šåˆ›å»ºä¸€ä¸ªtcf_protoç»“æ„ï¼Œè°ƒç”¨å¤šä¸ªtc filter addçš„æ—¶å€™å°±åˆ›å»ºå¤šä¸ªtcf_protoç»“æ„ï¼Œé€šè¿‡nextè¿æ¥
 
-//Í¼ĞÎ»¯Àí½â²Î¿¼²Î¿¼TCÁ÷Á¿¿ØÖÆÊµÏÖ·ÖÎö(³õ²½)*/   //ÏêÏ¸Àí½âÒ²¿ÉÒÔ²Î¿¼<<LINUX¸ß¼¶Â·ÓÉºÍÁ÷Á¿¿ØÖÆ>>
-//tcf_protoÀïÃæµÄrootÖ¸ÏòÕâÀï tc filter u32¹ıÂËÆ÷µÄ½á¹¹,ÆğÔ´½á¹¹ÔÚtcf_protoµÄroot
-struct tc_u_hnode  //u32¹ıÂËÆ÷ÔÚu32_initÖĞ´´½¨²¢³õÊ¼»¯¡£ ĞÂ½¨µÄËùÓĞtc_u_common¶¼Í¨¹ınextÌí¼Óµ½¸Ã¹ıÂËÆ÷¸ú±íÉÏ
-/*Ò»¸ötc_u_hnodeÉÏÃæ¿ÉÄÜ°üº¬¶àÌõµÄ¹ıÂËĞÅÏ¢£¬ÀıÈçÌí¼Ó¹ıÂËÆ÷µÄÊ±ºò¿ÉÒÔ¹ıÂËÔ´ Ä¿µÄ IP port maskµÈ£¬Ã¿¸öĞÅÏ¢¶¼´æÔÚÓÚtc_u_common
-µÄtc_u_knodeÊı×éht[]ÖĞ£¬È»ºóÕâĞ©¶àÌõÒ»ÆğÌí¼Óµ½tc_u_hnode£¬²Î¿¼u32_init¡£ÀıÈçtc filter add dev eth0 protocol ip parent 1:0 prio 1 u32 xxxxºó£¬
-¼ÌĞøÌí¼Ótc filter add dev eth0 protocol ip parent 1:0 prio 1 u32£¬Ìí¼ÓÁ½¸ötc filter add¾Í»á´´½¨Á½¸ötcf_proto¹ıÂËÆ÷½á¹¹£¬µ«ÊÇÃ¿ÌõÀïÃæÕë¶Ôparent 1:0µÄ¹ıÂËÆ÷tc_u_common*/
+//å›¾å½¢åŒ–ç†è§£å‚è€ƒå‚è€ƒTCæµé‡æ§åˆ¶å®ç°åˆ†æ(åˆæ­¥)*/   //è¯¦ç»†ç†è§£ä¹Ÿå¯ä»¥å‚è€ƒ<<LINUXé«˜çº§è·¯ç”±å’Œæµé‡æ§åˆ¶>>
+//tcf_protoé‡Œé¢çš„rootæŒ‡å‘è¿™é‡Œ tc filter u32è¿‡æ»¤å™¨çš„ç»“æ„,èµ·æºç»“æ„åœ¨tcf_protoçš„root
+struct tc_u_hnode  //u32è¿‡æ»¤å™¨åœ¨u32_initä¸­åˆ›å»ºå¹¶åˆå§‹åŒ–ã€‚ æ–°å»ºçš„æ‰€æœ‰tc_u_commonéƒ½é€šè¿‡nextæ·»åŠ åˆ°è¯¥è¿‡æ»¤å™¨è·Ÿè¡¨ä¸Š
+/*ä¸€ä¸ªtc_u_hnodeä¸Šé¢å¯èƒ½åŒ…å«å¤šæ¡çš„è¿‡æ»¤ä¿¡æ¯ï¼Œä¾‹å¦‚æ·»åŠ è¿‡æ»¤å™¨çš„æ—¶å€™å¯ä»¥è¿‡æ»¤æº ç›®çš„ IP port maskç­‰ï¼Œæ¯ä¸ªä¿¡æ¯éƒ½å­˜åœ¨äºtc_u_common
+çš„tc_u_knodeæ•°ç»„ht[]ä¸­ï¼Œç„¶åè¿™äº›å¤šæ¡ä¸€èµ·æ·»åŠ åˆ°tc_u_hnodeï¼Œå‚è€ƒu32_initã€‚ä¾‹å¦‚tc filter add dev eth0 protocol ip parent 1:0 prio 1 u32 xxxxåï¼Œ
+ç»§ç»­æ·»åŠ tc filter add dev eth0 protocol ip parent 1:0 prio 1 u32ï¼Œæ·»åŠ ä¸¤ä¸ªtc filter addå°±ä¼šåˆ›å»ºä¸¤ä¸ªtcf_protoè¿‡æ»¤å™¨ç»“æ„ï¼Œä½†æ˜¯æ¯æ¡é‡Œé¢é’ˆå¯¹parent 1:0çš„è¿‡æ»¤å™¨tc_u_common*/
 {
-	struct tc_u_hnode	*next;//Í¨¹ıÕâ¸öÖ¸Ïò¶ÔÓ¦¸úÏÂÃæËùÓĞtc_u_common½ÚµãµÄ×îºóÒ»¸ötc_u_common½Úµã£¬²Î¿¼u32_init
-	u32			handle; //Îª¹ıÂËÆ÷×Ô¶¯·ÖÅäµÄÒ»¸öhandle
-	u32			prio;//tc filter add dev eth0 protocol ip parent 22: prio 2Îª2
-	struct tc_u_common	*tp_c; //Ö¸Ïò×îºó´´½¨µÄuc_u_common¹ıÂËÆ÷
+	struct tc_u_hnode	*next;//é€šè¿‡è¿™ä¸ªæŒ‡å‘å¯¹åº”è·Ÿä¸‹é¢æ‰€æœ‰tc_u_commonèŠ‚ç‚¹çš„æœ€åä¸€ä¸ªtc_u_commonèŠ‚ç‚¹ï¼Œå‚è€ƒu32_init
+	u32			handle; //ä¸ºè¿‡æ»¤å™¨è‡ªåŠ¨åˆ†é…çš„ä¸€ä¸ªhandle
+	u32			prio;//tc filter add dev eth0 protocol ip parent 22: prio 2ä¸º2
+	struct tc_u_common	*tp_c; //æŒ‡å‘æœ€ååˆ›å»ºçš„uc_u_commonè¿‡æ»¤å™¨
 	int			refcnt;
 	unsigned		divisor;
-	struct tc_u_knode	*ht[1];//ÕâÊÇÃ¿Ìõ¹ıÂËÆ÷ÖĞµÄ¶àÌõ¹ıÂËÒò×Ó£¬ÈçÒ»Ìõ¹ıÂËÆ÷ÖĞ¿ÉÄÜ°üº¬¶à¸öip mask portµÈ£¬¿ÉÒÔÍ¨¹ı¸Ã½á¹¹×éÖ¯
+	struct tc_u_knode	*ht[1];//è¿™æ˜¯æ¯æ¡è¿‡æ»¤å™¨ä¸­çš„å¤šæ¡è¿‡æ»¤å› å­ï¼Œå¦‚ä¸€æ¡è¿‡æ»¤å™¨ä¸­å¯èƒ½åŒ…å«å¤šä¸ªip mask portç­‰ï¼Œå¯ä»¥é€šè¿‡è¯¥ç»“æ„ç»„ç»‡
 };
 
-//Í¼ĞÎ»¯Àí½â²Î¿¼²Î¿¼TCÁ÷Á¿¿ØÖÆÊµÏÖ·ÖÎö(³õ²½)*/   //ÏêÏ¸Àí½âÒ²¿ÉÒÔ²Î¿¼<<LINUX¸ß¼¶Â·ÓÉºÍÁ÷Á¿¿ØÖÆ>>
-//tcf_protoÀïÃæµÄdataÖ¸ÏòÕâÀï   tc filter u32¹ıÂËÆ÷µÄ½á¹¹,ÆğÔ´½á¹¹ÔÚtcf_protoµÄdata
-////Ò»¸ötc_u_hnodeÉÏÃæ¿ÉÄÜ°üº¬ºÜ¶àµÄ¹ıÂËĞÅÏ¢£¬ÀıÈçÌí¼Ó¹ıÂËÆ÷µÄÊ±ºò¿ÉÒÔ¹ıÂËÔ´ Ä¿µÄ IP port maskµÈ£¬Ã¿¸öĞÅÏ¢¶¼´æÔÚÓÚtc_u_common£¬È»ºóÒ»ÆğÌí¼Óµ½tc_u_hnode£¬²Î¿¼u32_init
-/*Ò»¸ötc_u_hnodeÉÏÃæ¿ÉÄÜ°üº¬¶àÌõµÄ¹ıÂËĞÅÏ¢£¬ÀıÈçÌí¼Ó¹ıÂËÆ÷µÄÊ±ºò¿ÉÒÔ¹ıÂËÔ´ Ä¿µÄ IP port maskµÈ£¬Ã¿¸öĞÅÏ¢¶¼´æÔÚÓÚtc_u_common
-µÄtc_u_knodeÊı×éht[]ÖĞ£¬È»ºóÕâĞ©¶àÌõÒ»ÆğÌí¼Óµ½tc_u_hnode£¬²Î¿¼u32_init¡£ÀıÈçtc filter add dev eth0 protocol ip parent 1:0 prio 1 u32 xxxxºó£¬
-¼ÌĞøÌí¼Ótc filter add dev eth0 protocol ip parent 1:0 prio 1 u32£¬ÕâÑùÌí¼ÓºÃ2ÌõÕë¶Ôparent 1:0µÄ¹ıÂËÆ÷tc_u_common*/
+//å›¾å½¢åŒ–ç†è§£å‚è€ƒå‚è€ƒTCæµé‡æ§åˆ¶å®ç°åˆ†æ(åˆæ­¥)*/   //è¯¦ç»†ç†è§£ä¹Ÿå¯ä»¥å‚è€ƒ<<LINUXé«˜çº§è·¯ç”±å’Œæµé‡æ§åˆ¶>>
+//tcf_protoé‡Œé¢çš„dataæŒ‡å‘è¿™é‡Œ   tc filter u32è¿‡æ»¤å™¨çš„ç»“æ„,èµ·æºç»“æ„åœ¨tcf_protoçš„data
+////ä¸€ä¸ªtc_u_hnodeä¸Šé¢å¯èƒ½åŒ…å«å¾ˆå¤šçš„è¿‡æ»¤ä¿¡æ¯ï¼Œä¾‹å¦‚æ·»åŠ è¿‡æ»¤å™¨çš„æ—¶å€™å¯ä»¥è¿‡æ»¤æº ç›®çš„ IP port maskç­‰ï¼Œæ¯ä¸ªä¿¡æ¯éƒ½å­˜åœ¨äºtc_u_commonï¼Œç„¶åä¸€èµ·æ·»åŠ åˆ°tc_u_hnodeï¼Œå‚è€ƒu32_init
+/*ä¸€ä¸ªtc_u_hnodeä¸Šé¢å¯èƒ½åŒ…å«å¤šæ¡çš„è¿‡æ»¤ä¿¡æ¯ï¼Œä¾‹å¦‚æ·»åŠ è¿‡æ»¤å™¨çš„æ—¶å€™å¯ä»¥è¿‡æ»¤æº ç›®çš„ IP port maskç­‰ï¼Œæ¯ä¸ªä¿¡æ¯éƒ½å­˜åœ¨äºtc_u_common
+çš„tc_u_knodeæ•°ç»„ht[]ä¸­ï¼Œç„¶åè¿™äº›å¤šæ¡ä¸€èµ·æ·»åŠ åˆ°tc_u_hnodeï¼Œå‚è€ƒu32_initã€‚ä¾‹å¦‚tc filter add dev eth0 protocol ip parent 1:0 prio 1 u32 xxxxåï¼Œ
+ç»§ç»­æ·»åŠ tc filter add dev eth0 protocol ip parent 1:0 prio 1 u32ï¼Œè¿™æ ·æ·»åŠ å¥½2æ¡é’ˆå¯¹parent 1:0çš„è¿‡æ»¤å™¨tc_u_common*/
 struct tc_u_common
 {
-	struct tc_u_hnode	*hlist;//Í¨¹ıÕâ¸öÖ¸Ïòtc_u_hnode¸ú
+	struct tc_u_hnode	*hlist;//é€šè¿‡è¿™ä¸ªæŒ‡å‘tc_u_hnodeè·Ÿ
 	struct Qdisc		*q;
 	int			refcnt;
 	u32			hgenerator;
@@ -110,8 +110,8 @@ static __inline__ unsigned u32_hash_fold(__be32 key, struct tc_u32_sel *sel, u8 
 	return h;
 }
 
-////U32·ÖÀàº¯Êı£¬½á¹û±£´æÔÚtcf_resultÖĞ¡£Í¨¹ıSKBÖĞµÄÄÚÈİ£¬À´Æ¥ÅäÕâ¸ö¹ıÂËÆ÷£¬½á¹û·µ»Ø¸øtcf_result£¬¼ûtc_classify_compat
-//Æ¥Åä³É¹¦·µ»Ø0£¬²¢°ÑÆ¥Åäµ½µÄ¹ıÂËÆ÷Ëù´¦µÄ×Ó·ÖÀàĞÅÏ¢½Úµã´æµ½resÖĞ
+////U32åˆ†ç±»å‡½æ•°ï¼Œç»“æœä¿å­˜åœ¨tcf_resultä¸­ã€‚é€šè¿‡SKBä¸­çš„å†…å®¹ï¼Œæ¥åŒ¹é…è¿™ä¸ªè¿‡æ»¤å™¨ï¼Œç»“æœè¿”å›ç»™tcf_resultï¼Œè§tc_classify_compat
+//åŒ¹é…æˆåŠŸè¿”å›0ï¼Œå¹¶æŠŠåŒ¹é…åˆ°çš„è¿‡æ»¤å™¨æ‰€å¤„çš„å­åˆ†ç±»ä¿¡æ¯èŠ‚ç‚¹å­˜åˆ°resä¸­
 static int u32_classify(struct sk_buff *skb, struct tcf_proto *tp, struct tcf_result *res)
 {
 	struct {
@@ -285,8 +285,8 @@ out:
 	return n;
 }
 
-//»ñÈ¡tcf_proto(tc filter addµÄÊ±ºò´´½¨Ò»¸ö¸ÃÀàĞÍ¹ıÂËÆ÷) //½²Ò»¸ö¹ıÂËÆ÷ÔªËØµÄ¾ä±úÓ³Éäµ½Ò»¸öÄÚ²¿¹ıÂËÆ÷±êÊ¶·û£¬Êµ¼ÊÉÏÊÇ¹ıÂËÆ÷ÊµÀıÖ¸Õë£¬²¢½«Æä·µ»Ø
-//tpÎª
+//è·å–tcf_proto(tc filter addçš„æ—¶å€™åˆ›å»ºä¸€ä¸ªè¯¥ç±»å‹è¿‡æ»¤å™¨) //è®²ä¸€ä¸ªè¿‡æ»¤å™¨å…ƒç´ çš„å¥æŸ„æ˜ å°„åˆ°ä¸€ä¸ªå†…éƒ¨è¿‡æ»¤å™¨æ ‡è¯†ç¬¦ï¼Œå®é™…ä¸Šæ˜¯è¿‡æ»¤å™¨å®ä¾‹æŒ‡é’ˆï¼Œå¹¶å°†å…¶è¿”å›
+//tpä¸º
 static unsigned long u32_get(struct tcf_proto *tp, u32 handle)
 {
 	struct tc_u_hnode *ht;
@@ -323,7 +323,7 @@ static u32 gen_new_htid(struct tc_u_common *tp_c)
 }
 
 // tc filter add dev eth0 protocol ip parent 22: prio 2 u32 match ip dst 4.3.2.1/32 flowid 22:4
-static int u32_init(struct tcf_proto *tp)//tc_ctl_tclassµ÷ÓÃ
+static int u32_init(struct tcf_proto *tp)//tc_ctl_tclassè°ƒç”¨
 {
 	struct tc_u_hnode *root_ht;
 	struct tc_u_common *tp_c;
@@ -337,7 +337,7 @@ static int u32_init(struct tcf_proto *tp)//tc_ctl_tclassµ÷ÓÃ
 	root_ht->divisor = 0;
 	root_ht->refcnt++;
 	root_ht->handle = tp_c ? gen_new_htid(tp_c) : 0x80000000;
-	root_ht->prio = tp->prio;//tc filter add dev eth0 protocol ip parent 22: prio 2Îª2
+	root_ht->prio = tp->prio;//tc filter add dev eth0 protocol ip parent 22: prio 2ä¸º2
 
 	if (tp_c == NULL) {
 		tp_c = kzalloc(sizeof(*tp_c), GFP_KERNEL);
@@ -351,7 +351,7 @@ static int u32_init(struct tcf_proto *tp)//tc_ctl_tclassµ÷ÓÃ
 
 	tp_c->refcnt++;
 
-	//Í¨¹ıÕâ¸ö°Ñtc_u_commonÌí¼Óµ½¸útc_u_hnodeµÄÎ²½ÚµãÉÏ
+	//é€šè¿‡è¿™ä¸ªæŠŠtc_u_commonæ·»åŠ åˆ°è·Ÿtc_u_hnodeçš„å°¾èŠ‚ç‚¹ä¸Š
 	root_ht->next = tp_c->hlist;
 	tp_c->hlist = root_ht;
 	root_ht->tp_c = tp_c;
@@ -549,7 +549,7 @@ static int u32_set_parms(struct tcf_proto *tp, unsigned long base,
 	}
 	if (tb[TCA_U32_CLASSID]) {
 	//tc filter add dev eth0 protocol ip parent 22: prio 2 u32 match ip dst 4.3.2.1/32 flowid 22:4
-		n->res.classid = nla_get_u32(tb[TCA_U32_CLASSID]); //°ÑÓ¦ÓÃ²ã¹ıÀ´µÄflowid 22:4ÖĞµÄflowid¸³Öµ¸øres
+		n->res.classid = nla_get_u32(tb[TCA_U32_CLASSID]); //æŠŠåº”ç”¨å±‚è¿‡æ¥çš„flowid 22:4ä¸­çš„flowidèµ‹å€¼ç»™res
 		tcf_bind_filter(tp, &n->res, base);
 	}
 
@@ -569,7 +569,7 @@ errout:
 }
 
 //tc filter add dev eth0 protocol ip parent 22: prio 2 u32 match ip dst 4.3.2.1/32 flowid 22:4
-////tpÎªĞÂ´´½¨»òÕßĞèÒªĞŞ¸ÄµÄtc filter¹ıÂËÆ÷tcf_proto£¬ baseÎªflowid 22:4¶ÔÓ¦µÄhtb_class½á¹¹£¬¼ûhtb_get. tcaÎªÓ¦ÓÃ²ãÏÂÀ´µÄ²ÎÊıĞÅÏ¢£¬handleÎªÄÚºËÎª¸Ãtc filter×Ô¶¯Éú³ÉµÄhandle
+////tpä¸ºæ–°åˆ›å»ºæˆ–è€…éœ€è¦ä¿®æ”¹çš„tc filterè¿‡æ»¤å™¨tcf_protoï¼Œ baseä¸ºflowid 22:4å¯¹åº”çš„htb_classç»“æ„ï¼Œè§htb_get. tcaä¸ºåº”ç”¨å±‚ä¸‹æ¥çš„å‚æ•°ä¿¡æ¯ï¼Œhandleä¸ºå†…æ ¸ä¸ºè¯¥tc filterè‡ªåŠ¨ç”Ÿæˆçš„handle
 static int u32_change(struct tcf_proto *tp, unsigned long base, u32 handle,
 		      struct nlattr **tca,
 		      unsigned long *arg)
@@ -801,17 +801,17 @@ nla_put_failure:
 	return -1;
 }
 
-//Í¼ĞÎ»¯Àí½â²Î¿¼²Î¿¼TCÁ÷Á¿¿ØÖÆÊµÏÖ·ÖÎö(³õ²½)*/   //ÏêÏ¸Àí½âÒ²¿ÉÒÔ²Î¿¼<<LINUX¸ß¼¶Â·ÓÉºÍÁ÷Á¿¿ØÖÆ>>
-//tcf_protoÀïÃæµÄopsÖ¸ÏòÕâÀï  tc filter u32¹ıÂËÆ÷µÄ½á¹¹,ÆğÔ´½á¹¹ÔÚtcf_proto
-//Ö÷ÒªÓĞcls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
+//å›¾å½¢åŒ–ç†è§£å‚è€ƒå‚è€ƒTCæµé‡æ§åˆ¶å®ç°åˆ†æ(åˆæ­¥)*/   //è¯¦ç»†ç†è§£ä¹Ÿå¯ä»¥å‚è€ƒ<<LINUXé«˜çº§è·¯ç”±å’Œæµé‡æ§åˆ¶>>
+//tcf_protoé‡Œé¢çš„opsæŒ‡å‘è¿™é‡Œ  tc filter u32è¿‡æ»¤å™¨çš„ç»“æ„,èµ·æºç»“æ„åœ¨tcf_proto
+//ä¸»è¦æœ‰cls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
 static struct tcf_proto_ops cls_u32_ops ;//__read_mostly = {
 	.kind		=	"u32",
 	.classify	=	u32_classify,
-	.init		=	u32_init, //tc_ctl_tclassµ÷ÓÃ
+	.init		=	u32_init, //tc_ctl_tclassè°ƒç”¨
 	.destroy	=	u32_destroy,
 
-	//½²Ò»¸ö¹ıÂËÆ÷ÔªËØµÄ¾ä±úÓ³Éäµ½Ò»¸öÄÚ²¿¹ıÂËÆ÷±êÊ¶·û£¬Êµ¼ÊÉÏÊÇ¹ıÂËÆ÷ÊµÀıÖ¸Õë£¬²¢½«Æä·µ»Ø
-	.get		=	u32_get, //Í¨¹ıtcmsg -> tcm_handle ¾ÍÄÜÕÒµ½¶ÔÓ¦µÄtcf_proto¹ıÂËÆ÷µÄ¸úĞÅÏ¢tc_u_hnode
+	//è®²ä¸€ä¸ªè¿‡æ»¤å™¨å…ƒç´ çš„å¥æŸ„æ˜ å°„åˆ°ä¸€ä¸ªå†…éƒ¨è¿‡æ»¤å™¨æ ‡è¯†ç¬¦ï¼Œå®é™…ä¸Šæ˜¯è¿‡æ»¤å™¨å®ä¾‹æŒ‡é’ˆï¼Œå¹¶å°†å…¶è¿”å›
+	.get		=	u32_get, //é€šè¿‡tcmsg -> tcm_handle å°±èƒ½æ‰¾åˆ°å¯¹åº”çš„tcf_protoè¿‡æ»¤å™¨çš„è·Ÿä¿¡æ¯tc_u_hnode
 	.put		=	u32_put,
 	.change		=	u32_change,
 	.delete		=	u32_delete,

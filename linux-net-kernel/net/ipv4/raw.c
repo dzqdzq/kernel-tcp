@@ -77,15 +77,15 @@
 #include <linux/netfilter.h>
 #include <linux/netfilter_ipv4.h>
 
-/*ÒòÎªÔÚ´´½¨ socketÊ±£¬inet_create»á°ÑĞ­ÒéºÅIPPROTO_ICMPµÄÖµ¸³¸øsocketµÄ³ÉÔ±num£¬²¢ÒÔnumÎª¼üÖµ£¬°Ñsocket´æÈë¹ş Ïî±íraw_v4_htable£¬
-raw_v4_htable[IPPROTO_ICMP&(MAX_INET_PROTOS-1)]ÉÏ¼´´æ·ÅÁËÕâ¸ösocket£¬Êµ¼ÊÉÏÊÇÒ»¸ösocketµÄÁ´±í*/  //¼ûraw_local_deliver
+/*å› ä¸ºåœ¨åˆ›å»º socketæ—¶ï¼Œinet_createä¼šæŠŠåè®®å·IPPROTO_ICMPçš„å€¼èµ‹ç»™socketçš„æˆå‘˜numï¼Œå¹¶ä»¥numä¸ºé”®å€¼ï¼ŒæŠŠsocketå­˜å…¥å“ˆ é¡¹è¡¨raw_v4_htableï¼Œ
+raw_v4_htable[IPPROTO_ICMP&(MAX_INET_PROTOS-1)]ä¸Šå³å­˜æ”¾äº†è¿™ä¸ªsocketï¼Œå®é™…ä¸Šæ˜¯ä¸€ä¸ªsocketçš„é“¾è¡¨*/  //è§raw_local_deliver
 
-//rawÌ×½Ó×ÖÔÚinet_createÖĞ»áÖ´ĞĞraw_prot->hash£¬´Ó¶ø¼ÓÈëµ½raw_v4_hashinfo
-static struct raw_hashinfo raw_v4_hashinfo = { //Í¨¹ıprot-.hashÖĞµÄraw_hash_sk°ÑrawÌ×½Ó×Östruct sockÌí¼Óµ½¸ÃhashinfoÖĞ
+//rawå¥—æ¥å­—åœ¨inet_createä¸­ä¼šæ‰§è¡Œraw_prot->hashï¼Œä»è€ŒåŠ å…¥åˆ°raw_v4_hashinfo
+static struct raw_hashinfo raw_v4_hashinfo = { //é€šè¿‡prot-.hashä¸­çš„raw_hash_skæŠŠrawå¥—æ¥å­—struct sockæ·»åŠ åˆ°è¯¥hashinfoä¸­
 	.lock = __RW_LOCK_UNLOCKED(raw_v4_hashinfo.lock),
 };
 
-//raw_protÀïÃæµÄhash×Ö¶Î
+//raw_proté‡Œé¢çš„hashå­—æ®µ
 void raw_hash_sk(struct sock *sk)
 {
 	struct raw_hashinfo *h = sk->sk_prot->h.raw_hash;
@@ -135,15 +135,15 @@ found:
  *	1 - block
  */
 /*
-½á¹¹Ìåraw_sockÓĞ Ò»¸ö³ÉÔ±struct icmp_filter filter£¬ËüÊµ¼ÊÉÏÊÇÒ»¸ö32Î»ÎŞ·ûºÅÊı£¬Èç¹ûÄ³Î»ÎªÁã£¬ÔòÏàÓ¦µÄ¸ÃÀàĞÍµÄicmp±¨ÎÄ±»ÆÁ±Î£¬²»ÄÜ±»Ó¦ÓÃ²ã½ÓÊÕµ½£¬icmp±¨ÎÄÀàĞÍºÅµÄ×î´óÖµÎª 18£¬ËùÒÔ32Î»ÊÇ×ã¹»µÄ£¬
-ping³ÌĞòĞèÒªÄÜ¹»ÊÕµ½icmpµÄ»ØÏÔÓ¦´ğ±¨ÎÄ£¬ËùÒÔ£¬ĞèÒª¹ØµôÆÁ±ÎÎ»(ÏàÓ¦Î»ÉèÎª1)£¬Õâ¿ÉÒÔÍ¨¹ısocketÃüÁî×Ö ICMP_FILTERÀ´ÊµÏÖ£¬ËùÒÔ£¬
-ping³ÌĞòµÄÊµÏÖÖĞĞèÒªÕâÑùµÄÔ´´úÂë£º
+ç»“æ„ä½“raw_sockæœ‰ ä¸€ä¸ªæˆå‘˜struct icmp_filter filterï¼Œå®ƒå®é™…ä¸Šæ˜¯ä¸€ä¸ª32ä½æ— ç¬¦å·æ•°ï¼Œå¦‚æœæŸä½ä¸ºé›¶ï¼Œåˆ™ç›¸åº”çš„è¯¥ç±»å‹çš„icmpæŠ¥æ–‡è¢«å±è”½ï¼Œä¸èƒ½è¢«åº”ç”¨å±‚æ¥æ”¶åˆ°ï¼ŒicmpæŠ¥æ–‡ç±»å‹å·çš„æœ€å¤§å€¼ä¸º 18ï¼Œæ‰€ä»¥32ä½æ˜¯è¶³å¤Ÿçš„ï¼Œ
+pingç¨‹åºéœ€è¦èƒ½å¤Ÿæ”¶åˆ°icmpçš„å›æ˜¾åº”ç­”æŠ¥æ–‡ï¼Œæ‰€ä»¥ï¼Œéœ€è¦å…³æ‰å±è”½ä½(ç›¸åº”ä½è®¾ä¸º1)ï¼Œè¿™å¯ä»¥é€šè¿‡socketå‘½ä»¤å­— ICMP_FILTERæ¥å®ç°ï¼Œæ‰€ä»¥ï¼Œ
+pingç¨‹åºçš„å®ç°ä¸­éœ€è¦è¿™æ ·çš„æºä»£ç ï¼š
      struct icmp_filter filter.data = 1 << ICMP_ECHOREPLY;
      int err = setsockopt( sock, SOL_RAW, ICMP_FILTER, &filter, sizeof(struct icmp_filter) );
      if( err < 0 )
         perror("error: ");
-    µ«Êµ¼ÊÉÏ£¬ICMP_ECHOREPLYµÄÖµÊÇ0£¬¼´Ğ­ÒéÕ»ÊÇÓÀÔ¶²»»áÆÁ±Î»ØÏÔÓ¦´ğ±¨ÎÄµÄ£¬ËùÒÔ£¬Õâ²½²Ù×÷ÆäÊµÊÇÃ»ÓĞ±ØÒªµÄ¡£
-    ÊÕµ½µÄskb½»¸øraw_rcv´¦Àí£¬raw_rcvµ÷ÓÃraw_rcv_skb£¬°ÑÊÕµ½µÄskb·ÅÈësocketµÄ½ÓÊÕ¶ÓÁĞ¡£Ó¦ÓÃ³ÌĞòÊÕµ½Êı¾İ±¨£¬½âÎöicmpÊ×²¿¼´¿É¡£
+    ä½†å®é™…ä¸Šï¼ŒICMP_ECHOREPLYçš„å€¼æ˜¯0ï¼Œå³åè®®æ ˆæ˜¯æ°¸è¿œä¸ä¼šå±è”½å›æ˜¾åº”ç­”æŠ¥æ–‡çš„ï¼Œæ‰€ä»¥ï¼Œè¿™æ­¥æ“ä½œå…¶å®æ˜¯æ²¡æœ‰å¿…è¦çš„ã€‚
+    æ”¶åˆ°çš„skbäº¤ç»™raw_rcvå¤„ç†ï¼Œraw_rcvè°ƒç”¨raw_rcv_skbï¼ŒæŠŠæ”¶åˆ°çš„skbæ”¾å…¥socketçš„æ¥æ”¶é˜Ÿåˆ—ã€‚åº”ç”¨ç¨‹åºæ”¶åˆ°æ•°æ®æŠ¥ï¼Œè§£æicmpé¦–éƒ¨å³å¯ã€‚
 */
 static __inline__ int icmp_filter(struct sock *sk, struct sk_buff *skb)
 {
@@ -188,12 +188,12 @@ static int raw_v4_input(struct sk_buff *skb, struct iphdr *iph, int hash)
 
 	while (sk) {
 		delivered = 1;
-		if (iph->protocol != IPPROTO_ICMP || !icmp_filter(sk, skb)) { //Ğ­ÒéºÅÊÇ IPPROTO_ICMP(ÎÒÃÇµ±Ç°Õı´¦ÀíµÄÇé¿ö)Ê±£¬Ôò»¹ĞèÒªÅĞ¶Ï¸ÃicmpÀàĞÍµÄ±¨ÎÄÊÇ·ñÊÇ±»¹ıÂËµôµÄ£¬Èç¹ûÊÇ£¬Ôò²»´¦Àí
+		if (iph->protocol != IPPROTO_ICMP || !icmp_filter(sk, skb)) { //åè®®å·æ˜¯ IPPROTO_ICMP(æˆ‘ä»¬å½“å‰æ­£å¤„ç†çš„æƒ…å†µ)æ—¶ï¼Œåˆ™è¿˜éœ€è¦åˆ¤æ–­è¯¥icmpç±»å‹çš„æŠ¥æ–‡æ˜¯å¦æ˜¯è¢«è¿‡æ»¤æ‰çš„ï¼Œå¦‚æœæ˜¯ï¼Œåˆ™ä¸å¤„ç†
 			struct sk_buff *clone = skb_clone(skb, GFP_ATOMIC);
 
 			/* Not releasing hash table! */
 			if (clone)
-				raw_rcv(sk, clone);//Ö®Ç°¿ª¾ŞÖ¡µÄÊ±ºò£¬icmp²»Í¨¾ÍÊÇÔÚÕâÀïÃæµÄº¯ÊıÖĞsock_queue_rcv_skb¶ªµÄ
+				raw_rcv(sk, clone);//ä¹‹å‰å¼€å·¨å¸§çš„æ—¶å€™ï¼Œicmpä¸é€šå°±æ˜¯åœ¨è¿™é‡Œé¢çš„å‡½æ•°ä¸­sock_queue_rcv_skbä¸¢çš„
 		}
 		sk = __raw_v4_lookup(net, sk_next(sk), iph->protocol,
 				     iph->saddr, iph->daddr,
@@ -276,15 +276,15 @@ static void raw_err(struct sock *sk, struct sk_buff *skb, u32 info)
 	}
 }
 /*
- * Í¨¹ı´«Êä²ãĞ­ÒéºÅ£¬Ê×ÏÈÔÚraw_v4_hashinfoµÄÉ¢ÁĞ±í
- * ÖĞ²éÕÒÊÇ·ñÓĞ¶ÔÓ¦µÄÔ­Ê¼Ì×½Ó×ÖµÄ´«Êä¿ØÖÆ¿é£¬
- * Èç¹ûÓĞ£¬Ôòµ÷ÓÃraw_err()½«²î´í±¨ÎÄ´«µİÉÏÈ¥¡£
- * ÓÉÓÚÔ­Ê¼Ì×½Ó×Ö´«Êä¿ØÖÆ¿éµÄ´æÔÚ£¬Ó¦ÓÃ³ÌĞò
- * ¿ÉÒÔ×é×°¸÷ÖÖĞ­ÒéµÄÊı¾İ±¨£¬ÈçTCP¶Î¡¢UDPÊı¾İ
- * ±¨µÈ¡£ÕâÀïÅĞ¶Ï²»ÁËµ½µ×ÊÇÔ­Ê¼Ì×½Ó×Ö·¢ËÍµÄ
- * ±¨ÎÄµ¼ÖÂµÄ²î´í£¬»¹ÊÇÓÉTCP»òUDPÌ×½Ó×Ö·¢ËÍ±¨ÎÄ
- * µ¼ÖÂµÄ²î´í¡£Òò´ËÖ»ÄÜÏÈ°Ñ²î´í·¢¸øÔ­Ê¼Ì×½Ó×Ö(Èç¹û
- * ´æÔÚ)£¬È»ºóÔÙ·¢¸øTCP»òUDPÌ×½Ó×Ö
+ * é€šè¿‡ä¼ è¾“å±‚åè®®å·ï¼Œé¦–å…ˆåœ¨raw_v4_hashinfoçš„æ•£åˆ—è¡¨
+ * ä¸­æŸ¥æ‰¾æ˜¯å¦æœ‰å¯¹åº”çš„åŸå§‹å¥—æ¥å­—çš„ä¼ è¾“æ§åˆ¶å—ï¼Œ
+ * å¦‚æœæœ‰ï¼Œåˆ™è°ƒç”¨raw_err()å°†å·®é”™æŠ¥æ–‡ä¼ é€’ä¸Šå»ã€‚
+ * ç”±äºåŸå§‹å¥—æ¥å­—ä¼ è¾“æ§åˆ¶å—çš„å­˜åœ¨ï¼Œåº”ç”¨ç¨‹åº
+ * å¯ä»¥ç»„è£…å„ç§åè®®çš„æ•°æ®æŠ¥ï¼Œå¦‚TCPæ®µã€UDPæ•°æ®
+ * æŠ¥ç­‰ã€‚è¿™é‡Œåˆ¤æ–­ä¸äº†åˆ°åº•æ˜¯åŸå§‹å¥—æ¥å­—å‘é€çš„
+ * æŠ¥æ–‡å¯¼è‡´çš„å·®é”™ï¼Œè¿˜æ˜¯ç”±TCPæˆ–UDPå¥—æ¥å­—å‘é€æŠ¥æ–‡
+ * å¯¼è‡´çš„å·®é”™ã€‚å› æ­¤åªèƒ½å…ˆæŠŠå·®é”™å‘ç»™åŸå§‹å¥—æ¥å­—(å¦‚æœ
+ * å­˜åœ¨)ï¼Œç„¶åå†å‘ç»™TCPæˆ–UDPå¥—æ¥å­—
  */
 void raw_icmp_error(struct sk_buff *skb, int protocol, u32 info)
 {
@@ -863,8 +863,8 @@ static int raw_ioctl(struct sock *sk, int cmd, unsigned long arg)
 	}
 }
 
-//Ô­Ê¼Ì×½Ó×Ö´«Êä²ã²Ù×÷¼¯
-struct proto raw_prot = { ////Ö±½Ó´Óip_local_deliver_finishº¯ÊıÖĞÌø×ªµ½raw_prot   rawµÄÌ×½Ó¿Ú²ã²Ù×÷¼¯ÔÚinetsw_arrayÊı×éÖĞµÄinet_sockraw_ops
+//åŸå§‹å¥—æ¥å­—ä¼ è¾“å±‚æ“ä½œé›†
+struct proto raw_prot = { ////ç›´æ¥ä»ip_local_deliver_finishå‡½æ•°ä¸­è·³è½¬åˆ°raw_prot   rawçš„å¥—æ¥å£å±‚æ“ä½œé›†åœ¨inetsw_arrayæ•°ç»„ä¸­çš„inet_sockraw_ops
 	.name		   = "RAW",
 	.owner		   = THIS_MODULE,
 	.close		   = raw_close,
@@ -872,14 +872,14 @@ struct proto raw_prot = { ////Ö±½Ó´Óip_local_deliver_finishº¯ÊıÖĞÌø×ªµ½raw_prot 
 	.connect	   = ip4_datagram_connect,
 	.disconnect	   = udp_disconnect,
 	.ioctl		   = raw_ioctl,
-	.init		   = raw_init,  //inet_createÖĞÖ´ĞĞ
+	.init		   = raw_init,  //inet_createä¸­æ‰§è¡Œ
 	.setsockopt	   = raw_setsockopt,
 	.getsockopt	   = raw_getsockopt,
 	.sendmsg	   = raw_sendmsg,
 	.recvmsg	   = raw_recvmsg,
 	.bind		   = raw_bind,
 	.backlog_rcv	   = raw_rcv_skb,
-	.hash		   = raw_hash_sk, //inet_createÖĞÖ´ĞĞ
+	.hash		   = raw_hash_sk, //inet_createä¸­æ‰§è¡Œ
 	.unhash		   = raw_unhash_sk,
 	.obj_size	   = sizeof(struct raw_sock),
 	.h.raw_hash	   = &raw_v4_hashinfo,

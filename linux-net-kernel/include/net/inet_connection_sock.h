@@ -37,42 +37,42 @@ struct tcp_congestion_ops;
  */
 
 /*
- * ·â×°ÁËÒ»×éÓë´«Êä²ãÏà¹ØµÄ²Ù×÷¼¯£¬°üÀ¨ÏòÍøÂç²ã·¢ËÍµÄ½Ó¿Ú¡¢´«Êä²ãµÄ
- * setsockopt½Ó¿ÚµÈ¡£TCPÖĞµÄÊµÀıÎªipv4_specific
+ * å°è£…äº†ä¸€ç»„ä¸ä¼ è¾“å±‚ç›¸å…³çš„æ“ä½œé›†ï¼ŒåŒ…æ‹¬å‘ç½‘ç»œå±‚å‘é€çš„æ¥å£ã€ä¼ è¾“å±‚çš„
+ * setsockoptæ¥å£ç­‰ã€‚TCPä¸­çš„å®ä¾‹ä¸ºipv4_specific
 */
 struct inet_connection_sock_af_ops {
-    /* ´Ó´«Êä²ãÏòÍøÂç²ã´«µİµÄ½Ó¿Ú£¬TCPÖĞÉèÖÃÎªip_queue_xmit*/
+    /* ä»ä¼ è¾“å±‚å‘ç½‘ç»œå±‚ä¼ é€’çš„æ¥å£ï¼ŒTCPä¸­è®¾ç½®ä¸ºip_queue_xmit*/
 	int	    (*queue_xmit)(struct sk_buff *skb);
 
-	 /* ¼ÆËã´«Êä²ãÊ×²¿Ğ£ÑéºÍº¯Êı£¬TCPÖĞÉèÖÃÎªtcp_v4_send_check*/
+	 /* è®¡ç®—ä¼ è¾“å±‚é¦–éƒ¨æ ¡éªŒå’Œå‡½æ•°ï¼ŒTCPä¸­è®¾ç½®ä¸ºtcp_v4_send_check*/
 	void	    (*send_check)(struct sock *sk, struct sk_buff *skb);
 
 	/* 
-     * Èç¹û´Ë´«Êä¿ØÖÆ¿é»¹Ã»ÓĞÂ·ÓÉ»º´æÏî£¬Îª´«Êä¿ØÖÆ¿éÑ¡ÔñÂ·ÓÉ»º´æÏî£¬
-     * TCPÖĞÉèÖÃÎªinet_sk_rebuild_header
+     * å¦‚æœæ­¤ä¼ è¾“æ§åˆ¶å—è¿˜æ²¡æœ‰è·¯ç”±ç¼“å­˜é¡¹ï¼Œä¸ºä¼ è¾“æ§åˆ¶å—é€‰æ‹©è·¯ç”±ç¼“å­˜é¡¹ï¼Œ
+     * TCPä¸­è®¾ç½®ä¸ºinet_sk_rebuild_header
      */
 	int	    (*rebuild_header)(struct sock *sk);
 
-	/* ´¦ÀíÁ¬½ÓÇëÇó½Ó¿Ú£¬TCPÖĞÉèÖÃÎªtcp_v4_conn_request*/
+	/* å¤„ç†è¿æ¥è¯·æ±‚æ¥å£ï¼ŒTCPä¸­è®¾ç½®ä¸ºtcp_v4_conn_request*/
 	int	    (*conn_request)(struct sock *sk, struct sk_buff *skb);
 
    /*
-     * ÔÚÍê³ÉÈı´ÎÎÕÊÖºó£¬µ÷ÓÃ´Ë½Ó¿ÚÀ´´´½¨Ò»¸öĞÂµÄÌ×½Ó×Ö£¬ÔÚTCPÖĞ³õÊ¼»¯
-     * Îªtcp_v4_syn_recv_sock
+     * åœ¨å®Œæˆä¸‰æ¬¡æ¡æ‰‹åï¼Œè°ƒç”¨æ­¤æ¥å£æ¥åˆ›å»ºä¸€ä¸ªæ–°çš„å¥—æ¥å­—ï¼Œåœ¨TCPä¸­åˆå§‹åŒ–
+     * ä¸ºtcp_v4_syn_recv_sock
      */
 	struct sock *(*syn_recv_sock)(struct sock *sk, struct sk_buff *skb,
 				      struct request_sock *req,
 				      struct dst_entry *dst);
 
     /*
-     * ÔÚÆôÓÃtw_recycleÇé¿öÏÂ£¬¹Ø±ÕÌ×½Ó×ÖÊ±£¬¼ÇÂ¼Ïà¹ØÊ±¼ä´ÁĞÅÏ¢µ½¶Ô¶ËĞÅÏ¢
-     * ¹ÜÀí¿éÖĞ¡£TCPÖĞÉèÖÃÎªtcp_v4_remember_stamp
+     * åœ¨å¯ç”¨tw_recycleæƒ…å†µä¸‹ï¼Œå…³é—­å¥—æ¥å­—æ—¶ï¼Œè®°å½•ç›¸å…³æ—¶é—´æˆ³ä¿¡æ¯åˆ°å¯¹ç«¯ä¿¡æ¯
+     * ç®¡ç†å—ä¸­ã€‚TCPä¸­è®¾ç½®ä¸ºtcp_v4_remember_stamp
      */
 	int	    (*remember_stamp)(struct sock *sk);
-	/* ÔÚIPv4ÖĞÎªIPÊ×²¿µÄ³¤¶È(²»´øIPÊ×²¿Ñ¡Ïî)*/
+	/* åœ¨IPv4ä¸­ä¸ºIPé¦–éƒ¨çš„é•¿åº¦(ä¸å¸¦IPé¦–éƒ¨é€‰é¡¹)*/
 	u16	    net_header_len;
 
-	 /* IPÌ×½Ó×ÖµØÖ·³¤¶È£¬ÔÚIPv4ÖĞ¾ÍÊÇsockaddr_in½á¹¹µÄ³¤¶È*/
+	 /* IPå¥—æ¥å­—åœ°å€é•¿åº¦ï¼Œåœ¨IPv4ä¸­å°±æ˜¯sockaddr_inç»“æ„çš„é•¿åº¦*/
 	u16	    sockaddr_len;
 	int	    (*setsockopt)(struct sock *sk, int level, int optname, 
 				  char __user *optval, unsigned int optlen);
@@ -88,8 +88,8 @@ struct inet_connection_sock_af_ops {
 #endif
 
     /*
-     * ½«IPÌ×½Ó×ÖµØÖ·½á¹¹ÖĞµÄµØÖ·ĞÅÏ¢¸´ÖÆµ½´«Êä¿ØÖÆ¿éÖĞ£¬TCPÖĞÎª
-     * inet_csk_addr2sockaddr£¬Êµ¼ÊÉÏ¸Ã½Ó¿Ú²¢Î´Ê¹ÓÃ
+     * å°†IPå¥—æ¥å­—åœ°å€ç»“æ„ä¸­çš„åœ°å€ä¿¡æ¯å¤åˆ¶åˆ°ä¼ è¾“æ§åˆ¶å—ä¸­ï¼ŒTCPä¸­ä¸º
+     * inet_csk_addr2sockaddrï¼Œå®é™…ä¸Šè¯¥æ¥å£å¹¶æœªä½¿ç”¨
      */
 	void	    (*addr2sockaddr)(struct sock *sk, struct sockaddr *);
 	int	    (*bind_conflict)(const struct sock *sk,
@@ -116,182 +116,182 @@ struct inet_connection_sock_af_ops {
  * @icsk_ack:		   Delayed ACK control data
  * @icsk_mtup;		   MTU probing control data
  */
-/*Ì×½Ó×ÖÖĞ±¾¶ÎºÍ¶Ô¶ËµÄÏà¹ØĞÅÏ¢¶¼·ÅÔÚinet_sockÖĞ£¬¿ÉÒÔ±£Ö¤ºÍĞ­ÒéÎŞ¹Ø£¬¸÷ÖÖĞ­Òé¶¼ÓÃ¸Ã½á¹¹´æ´¢±¾µØµØÖ·¶Ë¿ÚºÍ¶Ô¶ËµØÖ·¶Ë¿ÚÒÑ¾­Á¬½Ó×´Ì¬µÈ
-ÒÔtcpÎªÀı£¬struct tcp_sock°üº¬struct inet_connection_sock,inet_connection_sock°üº¬ struct inet_sock£¬struct inet_sock°üº¬struct sock, struct sockºóÃæÊÇ struct sock_common¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct tcp_sock)
-ÒÔudpÎªÀı£¬struct udp_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock£¬ struct sockºóÃæÊÇ struct sock_common¡£¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct udp_sock)
-ÒÔrawÎªÀı£¬struct raw_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock£¬ struct sockºóÃæÊÇ struct sock_common¡£¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct raw_sock)
-tcp_sock->inet_connection_sock->inet_sock->sock(socketÀïÃæµÄskÖ¸Ïòsock)
+/*å¥—æ¥å­—ä¸­æœ¬æ®µå’Œå¯¹ç«¯çš„ç›¸å…³ä¿¡æ¯éƒ½æ”¾åœ¨inet_sockä¸­ï¼Œå¯ä»¥ä¿è¯å’Œåè®®æ— å…³ï¼Œå„ç§åè®®éƒ½ç”¨è¯¥ç»“æ„å­˜å‚¨æœ¬åœ°åœ°å€ç«¯å£å’Œå¯¹ç«¯åœ°å€ç«¯å£å·²ç»è¿æ¥çŠ¶æ€ç­‰
+ä»¥tcpä¸ºä¾‹ï¼Œstruct tcp_sockåŒ…å«struct inet_connection_sock,inet_connection_sockåŒ…å« struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sock, struct sockåé¢æ˜¯ struct sock_commonã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct tcp_sock)
+ä»¥udpä¸ºä¾‹ï¼Œstruct udp_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockï¼Œ struct sockåé¢æ˜¯ struct sock_commonã€‚ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct udp_sock)
+ä»¥rawä¸ºä¾‹ï¼Œstruct raw_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockï¼Œ struct sockåé¢æ˜¯ struct sock_commonã€‚ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct raw_sock)
+tcp_sock->inet_connection_sock->inet_sock->sock(socketé‡Œé¢çš„skæŒ‡å‘sock)
 */
-/*ÒÔtcpÎªÀı£¬struct tcp_sock°üº¬struct inet_connection_sock,inet_connection_sock°üº¬ struct inet_sock£¬struct inet_sock°üº¬struct sock, struct sockºóÃæÊÇ struct sock_common¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct tcp_sock)
-ÒÔudpÎªÀı£¬struct udp_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock£¬ struct sockºóÃæÊÇ struct sock_common¡£¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct udp_sock)
-ÒÔrawÎªÀı£¬struct raw_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock£¬ struct sockºóÃæÊÇ struct sock_common¡£¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct raw_sock)
-//tcp_timewait_sock°üº¬inet_timewait_sock£¬inet_timewait_sock°üº¬sock_common
-tcp_request_sock°üº¬inet_request_sock£¬inet_request_sock°üº¬request_sock*/
+/*ä»¥tcpä¸ºä¾‹ï¼Œstruct tcp_sockåŒ…å«struct inet_connection_sock,inet_connection_sockåŒ…å« struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sock, struct sockåé¢æ˜¯ struct sock_commonã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct tcp_sock)
+ä»¥udpä¸ºä¾‹ï¼Œstruct udp_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockï¼Œ struct sockåé¢æ˜¯ struct sock_commonã€‚ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct udp_sock)
+ä»¥rawä¸ºä¾‹ï¼Œstruct raw_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockï¼Œ struct sockåé¢æ˜¯ struct sock_commonã€‚ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct raw_sock)
+//tcp_timewait_sockåŒ…å«inet_timewait_sockï¼Œinet_timewait_sockåŒ…å«sock_common
+tcp_request_sockåŒ…å«inet_request_sockï¼Œinet_request_sockåŒ…å«request_sock*/
 
 /*
- * inet_connection_sock½á¹¹ÊÇÖ§³ÖÃæÏòÁ¬½ÓÌØĞÔµÄÃèÊö¿é£¬¹¹³É
- * IPv4Ğ­Òé×åTCP¿ØÖÆ¿éµÄ»ù´¡£¬ÔÚinet_sock½á¹¹µÄ»ù´¡ÉÏ¼ÓÈëÁË
- * Ö§³ÖÁ¬½ÓµÄÌØĞÔ¡£ÔÚnet_sock»ù´¡ÉÏÔö¼ÓÁËÁ¬½Ó È·ÈÏ ÖØ´«µÈÑ¡Ïî
+ * inet_connection_sockç»“æ„æ˜¯æ”¯æŒé¢å‘è¿æ¥ç‰¹æ€§çš„æè¿°å—ï¼Œæ„æˆ
+ * IPv4åè®®æ—TCPæ§åˆ¶å—çš„åŸºç¡€ï¼Œåœ¨inet_sockç»“æ„çš„åŸºç¡€ä¸ŠåŠ å…¥äº†
+ * æ”¯æŒè¿æ¥çš„ç‰¹æ€§ã€‚åœ¨net_sockåŸºç¡€ä¸Šå¢åŠ äº†è¿æ¥ ç¡®è®¤ é‡ä¼ ç­‰é€‰é¡¹
  */
 struct inet_connection_sock {
     /* inet_sock has to be the first member! */
     struct inet_sock      icsk_inet;
     /*
-     * µ±TCP´«Êä²ã½ÓÊÕµ½¿Í»§¶ËµÄÁ¬½ÓÇëÇóºó£¬
-     * »á´´½¨Ò»¸ö¿Í»§¶ËÌ×½Ó×Ö´æ·Å
-     * µ½icsk_accept_queueÈİÆ÷ÖĞ£¬µÈ´ıÓ¦ÓÃ³ÌĞò
-     * µ÷ÓÃaccept()½øĞĞ¶ÁÈ¡
+     * å½“TCPä¼ è¾“å±‚æ¥æ”¶åˆ°å®¢æˆ·ç«¯çš„è¿æ¥è¯·æ±‚åï¼Œ
+     * ä¼šåˆ›å»ºä¸€ä¸ªå®¢æˆ·ç«¯å¥—æ¥å­—å­˜æ”¾
+     * åˆ°icsk_accept_queueå®¹å™¨ä¸­ï¼Œç­‰å¾…åº”ç”¨ç¨‹åº
+     * è°ƒç”¨accept()è¿›è¡Œè¯»å–
      */ 
-//Èç¹û¿Í»§¶ËÓĞÁ¬½Óµ½À´£¬ÄÇÃ´ÔÚº¯Êıtcp_v4_conn_requestÖĞµÄinet_csk_reqsk_queue_hash_addÌí¼Óµ½icsk_accept_queueÖĞ¡£Ö±µ½Ó¦ÓÃ²ã³ÌĞòµ÷ÓÃacceptº¯Êı£¬ÏµÍ³µ÷ÓÃ
-//»áÖ´ĞĞµ½inet_csk_acceptº¯Êı£¬´Ó¶ø´ÓÁ¬½Ó¶ÓÁĞÖĞÈ¡³öÕâ¸öÒÑÁ¬½ÓµÄĞÅÏ¢£¬Ò²¾ÍÊÇ¶ÓÁĞÉÏÃæ»á¼õÉÙÒ»¸ö£¬Ã¿È¡Ò»¸öÉÙÒ»¸ö¡£·şÎñÆ÷¶ËacceptµÄstruct sock½á¹¹ÊÇ´ÓÕâÀïÃæÈ¥³öÀ´µÄ£¬²»ÊÇ×Ô¼º´´½¨µÄ
+//å¦‚æœå®¢æˆ·ç«¯æœ‰è¿æ¥åˆ°æ¥ï¼Œé‚£ä¹ˆåœ¨å‡½æ•°tcp_v4_conn_requestä¸­çš„inet_csk_reqsk_queue_hash_addæ·»åŠ åˆ°icsk_accept_queueä¸­ã€‚ç›´åˆ°åº”ç”¨å±‚ç¨‹åºè°ƒç”¨acceptå‡½æ•°ï¼Œç³»ç»Ÿè°ƒç”¨
+//ä¼šæ‰§è¡Œåˆ°inet_csk_acceptå‡½æ•°ï¼Œä»è€Œä»è¿æ¥é˜Ÿåˆ—ä¸­å–å‡ºè¿™ä¸ªå·²è¿æ¥çš„ä¿¡æ¯ï¼Œä¹Ÿå°±æ˜¯é˜Ÿåˆ—ä¸Šé¢ä¼šå‡å°‘ä¸€ä¸ªï¼Œæ¯å–ä¸€ä¸ªå°‘ä¸€ä¸ªã€‚æœåŠ¡å™¨ç«¯acceptçš„struct sockç»“æ„æ˜¯ä»è¿™é‡Œé¢å»å‡ºæ¥çš„ï¼Œä¸æ˜¯è‡ªå·±åˆ›å»ºçš„
     struct request_sock_queue icsk_accept_queue;  
     /*
-     * Ö¸ÏòÓëÖ®°ó¶¨µÄ±¾µØ¶Ë¿ÚĞÅÏ¢£¬ÔÚ°ó¶¨¹ı³ÌÖĞ±»ÉèÖÃ  
-     *///inet_bind_bucketÒ²Ìí¼Óµ½sockµÄ->sk_bind_nodeÖĞ
-    struct inet_bind_bucket   *icsk_bind_hash; //´æ´¢inet_bind_bucket½á¹¹  inet_bind_hash
+     * æŒ‡å‘ä¸ä¹‹ç»‘å®šçš„æœ¬åœ°ç«¯å£ä¿¡æ¯ï¼Œåœ¨ç»‘å®šè¿‡ç¨‹ä¸­è¢«è®¾ç½®  
+     *///inet_bind_bucketä¹Ÿæ·»åŠ åˆ°sockçš„->sk_bind_nodeä¸­
+    struct inet_bind_bucket   *icsk_bind_hash; //å­˜å‚¨inet_bind_bucketç»“æ„  inet_bind_hash
     /*
-     * Èç¹ûTCP¶ÎÔÚÖ¸¶¨Ê±¼äÄÚÃ»½ÓÊÕµ½ACK£¬ÔòÈÏÎª·¢ËÍÊ§°Ü£¬¶ø½øĞĞÖØ´«µÄ
-     * ³¬Ê±Ê±¼äjiffies+icsk_rto£¬¼´ÔÚjiffies+icsk_rtoÖ®ºó½øĞĞÖØ´«
+     * å¦‚æœTCPæ®µåœ¨æŒ‡å®šæ—¶é—´å†…æ²¡æ¥æ”¶åˆ°ACKï¼Œåˆ™è®¤ä¸ºå‘é€å¤±è´¥ï¼Œè€Œè¿›è¡Œé‡ä¼ çš„
+     * è¶…æ—¶æ—¶é—´jiffies+icsk_rtoï¼Œå³åœ¨jiffies+icsk_rtoä¹‹åè¿›è¡Œé‡ä¼ 
      */
     unsigned long         icsk_timeout;
     /*
-     * Í¨¹ı±êÊ¶·ûicsk_pendingÀ´Çø·ÖÖØ´«¶¨Ê±Æ÷ºÍ³ÖĞø¶¨Ê±Æ÷(´°¿ÚÌ½²â)µÄÊµÏÖ¡£ÔÚ³¬Ê±
-     * Ê±¼äÄÚÃ»ÓĞ½ÓÊÕµ½ÏàÓ¦µÄACK¶Î»á·¢ÉúÖØ´«¡£ÔÚÁ¬½Ó¶Ô·½Í¨¸æ½ÓÊÕ´°¿ÚÎª
-     * 0Ê±»áÆô¶¯³ÖĞø¶¨Ê±Æ÷.
-     * ÉèÖÃµÄ¶¨Ê±Æ÷º¯ÊıÎªtcp_write_timer().
+     * é€šè¿‡æ ‡è¯†ç¬¦icsk_pendingæ¥åŒºåˆ†é‡ä¼ å®šæ—¶å™¨å’ŒæŒç»­å®šæ—¶å™¨(çª—å£æ¢æµ‹)çš„å®ç°ã€‚åœ¨è¶…æ—¶
+     * æ—¶é—´å†…æ²¡æœ‰æ¥æ”¶åˆ°ç›¸åº”çš„ACKæ®µä¼šå‘ç”Ÿé‡ä¼ ã€‚åœ¨è¿æ¥å¯¹æ–¹é€šå‘Šæ¥æ”¶çª—å£ä¸º
+     * 0æ—¶ä¼šå¯åŠ¨æŒç»­å®šæ—¶å™¨.
+     * è®¾ç½®çš„å®šæ—¶å™¨å‡½æ•°ä¸ºtcp_write_timer().
      */ 
     struct timer_list     icsk_retransmit_timer;//inet_csk_init_xmit_timers
-    /* ÓÃÓÚÑÓ³Ù·¢ËÍACK¶ÎµÄ¶¨Ê±Æ÷ 
-     * ÉèÖÃµÄ¶¨Ê±Æ÷º¯ÊıÎªtcp_delack_timer(),²Î¼ûtcp_v4_init_sock()ºÍ
+    /* ç”¨äºå»¶è¿Ÿå‘é€ACKæ®µçš„å®šæ—¶å™¨ 
+     * è®¾ç½®çš„å®šæ—¶å™¨å‡½æ•°ä¸ºtcp_delack_timer(),å‚è§tcp_v4_init_sock()å’Œ
      * tcp_init_xmit_timers().
      * */
-    struct timer_list     icsk_delack_timer;//inet_csk_init_xmit_timers  £¬ÔÚtcp_send_delayed_ackÖĞÆôÓÃ¶¨Ê±Æ÷
+    struct timer_list     icsk_delack_timer;//inet_csk_init_xmit_timers  ï¼Œåœ¨tcp_send_delayed_ackä¸­å¯ç”¨å®šæ—¶å™¨
     /* 
-     * ³¬Ê±ÖØ´«µÄÊ±¼ä£¬³õÊ¼ÖµÎªTCP_TIMEOUT_INIT,µ±Íù·µÊ±¼ä³¬¹ı´ËÖµÊ±±»
-     * ÈÏÎª´«ÊäÊ§°Ü¡£ĞèÒª×¢ÒâµÄÊÇ£¬³¬Ê±ÖØ´«µÄÊ±¼äÊÇ¸ù¾İµ±Ç°ÍøÂçµÄÇé¿ö
-     * ¶¯Ì¬¼ÆËãµÄ¡£ÔÚtcp_v4_init_sock()ÖĞ³õÊ¼»¯¡£
-     * ¸üĞÂ¼ÆËã¹ı³Ì²Î¼ûtcp_clean_rtx_queue()ºÍtcp_ack_update_rtt()¡£
+     * è¶…æ—¶é‡ä¼ çš„æ—¶é—´ï¼Œåˆå§‹å€¼ä¸ºTCP_TIMEOUT_INIT,å½“å¾€è¿”æ—¶é—´è¶…è¿‡æ­¤å€¼æ—¶è¢«
+     * è®¤ä¸ºä¼ è¾“å¤±è´¥ã€‚éœ€è¦æ³¨æ„çš„æ˜¯ï¼Œè¶…æ—¶é‡ä¼ çš„æ—¶é—´æ˜¯æ ¹æ®å½“å‰ç½‘ç»œçš„æƒ…å†µ
+     * åŠ¨æ€è®¡ç®—çš„ã€‚åœ¨tcp_v4_init_sock()ä¸­åˆå§‹åŒ–ã€‚
+     * æ›´æ–°è®¡ç®—è¿‡ç¨‹å‚è§tcp_clean_rtx_queue()å’Œtcp_ack_update_rtt()ã€‚
      * 
-     * ×î´óÖµÊÇTCP_RTO_MAX£¬×îĞ¡ÖµÊÇTCP_RTO_MIN
+     * æœ€å¤§å€¼æ˜¯TCP_RTO_MAXï¼Œæœ€å°å€¼æ˜¯TCP_RTO_MIN
      */
     __u32             icsk_rto;
-    /* ×îºóÒ»´Î¸üĞÂµÄÂ·¾¶MTU(PMTU)  ÓÉ½á¹¹dst_entryÖĞµÄmetrics[RTAX_MAX]³õÊ¼»¯²¢¸üĞÂ */ //Â·¾¶MTU·¢ÏÖ¹ı³ÌÖĞ£¬Èç¹û·¢ËÍ±ä»¯»á¸üĞÂ¡£¼ûtcp_sync_mss
+    /* æœ€åä¸€æ¬¡æ›´æ–°çš„è·¯å¾„MTU(PMTU)  ç”±ç»“æ„dst_entryä¸­çš„metrics[RTAX_MAX]åˆå§‹åŒ–å¹¶æ›´æ–° */ //è·¯å¾„MTUå‘ç°è¿‡ç¨‹ä¸­ï¼Œå¦‚æœå‘é€å˜åŒ–ä¼šæ›´æ–°ã€‚è§tcp_sync_mss
     __u32             icsk_pmtu_cookie;
     /*
-     * icsk_ca_opsÊÇÖ¸ÏòÊµÏÖÄ³¸öÓµÈû¿ØÖÆËã·¨µÄÖ¸Õë¡£µ½Ä¿Ç°ÎªÖ¹£¬LinuxÖ§³Ö
-     * ¶àÖÖÓµÈû¿ØÖÆËã·¨£¬¶øÓÃ»§Ò²¿ÉÒÔ±àĞ´×Ô¼ºµÄÓµÈû¿ØÖÆ»úÖÆÄ£¿é¼ÓÔØµ½ÄÚºË
-     * ÖĞ£¬²Î¼ûTCP_CONGESTIONÑ¡Ïî
+     * icsk_ca_opsæ˜¯æŒ‡å‘å®ç°æŸä¸ªæ‹¥å¡æ§åˆ¶ç®—æ³•çš„æŒ‡é’ˆã€‚åˆ°ç›®å‰ä¸ºæ­¢ï¼ŒLinuxæ”¯æŒ
+     * å¤šç§æ‹¥å¡æ§åˆ¶ç®—æ³•ï¼Œè€Œç”¨æˆ·ä¹Ÿå¯ä»¥ç¼–å†™è‡ªå·±çš„æ‹¥å¡æ§åˆ¶æœºåˆ¶æ¨¡å—åŠ è½½åˆ°å†…æ ¸
+     * ä¸­ï¼Œå‚è§TCP_CONGESTIONé€‰é¡¹
      * 
-     * Ä¬ÈÏÇé¿öÏÂÊÇtcp_init_congestion_ops£¬²Î¼û
-     * ÔÚ³õÊ¼µÄÊ±ºò»áÉèÖÃÎªtcp_init_congestion_ops(²Î¼ûtcp_v4_init_sock())£¬µ«ÊÇÔÚ
-     * Á¬½Ó½¨Á¢¹ı³ÌÖĞ»áµ÷ÓÃtcp_init_congestion_control()Ñ¡Ôñtcp_cong_listÁ´±íÖĞµÚÒ»¸ö
-     * ¿ÉÒÔÊ¹ÓÃµÄÓµÈû¿ØÖÆËã·¨Ä£¿é¡£ÔÚcentosÏÂ£¬Ä¬ÈÏÊÇcubic¡£
-     * Ö®ËùÒÔÄ¬ÈÏÊÇcubic£¬ÊÇÒòÎªÔÚ±àÒëÄÚºËµÄÊ±ºòÆôÓÃÁËCONFIG_TCP_CONG_CUBIC
-     * Ñ¡Ïî£¬²Î¼û/boot/config-2.6.32-358.el6.x86_64.
+     * é»˜è®¤æƒ…å†µä¸‹æ˜¯tcp_init_congestion_opsï¼Œå‚è§
+     * åœ¨åˆå§‹çš„æ—¶å€™ä¼šè®¾ç½®ä¸ºtcp_init_congestion_ops(å‚è§tcp_v4_init_sock())ï¼Œä½†æ˜¯åœ¨
+     * è¿æ¥å»ºç«‹è¿‡ç¨‹ä¸­ä¼šè°ƒç”¨tcp_init_congestion_control()é€‰æ‹©tcp_cong_listé“¾è¡¨ä¸­ç¬¬ä¸€ä¸ª
+     * å¯ä»¥ä½¿ç”¨çš„æ‹¥å¡æ§åˆ¶ç®—æ³•æ¨¡å—ã€‚åœ¨centosä¸‹ï¼Œé»˜è®¤æ˜¯cubicã€‚
+     * ä¹‹æ‰€ä»¥é»˜è®¤æ˜¯cubicï¼Œæ˜¯å› ä¸ºåœ¨ç¼–è¯‘å†…æ ¸çš„æ—¶å€™å¯ç”¨äº†CONFIG_TCP_CONG_CUBIC
+     * é€‰é¡¹ï¼Œå‚è§/boot/config-2.6.32-358.el6.x86_64.
      */
-    const struct tcp_congestion_ops *icsk_ca_ops; //¿ÉÒÔÍ¨¹ıÓ¦ÓÃ³ÌĞòsetsockopsÉèÖÃtcp_setsockopt
+    const struct tcp_congestion_ops *icsk_ca_ops; //å¯ä»¥é€šè¿‡åº”ç”¨ç¨‹åºsetsockopsè®¾ç½®tcp_setsockopt
     /*
-     * TCPµÄÒ»¸ö²Ù×÷½Ó¿Ú¼¯£¬°üÀ¨ÏòIP²ã·¢ËÍµÄ½Ó¿Ú¡¢TCP²ãsetsockopt½Ó¿ÚµÈ¡£
-     * ¼ÓÔØTCPĞ­ÒéÄ£¿éÊ±£¬ÔÚtcp_v4_init_sock()ÖĞ±»³õÊ¼»¯Îªinet_connection_sock_af_ops
-     * ½á¹¹ÀàĞÍ³£Á¿ipv4_specific
-     */ ////ÔÚtcp_prot->initÖĞ±»¸³Öµ¸øinet_connection_sock->icsk_af_ops
+     * TCPçš„ä¸€ä¸ªæ“ä½œæ¥å£é›†ï¼ŒåŒ…æ‹¬å‘IPå±‚å‘é€çš„æ¥å£ã€TCPå±‚setsockoptæ¥å£ç­‰ã€‚
+     * åŠ è½½TCPåè®®æ¨¡å—æ—¶ï¼Œåœ¨tcp_v4_init_sock()ä¸­è¢«åˆå§‹åŒ–ä¸ºinet_connection_sock_af_ops
+     * ç»“æ„ç±»å‹å¸¸é‡ipv4_specific
+     */ ////åœ¨tcp_prot->initä¸­è¢«èµ‹å€¼ç»™inet_connection_sock->icsk_af_ops
     const struct inet_connection_sock_af_ops *icsk_af_ops;
     /*
-     * ¸ù¾İPMTUÍ¬²½±¾µØMSSº¯ÊıÖ¸Õë¡£¼ÓÔØTCPĞ­ÒéÄ£¿éÊ±£¬ÔÚtcp_v4_init_sock()ÖĞ
-     * ±»³õÊ¼»¯Îªtcp_sync_mss().
+     * æ ¹æ®PMTUåŒæ­¥æœ¬åœ°MSSå‡½æ•°æŒ‡é’ˆã€‚åŠ è½½TCPåè®®æ¨¡å—æ—¶ï¼Œåœ¨tcp_v4_init_sock()ä¸­
+     * è¢«åˆå§‹åŒ–ä¸ºtcp_sync_mss().
      */
     unsigned int          (*icsk_sync_mss)(struct sock *sk, u32 pmtu);
-    /* ÓµÈû¿ØÖÆ×´Ì¬*/
+    /* æ‹¥å¡æ§åˆ¶çŠ¶æ€*/
     __u8              icsk_ca_state;
-    /* ¼ÇÂ¼³¬Ê±ÖØ´«µÄ´ÎÊı,Ò²¾ÍÊÇÖØ´«µÄ¶ÎµÄ¸öÊı*/
+    /* è®°å½•è¶…æ—¶é‡ä¼ çš„æ¬¡æ•°,ä¹Ÿå°±æ˜¯é‡ä¼ çš„æ®µçš„ä¸ªæ•°*/
     __u8              icsk_retransmits;
     /*
-     * ±êÊ¶Ô¤¶¨µÄ¶¨Ê±Æ÷ÊÂ¼ş£¬¿ÉÄÜµÄÈ¡ÖµÎªICSK_TIME_RETRANSµÈ¡£Êµ¼ÊÉÏ£¬Ö»È¡
-     * ICSK_TIME_RETRANS»òICSK_TIME_PROBE0£¬ÒòÎªÕâÁ½ÖÖ¶¨Ê±Æ÷²Ù×÷Ê±Ê¹ÓÃµÄÊÇ
-     * Í¬Ò»¸ö¶¨Ê±Æ÷£¬Òò´ËĞèÒªÓÃÕâ¸ö±êÊ¶À´Çø·ÖÕıÔÚÊ¹ÓÃµÄÄÄ¸ö¶¨Ê±Æ÷¡£ÖØ´«ºÍÁã
-     * ´°¿ÚÌ½²âÊ±»áµ÷ÓÃinet_csk_reset_xmit_timer()ÉèÖÃ¸Ã×Ö¶Î
+     * æ ‡è¯†é¢„å®šçš„å®šæ—¶å™¨äº‹ä»¶ï¼Œå¯èƒ½çš„å–å€¼ä¸ºICSK_TIME_RETRANSç­‰ã€‚å®é™…ä¸Šï¼Œåªå–
+     * ICSK_TIME_RETRANSæˆ–ICSK_TIME_PROBE0ï¼Œå› ä¸ºè¿™ä¸¤ç§å®šæ—¶å™¨æ“ä½œæ—¶ä½¿ç”¨çš„æ˜¯
+     * åŒä¸€ä¸ªå®šæ—¶å™¨ï¼Œå› æ­¤éœ€è¦ç”¨è¿™ä¸ªæ ‡è¯†æ¥åŒºåˆ†æ­£åœ¨ä½¿ç”¨çš„å“ªä¸ªå®šæ—¶å™¨ã€‚é‡ä¼ å’Œé›¶
+     * çª—å£æ¢æµ‹æ—¶ä¼šè°ƒç”¨inet_csk_reset_xmit_timer()è®¾ç½®è¯¥å­—æ®µ
      */
     __u8              icsk_pending;
-    /* ÓÃÀ´¼ÆËã³ÖĞø¶¨Ê±Æ÷µÄÏÂÒ»¸öÉè¶¨ÖµµÄÖ¸ÊıÍË±ÜËã·¨Ö¸Êı£¬ÔÚ´«ËÍ³¬Ê±Ê±»áµİÔö *///ÀıÈçÌ½²â¶¨Ê±Æ÷ÀïÃætcp_send_probe0£¬¾ÍÓÃÁËÕâÁ½¸ö×Ö¶Î×öÖØ´«Ê±¼ä±ä»¯
+    /* ç”¨æ¥è®¡ç®—æŒç»­å®šæ—¶å™¨çš„ä¸‹ä¸€ä¸ªè®¾å®šå€¼çš„æŒ‡æ•°é€€é¿ç®—æ³•æŒ‡æ•°ï¼Œåœ¨ä¼ é€è¶…æ—¶æ—¶ä¼šé€’å¢ *///ä¾‹å¦‚æ¢æµ‹å®šæ—¶å™¨é‡Œé¢tcp_send_probe0ï¼Œå°±ç”¨äº†è¿™ä¸¤ä¸ªå­—æ®µåšé‡ä¼ æ—¶é—´å˜åŒ–
     __u8              icsk_backoff;
     /*
-     * ÔÚ½¨Á¢TCPÁ¬½ÓÊ±×î¶àÔÊĞíÖØÊÔ·¢ËÍSYN»òSYN+ACK¶ÎµÄ´ÎÊı£¬²Î¼ûTCP_SYNCNTÑ¡Ïî
-     * ºÍsysctl_tcp_synack_retriesÏµÍ³²ÎÊı
+     * åœ¨å»ºç«‹TCPè¿æ¥æ—¶æœ€å¤šå…è®¸é‡è¯•å‘é€SYNæˆ–SYN+ACKæ®µçš„æ¬¡æ•°ï¼Œå‚è§TCP_SYNCNTé€‰é¡¹
+     * å’Œsysctl_tcp_synack_retriesç³»ç»Ÿå‚æ•°
      */
     __u8              icsk_syn_retries;
     /*
-     * ³ÖĞø¶¨Ê±Æ÷»ò±£»î¶¨Ê±Æ÷ÖÜÆÚĞÔ·¢ËÍ³öÈ¥µ«Î´±»È·ÈÏµÄTCP¶ÎÊıÄ¿£¬ÔÚÊÕµ½ACKÖ®ºó
-     * ÇåÁã
+     * æŒç»­å®šæ—¶å™¨æˆ–ä¿æ´»å®šæ—¶å™¨å‘¨æœŸæ€§å‘é€å‡ºå»ä½†æœªè¢«ç¡®è®¤çš„TCPæ®µæ•°ç›®ï¼Œåœ¨æ”¶åˆ°ACKä¹‹å
+     * æ¸…é›¶
      */
     __u8              icsk_probes_out;
-    /* IPÊ×²¿ÖĞÑ¡Ïî²¿·Ö³¤¶È */
+    /* IPé¦–éƒ¨ä¸­é€‰é¡¹éƒ¨åˆ†é•¿åº¦ */
     __u16             icsk_ext_hdr_len;
     struct {
         /*
-         * ±êÊ¶µ±Ç°ĞèÒª·¢ËÍÈ·ÈÏµÄ½ô¼±³Ì¶ÈºÍ×´Ì¬£¬¿ÉÄÜµÄÈ¡ÖµÎªICSK_ACK_SCHEDµÈ¡£
-         * ÔÚÊı¾İ´ÓÄÚºË¿Õ¼ä¸´ÖÆµ½ÓÃ»§¿Õ¼äÊ±»á¼ì²â¸Ã×´Ì¬£¬Èç¹ûĞèÒªÔòÁ¢¼´·¢ËÍÈ·ÈÏ£»
-         * ¶øÔÚ¼ÆËãrcv_mssÊ±£¬»á¸ù¾İÇé¿öµ÷Õû´Ë×´Ì¬¡£ÓÉÓÚpendingÊÇ°´Î»´æ´¢µÄ£¬
-         * Òò´Ë¶à¸ö×´Ì¬¿ÉÒÔÍ¬Ê±´æÔÚ
+         * æ ‡è¯†å½“å‰éœ€è¦å‘é€ç¡®è®¤çš„ç´§æ€¥ç¨‹åº¦å’ŒçŠ¶æ€ï¼Œå¯èƒ½çš„å–å€¼ä¸ºICSK_ACK_SCHEDç­‰ã€‚
+         * åœ¨æ•°æ®ä»å†…æ ¸ç©ºé—´å¤åˆ¶åˆ°ç”¨æˆ·ç©ºé—´æ—¶ä¼šæ£€æµ‹è¯¥çŠ¶æ€ï¼Œå¦‚æœéœ€è¦åˆ™ç«‹å³å‘é€ç¡®è®¤ï¼›
+         * è€Œåœ¨è®¡ç®—rcv_mssæ—¶ï¼Œä¼šæ ¹æ®æƒ…å†µè°ƒæ•´æ­¤çŠ¶æ€ã€‚ç”±äºpendingæ˜¯æŒ‰ä½å­˜å‚¨çš„ï¼Œ
+         * å› æ­¤å¤šä¸ªçŠ¶æ€å¯ä»¥åŒæ—¶å­˜åœ¨
          */
         __u8          pending;   /* ACK is pending             */
         /*
-         * ±êÊ¶ÔÚ¿ìËÙ·¢ËÍÈ·ÈÏÄ£Ê½ÖĞ£¬¿ÉÒÔ¿ìËÙ·¢ËÍACK¶ÎµÄÊıÁ¿¡£Óëpingpong
-         * Ò»Í¬×÷ÎªÅĞ¶ÏÊÇ·ñÔÚ¿ìËÙ·¢ËÍÈ·ÈÏÄ£Ê½ÏÂµÄÌõ¼ş£¬Èç¹ûÒªÑÓÊ±·¢ËÍÈ·ÈÏ
-         * Ôò±ØĞëÔÚÑÓÊ±·¢ËÍÈ·ÈÏÄ£Ê½ÏÂ 
+         * æ ‡è¯†åœ¨å¿«é€Ÿå‘é€ç¡®è®¤æ¨¡å¼ä¸­ï¼Œå¯ä»¥å¿«é€Ÿå‘é€ACKæ®µçš„æ•°é‡ã€‚ä¸pingpong
+         * ä¸€åŒä½œä¸ºåˆ¤æ–­æ˜¯å¦åœ¨å¿«é€Ÿå‘é€ç¡®è®¤æ¨¡å¼ä¸‹çš„æ¡ä»¶ï¼Œå¦‚æœè¦å»¶æ—¶å‘é€ç¡®è®¤
+         * åˆ™å¿…é¡»åœ¨å»¶æ—¶å‘é€ç¡®è®¤æ¨¡å¼ä¸‹ 
          */
         __u8          quick;     /* Scheduled number of quick acks     */
         /*
-         * ±êÊ¶ÆôÓÃ»ò½ûÖ¹¿ìËÙÈ·ÈÏÄ£Ê½£¬Í¨¹ıTCP_QUICKACKÑ¡Ïî¿ÉÒÔÉèÖÃÆäÖµ£¬¾ßÌå
-         * ²Î¼ûTCP_QUICKÑ¡Ïî¡£È¡Öµ:
-         * 0: ²»ÑÓÊ±ACK¶ÎµÄ·¢ËÍ£¬¶øÊÇ½øĞĞ¿ìËÙ·¢ËÍ
-         * 1: ½«»áÑÓÊ±·¢ËÍACK
-         * ÔÚ¿ìËÙÈ·ÈÏÄ£Ê½ÏÂ£¬»áÁ¢¼´·¢ËÍACK.Õû¸öTCP´¦Àí¹ı³ÌÖĞ£¬Èç¹ûĞèÒª»¹»á½øÈë
-         * µ½Õı³£Ä£Ê½ÔËĞĞ£¬Ò²¾ÍÊÇËµ£¬Õâ¸ö±êÖ¾µÄÉèÖÃ²»ÊÇÓÀ¾ÃĞÔµÄ£¬¶øÖ»ÊÇÔÚµ±Ê±
-         * ÆôÓÃ/½ûÖ¹¿ìËÙÈ·ÈÏÄ£Ê½£¬ÔÚÕâÖ®ºó£¬¸ù¾İÑÓÊ±È·ÈÏ³¬Ê±¡¢Êı¾İ´«ÊäµÈÒòËØ£¬
-         * ÓĞ¿ÉÄÜ»áÔÙ´Î½øÈë»òÀë¿ª¿ìËÙÈ·ÈÏÄ£Ê½
+         * æ ‡è¯†å¯ç”¨æˆ–ç¦æ­¢å¿«é€Ÿç¡®è®¤æ¨¡å¼ï¼Œé€šè¿‡TCP_QUICKACKé€‰é¡¹å¯ä»¥è®¾ç½®å…¶å€¼ï¼Œå…·ä½“
+         * å‚è§TCP_QUICKé€‰é¡¹ã€‚å–å€¼:
+         * 0: ä¸å»¶æ—¶ACKæ®µçš„å‘é€ï¼Œè€Œæ˜¯è¿›è¡Œå¿«é€Ÿå‘é€
+         * 1: å°†ä¼šå»¶æ—¶å‘é€ACK
+         * åœ¨å¿«é€Ÿç¡®è®¤æ¨¡å¼ä¸‹ï¼Œä¼šç«‹å³å‘é€ACK.æ•´ä¸ªTCPå¤„ç†è¿‡ç¨‹ä¸­ï¼Œå¦‚æœéœ€è¦è¿˜ä¼šè¿›å…¥
+         * åˆ°æ­£å¸¸æ¨¡å¼è¿è¡Œï¼Œä¹Ÿå°±æ˜¯è¯´ï¼Œè¿™ä¸ªæ ‡å¿—çš„è®¾ç½®ä¸æ˜¯æ°¸ä¹…æ€§çš„ï¼Œè€Œåªæ˜¯åœ¨å½“æ—¶
+         * å¯ç”¨/ç¦æ­¢å¿«é€Ÿç¡®è®¤æ¨¡å¼ï¼Œåœ¨è¿™ä¹‹åï¼Œæ ¹æ®å»¶æ—¶ç¡®è®¤è¶…æ—¶ã€æ•°æ®ä¼ è¾“ç­‰å› ç´ ï¼Œ
+         * æœ‰å¯èƒ½ä¼šå†æ¬¡è¿›å…¥æˆ–ç¦»å¼€å¿«é€Ÿç¡®è®¤æ¨¡å¼
          */
-        __u8          pingpong;  /* The session is interactive   ¼ûtcp_delack_timer      */
+        __u8          pingpong;  /* The session is interactive   è§tcp_delack_timer      */
         /*
-         * ÈíÖĞ¶ÏºÍÓÃ»§½ø³ÌÊÇ²»ÄÜÍ¬Ê±Õ¼ÓĞËø¶¨Ì×½Ó×ÖµÄ£¬Òò´ËÈç¹ûÌ×½Ó×ÖÒÑ±»ÓÃ»§
-         * ½ø³ÌËø¶¨£¬¶ø´ËÊ±ÑÓÊ±ACK¶¨Ê±Æ÷±»´¥·¢£¬ÔÚÂß¼­ÉÏËµ´ËÊ±Ó¦¸Ã·¢ËÍACK,µ«
-         * ÓÉÓÚÌ×½Ó×Ö±»ÓÃ»§½ø³ÌËø¶¨ÁË²»ÄÜ·ÃÎÊ£¬Òò´ËÖ»ÄÜÖÃblocked±êÖ¾Î»1£¬±íÊ¾
-         * "Ì×½Ó×Ö±»ÓÃ»§½ø³ÌËø¶¨ÁË£¬ÏÖ²»ÄÜ·¢ËÍACK£¬Èç¹ûÓĞ»ú»áÁ¢¼´·¢ËÍACK"£¬ÕâĞ©
-         * »ú»á°üÀ¨½ÓÊÕµ½Êı¾İÖ®ºóºÍ½«Êı¾İ¸´ÖÆµ½ÓÃ»§¿Õ¼äÖ®ºó
+         * è½¯ä¸­æ–­å’Œç”¨æˆ·è¿›ç¨‹æ˜¯ä¸èƒ½åŒæ—¶å æœ‰é”å®šå¥—æ¥å­—çš„ï¼Œå› æ­¤å¦‚æœå¥—æ¥å­—å·²è¢«ç”¨æˆ·
+         * è¿›ç¨‹é”å®šï¼Œè€Œæ­¤æ—¶å»¶æ—¶ACKå®šæ—¶å™¨è¢«è§¦å‘ï¼Œåœ¨é€»è¾‘ä¸Šè¯´æ­¤æ—¶åº”è¯¥å‘é€ACK,ä½†
+         * ç”±äºå¥—æ¥å­—è¢«ç”¨æˆ·è¿›ç¨‹é”å®šäº†ä¸èƒ½è®¿é—®ï¼Œå› æ­¤åªèƒ½ç½®blockedæ ‡å¿—ä½1ï¼Œè¡¨ç¤º
+         * "å¥—æ¥å­—è¢«ç”¨æˆ·è¿›ç¨‹é”å®šäº†ï¼Œç°ä¸èƒ½å‘é€ACKï¼Œå¦‚æœæœ‰æœºä¼šç«‹å³å‘é€ACK"ï¼Œè¿™äº›
+         * æœºä¼šåŒ…æ‹¬æ¥æ”¶åˆ°æ•°æ®ä¹‹åå’Œå°†æ•°æ®å¤åˆ¶åˆ°ç”¨æˆ·ç©ºé—´ä¹‹å
          */
         __u8          blocked;   /* Delayed ACK was blocked by socket lock */
         /*
-         * ÓÃÀ´¼ÆËãÑÓÊ±È·ÈÏµÄ¹ÀÖµ£¬ÔÚ½ÓÊÕµ½TCP¶ÎÊ±»á¸ù¾İ±¾´ÎÓëÉÏ´Î½ÓÊÕµÄÊ±¼ä¼ä¸ô
-         * À´µ÷Õû¸ÃÖµ£¬¶øÔÚÉèÖÃÑÓÊ±È·ÈÏ¶¨Ê±Æ÷Ê±Ò²»á¸ù¾İÌõ¼şµ÷Õû¸ÃÖµ
+         * ç”¨æ¥è®¡ç®—å»¶æ—¶ç¡®è®¤çš„ä¼°å€¼ï¼Œåœ¨æ¥æ”¶åˆ°TCPæ®µæ—¶ä¼šæ ¹æ®æœ¬æ¬¡ä¸ä¸Šæ¬¡æ¥æ”¶çš„æ—¶é—´é—´éš”
+         * æ¥è°ƒæ•´è¯¥å€¼ï¼Œè€Œåœ¨è®¾ç½®å»¶æ—¶ç¡®è®¤å®šæ—¶å™¨æ—¶ä¹Ÿä¼šæ ¹æ®æ¡ä»¶è°ƒæ•´è¯¥å€¼
          */
         __u32         ato;       /* Predicted tick of soft clock       */
-        /* µ±Ç°µÄÑÓÊ±È·ÈÏÊ±¼ä£¬³¬Ê±Ê±»á·¢ËÍACK*/
+        /* å½“å‰çš„å»¶æ—¶ç¡®è®¤æ—¶é—´ï¼Œè¶…æ—¶æ—¶ä¼šå‘é€ACK*/
         unsigned long     timeout;   /* Currently scheduled timeout        */
-        /* ±êÊ¶×î½üÒ»´Î½ÓÊÕµ½Êı¾İ°üµÄÊ±¼ä */
+        /* æ ‡è¯†æœ€è¿‘ä¸€æ¬¡æ¥æ”¶åˆ°æ•°æ®åŒ…çš„æ—¶é—´ */
         __u32         lrcvtime;  /* timestamp of last received data packet */
-        /* ×îºóÒ»¸ö½ÓÊÕµ½µÄ¶ÎµÄ³¤¶È£¬ÓÃÀ´¼ÆËãrcv_mss */
+        /* æœ€åä¸€ä¸ªæ¥æ”¶åˆ°çš„æ®µçš„é•¿åº¦ï¼Œç”¨æ¥è®¡ç®—rcv_mss */
         __u16         last_seg_size; /* Size of last incoming segment      */
-        /* ÓÉ×î½ü½ÓÊÕµ½¶Î¼ÆËã³öµÄMSS£¬Ö÷ÒªÓÃÀ´È·¶¨ÊÇ·ñÖ´ĞĞÑÓÊ±È·ÈÏ*/
+        /* ç”±æœ€è¿‘æ¥æ”¶åˆ°æ®µè®¡ç®—å‡ºçš„MSSï¼Œä¸»è¦ç”¨æ¥ç¡®å®šæ˜¯å¦æ‰§è¡Œå»¶æ—¶ç¡®è®¤*/
         __u16         rcv_mss;   /* MSS used for delayed ACK decisions     */ 
-    } icsk_ack; /* ÑÓÊ±È·ÈÏ¿ØÖÆÊı¾İ¿é */
+    } icsk_ack; /* å»¶æ—¶ç¡®è®¤æ§åˆ¶æ•°æ®å— */
     struct {
-        /* ±êÊ¶ÊÇ·ñÆôÓÃÂ·¾¶MTU·¢ÏÖ */
+        /* æ ‡è¯†æ˜¯å¦å¯ç”¨è·¯å¾„MTUå‘ç° */
         int       enabled;
 
         /* Range of MTUs to search */
-        /* ÓÃÓÚ±êÊ¶½øĞĞÂ·¾¶MTU·¢ÏÖµÄÇø¼äµÄÉÏÏÂÏŞ */
+        /* ç”¨äºæ ‡è¯†è¿›è¡Œè·¯å¾„MTUå‘ç°çš„åŒºé—´çš„ä¸Šä¸‹é™ */
         int       search_high;
         int       search_low;
 
         /* Information on the current probe. */
         /*
-         * Îªµ±Ç°Â·¾¶MTUÌ½²â¶ÎµÄ³¤¶È£¬Ò²ÓÃÓÚÅĞ¶ÏÂ·¾¶MTUÌ½²âÊÇ·ñÍê³É¡£ÎŞÂÛ
-         * ³É¹¦»¹ÊÇÊ§°Ü£¬Â·¾¶MTUÌ½²âÍê³Éºó´ËÖµ¶¼½«³õÊ¼»¯Îª0
+         * ä¸ºå½“å‰è·¯å¾„MTUæ¢æµ‹æ®µçš„é•¿åº¦ï¼Œä¹Ÿç”¨äºåˆ¤æ–­è·¯å¾„MTUæ¢æµ‹æ˜¯å¦å®Œæˆã€‚æ— è®º
+         * æˆåŠŸè¿˜æ˜¯å¤±è´¥ï¼Œè·¯å¾„MTUæ¢æµ‹å®Œæˆåæ­¤å€¼éƒ½å°†åˆå§‹åŒ–ä¸º0
          */
         int       probe_size;
-    } icsk_mtup; /* ÓĞ¹ØÂ·¾¶MTU·¢ÏÖµÄ¿ØÖÆÊı¾İ¿é£¬ÔÚtcp_mtup_init()ÖĞ±»³õÊ¼»¯*/
+    } icsk_mtup; /* æœ‰å…³è·¯å¾„MTUå‘ç°çš„æ§åˆ¶æ•°æ®å—ï¼Œåœ¨tcp_mtup_init()ä¸­è¢«åˆå§‹åŒ–*/
     /*
-     * ´æ´¢¸÷ÖÖÓĞ¹ØTCPÓµÈû¿ØÖÆËã·¨µÄË½ÓĞ²ÎÊı¡£ËäÈ»ÕâÀï¶¨ÒåµÄÊÇ16¸öÎŞ·ûºÅÕûĞÎ£¬
-     * µ«ÔÚÊµ¼Ê´æ´¢Ê±µÄÀàĞÍÒòÓµÈûËã·¨¶øÒì
+     * å­˜å‚¨å„ç§æœ‰å…³TCPæ‹¥å¡æ§åˆ¶ç®—æ³•çš„ç§æœ‰å‚æ•°ã€‚è™½ç„¶è¿™é‡Œå®šä¹‰çš„æ˜¯16ä¸ªæ— ç¬¦å·æ•´å½¢ï¼Œ
+     * ä½†åœ¨å®é™…å­˜å‚¨æ—¶çš„ç±»å‹å› æ‹¥å¡ç®—æ³•è€Œå¼‚
      */
     u32           icsk_ca_priv[16];
 #define ICSK_CA_PRIV_SIZE	(16 * sizeof(u32))
@@ -319,15 +319,15 @@ extern struct sock *inet_csk_clone(struct sock *sk,
 
 enum inet_csk_ack_state_t {
     /*
-        * ÓĞACKĞèÒª·¢ËÍ£¬ÊÇÁ¢¼´·¢ËÍ»¹ÊÇÑÓÊ±·¢ËÍ£¬»¹ĞèÒª¿´ÆäËû±êÖ¾£¬Ò²ÊÇÄÜ·ñ
-        * ·¢ËÍÈ·ÈÏµÄÇ°Ìá¡£ÔÚ½ÓÊÕµ½ÓĞ¸ººÉµÄTCP¶Îºó£¬»áÉèÖÃ¸Ã±êÖ¾
+        * æœ‰ACKéœ€è¦å‘é€ï¼Œæ˜¯ç«‹å³å‘é€è¿˜æ˜¯å»¶æ—¶å‘é€ï¼Œè¿˜éœ€è¦çœ‹å…¶ä»–æ ‡å¿—ï¼Œä¹Ÿæ˜¯èƒ½å¦
+        * å‘é€ç¡®è®¤çš„å‰æã€‚åœ¨æ¥æ”¶åˆ°æœ‰è´Ÿè·çš„TCPæ®µåï¼Œä¼šè®¾ç½®è¯¥æ ‡å¿—
         */
-	ICSK_ACK_SCHED	= 1, //inet_csk_schedule_ackÖĞÖÃÎ»    ////ÉèÖÃÕâ¸ö±êÖ¾ºó£¬ÔÚÏÂÒ»¸öackÑÓ³Ù¶¨Ê±Æ÷Ê±¼äµ½ºó»á·¢ËÍack   ¼ûtcp_delack_timer
-    /* ÑÓÊ±·¢ËÍACK¶¨Ê±Æ÷ÒÑ¾­Æô¶¯ */
+	ICSK_ACK_SCHED	= 1, //inet_csk_schedule_ackä¸­ç½®ä½    ////è®¾ç½®è¿™ä¸ªæ ‡å¿—åï¼Œåœ¨ä¸‹ä¸€ä¸ªackå»¶è¿Ÿå®šæ—¶å™¨æ—¶é—´åˆ°åä¼šå‘é€ack   è§tcp_delack_timer
+    /* å»¶æ—¶å‘é€ACKå®šæ—¶å™¨å·²ç»å¯åŠ¨ */
 	ICSK_ACK_TIMER  = 2,
-    /* Ö»ÒªÓĞACKĞèÒª·¢ËÍ£¬²¢ÇÒpingpongÎª0Ê±£¬ACK¿ÉÒÔÁ¢¼´·¢ËÍ */
+    /* åªè¦æœ‰ACKéœ€è¦å‘é€ï¼Œå¹¶ä¸”pingpongä¸º0æ—¶ï¼ŒACKå¯ä»¥ç«‹å³å‘é€ */
 	ICSK_ACK_PUSHED = 4,
-	/* Ö»ÒªÓĞACKĞèÒª·¢ËÍ£¬¶¼¿ÉÒÔÁ¢¼´·¢ËÍ£¬ÎŞÂÛÊÇ·ñ´¦ÓÚ¿ìËÙ·¢ËÍÄ£Ê½*/
+	/* åªè¦æœ‰ACKéœ€è¦å‘é€ï¼Œéƒ½å¯ä»¥ç«‹å³å‘é€ï¼Œæ— è®ºæ˜¯å¦å¤„äºå¿«é€Ÿå‘é€æ¨¡å¼*/
 	ICSK_ACK_PUSHED2 = 8
 };
 
@@ -337,7 +337,7 @@ extern void inet_csk_init_xmit_timers(struct sock *sk,
 				      void (*keepalive_handler)(unsigned long));
 extern void inet_csk_clear_xmit_timers(struct sock *sk);
 
-//ÉèÖÃÕâ¸ö±êÖ¾ºó£¬ÔÚÏÂÒ»¸öackÑÓ³Ù¶¨Ê±Æ÷Ê±¼äµ½ºó»á·¢ËÍack   ¼ûtcp_delack_timer
+//è®¾ç½®è¿™ä¸ªæ ‡å¿—åï¼Œåœ¨ä¸‹ä¸€ä¸ªackå»¶è¿Ÿå®šæ—¶å™¨æ—¶é—´åˆ°åä¼šå‘é€ack   è§tcp_delack_timer
 static inline void inet_csk_schedule_ack(struct sock *sk)
 {
 	inet_csk(sk)->icsk_ack.pending |= ICSK_ACK_SCHED;
@@ -398,8 +398,8 @@ static inline void inet_csk_reset_xmit_timer(struct sock *sk, const int what,
 #endif
 		when = max_when;
 	}
-    //??ÒÉÎÊ:ÖØ´«¶¨Ê±Æ÷ºÍÌ½²â¶¨Ê±Æ÷ÎªÊ²Ã´ºóÃæµÄ¶¨Ê±Æ÷²»»á°ÑÇ°Ãæsk_reset_timerµÄ¶¨Ê±Æ÷¸ø¸²¸ÇÁËÄØ£¬ÄÇÇ°ÃæµÄ¶¨Ê±Æ÷²»ÊÇ²»Æğ×÷ÓÃÂğ?
-    //ÒòÎªÔÚÆôÓÃÖØ´«¶¨Ê±Æ÷µÄ¹ı³ÌÖĞ£¬±íÊ¾¶Ô¶Ë´°¿ÚÊÇ²»Îª0µÄ£¬ÔÚÆô¶¯Ì½²â¶¨Ê±Æ÷µÄÊ±ºòÒ²»á¼ì²éÊÇ·ñÓĞÎ´±»È·ÈÏµÄackµÈ¡£ËùÒÔËûÃÇÊÇ²»¿ÉÄÜÍ¬Ê±´æÔÚµÄ
+    //??ç–‘é—®:é‡ä¼ å®šæ—¶å™¨å’Œæ¢æµ‹å®šæ—¶å™¨ä¸ºä»€ä¹ˆåé¢çš„å®šæ—¶å™¨ä¸ä¼šæŠŠå‰é¢sk_reset_timerçš„å®šæ—¶å™¨ç»™è¦†ç›–äº†å‘¢ï¼Œé‚£å‰é¢çš„å®šæ—¶å™¨ä¸æ˜¯ä¸èµ·ä½œç”¨å—?
+    //å› ä¸ºåœ¨å¯ç”¨é‡ä¼ å®šæ—¶å™¨çš„è¿‡ç¨‹ä¸­ï¼Œè¡¨ç¤ºå¯¹ç«¯çª—å£æ˜¯ä¸ä¸º0çš„ï¼Œåœ¨å¯åŠ¨æ¢æµ‹å®šæ—¶å™¨çš„æ—¶å€™ä¹Ÿä¼šæ£€æŸ¥æ˜¯å¦æœ‰æœªè¢«ç¡®è®¤çš„ackç­‰ã€‚æ‰€ä»¥ä»–ä»¬æ˜¯ä¸å¯èƒ½åŒæ—¶å­˜åœ¨çš„
 	if (what == ICSK_TIME_RETRANS || what == ICSK_TIME_PROBE0) { 
 		icsk->icsk_pending = what;
 		icsk->icsk_timeout = jiffies + when;
@@ -451,7 +451,7 @@ static inline void inet_csk_reqsk_queue_removed(struct sock *sk,
 static inline void inet_csk_reqsk_queue_added(struct sock *sk,
 					      const unsigned long timeout)
 {
-	if (reqsk_queue_added(&inet_csk(sk)->icsk_accept_queue) == 0) //Èç¹ûÕâÊÇskµÄµÚÒ»¸ö°ëÁ¬½ÓÔòĞèÒªÆô¶¯¶¨Ê±Æ÷
+	if (reqsk_queue_added(&inet_csk(sk)->icsk_accept_queue) == 0) //å¦‚æœè¿™æ˜¯skçš„ç¬¬ä¸€ä¸ªåŠè¿æ¥åˆ™éœ€è¦å¯åŠ¨å®šæ—¶å™¨
 		inet_csk_reset_keepalive_timer(sk, timeout);
 }
 

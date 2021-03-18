@@ -13,21 +13,21 @@
 #include <linux/spinlock.h>
 #include <asm/atomic.h>
 
-//¸Ã½á¹¹Îª¶Ô¶ËĞÅÏ¢¿é½á¹¹£¬ÒÔv4addrÎª¹Ø¼üÖ®£¬peer_rootÎª¸ú£¬×éÖ¯³ÉAVLÊ÷¡£¼û·®¶«¶«P238
-//¶Ô¶ËĞÅÏ¢¿éÖ÷ÒªÓÃÓÚ×é×°ipÊı¾İ°üÊ±·ÀÖ¹·ÖÆ¬¹¥»÷£¬ÔÚ½¨Á¢tcpÁ¬½ÓÊ±¼ì²âÁ¬½ÓÇëÇó¶ÎÊÇ·ñÓĞĞ§ÒÔ¼°ÆäĞòÁĞºÅÊÇ·ñ»ØÈÆ
+//è¯¥ç»“æ„ä¸ºå¯¹ç«¯ä¿¡æ¯å—ç»“æ„ï¼Œä»¥v4addrä¸ºå…³é”®ä¹‹ï¼Œpeer_rootä¸ºè·Ÿï¼Œç»„ç»‡æˆAVLæ ‘ã€‚è§æ¨Šä¸œä¸œP238
+//å¯¹ç«¯ä¿¡æ¯å—ä¸»è¦ç”¨äºç»„è£…ipæ•°æ®åŒ…æ—¶é˜²æ­¢åˆ†ç‰‡æ”»å‡»ï¼Œåœ¨å»ºç«‹tcpè¿æ¥æ—¶æ£€æµ‹è¿æ¥è¯·æ±‚æ®µæ˜¯å¦æœ‰æ•ˆä»¥åŠå…¶åºåˆ—å·æ˜¯å¦å›ç»•
 struct inet_peer {
 	/* group together avl_left,avl_right,v4daddr to speedup lookups */
-	struct inet_peer	*avl_left, *avl_right;  //ÓÃÀ´½«¶Ô¶ËĞÅÏ¢¿é×é³ÉAVLÊ÷¡£AVLÊ÷µÄ¸ùÎªpeer_root¡£
+	struct inet_peer	*avl_left, *avl_right;  //ç”¨æ¥å°†å¯¹ç«¯ä¿¡æ¯å—ç»„æˆAVLæ ‘ã€‚AVLæ ‘çš„æ ¹ä¸ºpeer_rootã€‚
 	__be32			v4daddr;	/* peer's address */
 	__u32			avl_height;
-	struct list_head	unused; //ÓÃÀ´Á´½Óµ½inet_peer_unused_headÁ´±íÉÏ¡£¸Ã Á´±íÉÏµÄ¶Ô¶ËĞÅÏ¢¿é¶¼ÊÇµ±Ç°ÏĞÖÃµÄ£¬ ¿É»ØÊÕµÄ¡£  unused_peers
+	struct list_head	unused; //ç”¨æ¥é“¾æ¥åˆ°inet_peer_unused_headé“¾è¡¨ä¸Šã€‚è¯¥ é“¾è¡¨ä¸Šçš„å¯¹ç«¯ä¿¡æ¯å—éƒ½æ˜¯å½“å‰é—²ç½®çš„ï¼Œ å¯å›æ”¶çš„ã€‚  unused_peers
 	__u32			dtime;		/* the time of last use of not
-						 * referenced entries */  //¼ÇÂ¼¸Ã¶Ô¶ËĞÅÏ¢¿éÒıÓÃ¼ÆÊıÎª0µÄÊ±¼ä¡£ µ±ÏĞÖÃµÄÊ±¼ä³¬³öÖ¸¶¨µÄÊ±¼äÊ±£¬ ¾Í»á±»»ØÊÕ¡£
-	atomic_t		refcnt; //ÒıÓÃ¼ÆÊıÆ÷£¬±êÊ¶µ±Ç°±»Ê¹ÓÃµÄ´ÎÊı¡£ µ±ÒıÓÃ¼ÆÊıÎª0£¬±íÊ¾¸Ã¶Ô¶ËĞÅÏ¢¿é Ã»ÓĞ±»Ê¹ÓÃ¡£
-	atomic_t		rid;		/* Frag reception counter */ //µİÔöID£¬¶Ô¶Ë·¢ËÍ·ÖÆ¬µÄ¼ÆÊıÆ÷¡£ ²Î¼ûipq½á¹¹ÖĞµÄrid³ÉÔ±¡£
-	atomic_t		ip_id_count;	/* IP ID for the next packet */// Ò»¸öµ¥µ÷µİÔöÖµ£¬ÓÃÀ´ÉèÖÃIP·ÖÆ¬Ê×²¿ÖĞµÄidÓò¡£¸ù¾İ¶Ô¶ËµØÖ·³õÊ¼»¯ÎªËæ»úÖµ¡£
-	__u32			tcp_ts;//TCPÖĞ£¬¼ÇÂ¼×îºóÒ»¸öACK¶Îµ½´ïµÄ Ê±¼ä¡£²Î¼ûtcp_options_received½á¹¹ÖĞ µÄts_recent³ÉÔ±¡£
-	__u32			tcp_ts_stamp; //TCPÖĞ£¬¼ÇÂ¼½ÓÊÕµ½µÄ¶ÎÖĞµÄÊ±¼ä´Á£¬ ÉèÖÃts_recentµÄÊ±¼ä¡£²Î¼ûtcp_options_received ½á¹¹ÖĞµÄts_recent_stamp³ÉÔ±¡£
+						 * referenced entries */  //è®°å½•è¯¥å¯¹ç«¯ä¿¡æ¯å—å¼•ç”¨è®¡æ•°ä¸º0çš„æ—¶é—´ã€‚ å½“é—²ç½®çš„æ—¶é—´è¶…å‡ºæŒ‡å®šçš„æ—¶é—´æ—¶ï¼Œ å°±ä¼šè¢«å›æ”¶ã€‚
+	atomic_t		refcnt; //å¼•ç”¨è®¡æ•°å™¨ï¼Œæ ‡è¯†å½“å‰è¢«ä½¿ç”¨çš„æ¬¡æ•°ã€‚ å½“å¼•ç”¨è®¡æ•°ä¸º0ï¼Œè¡¨ç¤ºè¯¥å¯¹ç«¯ä¿¡æ¯å— æ²¡æœ‰è¢«ä½¿ç”¨ã€‚
+	atomic_t		rid;		/* Frag reception counter */ //é€’å¢IDï¼Œå¯¹ç«¯å‘é€åˆ†ç‰‡çš„è®¡æ•°å™¨ã€‚ å‚è§ipqç»“æ„ä¸­çš„ridæˆå‘˜ã€‚
+	atomic_t		ip_id_count;	/* IP ID for the next packet */// ä¸€ä¸ªå•è°ƒé€’å¢å€¼ï¼Œç”¨æ¥è®¾ç½®IPåˆ†ç‰‡é¦–éƒ¨ä¸­çš„idåŸŸã€‚æ ¹æ®å¯¹ç«¯åœ°å€åˆå§‹åŒ–ä¸ºéšæœºå€¼ã€‚
+	__u32			tcp_ts;//TCPä¸­ï¼Œè®°å½•æœ€åä¸€ä¸ªACKæ®µåˆ°è¾¾çš„ æ—¶é—´ã€‚å‚è§tcp_options_receivedç»“æ„ä¸­ çš„ts_recentæˆå‘˜ã€‚
+	__u32			tcp_ts_stamp; //TCPä¸­ï¼Œè®°å½•æ¥æ”¶åˆ°çš„æ®µä¸­çš„æ—¶é—´æˆ³ï¼Œ è®¾ç½®ts_recentçš„æ—¶é—´ã€‚å‚è§tcp_options_received ç»“æ„ä¸­çš„ts_recent_stampæˆå‘˜ã€‚
 };
 
 void			inet_initpeers(void) __init;

@@ -34,7 +34,7 @@ static unsigned long sfc50_l_cache_timeout = 60 * HZ;
 static unsigned long sfc50_l_cache_retime = HZ;
 static unsigned long sfc50_l_cache_renotify = 0;//3 * HZ;
 
-/* Êý¾Ý¸ù */
+/* æ•°æ®æ ¹ */
 sfc50_l_data sfc_dt = {
 	.lock = __SPIN_LOCK_UNLOCKED(sfc_dt.lock),
 };
@@ -43,7 +43,7 @@ EXPORT_SYMBOL_GPL(sfc_dt);
 /* declare */
 static inline void sfc50_l_data_clean(void);
 
-/* ´ó¿éÄÚ´æ·ÖÅä */
+/* å¤§å—å†…å­˜åˆ†é… */
 static void *nf_sfc50_l_mblk(unsigned int *item_numb, size_t item_size, int *vmalloced)
 {
 	void *ret;
@@ -306,7 +306,7 @@ static inline void sfc50_l_unreach_notify(struct sk_buff *old_skb,
 													sfc_ct *cache_ptr,
 													int now)
 {
-	/* ½ÇÉ«ÎÞ¹Ø */
+	/* è§’è‰²æ— å…³ */
 	if(NF_DROP == cache_ptr->nf_result
 	    && IPPROTO_ICMP != oldiph->protocol) {
 	icmp_send(old_skb, ICMP_DEST_UNREACH, ICMP_HOST_UNREACH, 0);
@@ -314,7 +314,7 @@ static inline void sfc50_l_unreach_notify(struct sk_buff *old_skb,
 		__FILE__, __LINE__, ntohl(oldiph->daddr), 	ntohl(oldiph->saddr)););
 	}
 
-	/* ½öÄÚÍø½ÇÉ« */
+	/* ä»…å†…ç½‘è§’è‰² */
 	if(sfc_dt.is_inside) {
 		if(now) {
 			sfc50_l_data_send(ntohl(oldiph->daddr));
@@ -405,7 +405,7 @@ static inline unsigned int sfc50_l_gw_find_inside(unsigned int hash_val,
 	sfc_fwd_item *fwd_ptr;
 	sfc_ct *cache_ptr;
 
-	/* cache ²éÕÒ */
+	/* cache æŸ¥æ‰¾ */
 	cache_ptr = sfc50_l_cache_find(hash_val, oldiph, source, dest);
 	if(likely(cache_ptr)) {
 		DATA_DBG(printk("<%s, %d>: cache hit: <dst:%08x, sp:%u, dp:%u, proto:%u, act:%s>\n",
@@ -433,7 +433,7 @@ static inline unsigned int sfc50_l_gw_find_inside(unsigned int hash_val,
 		goto fnd_out;
 	}
 
-	/* cache Ìí¼Ó */
+	/* cache æ·»åŠ  */
 	cache_ptr = sfc50_l_cache_add(hash_val, oldiph, source, dest);
 	if(unlikely(!cache_ptr)) 
 		return NF_DROP;
@@ -495,7 +495,7 @@ static inline unsigned int sfc50_l_gw_find_outside(unsigned int hash_val,
 	sfc_ct *cache_ptr;
 	unsigned long newtime;
 
-	/* cache ²éÕÒ */
+	/* cache æŸ¥æ‰¾ */
 	cache_ptr = sfc50_l_cache_find(hash_val, oldiph, source, dest);
 	if(likely(cache_ptr)) {
 		newtime = jiffies + sfc50_l_cache_timeout;
@@ -509,20 +509,20 @@ static inline unsigned int sfc50_l_gw_find_outside(unsigned int hash_val,
 				__FILE__, __LINE__););
 		}
 
-		/* ²»¿É´ïÍ¨¸æ */
+		/* ä¸å¯è¾¾é€šå‘Š */
 		if(NF_DROP == cache_ptr->nf_result) 
 			sfc50_l_unreach_notify(old_skb, oldiph, cache_ptr, 0);
 
 		goto fnd_out;
 	}
 
-	/* cache Ìí¼Ó */
+	/* cache æ·»åŠ  */
 	cache_ptr = sfc50_l_cache_add(hash_val, oldiph, source, dest);
 	if(unlikely(!cache_ptr))
 		return NF_DROP;
 	/*- ECMP??? FIX ME -*/
 	cache_ptr->gw = htonl(sfc_dt.gws[0]);
-	cache_ptr->nf_result = NF_ACCEPT; /* ¶ÔÓÚÍâÍø½ÇÉ«£¬Ä¬ÈÏ¶¼ÊÇACCEPT */
+	cache_ptr->nf_result = NF_ACCEPT; /* å¯¹äºŽå¤–ç½‘è§’è‰²ï¼Œé»˜è®¤éƒ½æ˜¯ACCEPT */
 	setup_timer(&(cache_ptr->timeout), sfc50_l_cache_timeout_fn,
 		(unsigned long)cache_ptr);
 	cache_ptr->timeout.expires = jiffies + sfc50_l_cache_timeout;
@@ -609,11 +609,11 @@ int sfc50_l_cache_feedback(struct iphdr *iph)
 	hash_val = jhash(&key, sizeof(key), sfc_dt.ct_rand) &
 		(sfc_dt.ct_bkt_numb - 1);
 
-	/* cache ²éÕÒ */
+	/* cache æŸ¥æ‰¾ */
 	cache_ptr = sfc50_l_cache_find(hash_val, iph, chdr->source,
 		chdr->dest);
 
-	/* cacheÐÐÎª¸üÐÂ */
+	/* cacheè¡Œä¸ºæ›´æ–° */
 	if(likely(cache_ptr)) {
 		if(NF_DROP != cache_ptr->nf_result) {
 			cache_ptr->nf_result = NF_DROP;
@@ -711,7 +711,7 @@ static int sfc50_l_op_wd(kernel_msg *msg_ptr)
 }
 
 
-/* NETLINK ½ÓÊÕº¯Êý */
+/* NETLINK æŽ¥æ”¶å‡½æ•° */
 
 /* --------------- */
 static void sfc50_l_data_from_user(kernel_msg *msg_ptr)

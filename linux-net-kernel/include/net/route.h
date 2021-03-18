@@ -151,7 +151,7 @@ static inline void ip_rt_put(struct rtable * rt)
 
 extern const __u8 ip_tos2prio[16];
 
-//tc qdisc add dev eth0 parent 22:4 handle 33 prio bands 5 priomap 3 3 2 2 1 2 0 0 1 1 1 1 1 1 1 1  priomapºóÃæµÄÃ¿Ò»¸ö¶ÔÓ¦Ò»¸ö
+//tc qdisc add dev eth0 parent 22:4 handle 33 prio bands 5 priomap 3 3 2 2 1 2 0 0 1 1 1 1 1 1 1 1  priomapåŽé¢çš„æ¯ä¸€ä¸ªå¯¹åº”ä¸€ä¸ª
 static inline char rt_tos2priority(u8 tos)
 {
 	return ip_tos2prio[IPTOS_TOS(tos)>>1];

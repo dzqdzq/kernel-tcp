@@ -4,12 +4,12 @@
 #include <linux/list.h>
 
 
-#define NF_LOCAL_TIME_UTC_SECOND		(8*60*60)//8Ğ¡Ê± UTCÊ±¼ä£¬Í¬±±¾©Ê±¼ä²î8Ğ¡Ê±
+#define NF_LOCAL_TIME_UTC_SECOND		(8*60*60)//8å°æ—¶ UTCæ—¶é—´ï¼ŒåŒåŒ—äº¬æ—¶é—´å·®8å°æ—¶
 
 #define NF_SWITCH_HASH_TABLE_SIZE	1024
 
-#define NF_SWITCH_TIME_VALIDE 		1//Âú×ãÊ±¼ä¶ÔÏóÒªÇó
-#define NF_SWITCH_TIME_INVALIDE 	0//±íÊ¾Ê±¼ä·¶Î§ÊÇ·ñÓĞĞ§
+#define NF_SWITCH_TIME_VALIDE 		1//æ»¡è¶³æ—¶é—´å¯¹è±¡è¦æ±‚
+#define NF_SWITCH_TIME_INVALIDE 	0//è¡¨ç¤ºæ—¶é—´èŒƒå›´æ˜¯å¦æœ‰æ•ˆ
 
 #define NF_SWITCH_IN_TO_OUT	1
 #define NF_SWITCH_OUT_TO_IN	2
@@ -17,7 +17,7 @@
 
 #define NF_SWITCH_LIMIT_MD_LEN	32
 
-/*Ó¦ÓÃĞ­Òé±àÂë±íÊı¾İ½á¹¹*/
+/*åº”ç”¨åè®®ç¼–ç è¡¨æ•°æ®ç»“æ„*/
 #define NF_APP_ITEM_REL_TYPE_UNDEFINED 0xff
 #define NF_APP_ITEM_REL_TYPE_ANY       0
 #define NF_APP_ITEM_REL_TYPE_EQUAL     1
@@ -26,43 +26,43 @@
 #define NF_APP_ITEM_REL_TYPE_IN        7
 #define NF_APP_ITEM_REL_TYPE_ENUM      9
 
-/*ÁĞ±íscope_listËù°üº¬µÄ½ÚµãµÄ¶Ë¿Ú·¶Î§Êı¾İ½á¹¹ÈçÏÂ£º*/
-/*Èç¹ûĞ­ÒéºÅÊÇTCP£º*/
+/*åˆ—è¡¨scope_listæ‰€åŒ…å«çš„èŠ‚ç‚¹çš„ç«¯å£èŒƒå›´æ•°æ®ç»“æ„å¦‚ä¸‹ï¼š*/
+/*å¦‚æœåè®®å·æ˜¯TCPï¼š*/
 struct nf_ac_tcp_port_scope{
-	unsigned char src_op;		/*Ô´¶Ë¿Ú¹ØÏµ =  <=  >=  IN  Ã¶¾Ù£¬ANY   IN±íÊ¾Çø¼ä*/
-	unsigned char src_num;		/*Ô´¶Ë¿ÚÊıÁ¿*/
-	unsigned char dst_op;		/*Ä¿µÄ¶Ë¿Ú¹ØÏµ*/
-	unsigned char dst_num;		/*Ä¿µÄ¶Ë¿ÚÊıÁ¿*/
-	unsigned short port[0];		/*¶Ë¿ÚÊı×é£¬Êı×é¸öÊı¾ö¶¨ÓÚÔ´¶Ë¿ÚºÍÄ¿µÄ¶Ë¿ÚµÄÊıÁ¿Ö®ºÍ£¬
-						  *ÅÅÁĞË³ĞòÊÇÔ´¶Ë¿ÚÖ®ºóÊÇÄ¿µÄ¶Ë¿Ú
+	unsigned char src_op;		/*æºç«¯å£å…³ç³» =  <=  >=  IN  æšä¸¾ï¼ŒANY   INè¡¨ç¤ºåŒºé—´*/
+	unsigned char src_num;		/*æºç«¯å£æ•°é‡*/
+	unsigned char dst_op;		/*ç›®çš„ç«¯å£å…³ç³»*/
+	unsigned char dst_num;		/*ç›®çš„ç«¯å£æ•°é‡*/
+	unsigned short port[0];		/*ç«¯å£æ•°ç»„ï¼Œæ•°ç»„ä¸ªæ•°å†³å®šäºæºç«¯å£å’Œç›®çš„ç«¯å£çš„æ•°é‡ä¹‹å’Œï¼Œ
+						  *æ’åˆ—é¡ºåºæ˜¯æºç«¯å£ä¹‹åæ˜¯ç›®çš„ç«¯å£
 						  */
 };
 
-/*Èç¹ûĞ­ÒéºÅÊÇUDP£º*/
+/*å¦‚æœåè®®å·æ˜¯UDPï¼š*/
 struct nf_ac_udp_port_scope{
-	unsigned char src_op;		/*Ô´¶Ë¿Ú¹ØÏµ =  <=  >=  IN  Ã¶¾Ù£¬ANY*/
-	unsigned char src_num;		/*Ô´¶Ë¿ÚÊıÁ¿*/
-	unsigned char dst_op;		/*Ä¿µÄ¶Ë¿Ú¹ØÏµ*/
-	unsigned char dst_num;		/*Ä¿µÄ¶Ë¿ÚÊıÁ¿*/
-	unsigned short port[0];		/*¶Ë¿ÚÊı×é£¬Êı×é¸öÊı¾ö¶¨ÓÚÔ´¶Ë¿ÚºÍÄ¿µÄ¶Ë¿ÚµÄÊıÁ¿Ö®ºÍ£¬
-						  *ÅÅÁĞË³ĞòÊÇÔ´¶Ë¿ÚÖ®ºóÊÇÄ¿µÄ¶Ë¿Ú
+	unsigned char src_op;		/*æºç«¯å£å…³ç³» =  <=  >=  IN  æšä¸¾ï¼ŒANY*/
+	unsigned char src_num;		/*æºç«¯å£æ•°é‡*/
+	unsigned char dst_op;		/*ç›®çš„ç«¯å£å…³ç³»*/
+	unsigned char dst_num;		/*ç›®çš„ç«¯å£æ•°é‡*/
+	unsigned short port[0];		/*ç«¯å£æ•°ç»„ï¼Œæ•°ç»„ä¸ªæ•°å†³å®šäºæºç«¯å£å’Œç›®çš„ç«¯å£çš„æ•°é‡ä¹‹å’Œï¼Œ
+						  *æ’åˆ—é¡ºåºæ˜¯æºç«¯å£ä¹‹åæ˜¯ç›®çš„ç«¯å£
 						  */
 };
 
-/*Èç¹ûĞ­ÒéºÅÊÇICMP£º*/
+/*å¦‚æœåè®®å·æ˜¯ICMPï¼š*/
 struct nf_ac_icmp_scope{
-	unsigned char type_op;		/*ICMPÀàĞÍ¹ØÏµ =  <=  >=  IN  Ã¶¾Ù£¬ANY*/
-	unsigned char type_num;	/*Ô´¶Ë¿ÚÊıÁ¿*/
-	unsigned char code_op;		/*´úÂëÖµµÄ¹ØÏµ*/
-	unsigned char code_num;	/*´úÂëÖµµÄÊıÁ¿*/
-	unsigned char array[0];		/*ÀàĞÍºÍ´úÂëÊı×é£¬Êı×é¸öÊı¾ö¶¨ÓÚÀàĞÍºÍ´úÂëµÄÊıÁ¿
-						  *ÅÅÁĞË³ĞòÊÇÀàĞÍÊı×éÖ®ºóÊÇ´úÂëÊı×é
+	unsigned char type_op;		/*ICMPç±»å‹å…³ç³» =  <=  >=  IN  æšä¸¾ï¼ŒANY*/
+	unsigned char type_num;	/*æºç«¯å£æ•°é‡*/
+	unsigned char code_op;		/*ä»£ç å€¼çš„å…³ç³»*/
+	unsigned char code_num;	/*ä»£ç å€¼çš„æ•°é‡*/
+	unsigned char array[0];		/*ç±»å‹å’Œä»£ç æ•°ç»„ï¼Œæ•°ç»„ä¸ªæ•°å†³å®šäºç±»å‹å’Œä»£ç çš„æ•°é‡
+						  *æ’åˆ—é¡ºåºæ˜¯ç±»å‹æ•°ç»„ä¹‹åæ˜¯ä»£ç æ•°ç»„
 						  */
 };
 
 typedef struct _nf_app_coding_content_scope{
 	struct list_head lh;
-	unsigned char proto;//yang Ó¦ÓÃĞ­ÒéµÄ×ÓÏî×ÓĞ­ÒéÀàĞÍ
+	unsigned char proto;//yang åº”ç”¨åè®®çš„å­é¡¹å­åè®®ç±»å‹
 	union {
 		struct nf_ac_tcp_port_scope tcp;
 		struct nf_ac_udp_port_scope udp;
@@ -73,14 +73,14 @@ typedef struct _nf_app_coding_content_scope{
 
 #define NF_APP_STATUS_ON	1
 #define NF_APP_STATUS_OFF	0
-typedef struct _nf_app_coding{//ÕâÀïÃæ´æµÄÊÇÒ»ÌõÓ¦ÓÃĞ­Òé
-	struct hlist_node hlist;//Í¨¹ı¸ÃÁ´±íÁ¬½Óµ½gate_app_coding_kernel_hash_arrayÖĞ
-	char sequence[NF_SWITCH_LIMIT_MD_LEN+1];//Ó¦ÓÃĞ­ÒéË÷Òı index 
-	unsigned int h_seq;//yang Ë÷ÒıÖµsequence×ª»»Îªseq  ¼ûº¯Êı_nf_gate_md5_to_hseq
-	unsigned char status;/*½ûÓÃ»¹ÊÇÆôÓÃ Ò³ÃæÉÏ¿ÉÒÔÆôÓÃºÍ½ûÓÃ¸ÃÌõÓ¦ÓÃĞ­Òé */
+typedef struct _nf_app_coding{//è¿™é‡Œé¢å­˜çš„æ˜¯ä¸€æ¡åº”ç”¨åè®®
+	struct hlist_node hlist;//é€šè¿‡è¯¥é“¾è¡¨è¿æ¥åˆ°gate_app_coding_kernel_hash_arrayä¸­
+	char sequence[NF_SWITCH_LIMIT_MD_LEN+1];//åº”ç”¨åè®®ç´¢å¼• index 
+	unsigned int h_seq;//yang ç´¢å¼•å€¼sequenceè½¬æ¢ä¸ºseq  è§å‡½æ•°_nf_gate_md5_to_hseq
+	unsigned char status;/*ç¦ç”¨è¿˜æ˜¯å¯ç”¨ é¡µé¢ä¸Šå¯ä»¥å¯ç”¨å’Œç¦ç”¨è¯¥æ¡åº”ç”¨åè®® */
 
     /*
-    ÂŞ¿­(ÂŞ¿­) 15:42:37
+    ç½—å‡¯(ç½—å‡¯) 15:42:37
                 /// </summary>
                 TCP = ApprotocolControlLevelEnum.LevelOne,
                 /// <summary>
@@ -99,7 +99,7 @@ typedef struct _nf_app_coding{//ÕâÀïÃæ´æµÄÊÇÒ»ÌõÓ¦ÓÃĞ­Òé
                 /// 
                 /// </summary>
                 HTT
-    ÂŞ¿­(ÂŞ¿­) 15:42:37
+    ç½—å‡¯(ç½—å‡¯) 15:42:37
     P = ApprotocolControlLevelEnum.LevelOne,
                 /// <summary>
                 /// 
@@ -113,7 +113,7 @@ typedef struct _nf_app_coding{//ÕâÀïÃæ´æµÄÊÇÒ»ÌõÓ¦ÓÃĞ­Òé
                 /// 
                 /// </summary>
                 POP3 = ApprotocolControlLevelEnum.LevelOne
-    ÂŞ¿­(ÂŞ¿­) 15:42:37
+    ç½—å‡¯(ç½—å‡¯) 15:42:37
      /// <summary>
                 /// 
                 /// </summary>
@@ -132,16 +132,16 @@ typedef struct _nf_app_coding{//ÕâÀïÃæ´æµÄÊÇÒ»ÌõÓ¦ÓÃĞ­Òé
                 CSMXP = ApprotocolControlLevelEnum.levelThree,
                 /// <summary>
                 /// 
-    ÂŞ¿­(ÂŞ¿­) 15:42:50
-    one£¬two£¬three·Ö±ğ¶ÔÓ¦1,2,3*/
-	unsigned char intensity;//¶ÔÓ¦MCPÖĞXMLÀïÃæµÄ"CtrlLevel"
-	unsigned char control_type;////³¤±¨ÎÄ£¬¶Ì±¨ÎÄ£¬ÊµÊ±±¨ÎÄµÈ ²Î¿¼_gate_show_app_control_type   Êµ¼ÊÉÏÃ»Ê²Ã´ÓÃ
-	unsigned int pro_num;//×ÓĞ­ÒéµÄ¸öÊı Ö¸µÄÊÇ×ÔĞ­ÒéÖĞTCP UDPºÍICMPµÄ¸öÊı  ¼ÓÁË2¸öTCP Ò»¸öUDP£¬4¸öICMP£¬Ôò¸ÃÖµÎª7
-	char* name;//Ğ­ÒéÃû
+    ç½—å‡¯(ç½—å‡¯) 15:42:50
+    oneï¼Œtwoï¼Œthreeåˆ†åˆ«å¯¹åº”1,2,3*/
+	unsigned char intensity;//å¯¹åº”MCPä¸­XMLé‡Œé¢çš„"CtrlLevel"
+	unsigned char control_type;////é•¿æŠ¥æ–‡ï¼ŒçŸ­æŠ¥æ–‡ï¼Œå®æ—¶æŠ¥æ–‡ç­‰ å‚è€ƒ_gate_show_app_control_type   å®é™…ä¸Šæ²¡ä»€ä¹ˆç”¨
+	unsigned int pro_num;//å­åè®®çš„ä¸ªæ•° æŒ‡çš„æ˜¯è‡ªåè®®ä¸­TCP UDPå’ŒICMPçš„ä¸ªæ•°  åŠ äº†2ä¸ªTCP ä¸€ä¸ªUDPï¼Œ4ä¸ªICMPï¼Œåˆ™è¯¥å€¼ä¸º7
+	char* name;//åè®®å
 
-    //            Ğ­Òé 	Ô´¶Ë¿Ú/ÀàĞÍ¹ØÏµ 	Ô´¶Ë¿Ú/Öµ 	Ä¿µÄ¶Ë¿Ú/ÀàĞÍ¹ØÏµ 	Ä¿µÄ¶Ë¿Ú/Öµ 
-	//ÀïÃæ´æµÄÊÇ   TCP	  =	                 5555 	       any	
-	struct list_head app_coding_list;//´æ·Å×ÓĞ­ÒéµÄÁ´±í£¬²Î¿¼WEBÒ³Ãæ  nf_app_coding_content_scope  ÀïÃæ°üÀ¨Ó¦ÓÃĞ­ÒéµÄTCP  UDP  ICMP
+    //            åè®® 	æºç«¯å£/ç±»å‹å…³ç³» 	æºç«¯å£/å€¼ 	ç›®çš„ç«¯å£/ç±»å‹å…³ç³» 	ç›®çš„ç«¯å£/å€¼ 
+	//é‡Œé¢å­˜çš„æ˜¯   TCP	  =	                 5555 	       any	
+	struct list_head app_coding_list;//å­˜æ”¾å­åè®®çš„é“¾è¡¨ï¼Œå‚è€ƒWEBé¡µé¢  nf_app_coding_content_scope  é‡Œé¢åŒ…æ‹¬åº”ç”¨åè®®çš„TCP  UDP  ICMP
 }nf_app_coding;
 
 
@@ -154,43 +154,43 @@ typedef struct _nf_app_coding{//ÕâÀïÃæ´æµÄÊÇÒ»ÌõÓ¦ÓÃĞ­Òé
 
 typedef struct _nf_sw_limit_address_item{
 	struct list_head lh;
-	unsigned char type;//Íø¶Î  Çø¼ä  Ã¶¾Ù ²Î¿¼WEB
-	unsigned char count;//Èç¹ûÊÇÇø¼ä£¬²¢ÇÒÇø¼äÀïÃæÓĞÀıÍâ£¬Ôòarry[0]ºÍarry[1]ÊÇÇø¼äµÄÉÏÏÂÏŞµØÖ·£¬ºóÃæµÄarry[2],arry[3]µÈÔòÊÇÀıÍâµØÖ·
+	unsigned char type;//ç½‘æ®µ  åŒºé—´  æšä¸¾ å‚è€ƒWEB
+	unsigned char count;//å¦‚æœæ˜¯åŒºé—´ï¼Œå¹¶ä¸”åŒºé—´é‡Œé¢æœ‰ä¾‹å¤–ï¼Œåˆ™arry[0]å’Œarry[1]æ˜¯åŒºé—´çš„ä¸Šä¸‹é™åœ°å€ï¼Œåé¢çš„arry[2],arry[3]ç­‰åˆ™æ˜¯ä¾‹å¤–åœ°å€
 	unsigned int array[0];
 }nf_sw_limit_addr_item;
 
-//Àı:Èç¹ûµØÖ·¶ÔÏóÀïÃæÌîµÄÊÇ1.2.3.3/17,12.3.3.3/17 £¬ÔòÊµ¼ÊÉÏwebÊÇ°´ÕÕ·¢ËÍÁ½´Î·¢ÏÂÀ´µÄ£¬Ò²¾ÍÊÇ_nf_sw_limit_address_itemÎª2
-//Èç¹ûµØÖ·¶ÔÏóÀïÃæÌîµÄÊÇÃ¶¾Ù 1.1.1.1,2.2.2.2,3.3.3.3£¬ÔòÊÇÒ»´Î·¢ËÍ¹ıÀ´µÄ£¬item»¹ÊÇÎª1
-//Èç¹ûµØÖ·¶ÔÏóÀïÃæÊÇÇø¼ä1.2.3.3-1.3.3.3ÀıÍâµØÖ·£º1.2.3.3,1.3.3.2,1.2.5.2 £¬ÔòitemÎª1,arryÊı×é´æµÄÊÇ1.2.3.3 1.3.3.3 1.2.3.3 1.3.3.2 1.2.5.2 
-//Èç¹ûÎ´ÈÎÒâ£¬ÔòcountÎª0
+//ä¾‹:å¦‚æœåœ°å€å¯¹è±¡é‡Œé¢å¡«çš„æ˜¯1.2.3.3/17,12.3.3.3/17 ï¼Œåˆ™å®é™…ä¸Šwebæ˜¯æŒ‰ç…§å‘é€ä¸¤æ¬¡å‘ä¸‹æ¥çš„ï¼Œä¹Ÿå°±æ˜¯_nf_sw_limit_address_itemä¸º2
+//å¦‚æœåœ°å€å¯¹è±¡é‡Œé¢å¡«çš„æ˜¯æšä¸¾ 1.1.1.1,2.2.2.2,3.3.3.3ï¼Œåˆ™æ˜¯ä¸€æ¬¡å‘é€è¿‡æ¥çš„ï¼Œitemè¿˜æ˜¯ä¸º1
+//å¦‚æœåœ°å€å¯¹è±¡é‡Œé¢æ˜¯åŒºé—´1.2.3.3-1.3.3.3ä¾‹å¤–åœ°å€ï¼š1.2.3.3,1.3.3.2,1.2.5.2 ï¼Œåˆ™itemä¸º1,arryæ•°ç»„å­˜çš„æ˜¯1.2.3.3 1.3.3.3 1.2.3.3 1.3.3.2 1.2.5.2 
+//å¦‚æœæœªä»»æ„ï¼Œåˆ™countä¸º0
 typedef struct _nf_sw_limit_addr{
 	struct hlist_node hlist;
-	char sequence[NF_SWITCH_LIMIT_MD_LEN+1];//YANG  µØÖ·¶ÔÏóË÷Òıindex
-	unsigned int h_seq;//Í¨¹ı_nf_gate_md5_to_hseq°ÑÉÏÃæµÄµØÖ·¶ÔÏóindex×ª»»Îªseq
-	char* name;//µØÖ·¶ÔÏóÃû
+	char sequence[NF_SWITCH_LIMIT_MD_LEN+1];//YANG  åœ°å€å¯¹è±¡ç´¢å¼•index
+	unsigned int h_seq;//é€šè¿‡_nf_gate_md5_to_hseqæŠŠä¸Šé¢çš„åœ°å€å¯¹è±¡indexè½¬æ¢ä¸ºseq
+	char* name;//åœ°å€å¯¹è±¡å
 	struct list_head item_list;//_nf_sw_limit_address_item
 }nf_sw_limit_addr;
 
 
 #define NF_ITEM_REL_TYPE_ANY       0
-#define NF_ITEM_REL_TYPE_IN        1//±íÊ¾´ÓÄ³¸öÊ±¼äµ½Ä³¸öÊ±¼ä£¬Ê±¼äÊÇÁ¬ĞøµÄ  1ÈÕÁãµãµ½12ÈÕÁ½µã
-#define NF_ITEM_REL_TYPE_ENUM      2//´ÓÄ³Ò»Ììµ½Ä³Ò»ÌìÖĞµÄ¼¸µãµ½¼¸µãÊ±¼ä¶ÎÊÇ²»Á¬ĞøµÄ  1ÈÕµ½12ÈÕÖĞµÄÁãµãµ½Á½µãÖ®¼ä
+#define NF_ITEM_REL_TYPE_IN        1//è¡¨ç¤ºä»æŸä¸ªæ—¶é—´åˆ°æŸä¸ªæ—¶é—´ï¼Œæ—¶é—´æ˜¯è¿ç»­çš„  1æ—¥é›¶ç‚¹åˆ°12æ—¥ä¸¤ç‚¹
+#define NF_ITEM_REL_TYPE_ENUM      2//ä»æŸä¸€å¤©åˆ°æŸä¸€å¤©ä¸­çš„å‡ ç‚¹åˆ°å‡ ç‚¹æ—¶é—´æ®µæ˜¯ä¸è¿ç»­çš„  1æ—¥åˆ°12æ—¥ä¸­çš„é›¶ç‚¹åˆ°ä¸¤ç‚¹ä¹‹é—´
 
-//ÀàĞÍÎªanyµÄÊ±ºò£¬day,start_tm,end_tmÎŞĞ§£¬µ±ÎªÇø¼äµÄÊ±ºòdayÎŞĞ§
+//ç±»å‹ä¸ºanyçš„æ—¶å€™ï¼Œday,start_tm,end_tmæ— æ•ˆï¼Œå½“ä¸ºåŒºé—´çš„æ—¶å€™dayæ— æ•ˆ
 typedef struct _nf_sw_limit_time_item{
 	struct list_head lh;
-	unsigned char tm_type;//Ê±¼ä¶ÔÏóÀàĞÍ     ÈÎÒâ   Çø¼ä   Ã¶¾Ù  ÀàĞÍÎªanyµÄÊ±ºò£¬day,start_tm,end_tmÎŞĞ§£¬µ±ÎªÇø¼äµÄÊ±ºòdayÎŞĞ§
-	unsigned char day;//ĞÇÆÚ °´ÕÕÎ»ÓëµÄ¹ØÏµ£¬´ÓµÍÎ»µ½¸ßÎ£Ò»´ÎÊÇ ĞÇÆÚÌì ĞÇÆÚÒ» ¡£¡£¡£¡£¡£    _nf_show_sw_limit_time_day
-	unsigned int start_tm;//ÆğÊ¼Ê±¼ä  Ê±¼ä´Á           Èç¹ûÎªÇø¼äµÄ»°£¬Èç¹û¸ÃÖµ×ª»»ºóµÄÊµ¼ÊÎªstart_tm:2013-12-1(ÈÕÆÚÆğÊ¼Ê±¼ä) 14:55:0(Ê±ÖÓÆğÊ¼Ê±¼ä) ÔòÈÕÆÚÇø¼äÆäÊµÊ±¼ä£¬Ê±¼ä¶ÎÆäÊµÊ±¼ä end_tm:2013-12-20 21:57:1ÀàËÆ
+	unsigned char tm_type;//æ—¶é—´å¯¹è±¡ç±»å‹     ä»»æ„   åŒºé—´   æšä¸¾  ç±»å‹ä¸ºanyçš„æ—¶å€™ï¼Œday,start_tm,end_tmæ— æ•ˆï¼Œå½“ä¸ºåŒºé—´çš„æ—¶å€™dayæ— æ•ˆ
+	unsigned char day;//æ˜ŸæœŸ æŒ‰ç…§ä½ä¸çš„å…³ç³»ï¼Œä»ä½ä½åˆ°é«˜å±ä¸€æ¬¡æ˜¯ æ˜ŸæœŸå¤© æ˜ŸæœŸä¸€ ã€‚ã€‚ã€‚ã€‚ã€‚    _nf_show_sw_limit_time_day
+	unsigned int start_tm;//èµ·å§‹æ—¶é—´  æ—¶é—´æˆ³           å¦‚æœä¸ºåŒºé—´çš„è¯ï¼Œå¦‚æœè¯¥å€¼è½¬æ¢åçš„å®é™…ä¸ºstart_tm:2013-12-1(æ—¥æœŸèµ·å§‹æ—¶é—´) 14:55:0(æ—¶é’Ÿèµ·å§‹æ—¶é—´) åˆ™æ—¥æœŸåŒºé—´å…¶å®æ—¶é—´ï¼Œæ—¶é—´æ®µå…¶å®æ—¶é—´ end_tm:2013-12-20 21:57:1ç±»ä¼¼
 	unsigned int end_tm;
 }nf_sw_limit_time_item;
 
 typedef struct _nf_sw_limit_time{
-	struct hlist_node hlist;//¼Óµ½gate_sw_limit_time_kernel_hash_array  hash±íÖĞ
-	char sequence[NF_SWITCH_LIMIT_MD_LEN+1];//Ë÷Òıindex
-	unsigned int h_seq;//Ë÷Òı×ª»»ºóµÄseqÖµ
-	unsigned int effective_area;		/*×÷ÓÃÓò*/
-	char* name;//Ê±¼ä¶ÔÏóÃû×Ö
+	struct hlist_node hlist;//åŠ åˆ°gate_sw_limit_time_kernel_hash_array  hashè¡¨ä¸­
+	char sequence[NF_SWITCH_LIMIT_MD_LEN+1];//ç´¢å¼•index
+	unsigned int h_seq;//ç´¢å¼•è½¬æ¢åçš„seqå€¼
+	unsigned int effective_area;		/*ä½œç”¨åŸŸ*/
+	char* name;//æ—¶é—´å¯¹è±¡åå­—
 	struct list_head item_list;//_nf_sw_limit_time_item
 	struct timer_list timer;
 	unsigned int tm_flag;
@@ -205,8 +205,8 @@ typedef struct _nf_sw_limit_time{
 #define NF_SW_AUTH_DST_TYPE_OBJ		1
 #define NF_SW_AUTH_DST_TYPE_PREFIX	2
 
-#define NF_SW_AUTH_TIME_TYPE_ANY		0//Ê±¼ä¶ÔÏó  ÈÎÒâ
-#define NF_SW_AUTH_TIME_TYPE_OBJ		1//Ê±¼ä¶ÔÏóÀàĞÍÎªÇø¼ä»òÕßÃ¶¾Ù£¬²Î¿¼WEBÍøÒ³
+#define NF_SW_AUTH_TIME_TYPE_ANY		0//æ—¶é—´å¯¹è±¡  ä»»æ„
+#define NF_SW_AUTH_TIME_TYPE_OBJ		1//æ—¶é—´å¯¹è±¡ç±»å‹ä¸ºåŒºé—´æˆ–è€…æšä¸¾ï¼Œå‚è€ƒWEBç½‘é¡µ
 
 typedef struct _nf_switch_id_prefix{
 	unsigned int id;
@@ -215,7 +215,7 @@ typedef struct _nf_switch_id_prefix{
 
 typedef struct _nf_switch_app_coding{
 	struct list_head lh;
-	char app_seq[NF_SWITCH_LIMIT_MD_LEN+1];//Í¨¹ı¸ÃÖµ»ñÈ¡gate_app_coding_kernel_hash_array¼üÖµ
+	char app_seq[NF_SWITCH_LIMIT_MD_LEN+1];//é€šè¿‡è¯¥å€¼è·å–gate_app_coding_kernel_hash_arrayé”®å€¼
 }nf_switch_app_coding;
 
 #define NF_SW_AUTH_AREA_ALL		0
@@ -223,30 +223,30 @@ typedef struct _nf_switch_app_coding{
 #define NF_SW_AUTH_AREA_AGENT	2
 
 
-//Ò»Ìõ½»»»¹æÔòÖ»ÄÜÌí¼ÓÒ»¸öÊ±¼ä¶ÔÏó Ò»¸öµØÖ·¶ÔÏó ¿ÉÒÔ¶à¸öÓ¦ÓÃĞ­Òé
+//ä¸€æ¡äº¤æ¢è§„åˆ™åªèƒ½æ·»åŠ ä¸€ä¸ªæ—¶é—´å¯¹è±¡ ä¸€ä¸ªåœ°å€å¯¹è±¡ å¯ä»¥å¤šä¸ªåº”ç”¨åè®®
 typedef struct _nf_switch_authority{
 	struct hlist_node hlist;
-	char sequence[NF_SWITCH_LIMIT_MD_LEN+1];//¸Ã¹æÔòµÄË÷ÒıÖµ
+	char sequence[NF_SWITCH_LIMIT_MD_LEN+1];//è¯¥è§„åˆ™çš„ç´¢å¼•å€¼
 	unsigned int h_seq;
-	unsigned char log_level;			/*ÈÕÖ¾¼¶±ğ  yang Êµ¼ÊÉÏÃ»Ê²Ã´ÓÃ */
+	unsigned char log_level;			/*æ—¥å¿—çº§åˆ«  yang å®é™…ä¸Šæ²¡ä»€ä¹ˆç”¨ */
 	char* des;
-	struct list_head app_coding_list;	/*Ó¦ÓÃĞ­Òé±àÂë  Ó¦ÓÃĞ­ÒéÖ±½Ó¼Óµ½¸ÃÁ´±íÖĞ nf_switch_app_coding */
-	unsigned char dst_type;//Ìí¼Ó½»»»¹æÔòµÄÊ±ºò£¬Ä¿µÄµØÖ·ÀàĞÍ:ÈÎÒâ µØÖ·¶ÔÏó  µØÖ·/µØÖ·Ç°×º
+	struct list_head app_coding_list;	/*åº”ç”¨åè®®ç¼–ç   åº”ç”¨åè®®ç›´æ¥åŠ åˆ°è¯¥é“¾è¡¨ä¸­ nf_switch_app_coding */
+	unsigned char dst_type;//æ·»åŠ äº¤æ¢è§„åˆ™çš„æ—¶å€™ï¼Œç›®çš„åœ°å€ç±»å‹:ä»»æ„ åœ°å€å¯¹è±¡  åœ°å€/åœ°å€å‰ç¼€
 	union{
 		unsigned int obj;
 		nf_switch_id_prefix prefix;
 	}dst;
-	char dst_seq[NF_SWITCH_LIMIT_MD_LEN+1];//Í¨¹ı¸ÃÖµ×÷ÎªËùÓĞ£¬´Ó¶ø»ñÈ¡gate_sw_limit_addr_kernel_hash_array¼üÖµ
+	char dst_seq[NF_SWITCH_LIMIT_MD_LEN+1];//é€šè¿‡è¯¥å€¼ä½œä¸ºæ‰€æœ‰ï¼Œä»è€Œè·å–gate_sw_limit_addr_kernel_hash_arrayé”®å€¼
 	unsigned char time_type;
-	char tm_obj[NF_SWITCH_LIMIT_MD_LEN+1];//Ê±¼ä¶ÔÏóË÷Òı index      Ê±¼ä¶ÔÏóµÄÓĞĞ§ĞÔÍ¨¹ı¶¨Ê±Æ÷À´Íê³É
-	unsigned int tm_flag;//Ê±¼ä¶ÔÏóÊÇ·ñÓĞĞ§£¬Ö»ÓĞÓĞĞ§¸Ã¹æÔò²ÅÓĞÓÃ         Ê±¼ä¶ÔÏóÎªÈÎÒâÀàĞÍµÄÊ±ºòÖÃ1   º¯ÊıÖĞÉèÖÃ__gate_sw_time_validate_authority
+	char tm_obj[NF_SWITCH_LIMIT_MD_LEN+1];//æ—¶é—´å¯¹è±¡ç´¢å¼• index      æ—¶é—´å¯¹è±¡çš„æœ‰æ•ˆæ€§é€šè¿‡å®šæ—¶å™¨æ¥å®Œæˆ
+	unsigned int tm_flag;//æ—¶é—´å¯¹è±¡æ˜¯å¦æœ‰æ•ˆï¼Œåªæœ‰æœ‰æ•ˆè¯¥è§„åˆ™æ‰æœ‰ç”¨         æ—¶é—´å¯¹è±¡ä¸ºä»»æ„ç±»å‹çš„æ—¶å€™ç½®1   å‡½æ•°ä¸­è®¾ç½®__gate_sw_time_validate_authority
 }nf_switch_authority;
 
 
 /*********************************************
 	
 */
-typedef struct _nf_switch_user_rule_index{//ÎªÓÃ»§·ÖÅäµÄ¹æÔò  ¸Ã½ÚµãÌí¼Óµ½_nf_switch_user_idipµÄrule_list
+typedef struct _nf_switch_user_rule_index{//ä¸ºç”¨æˆ·åˆ†é…çš„è§„åˆ™  è¯¥èŠ‚ç‚¹æ·»åŠ åˆ°_nf_switch_user_idipçš„rule_list
 	struct list_head lh;//
 	char rule_seq[NF_SWITCH_LIMIT_MD_LEN+1];
 }nf_switch_user_rule_index;
@@ -261,18 +261,18 @@ typedef struct _nf_switch_user_idip{
 }nf_switch_user_idip;
 
 typedef struct _nf_switch_auth_mem_count{
-	int app_coding_scp;//Ó¦ÓÃĞ­ÒéÏÂÃæµÄ×ÓĞ­Òé×Ü¸öÊı
-	int app_coding;//Ó¦ÓÃĞ­Òé¸öÊı£¬ÔÚwebÉÏÃæÌí¼ÓÒ»ÌõµÄÊ±ºò£¬ÕâÀï¾Í»á¼ÓÒ»£¬É¾³ıÒ»ÌõµÄÊ±ºò¾Í»á¼õ1
+	int app_coding_scp;//åº”ç”¨åè®®ä¸‹é¢çš„å­åè®®æ€»ä¸ªæ•°
+	int app_coding;//åº”ç”¨åè®®ä¸ªæ•°ï¼Œåœ¨webä¸Šé¢æ·»åŠ ä¸€æ¡çš„æ—¶å€™ï¼Œè¿™é‡Œå°±ä¼šåŠ ä¸€ï¼Œåˆ é™¤ä¸€æ¡çš„æ—¶å€™å°±ä¼šå‡1
 	int app_coding_name;
 	int limit_time_item;
 	int limit_time;
 	int limit_time_name;
 	int limit_addr_item;
 	int limit_addr;
-	int limit_addr_name;//µØÖ·¶ÔÏó¼ÆÊı
+	int limit_addr_name;//åœ°å€å¯¹è±¡è®¡æ•°
 	int pri_des;//
-	int pri;//½»»»¹æÔò¸öÊı,°üÀ¨ÓÃ»§×Ô¶¨Òå¹æÔòºÍÏµÍ³¹æÔò
-	int pri_app;//Ó¦ÓÃĞ­Òé±»ÒıÓÃµÄ´ÎÊı£¬°üÀ¨ÏµÍ³¹æÔòºÍÓÃ»§×Ô¶¨Òå¹æÔòÓ¦ÓÃµÄ
+	int pri;//äº¤æ¢è§„åˆ™ä¸ªæ•°,åŒ…æ‹¬ç”¨æˆ·è‡ªå®šä¹‰è§„åˆ™å’Œç³»ç»Ÿè§„åˆ™
+	int pri_app;//åº”ç”¨åè®®è¢«å¼•ç”¨çš„æ¬¡æ•°ï¼ŒåŒ…æ‹¬ç³»ç»Ÿè§„åˆ™å’Œç”¨æˆ·è‡ªå®šä¹‰è§„åˆ™åº”ç”¨çš„
 } nf_switch_auth_mem_count;
 
 extern spinlock_t gate_privilege_lock;

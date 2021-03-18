@@ -28,7 +28,7 @@
 static DEFINE_MUTEX(afinfo_mutex);
 
 //const struct nf_afinfo *nf_afinfo[NFPROTO_NUMPROTO] __read_mostly;
-const struct nf_afinfo *nf_afinfo[NFPROTO_NUMPROTO]; //Ä¿Ç°±»nf_queue¹¦ÄÜÊ¹ÓÃ£¬Í¨¹ınf_register_afinfo×¢²á IPV4¼ûnf_ip_afinfo
+const struct nf_afinfo *nf_afinfo[NFPROTO_NUMPROTO]; //ç›®å‰è¢«nf_queueåŠŸèƒ½ä½¿ç”¨ï¼Œé€šè¿‡nf_register_afinfoæ³¨å†Œ IPV4è§nf_ip_afinfo
 EXPORT_SYMBOL(nf_afinfo);
 
 int nf_register_afinfo(const struct nf_afinfo *afinfo)
@@ -54,16 +54,16 @@ void nf_unregister_afinfo(const struct nf_afinfo *afinfo)
 EXPORT_SYMBOL_GPL(nf_unregister_afinfo);
 
 /*
-ÕâÊÇÒ»¸öÈıÎ¬µÄÊµÏÖÄ£ĞÍ£¬µÚÒ»Î¬¿ÉÒÔÈÏÎªÊÇ²»Í¬µÄÍøÂçĞ­Òé´Ø£¬µÚ¶şÎ¬ÊÇĞ­Òé´ØÖĞÊÂ¼ş(¶ÔÓ¦Ò»Ğ©¼ì²âÎ»ÖÃ)£¬µÚÈıÎ¬¾ÍÊÇÕâ¸öÁ´±íÖĞ¿ÉÒÔ¹ÒÔØµÄ
-ËùÓĞ¼ì²âº¯Êı£¬Êı×énf_hooksµÄÃ¿¸öÔªËØÖ»ÊÇÒ»¸öÁ´±íÍ·Î»ÖÃ£¬ËüÏÂÃæ¿ÉÒÔ¹Ò½ÓÈÎÒâ¶àµÄ¼ì²âº¯Êı£¬´Ó¶øĞÎ³ÉÒ»¸ö¶¯Ì¬¹ÒÔØÈÎÒâ¶àµÄ¼ì²â¡£
-¸ÃÊı×éÖĞµÄÃ¿Ò»¸ö¶ÓÁĞÖĞ¹Ò½ÓµÄÊÇÒ»¸östruct nf_hook_ops
+è¿™æ˜¯ä¸€ä¸ªä¸‰ç»´çš„å®ç°æ¨¡å‹ï¼Œç¬¬ä¸€ç»´å¯ä»¥è®¤ä¸ºæ˜¯ä¸åŒçš„ç½‘ç»œåè®®ç°‡ï¼Œç¬¬äºŒç»´æ˜¯åè®®ç°‡ä¸­äº‹ä»¶(å¯¹åº”ä¸€äº›æ£€æµ‹ä½ç½®)ï¼Œç¬¬ä¸‰ç»´å°±æ˜¯è¿™ä¸ªé“¾è¡¨ä¸­å¯ä»¥æŒ‚è½½çš„
+æ‰€æœ‰æ£€æµ‹å‡½æ•°ï¼Œæ•°ç»„nf_hooksçš„æ¯ä¸ªå…ƒç´ åªæ˜¯ä¸€ä¸ªé“¾è¡¨å¤´ä½ç½®ï¼Œå®ƒä¸‹é¢å¯ä»¥æŒ‚æ¥ä»»æ„å¤šçš„æ£€æµ‹å‡½æ•°ï¼Œä»è€Œå½¢æˆä¸€ä¸ªåŠ¨æ€æŒ‚è½½ä»»æ„å¤šçš„æ£€æµ‹ã€‚
+è¯¥æ•°ç»„ä¸­çš„æ¯ä¸€ä¸ªé˜Ÿåˆ—ä¸­æŒ‚æ¥çš„æ˜¯ä¸€ä¸ªstruct nf_hook_ops
 
-struct list_head nf_hooks[NFPROTO_NUMPROTO][NF_MAX_HOOKS]ÊÇÆäÖĞºËĞÄµÄÊı¾İ½á¹¹¡£nf_hooksµÄ¹¦ÄÜÀàËÆÒ»¸ö¶şÎ¬µÄº¯ÊıÖ¸ÕëÊı×é¡£
-nf_hooksÊı×éµÄµÚÒ»Î¬ÊÇ°´ÕÕĞ­Òé½øĞĞ·ÖÀàµÄ£¬¶ÔÓÚ²»Í¬µÄĞ­ÒéÓĞ²»Í¬µÄhookµãºÍhookº¯Êı£¬³£¼ûµÄĞ­Òé°üÀ¨ipv4£¬ipv6£¬arp£¬bridgeµÈ¡£
-nf_hooksÊı×éµÄµÚ¶şÎ¬ÊÇ°´ÕÕhookµã½øĞĞ»®·ÖµÄ£¬·ÖÎª
-NF_INET_PRE_ROUTING£¬NF_INET_LOCAL_IN£¬NF_INET_FORWARD£¬NF_INET_LOCAL_OUT£¬NF_INET_POST_ROUTINGµÈ5¸öhookµã£¬ÓëiptablesµÄ5¸öÁ´Ïà¶ÔÓ¦¡£
-nf_hooksÊı×éÖĞµÄÃ¿Ò»¸öÔªËØ¿ÉÒÔÀí½âÎªÒ»¸öº¯ÊıÖ¸ÕëÁ´±íµÄÁ´±íÍ·¡£Õâ¸öº¯ÊıÖ¸ÕëÁ´±íÊÇÒ»¸öÓĞĞòÁ´±í£¬°´ÕÕº¯ÊıhookµÄÓÅÏÈ¼¶½øĞĞÅÅĞò
-²Î¿¼µØÖ·:http://www.360doc.com/content/13/0914/12/3884271_314370861.shtml
+struct list_head nf_hooks[NFPROTO_NUMPROTO][NF_MAX_HOOKS]æ˜¯å…¶ä¸­æ ¸å¿ƒçš„æ•°æ®ç»“æ„ã€‚nf_hooksçš„åŠŸèƒ½ç±»ä¼¼ä¸€ä¸ªäºŒç»´çš„å‡½æ•°æŒ‡é’ˆæ•°ç»„ã€‚
+nf_hooksæ•°ç»„çš„ç¬¬ä¸€ç»´æ˜¯æŒ‰ç…§åè®®è¿›è¡Œåˆ†ç±»çš„ï¼Œå¯¹äºä¸åŒçš„åè®®æœ‰ä¸åŒçš„hookç‚¹å’Œhookå‡½æ•°ï¼Œå¸¸è§çš„åè®®åŒ…æ‹¬ipv4ï¼Œipv6ï¼Œarpï¼Œbridgeç­‰ã€‚
+nf_hooksæ•°ç»„çš„ç¬¬äºŒç»´æ˜¯æŒ‰ç…§hookç‚¹è¿›è¡Œåˆ’åˆ†çš„ï¼Œåˆ†ä¸º
+NF_INET_PRE_ROUTINGï¼ŒNF_INET_LOCAL_INï¼ŒNF_INET_FORWARDï¼ŒNF_INET_LOCAL_OUTï¼ŒNF_INET_POST_ROUTINGç­‰5ä¸ªhookç‚¹ï¼Œä¸iptablesçš„5ä¸ªé“¾ç›¸å¯¹åº”ã€‚
+nf_hooksæ•°ç»„ä¸­çš„æ¯ä¸€ä¸ªå…ƒç´ å¯ä»¥ç†è§£ä¸ºä¸€ä¸ªå‡½æ•°æŒ‡é’ˆé“¾è¡¨çš„é“¾è¡¨å¤´ã€‚è¿™ä¸ªå‡½æ•°æŒ‡é’ˆé“¾è¡¨æ˜¯ä¸€ä¸ªæœ‰åºé“¾è¡¨ï¼ŒæŒ‰ç…§å‡½æ•°hookçš„ä¼˜å…ˆçº§è¿›è¡Œæ’åº
+å‚è€ƒåœ°å€:http://www.360doc.com/content/13/0914/12/3884271_314370861.shtml
 */
 struct list_head nf_hooks[NFPROTO_NUMPROTO][NF_MAX_HOOKS] __read_mostly;
 EXPORT_SYMBOL(nf_hooks);
@@ -81,7 +81,7 @@ int nf_register_hook(struct nf_hook_ops *reg)
 		if (reg->priority < elem->priority)
 			break;
 	}
-	list_add_rcu(&reg->list, elem->list.prev); //yang add °Ñreg°´ÕÕÓÅÏÈ¼¶¼ÓÈëÁ´±íÖĞÈ¥
+	list_add_rcu(&reg->list, elem->list.prev); //yang add æŠŠregæŒ‰ç…§ä¼˜å…ˆçº§åŠ å…¥é“¾è¡¨ä¸­å»
 	mutex_unlock(&nf_hook_mutex);
 	return 0;
 }
@@ -97,7 +97,7 @@ void nf_unregister_hook(struct nf_hook_ops *reg)
 }
 EXPORT_SYMBOL(nf_unregister_hook);
 
-//yang add °´ÕÕ[reg->pf][reg->hooknum]¼ÓÈëµ½nf_hooks¶ÔÓ¦µÄÁ´±íÖĞÈ¥
+//yang add æŒ‰ç…§[reg->pf][reg->hooknum]åŠ å…¥åˆ°nf_hookså¯¹åº”çš„é“¾è¡¨ä¸­å»
 int nf_register_hooks(struct nf_hook_ops *reg, unsigned int n)
 {
 	unsigned int i;
@@ -126,7 +126,7 @@ void nf_unregister_hooks(struct nf_hook_ops *reg, unsigned int n)
 }
 EXPORT_SYMBOL(nf_unregister_hooks);
 
-//±éÀúhookº¯Êı£¬//Èç¹ûÖ´ĞĞhookº¯Êı·µ»ØÖµ²»ÊÇACCPT»î×ÅREPEATµÄÊ±ºò£¬Ôò´ÓhookÁ´±íÖĞÖ±½Ó·µ»Ø²»»áÔÚ¼ÌĞøÖ´ĞĞnext hookº¯Êı£¬²Î¿¼nf_hook_slow
+//éå†hookå‡½æ•°ï¼Œ//å¦‚æœæ‰§è¡Œhookå‡½æ•°è¿”å›å€¼ä¸æ˜¯ACCPTæ´»ç€REPEATçš„æ—¶å€™ï¼Œåˆ™ä»hooké“¾è¡¨ä¸­ç›´æ¥è¿”å›ä¸ä¼šåœ¨ç»§ç»­æ‰§è¡Œnext hookå‡½æ•°ï¼Œå‚è€ƒnf_hook_slow
 unsigned int nf_iterate(struct list_head *head,
 			struct sk_buff *skb,
 			unsigned int hook,
@@ -142,7 +142,7 @@ unsigned int nf_iterate(struct list_head *head,
 	 * The caller must not block between calls to this
 	 * function because of risk of continuing from deleted element.
 	 */
-	list_for_each_continue_rcu(*i, head) {//±éÀúiÁ´±í
+	list_for_each_continue_rcu(*i, head) {//éå†ié“¾è¡¨
 		struct nf_hook_ops *elem = (struct nf_hook_ops *)*i;
 
 		if (hook_thresh > elem->priority)
@@ -151,7 +151,7 @@ unsigned int nf_iterate(struct list_head *head,
 		/* Optimization: we don't need to hold module
 		   reference here, since function can't sleep. --RR */
 		verdict = elem->hook(hook, skb, indev, outdev, okfn);
-		if (verdict != NF_ACCEPT) {//Èç¹ûµ±Ç°hookº¯ÊıµÄ·µ»ØÖµÎªACCEPT,Ôò¼ÌĞøÏÂÒ»¸öhook¼ÌĞø  hookº¯ÊıÔÚº¯Êınf_register_hooksÖĞ×¢²á
+		if (verdict != NF_ACCEPT) {//å¦‚æœå½“å‰hookå‡½æ•°çš„è¿”å›å€¼ä¸ºACCEPT,åˆ™ç»§ç»­ä¸‹ä¸€ä¸ªhookç»§ç»­  hookå‡½æ•°åœ¨å‡½æ•°nf_register_hooksä¸­æ³¨å†Œ
 #ifdef CONFIG_NETFILTER_DEBUG
 			if (unlikely((verdict & NF_VERDICT_MASK)
 							> NF_MAX_VERDICT)) {
@@ -162,7 +162,7 @@ unsigned int nf_iterate(struct list_head *head,
 #endif
 			if (verdict != NF_REPEAT)
 				return verdict;
-			*i = (*i)->prev;//Èç¹ûverdictÖµÎªNF_REPEATÔò¼ÌĞøÖ´ĞĞ¸ÃHOOKº¯Êı£¬ÕâÀï×¢Òâ£¬¿ÉÄÜ»á³öÏÖËÀÑ­»·
+			*i = (*i)->prev;//å¦‚æœverdictå€¼ä¸ºNF_REPEATåˆ™ç»§ç»­æ‰§è¡Œè¯¥HOOKå‡½æ•°ï¼Œè¿™é‡Œæ³¨æ„ï¼Œå¯èƒ½ä¼šå‡ºç°æ­»å¾ªç¯
 		}
 	}
 	return NF_ACCEPT;
@@ -171,7 +171,7 @@ unsigned int nf_iterate(struct list_head *head,
 
 /* Returns 1 if okfn() needs to be executed by the caller,
  * -EPERM for NF_DROP, 0 otherwise. 
- nf_hook_slowÈ¥Íê³É¹³×Óº¯ÊıokfnµÄË³Ğò±éÀú(ÓÅÏÈ¼¶´ÓĞ¡µ½´óÒÀ´ÎÖ´ĞĞ)¡£
+ nf_hook_slowå»å®Œæˆé’©å­å‡½æ•°okfnçš„é¡ºåºéå†(ä¼˜å…ˆçº§ä»å°åˆ°å¤§ä¾æ¬¡æ‰§è¡Œ)ã€‚
  */
 int nf_hook_slow(u_int8_t pf, unsigned int hook, struct sk_buff *skb,
 		 struct net_device *indev,
@@ -231,7 +231,7 @@ EXPORT_SYMBOL(skb_make_writable);
 /* This does not belong here, but locally generated errors need it if connection
    tracking in use: without this, connection may not be in hash table, and hence
    manufactured ICMP or RST packets will not be associated with it. */
-void (*ip_ct_attach)(struct sk_buff *, struct sk_buff *);//Ö¸Ïònf_conntrack_attach£¬ ¼ûnf_conntrack_init
+void (*ip_ct_attach)(struct sk_buff *, struct sk_buff *);//æŒ‡å‘nf_conntrack_attachï¼Œ è§nf_conntrack_init
 EXPORT_SYMBOL(ip_ct_attach);
 
 void nf_ct_attach(struct sk_buff *new, struct sk_buff *skb)
@@ -248,7 +248,7 @@ void nf_ct_attach(struct sk_buff *new, struct sk_buff *skb)
 }
 EXPORT_SYMBOL(nf_ct_attach);
 
-void (*nf_ct_destroy)(struct nf_conntrack *);//Ö¸Ïòdestroy_conntrack£¬¼ûnf_conntrack_init 
+void (*nf_ct_destroy)(struct nf_conntrack *);//æŒ‡å‘destroy_conntrackï¼Œè§nf_conntrack_init 
 EXPORT_SYMBOL(nf_ct_destroy);
 
 void nf_conntrack_destroy(struct nf_conntrack *nfct)

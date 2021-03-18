@@ -49,7 +49,7 @@ static inline int dev_requeue_skb(struct sk_buff *skb, struct Qdisc *q)
 
 	return 0;
 }
-//__qdisc_run -> qdisc_restart -> dequeue_skb -> prio_dequeue(ÕâÀïÃæÓÐ¸öµÝ¹éµ÷ÓÃ¹ý³Ì) -> qdisc_dequeue_head
+//__qdisc_run -> qdisc_restart -> dequeue_skb -> prio_dequeue(è¿™é‡Œé¢æœ‰ä¸ªé€’å½’è°ƒç”¨è¿‡ç¨‹) -> qdisc_dequeue_head
 /*
 __qdisc_run -> qdisc_restart -> dequeue_skb -> htb_dequeue
 htb_dequeue
@@ -87,7 +87,7 @@ static inline struct sk_buff *dequeue_skb(struct Qdisc *q)
 		} else
 			skb = NULL;
 	} else {
-		skb = q->dequeue(q); //prioÎªprio_dequeue
+		skb = q->dequeue(q); //prioä¸ºprio_dequeue
 	}
 
 	return skb;
@@ -189,7 +189,7 @@ int sch_direct_xmit(struct sk_buff *skb, struct Qdisc *q,
  *				0  - queue is empty or throttled.
  *				>0 - queue is not empty.
  *
- */ //__qdisc_run -> qdisc_restart -> dequeue_skb -> prio_dequeue(ÕâÀïÃæÓÐ¸öµÝ¹éµ÷ÓÃ¹ý³Ì) -> qdisc_dequeue_head
+ */ //__qdisc_run -> qdisc_restart -> dequeue_skb -> prio_dequeue(è¿™é‡Œé¢æœ‰ä¸ªé€’å½’è°ƒç”¨è¿‡ç¨‹) -> qdisc_dequeue_head
 static inline int qdisc_restart(struct Qdisc *q)
 {
 	struct netdev_queue *txq;
@@ -210,22 +210,22 @@ static inline int qdisc_restart(struct Qdisc *q)
 }
 
 /*
-__QDISC_STATE_RUNNING±êÖ¾ÓÃÓÚ±£Ö¤Ò»¸öÁ÷¿Ø¶ÔÏó²»»áÍ¬Ê±±»¶à¸öÀý³ÌÔËÐÐ¡£
-ÈíÖÐ¶ÏÏß³ÌµÄ¶¯×÷£ºÔËÐÐ¼ÓÈëµ½output_queueÁ´±íÖÐµÄËùÓÐÁ÷¿Ø¶ÔÏó£¬Èç¹ûÊÔÍ¼ÔËÐÐÄ³¸öÁ÷¿Ø¶ÔÏóÊ±£¬·¢ÏÖÒÑ¾­ÓÐÆäËûÄÚºËÂ·¾¶ÔÚÔËÐÐÕâ¸ö¶ÔÏó£¬Ö±½Ó·µ»Ø£¬²¢ÊÔÍ¼ÔËÐÐÏÂÒ»¸öÁ÷¿Ø¶ÔÏó¡£
+__QDISC_STATE_RUNNINGæ ‡å¿—ç”¨äºŽä¿è¯ä¸€ä¸ªæµæŽ§å¯¹è±¡ä¸ä¼šåŒæ—¶è¢«å¤šä¸ªä¾‹ç¨‹è¿è¡Œã€‚
+è½¯ä¸­æ–­çº¿ç¨‹çš„åŠ¨ä½œï¼šè¿è¡ŒåŠ å…¥åˆ°output_queueé“¾è¡¨ä¸­çš„æ‰€æœ‰æµæŽ§å¯¹è±¡ï¼Œå¦‚æžœè¯•å›¾è¿è¡ŒæŸä¸ªæµæŽ§å¯¹è±¡æ—¶ï¼Œå‘çŽ°å·²ç»æœ‰å…¶ä»–å†…æ ¸è·¯å¾„åœ¨è¿è¡Œè¿™ä¸ªå¯¹è±¡ï¼Œç›´æŽ¥è¿”å›žï¼Œå¹¶è¯•å›¾è¿è¡Œä¸‹ä¸€ä¸ªæµæŽ§å¯¹è±¡ã€‚
 */
 void __qdisc_run(struct Qdisc *q)
 {
 	unsigned long start_time = jiffies;
 
-	while (qdisc_restart(q)) {//¶ÓÁÐ»áÒ»Ö±·¢ËÍÊý¾Ý°ü£¬Ö±µ½³¬Ê±»òÕß
+	while (qdisc_restart(q)) {//é˜Ÿåˆ—ä¼šä¸€ç›´å‘é€æ•°æ®åŒ…ï¼Œç›´åˆ°è¶…æ—¶æˆ–è€…
 		/*
 		 * Postpone processing if
 		 * 1. another process needs the CPU;
 		 * 2. we've been doing it for too long.
-		 *///Èç¹ûÕ¼ÓÃµÄCPUµÄÊ±¼äÌ«³¤ÁË£¬ÓÐÆäËûµÄÂ·¾¶ÐèÒªÕ¼ÓÃCPU£¬´ËÊ±ÔÝÊ±Í£Ö¹¶ÓÁÐµÄ·¢°ü¡£
-		if (need_resched() || jiffies != start_time) {//½«±¾¶ÓÁÐ¼ÓÈëÈíÖÐ¶ÏµÄoutput_queueÁ´±íÖÐ¡£
-        /*½«¶ÓÁÐ¼ÓÈë·¢ËÍÈíÖÐ¶ÏNET_TX_SOFTIRQµÄ´¦Àí¶ÓÁÐ£¬µ±ÈíÖÐ¶Ï±»Ö´ÐÐÊ±£¬¶ÓÁÐÓÖ»á¼ÌÐø·¢ËÍÊý¾Ý°ü¡£*/
-			__netif_schedule(q);//¼¤»î·¢ËÍÈí¼þÖÐµÄ£¬×îÖÕµ÷ÓÃnet_tx_action
+		 *///å¦‚æžœå ç”¨çš„CPUçš„æ—¶é—´å¤ªé•¿äº†ï¼Œæœ‰å…¶ä»–çš„è·¯å¾„éœ€è¦å ç”¨CPUï¼Œæ­¤æ—¶æš‚æ—¶åœæ­¢é˜Ÿåˆ—çš„å‘åŒ…ã€‚
+		if (need_resched() || jiffies != start_time) {//å°†æœ¬é˜Ÿåˆ—åŠ å…¥è½¯ä¸­æ–­çš„output_queueé“¾è¡¨ä¸­ã€‚
+        /*å°†é˜Ÿåˆ—åŠ å…¥å‘é€è½¯ä¸­æ–­NET_TX_SOFTIRQçš„å¤„ç†é˜Ÿåˆ—ï¼Œå½“è½¯ä¸­æ–­è¢«æ‰§è¡Œæ—¶ï¼Œé˜Ÿåˆ—åˆä¼šç»§ç»­å‘é€æ•°æ®åŒ…ã€‚*/
+			__netif_schedule(q);//æ¿€æ´»å‘é€è½¯ä»¶ä¸­çš„ï¼Œæœ€ç»ˆè°ƒç”¨net_tx_action
 			break;
 		}
 	}
@@ -451,7 +451,7 @@ static const u8 prio2band[TC_PRIO_MAX+1] =
  * 	- queues for the three band
  * 	- bitmap indicating which of the bands contain skbs
  */
-struct pfifo_fast_priv { //qdisc_priv(qdisc);  ´´½¨qdiscµÄÊ±ºò»á°ÑÕâ¿éË½ÓÐÊý¾Ý²¿·ÖÒ²·ÖÅäÉÏ
+struct pfifo_fast_priv { //qdisc_priv(qdisc);  åˆ›å»ºqdiscçš„æ—¶å€™ä¼šæŠŠè¿™å—ç§æœ‰æ•°æ®éƒ¨åˆ†ä¹Ÿåˆ†é…ä¸Š
 	u32 bitmap;
 	struct sk_buff_head q[PFIFO_FAST_BANDS];
 };
@@ -470,16 +470,16 @@ static inline struct sk_buff_head *band2list(struct pfifo_fast_priv *priv,
 	return priv->q + band;
 }
 
-//Í¨¹ýskb->priority¼ÆËã³öband,´Ó¶øÀ´È·¶¨°Ñ¸ÃSKB¼ÓÈëµ½pfifo_fast_privµÄq[i]¶ÓÁÐÖÐ
-static int pfifo_fast_enqueue(struct sk_buff *skb, struct Qdisc* qdisc) //ºÍÏÂÃæµÄpfifo_fast_enqueue½áºÏÊ¹ÓÃ
+//é€šè¿‡skb->priorityè®¡ç®—å‡ºband,ä»Žè€Œæ¥ç¡®å®šæŠŠè¯¥SKBåŠ å…¥åˆ°pfifo_fast_privçš„q[i]é˜Ÿåˆ—ä¸­
+static int pfifo_fast_enqueue(struct sk_buff *skb, struct Qdisc* qdisc) //å’Œä¸‹é¢çš„pfifo_fast_enqueueç»“åˆä½¿ç”¨
 {
 	if (skb_queue_len(&qdisc->q) < qdisc_dev(qdisc)->tx_queue_len) {
 		int band = prio2band[skb->priority & TC_PRIO_MAX];
 		struct pfifo_fast_priv *priv = qdisc_priv(qdisc);
 		struct sk_buff_head *list = band2list(priv, band);
 
-        //ÀýÈç0 1 2ÆµµÀ¶¼ÓÐÊý¾Ý£¬Ôòbitmap=¶þ½øÖÆ0111£¬Ò²¾ÍÊÇ7£¬bitmap2band[7]¶ÔÓ¦0£¬Ò²¾ÍÊÇÊ×ÏÈ·¢ËÍµÚ0ÆµµÀpfifo_fast_priv->q[0]skb¶ÓÁÐÊý¾Ý£¬
-        //Í¬ÀíÈç¹û0·¢ËÍÍê±Ï£¬Ôòbitmap±äÎª0x0110,Ò²¾ÍÊÇ6£¬bitmap2band[6]¶ÔÓ¦1£¬Ò²¾ÍÊÇ·¢ËÍµÚ1ÆµµÀpfifo_fast_priv->q[1]skb¶ÓÁÐÊý¾Ý£¬
+        //ä¾‹å¦‚0 1 2é¢‘é“éƒ½æœ‰æ•°æ®ï¼Œåˆ™bitmap=äºŒè¿›åˆ¶0111ï¼Œä¹Ÿå°±æ˜¯7ï¼Œbitmap2band[7]å¯¹åº”0ï¼Œä¹Ÿå°±æ˜¯é¦–å…ˆå‘é€ç¬¬0é¢‘é“pfifo_fast_priv->q[0]skbé˜Ÿåˆ—æ•°æ®ï¼Œ
+        //åŒç†å¦‚æžœ0å‘é€å®Œæ¯•ï¼Œåˆ™bitmapå˜ä¸º0x0110,ä¹Ÿå°±æ˜¯6ï¼Œbitmap2band[6]å¯¹åº”1ï¼Œä¹Ÿå°±æ˜¯å‘é€ç¬¬1é¢‘é“pfifo_fast_priv->q[1]skbé˜Ÿåˆ—æ•°æ®ï¼Œ
 		priv->bitmap |= (1 << band);
 		qdisc->q.qlen++;
 		return __qdisc_enqueue_tail(skb, qdisc, list);
@@ -488,8 +488,8 @@ static int pfifo_fast_enqueue(struct sk_buff *skb, struct Qdisc* qdisc) //ºÍÏÂÃæ
 	return qdisc_drop(skb, qdisc);
 }
 
-//Ö»ÓÐ0ÆµµÀµÄÊý¾Ý·¢ËÍÍê±Ï£¬²Å»á·¢ËÍ1ÆµµÀ£¬1·¢ËÍÍê±Ï£¬²Å»áÊÇ2£¬¶ÔÓ¦µÄÊÇpfifo_fast_priv->q[i]¡£
-static struct sk_buff *pfifo_fast_dequeue(struct Qdisc* qdisc)  //ºÍpfifo_fast_enqueueÅäºÏÊ¹ÓÃ
+//åªæœ‰0é¢‘é“çš„æ•°æ®å‘é€å®Œæ¯•ï¼Œæ‰ä¼šå‘é€1é¢‘é“ï¼Œ1å‘é€å®Œæ¯•ï¼Œæ‰ä¼šæ˜¯2ï¼Œå¯¹åº”çš„æ˜¯pfifo_fast_priv->q[i]ã€‚
+static struct sk_buff *pfifo_fast_dequeue(struct Qdisc* qdisc)  //å’Œpfifo_fast_enqueueé…åˆä½¿ç”¨
 {
 	struct pfifo_fast_priv *priv = qdisc_priv(qdisc);
 	int band = bitmap2band[priv->bitmap];
@@ -501,7 +501,7 @@ static struct sk_buff *pfifo_fast_dequeue(struct Qdisc* qdisc)  //ºÍpfifo_fast_e
 		qdisc->q.qlen--;
 		if (skb_queue_empty(list))
 			priv->bitmap &= ~(1 << band);
-	//¸ÃÆµµÀbandÊý¾Ý¶ÓÁÐµÄÊý¾Ý·¢ËÍÍê±Ï£¬°Ñ¸ÃÎ»bandÆµµÀÎ»Çå0¡£ÔÚpriv->q[0]skb¶ÓÁÐµÄÊý¾Ý·¢ËÍÍê±Ïºó£¬¾Í»áÍ¨¹ý __qdisc_run -> qdisc_restart¼ÌÐøµ÷ÓÃ£¬¿ªÊ¼·¢ËÍpriv->q[0]skb¶ÓÁÐµÄÊý¾Ý
+	//è¯¥é¢‘é“bandæ•°æ®é˜Ÿåˆ—çš„æ•°æ®å‘é€å®Œæ¯•ï¼ŒæŠŠè¯¥ä½bandé¢‘é“ä½æ¸…0ã€‚åœ¨priv->q[0]skbé˜Ÿåˆ—çš„æ•°æ®å‘é€å®Œæ¯•åŽï¼Œå°±ä¼šé€šè¿‡ __qdisc_run -> qdisc_restartç»§ç»­è°ƒç”¨ï¼Œå¼€å§‹å‘é€priv->q[0]skbé˜Ÿåˆ—çš„æ•°æ®
 
 		return skb;
 	}
@@ -559,7 +559,7 @@ static int pfifo_fast_init(struct Qdisc *qdisc, struct nlattr *opt)
 	return 0;
 }
 
-/*pfifo_fast_ops pfifo_qdisc_ops tbf_qdisc_ops sfq_qdisc_ops prio_class_opsÕâ¼¸¸ö¶¼Îª³ö¿Ú£¬ingress_qdisc_opsÎªÈë¿Ú */
+/*pfifo_fast_ops pfifo_qdisc_ops tbf_qdisc_ops sfq_qdisc_ops prio_class_opsè¿™å‡ ä¸ªéƒ½ä¸ºå‡ºå£ï¼Œingress_qdisc_opsä¸ºå…¥å£ */
 struct Qdisc_ops pfifo_fast_ops { //;//__read_mostly = {
 	.id		=	"pfifo_fast",
 	.priv_size	=	sizeof(struct pfifo_fast_priv),
@@ -572,8 +572,8 @@ struct Qdisc_ops pfifo_fast_ops { //;//__read_mostly = {
 	.owner		=	THIS_MODULE,
 };
 
-//¿ª±ÙQdisc¿Õ¼äµÄÊ±ºòÒª¶à¿ª±ÙQdisc_opsÖÐµÄpriv_size×Ö½Ú±£´æ¶ÔÓ¦µÄfifo_sched_dataÊý¾Ý(ÒÔpfifoÎªÀý)£¬  
-//Í¼ÐÎ»¯²Î¿¼TCÁ÷Á¿¿ØÖÆÊµÏÖ·ÖÎö£¨³õ²½£© 
+//å¼€è¾ŸQdiscç©ºé—´çš„æ—¶å€™è¦å¤šå¼€è¾ŸQdisc_opsä¸­çš„priv_sizeå­—èŠ‚ä¿å­˜å¯¹åº”çš„fifo_sched_dataæ•°æ®(ä»¥pfifoä¸ºä¾‹)ï¼Œ  
+//å›¾å½¢åŒ–å‚è€ƒTCæµé‡æŽ§åˆ¶å®žçŽ°åˆ†æžï¼ˆåˆæ­¥ï¼‰ 
 struct Qdisc *qdisc_alloc(struct netdev_queue *dev_queue,
 			  struct Qdisc_ops *ops)
 {
@@ -585,8 +585,8 @@ struct Qdisc *qdisc_alloc(struct netdev_queue *dev_queue,
 	/* ensure that the Qdisc and the private data are 64-byte aligned */
 	size = QDISC_ALIGN(sizeof(*sch));
 
-	//priv_sizeÎªpfifo_qdisc_ops prio_qdisc_ops tbf_qdisc_ops sfq_qdisc_ops ingress_qdisc_opsÖÐµÄ×Ö¶Î
-	size += ops->priv_size + (QDISC_ALIGNTO - 1); //Í¼ÐÎ»¯²Î¿¼TCÁ÷Á¿¿ØÖÆÊµÏÖ·ÖÎö£¨³õ²½£© 
+	//priv_sizeä¸ºpfifo_qdisc_ops prio_qdisc_ops tbf_qdisc_ops sfq_qdisc_ops ingress_qdisc_opsä¸­çš„å­—æ®µ
+	size += ops->priv_size + (QDISC_ALIGNTO - 1); //å›¾å½¢åŒ–å‚è€ƒTCæµé‡æŽ§åˆ¶å®žçŽ°åˆ†æžï¼ˆåˆæ­¥ï¼‰ 
 
 	p = kzalloc(size, GFP_KERNEL);
 	if (!p)
@@ -608,7 +608,7 @@ errout:
 	return ERR_PTR(err);
 }
 
-//´´½¨·ÖÀà¶ÓÁÐ¹æ³ÌÊ±£¬ÎªÆä·ÖÀàÊý×éÖÐ·ÖÅäÖ¸¶¨µÄÄ¬ÈÏ¶ÓÁÐ¹æ³Ìops
+//åˆ›å»ºåˆ†ç±»é˜Ÿåˆ—è§„ç¨‹æ—¶ï¼Œä¸ºå…¶åˆ†ç±»æ•°ç»„ä¸­åˆ†é…æŒ‡å®šçš„é»˜è®¤é˜Ÿåˆ—è§„ç¨‹ops
 struct Qdisc * qdisc_create_dflt(struct net_device *dev,
 				 struct netdev_queue *dev_queue,
 				 struct Qdisc_ops *ops,
@@ -686,7 +686,7 @@ void qdisc_destroy(struct Qdisc *qdisc)
 EXPORT_SYMBOL(qdisc_destroy);
 
 /* Attach toplevel qdisc to device queue. */
-//½«qdiscÓëdev_queue¹ØÁªÆðÀ´£¬Ò²¾ÍÊÇºÍdev¹ØÁªÆðÀ´ÁË
+//å°†qdiscä¸Ždev_queueå…³è”èµ·æ¥ï¼Œä¹Ÿå°±æ˜¯å’Œdevå…³è”èµ·æ¥äº†
 struct Qdisc *dev_graft_qdisc(struct netdev_queue *dev_queue,
 			      struct Qdisc *qdisc)
 {
@@ -770,7 +770,7 @@ static void transition_one_qdisc(struct net_device *dev,
 	}
 }
 
-//Íø¿¨ÔÚ¼¤»î(dev_open)Ê±»áµ÷ÓÃdev_activate()º¯ÊýÖØÐÂ¶ÔqdiscÖ¸Õë¸³Öµ£¬µ«Î´¶Ôqdisc_ingress¸³Öµ:
+//ç½‘å¡åœ¨æ¿€æ´»(dev_open)æ—¶ä¼šè°ƒç”¨dev_activate()å‡½æ•°é‡æ–°å¯¹qdiscæŒ‡é’ˆèµ‹å€¼ï¼Œä½†æœªå¯¹qdisc_ingressèµ‹å€¼:
 void dev_activate(struct net_device *dev)
 {
 	int need_watchdog;
@@ -846,9 +846,9 @@ static bool some_qdisc_is_busy(struct net_device *dev)
 	return false;
 }
 /*
-  * µ÷ÓÃdev_deactivate()½ûÖ¹³ö¿Ú¶ÓÁÐ¹æÔò£¬È·±£
-  * ¸ÃÉè±¸²»ÔÙÓÃÓÚ´«Êä£¬²¢Í£Ö¹²»ÔÙÐèÒª
-  * µÄ¼à¿Ø¶¨Ê±Æ÷¡£
+  * è°ƒç”¨dev_deactivate()ç¦æ­¢å‡ºå£é˜Ÿåˆ—è§„åˆ™ï¼Œç¡®ä¿
+  * è¯¥è®¾å¤‡ä¸å†ç”¨äºŽä¼ è¾“ï¼Œå¹¶åœæ­¢ä¸å†éœ€è¦
+  * çš„ç›‘æŽ§å®šæ—¶å™¨ã€‚
   */
 void dev_deactivate(struct net_device *dev)
 {
@@ -876,7 +876,7 @@ static void dev_init_scheduler_queue(struct net_device *dev,
 }
 
 
-//´ËÊ±ÍøÂçÉè±¸»¹²»ÄÜ·¢ËÍÈÎºÎÊý¾Ý°ü£¬±ØÐëµÈÍøÂçÉè±¸ÆôÓÃÖ®ºó²ÅÄÜ·¢ËÍÊý¾Ý°ü
+//æ­¤æ—¶ç½‘ç»œè®¾å¤‡è¿˜ä¸èƒ½å‘é€ä»»ä½•æ•°æ®åŒ…ï¼Œå¿…é¡»ç­‰ç½‘ç»œè®¾å¤‡å¯ç”¨ä¹‹åŽæ‰èƒ½å‘é€æ•°æ®åŒ…
 void dev_init_scheduler(struct net_device *dev)
 {
 	dev->qdisc = &noop_qdisc;

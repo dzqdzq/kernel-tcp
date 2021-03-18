@@ -118,8 +118,8 @@ EXPORT_SYMBOL_GPL(snort_strdup);
  *
  * Returns: void function
  */
- //pktÖ¸ÏòÎªÊµ¼ÊÊý¾Ý²¿·ÖµÄÇ°ETHERNET_HEADER_LEN£¬¾ÍÊÇÓÃAUTHµÄºóETHERNET_HEADER_LEN×Ö½Ú²¹³äÎªETHÍ·²¿£¬ º¯Êý×îºóµÄDecodeIP»áÔÚÏòÇ°ÒÆ¶¯ETHERNET_HEADER_LEN×Ö½Ú
-//¶ÔIP²ã TCP²ã»òÕßUDP²ã»òÕßICMP²ã½øÐÐÐ£Ñé£¬×¢ÒâÊµ¼ÊµÄETHÌî³äÔÚ¸Ãº¯ÊýÍâÃæ
+ //pktæŒ‡å‘ä¸ºå®žé™…æ•°æ®éƒ¨åˆ†çš„å‰ETHERNET_HEADER_LENï¼Œå°±æ˜¯ç”¨AUTHçš„åŽETHERNET_HEADER_LENå­—èŠ‚è¡¥å……ä¸ºETHå¤´éƒ¨ï¼Œ å‡½æ•°æœ€åŽçš„DecodeIPä¼šåœ¨å‘å‰ç§»åŠ¨ETHERNET_HEADER_LENå­—èŠ‚
+//å¯¹IPå±‚ TCPå±‚æˆ–è€…UDPå±‚æˆ–è€…ICMPå±‚è¿›è¡Œæ ¡éªŒï¼Œæ³¨æ„å®žé™…çš„ETHå¡«å……åœ¨è¯¥å‡½æ•°å¤–é¢
 unsigned int DecodeEthPkt(Packet * p, struct pintercept_pkthdr * pkthdr, u_int8_t * pkt)
 {
     u_int32_t pkt_len;      /* suprisingly, the length of the packet */
@@ -149,7 +149,7 @@ unsigned int DecodeEthPkt(Packet * p, struct pintercept_pkthdr * pkthdr, u_int8_
     p->eh = (EtherHdr *) pkt;
 
 	return DecodeIP(p->pkt + ETHERNET_HEADER_LEN, 
-					cap_len - ETHERNET_HEADER_LEN, p);//ÕâÀïÓÖÏòºóÒÆ¶¯ÁËETHERNET_HEADER_LEN×Ö½ÚµÄÊý¾Ý£¬Ö¸ÏòÁËÊµ¼ÊÊý¾ÝµÄIP²ã
+					cap_len - ETHERNET_HEADER_LEN, p);//è¿™é‡Œåˆå‘åŽç§»åŠ¨äº†ETHERNET_HEADER_LENå­—èŠ‚çš„æ•°æ®ï¼ŒæŒ‡å‘äº†å®žé™…æ•°æ®çš„IPå±‚
 }
 EXPORT_SYMBOL_GPL(DecodeEthPkt);
 
@@ -165,7 +165,7 @@ EXPORT_SYMBOL_GPL(DecodeEthPkt);
  * Returns: void function
  */
 
-//yang  Èç¹ûÊÇ·ÖÆ¬°üµÄÒ»²¿·Ö£¬·µ»ØNF_STOLEN                   ¶ÔIP²ã¡¢TCP²ã»òÕßUDP²ã½øÐÐÐ£Ñé
+//yang  å¦‚æžœæ˜¯åˆ†ç‰‡åŒ…çš„ä¸€éƒ¨åˆ†ï¼Œè¿”å›žNF_STOLEN                   å¯¹IPå±‚ã€TCPå±‚æˆ–è€…UDPå±‚è¿›è¡Œæ ¡éªŒ
 unsigned int DecodeIP(u_int8_t * pkt, const u_int32_t len, Packet * p)
 {
     u_int32_t ip_len; /* length from the start of the ip hdr to the pkt end */
@@ -238,7 +238,7 @@ unsigned int DecodeIP(u_int8_t * pkt, const u_int32_t len, Packet * p)
     /* test for IP options */
     p->ip_options_len = hlen - IP_HEADER_LEN;
 
-    if(p->ip_options_len > 0)//Èç¹ûIPÍ·²¿´óÓÚ20×Ö½Ú
+    if(p->ip_options_len > 0)//å¦‚æžœIPå¤´éƒ¨å¤§äºŽ20å­—èŠ‚
     {
         p->ip_options_data = pkt + IP_HEADER_LEN;
         if(NF_ACCEPT != DecodeIPOptions((pkt + IP_HEADER_LEN), p->ip_options_len, p)) {
@@ -259,7 +259,7 @@ unsigned int DecodeIP(u_int8_t * pkt, const u_int32_t len, Packet * p)
     ip_len -= hlen;
 
     /* check for fragmented packets */
-    p->frag_offset = ntohs(p->iph->ip_off);//Ç°Ãæ p->iph = (IPHdr *) pkt;
+    p->frag_offset = ntohs(p->iph->ip_off);//å‰é¢ p->iph = (IPHdr *) pkt;
 
     /* 
      * get the values of the reserved, more 

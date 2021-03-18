@@ -67,28 +67,28 @@ MODULE_PARM_DESC(htb_hysteresis, "Hysteresis mode, less CPU load, less accurate"
 /* used internaly to keep status of single class */
 
 /*
-µ«HTBÄ£Ê½ÊÇHTB_CAN_SENDÊ±, ±íÊ¾ÊÇ¿ÉÒÔ·¢ËÍ, Ã»ÓĞ×èÈû; ÎªHTB_CANT_SENDÊ±±íÊ¾×èÈû, ¸ù±¾²»ÄÜ
-·¢ËÍÊı¾İ°üÁË; ÎªHTB_MAY_BORROWÊ±Ò²ÊôÓÚ×èÈû×´Ì¬, µ«¿ÉÒÔÏòÆäËûÀà±ğ½è´ø¿íÀ´·¢ËÍ.
+ä½†HTBæ¨¡å¼æ˜¯HTB_CAN_SENDæ—¶, è¡¨ç¤ºæ˜¯å¯ä»¥å‘é€, æ²¡æœ‰é˜»å¡; ä¸ºHTB_CANT_SENDæ—¶è¡¨ç¤ºé˜»å¡, æ ¹æœ¬ä¸èƒ½
+å‘é€æ•°æ®åŒ…äº†; ä¸ºHTB_MAY_BORROWæ—¶ä¹Ÿå±äºé˜»å¡çŠ¶æ€, ä½†å¯ä»¥å‘å…¶ä»–ç±»åˆ«å€Ÿå¸¦å®½æ¥å‘é€.
 */
 enum htb_cmode {
-    // ²»ÄÜ·¢ËÍ
+    // ä¸èƒ½å‘é€
 	HTB_CANT_SEND,		/* class can't send and can't borrow */
 
-	// ½è´ø¿í
+	// å€Ÿå¸¦å®½
 	HTB_MAY_BORROW,		/* class can't send but may borrow */
 
-	// ¿É·¢ËÍ
+	// å¯å‘é€
 	HTB_CAN_SEND		/* class can send */
 };
 
 /*
-µ«ËüÊÇÈçºÎ±£Ö¤Ò»¿Ãn¸ö½áµãµÄºìºÚÊ÷µÄ¸ß¶ÈÊ¼ÖÕ±£³ÖÔÚlognµÄÄØ£¿Õâ¾ÍÒı³öÁËºìºÚÊ÷µÄ5¸öĞÔÖÊ£º
+ä½†å®ƒæ˜¯å¦‚ä½•ä¿è¯ä¸€æ£µnä¸ªç»“ç‚¹çš„çº¢é»‘æ ‘çš„é«˜åº¦å§‹ç»ˆä¿æŒåœ¨lognçš„å‘¢ï¼Ÿè¿™å°±å¼•å‡ºäº†çº¢é»‘æ ‘çš„5ä¸ªæ€§è´¨ï¼š
 
-1.Ã¿¸ö½áµãÒªÃ´ÊÇºìµÄÒªÃ´ÊÇºÚµÄ¡£  
-2.¸ù½áµãÊÇºÚµÄ¡£  
-3.Ã¿¸öÒ¶½áµã£¨Ò¶½áµã¼´Ö¸Ê÷Î²¶ËNILÖ¸Õë»òNULL½áµã£©¶¼ÊÇºÚµÄ¡£  
-4.Èç¹ûÒ»¸ö½áµãÊÇºìµÄ£¬ÄÇÃ´ËüµÄÁ½¸ö¶ù×Ó¶¼ÊÇºÚµÄ¡£  
-5.¶ÔÓÚÈÎÒâ½áµã¶øÑÔ£¬Æäµ½Ò¶½áµãÊ÷Î²¶ËNILÖ¸ÕëµÄÃ¿ÌõÂ·¾¶¶¼°üº¬ÏàÍ¬ÊıÄ¿µÄºÚ½áµã¡£ 
+1.æ¯ä¸ªç»“ç‚¹è¦ä¹ˆæ˜¯çº¢çš„è¦ä¹ˆæ˜¯é»‘çš„ã€‚  
+2.æ ¹ç»“ç‚¹æ˜¯é»‘çš„ã€‚  
+3.æ¯ä¸ªå¶ç»“ç‚¹ï¼ˆå¶ç»“ç‚¹å³æŒ‡æ ‘å°¾ç«¯NILæŒ‡é’ˆæˆ–NULLç»“ç‚¹ï¼‰éƒ½æ˜¯é»‘çš„ã€‚  
+4.å¦‚æœä¸€ä¸ªç»“ç‚¹æ˜¯çº¢çš„ï¼Œé‚£ä¹ˆå®ƒçš„ä¸¤ä¸ªå„¿å­éƒ½æ˜¯é»‘çš„ã€‚  
+5.å¯¹äºä»»æ„ç»“ç‚¹è€Œè¨€ï¼Œå…¶åˆ°å¶ç»“ç‚¹æ ‘å°¾ç«¯NILæŒ‡é’ˆçš„æ¯æ¡è·¯å¾„éƒ½åŒ…å«ç›¸åŒæ•°ç›®çš„é»‘ç»“ç‚¹ã€‚ 
 */
 
 /*
@@ -112,25 +112,25 @@ Usage: ... qdisc add ... htb [default N] [r2q N]
  quantum  how much bytes to serve from leaf at once {use r2q}
 */
 /* interior & leaf nodes; props specific to leaves are marked L: */
-//tc class add Á½´Îºó£¬»á´´½¨Á½¸öhtb_class½á¹¹£¬ÕâÁ½¸ö½á¹¹Í¨¹ıQdisc_class_common -> hnode×îÖÕ°Ñhtb_class¼ÓÈëµ½htb_sched(htb qdiscµÄË½ÓĞÊı¾İ)->clhashÖĞ£¬¼ûhtb_change_class -> qdisc_class_hash_insert
-//htb_class¾­³£ÓÃcl±íÊ¾´´½¨µÄtc class½á¹¹µÄµØÖ·£¬¼ûhtb_get
-//²Î¿¼<HTB½éÉÜÒÔ¼°Ê¹ÓÃ.doc>
-struct htb_class {//htb_change_classÖĞ´´½¨»òÕßĞŞ¸ÄÀà£¬ÔÚ´´½¨htb×ÓÀàµÄÊ±ºò£¬»áÄ¬ÈÏ¼ûÒ»¸öpfifo_qdisc_opsÒ¶×Ó½Úµã£¬ÕæÕıSKBÈë¶ÓÊÇÈçµ½¸ÃÒ¶×Ó½ÚµãµÄSKB¶ÓÁĞÉÏÃæ
-	struct Qdisc_class_common common; //Í¨¹ıÕâ¸öºÍhtbË½ÓĞÊı¾İ¹ØÁªÆğÀ´£¬¼ûhtb_change_class -> qdisc_class_hash_insert,Á¬½Óµ½Qdisc_class_hashÖĞµÄhashÖĞ
+//tc class add ä¸¤æ¬¡åï¼Œä¼šåˆ›å»ºä¸¤ä¸ªhtb_classç»“æ„ï¼Œè¿™ä¸¤ä¸ªç»“æ„é€šè¿‡Qdisc_class_common -> hnodeæœ€ç»ˆæŠŠhtb_classåŠ å…¥åˆ°htb_sched(htb qdiscçš„ç§æœ‰æ•°æ®)->clhashä¸­ï¼Œè§htb_change_class -> qdisc_class_hash_insert
+//htb_classç»å¸¸ç”¨clè¡¨ç¤ºåˆ›å»ºçš„tc classç»“æ„çš„åœ°å€ï¼Œè§htb_get
+//å‚è€ƒ<HTBä»‹ç»ä»¥åŠä½¿ç”¨.doc>
+struct htb_class {//htb_change_classä¸­åˆ›å»ºæˆ–è€…ä¿®æ”¹ç±»ï¼Œåœ¨åˆ›å»ºhtbå­ç±»çš„æ—¶å€™ï¼Œä¼šé»˜è®¤è§ä¸€ä¸ªpfifo_qdisc_opså¶å­èŠ‚ç‚¹ï¼ŒçœŸæ­£SKBå…¥é˜Ÿæ˜¯å¦‚åˆ°è¯¥å¶å­èŠ‚ç‚¹çš„SKBé˜Ÿåˆ—ä¸Šé¢
+	struct Qdisc_class_common common; //é€šè¿‡è¿™ä¸ªå’Œhtbç§æœ‰æ•°æ®å…³è”èµ·æ¥ï¼Œè§htb_change_class -> qdisc_class_hash_insert,è¿æ¥åˆ°Qdisc_class_hashä¸­çš„hashä¸­
 	/* general class parameters */
-	struct gnet_stats_basic_packed bstats; // ×Ö½ÚÊı, °üÊıÍ³¼Æ
-	struct gnet_stats_queue qstats;// ¶ÓÁĞĞÅÏ¢Í³¼Æ
-	struct gnet_stats_rate_est rate_est;// ËÙÂÊÍ³¼Æ, ×Ö½ÚÂÊ, °üÂÊ
-	struct tc_htb_xstats xstats;	/* our special stats */// HTBÍ³¼ÆĞÅÏ¢, ½è³ö, ½èÈë, ÁîÅÆµÈ²ÎÊı
-	int refcnt;		/* usage count of this class */// HTBÀà±ğÒıÓÃ¼ÆÊı  ÔÚ´´½¨classµÄÊ±ºò³õÊ¼»¯Îª1£¬¼ûhtb_change_class
+	struct gnet_stats_basic_packed bstats; // å­—èŠ‚æ•°, åŒ…æ•°ç»Ÿè®¡
+	struct gnet_stats_queue qstats;// é˜Ÿåˆ—ä¿¡æ¯ç»Ÿè®¡
+	struct gnet_stats_rate_est rate_est;// é€Ÿç‡ç»Ÿè®¡, å­—èŠ‚ç‡, åŒ…ç‡
+	struct tc_htb_xstats xstats;	/* our special stats */// HTBç»Ÿè®¡ä¿¡æ¯, å€Ÿå‡º, å€Ÿå…¥, ä»¤ç‰Œç­‰å‚æ•°
+	int refcnt;		/* usage count of this class */// HTBç±»åˆ«å¼•ç”¨è®¡æ•°  åœ¨åˆ›å»ºclassçš„æ—¶å€™åˆå§‹åŒ–ä¸º1ï¼Œè§htb_change_class
 
 	/* topology */
-	// ÔÚÊ÷ÖĞµÄ²ã´Î, 0±íÊ¾Ò¶×Ó½Úµã, ¸ù½Úµã²ã´ÎÊÇTC_HTB_MAXDEPTH-1(7)
+	// åœ¨æ ‘ä¸­çš„å±‚æ¬¡, 0è¡¨ç¤ºå¶å­èŠ‚ç‚¹, æ ¹èŠ‚ç‚¹å±‚æ¬¡æ˜¯TC_HTB_MAXDEPTH-1(7)
 	int level;		/* our level (see above) */
 	unsigned int children;
 
-	//¸Ã½á¹¹ºÍÉÏÃæµÄcommon¶¼ÄÜ±£Ö¤ËùÓĞµÄhtb_class(tc class addµÄÊ±ºò´´½¨µÄclassĞÅÏ¢½Úµã)¹ØÁªÔÚÒ»Æğ
-	struct htb_class *parent;	/* parent class */ //tc class add parent 5:2 classid 6: xxxx£¬ parentÎª¸¸class
+	//è¯¥ç»“æ„å’Œä¸Šé¢çš„commonéƒ½èƒ½ä¿è¯æ‰€æœ‰çš„htb_class(tc class addçš„æ—¶å€™åˆ›å»ºçš„classä¿¡æ¯èŠ‚ç‚¹)å…³è”åœ¨ä¸€èµ·
+	struct htb_class *parent;	/* parent class */ //tc class add parent 5:2 classid 6: xxxxï¼Œ parentä¸ºçˆ¶class
 
     /*
     Usage: ... qdisc add ... htb [default N] [r2q N]
@@ -150,116 +150,116 @@ struct htb_class {//htb_change_classÖĞ´´½¨»òÕßĞŞ¸ÄÀà£¬ÔÚ´´½¨htb×ÓÀàµÄÊ±ºò£¬»áÄ¬È
      cburst   burst but for ceil {computed}
      mtu      max packet size we create rate map for {1600}
      prio     priority of leaf; lower are served first {0}
-¸ù¾İHTBµÄ¹Ù·½ÎÄµµÏÔÊ¾£¬quantumÊÇÔÚ¿ÉÒÔ¡°½è¡±µÄÇé¿öÏÂ£¬Ò»´Î¿ÉÒÔ¡°½è¡±¶àÉÙ£¬²¢ÇÒËµÕâ¸öÖµ×îºÃ¾¡Á¿µÄĞ¡£¬µ«Òª´óÓÚMTU£»¶øÇÒÕâ¸ö
-ÖµÊÇ²»ÓÃÊÖ¶¯ÉèÖÃ£¬Ëü»á¸ù¾İr2qµÄÖµ¼ÆËã³öÀ´¡£
+æ ¹æ®HTBçš„å®˜æ–¹æ–‡æ¡£æ˜¾ç¤ºï¼Œquantumæ˜¯åœ¨å¯ä»¥â€œå€Ÿâ€çš„æƒ…å†µä¸‹ï¼Œä¸€æ¬¡å¯ä»¥â€œå€Ÿâ€å¤šå°‘ï¼Œå¹¶ä¸”è¯´è¿™ä¸ªå€¼æœ€å¥½å°½é‡çš„å°ï¼Œä½†è¦å¤§äºMTUï¼›è€Œä¸”è¿™ä¸ª
+å€¼æ˜¯ä¸ç”¨æ‰‹åŠ¨è®¾ç½®ï¼Œå®ƒä¼šæ ¹æ®r2qçš„å€¼è®¡ç®—å‡ºæ¥ã€‚
      quantum  how much bytes to serve from leaf at once {use r2q}
-     */ //Èç¹ûÓ¦ÓÃ²ãÉèÖÃÎª³¬¹ı8£¬ÔòÄ¬ÈÏĞŞ¸ÄÎª7£¬¼ûhtb_change_class
-	int prio;		/* these two are used only by leaves... */ //È¡Öµ·¶Î§Ğ¡ÓÚTC_HTB_NUMPRIO      ¼ûhtb_activate
-	//quantum²ÎÊıÔÚhtb_dequeue_treeÖĞ»áÊ¹ÓÃµ½
-	int quantum;		/* but stored for parent-to-leaf return */ // ¶¨¶î²ÎÊı, È±Ê¡ÊÇÈ¡ÎïÀíÍø¿¨µÄ¶ÓÁĞ³¤¶ÈÖµ  ×îĞ¡³¤¶ÈÎª1000 ×î´ó200000 ¿ÉÒÔÍ¨¹ıÓ¦ÓÃ²ã²ÎÊıquantumÉèÖÃ
+     */ //å¦‚æœåº”ç”¨å±‚è®¾ç½®ä¸ºè¶…è¿‡8ï¼Œåˆ™é»˜è®¤ä¿®æ”¹ä¸º7ï¼Œè§htb_change_class
+	int prio;		/* these two are used only by leaves... */ //å–å€¼èŒƒå›´å°äºTC_HTB_NUMPRIO      è§htb_activate
+	//quantumå‚æ•°åœ¨htb_dequeue_treeä¸­ä¼šä½¿ç”¨åˆ°
+	int quantum;		/* but stored for parent-to-leaf return */ // å®šé¢å‚æ•°, ç¼ºçœæ˜¯å–ç‰©ç†ç½‘å¡çš„é˜Ÿåˆ—é•¿åº¦å€¼  æœ€å°é•¿åº¦ä¸º1000 æœ€å¤§200000 å¯ä»¥é€šè¿‡åº”ç”¨å±‚å‚æ•°quantumè®¾ç½®
 
 	union {
-		struct htb_class_leaf { // Èç¹û¸Ã½ÚµãÊÇÒ¶×Ó½Úµã£¬ ÔòÊ¹ÓÃleaf½á¹¹, ÊµÏÖ¾ßÌåµÄÁ÷¿Ø´¦Àí£»
-			struct Qdisc *q; //ĞÂ½¨µÄhtb class·ÖÀà¹æÔòµÄÄ¬ÈÏÒ¶×ÓqdiscÎªpfifo_qdisc_ops
-			int deficit[TC_HTB_MAXDEPTH];// ²»Í¬²ã´ÎÉî¶ÈµÄ³à×Ö        ³ö¶ÓµÄÊ±ºòÓÃµ½£¬¼ûhtb_dequeue_tree¡£ Ã»·¢ËÍSKB->LENµÄÊı¾İ°ü£¬¸ÃÖµ¼õÉÙlen
-			struct list_head drop_list;// ¹Ò½Óµ½¶ª°üÁ´±í, Ìí¼Óµ½htb_sched->drops[]Á´±íÖĞ£¬¼ûhtb_activate
+		struct htb_class_leaf { // å¦‚æœè¯¥èŠ‚ç‚¹æ˜¯å¶å­èŠ‚ç‚¹ï¼Œ åˆ™ä½¿ç”¨leafç»“æ„, å®ç°å…·ä½“çš„æµæ§å¤„ç†ï¼›
+			struct Qdisc *q; //æ–°å»ºçš„htb classåˆ†ç±»è§„åˆ™çš„é»˜è®¤å¶å­qdiscä¸ºpfifo_qdisc_ops
+			int deficit[TC_HTB_MAXDEPTH];// ä¸åŒå±‚æ¬¡æ·±åº¦çš„èµ¤å­—        å‡ºé˜Ÿçš„æ—¶å€™ç”¨åˆ°ï¼Œè§htb_dequeue_treeã€‚ æ²¡å‘é€SKB->LENçš„æ•°æ®åŒ…ï¼Œè¯¥å€¼å‡å°‘len
+			struct list_head drop_list;// æŒ‚æ¥åˆ°ä¸¢åŒ…é“¾è¡¨, æ·»åŠ åˆ°htb_sched->drops[]é“¾è¡¨ä¸­ï¼Œè§htb_activate
 		} leaf;
-		// Èç¹û·ÇÒ¶×Ó½Úµã, Ê¹ÓÃHTBÄÚ²¿Àà±ğ½á¹¹inner, ÓÃÓÚĞÎ³É·ÖÀàÊ÷
+		// å¦‚æœéå¶å­èŠ‚ç‚¹, ä½¿ç”¨HTBå†…éƒ¨ç±»åˆ«ç»“æ„inner, ç”¨äºå½¢æˆåˆ†ç±»æ ‘
 		struct htb_class_inner {
-            // Ìá¹©Êı¾İ°üµÄºìºÚÊ÷½á¹¹, ÊÇÒ»¸ö°´Àà±ğID½øĞĞÅÅĞòµÄÓĞĞò±í, ÒÔ¶ş²æÊ÷ÊµÏÖ, 
-            // ²»Í¬ÓÅÏÈÈ¨¶ÔÓ¦²»Í¬µÄ¶ş²æÊ÷
-            // feed´æ·ÅÆä×ÓËïÊÇyellowµÄ½Úµã£¬×ÓËïĞèÒªÏò¸¸Àà½è¶î¶È£¬²Å¿ÉÒÔ½øĞĞµ÷¶È; ¼ûhtb_activate_prios
-			struct rb_root feed[TC_HTB_NUMPRIO];	/* feed trees */  //class×ÓÀàÍ¨¹ıprioÌí¼Óµ½¸¸½ÚµãµÄfeed[i]ÉÏ£¬¼ûhtb_add_to_id_tree
-			// µ±Ç°ÓÅÏÈÈ¨Ê÷ÖĞÕıÔÚ´¦ÀíµÄÄÇ¸ö½ÚµãµÄÖ¸Õë
+            // æä¾›æ•°æ®åŒ…çš„çº¢é»‘æ ‘ç»“æ„, æ˜¯ä¸€ä¸ªæŒ‰ç±»åˆ«IDè¿›è¡Œæ’åºçš„æœ‰åºè¡¨, ä»¥äºŒå‰æ ‘å®ç°, 
+            // ä¸åŒä¼˜å…ˆæƒå¯¹åº”ä¸åŒçš„äºŒå‰æ ‘
+            // feedå­˜æ”¾å…¶å­å­™æ˜¯yellowçš„èŠ‚ç‚¹ï¼Œå­å­™éœ€è¦å‘çˆ¶ç±»å€Ÿé¢åº¦ï¼Œæ‰å¯ä»¥è¿›è¡Œè°ƒåº¦; è§htb_activate_prios
+			struct rb_root feed[TC_HTB_NUMPRIO];	/* feed trees */  //classå­ç±»é€šè¿‡prioæ·»åŠ åˆ°çˆ¶èŠ‚ç‚¹çš„feed[i]ä¸Šï¼Œè§htb_add_to_id_tree
+			// å½“å‰ä¼˜å…ˆæƒæ ‘ä¸­æ­£åœ¨å¤„ç†çš„é‚£ä¸ªèŠ‚ç‚¹çš„æŒ‡é’ˆ
 			struct rb_node *ptr[TC_HTB_NUMPRIO];	/* current class ptr */
 			/* When class changes from state 1->2 and disconnects from
 			   parent's feed then we lost ptr value and start from the
 			   first child again. Here we store classid of the
 			   last valid ptr (used when ptr is NULL). */
-			   // ÉÏÒ»¸öÓĞĞ§µÄÊ÷½ÚµãµÄÀà±ğID£¬¼ûhtb_deactivate_prios
+			   // ä¸Šä¸€ä¸ªæœ‰æ•ˆçš„æ ‘èŠ‚ç‚¹çš„ç±»åˆ«IDï¼Œè§htb_deactivate_prios
 			u32 last_ptr_id[TC_HTB_NUMPRIO];
 		} inner;
 	} un;
-    // Àà±ğ½á¹¹×Ô¼ºµÄÊı¾İ°ü¹©Ó¦Ê÷
+    // ç±»åˆ«ç»“æ„è‡ªå·±çš„æ•°æ®åŒ…ä¾›åº”æ ‘
 	struct rb_node node[TC_HTB_NUMPRIO];	/* node for self or feed tree */
 	
-    // ÊÂ¼şÊ÷, Êµ¼ÊÊÇµÈ´ıÊ÷, µ±´ø¿í³¬¹ıÏŞÖÆÊ±»á½«¸ÃÀà±ğ½Úµã¹Ò½Óµ½HTBÁ÷¿Ø½ÚµãµÄ
-    // µÈ´ı¶ÓÁĞwait_pq
+    // äº‹ä»¶æ ‘, å®é™…æ˜¯ç­‰å¾…æ ‘, å½“å¸¦å®½è¶…è¿‡é™åˆ¶æ—¶ä¼šå°†è¯¥ç±»åˆ«èŠ‚ç‚¹æŒ‚æ¥åˆ°HTBæµæ§èŠ‚ç‚¹çš„
+    // ç­‰å¾…é˜Ÿåˆ—wait_pq
 	struct rb_node pq_node;	/* node for event queue */
 	psched_time_t pq_key;
 
-    /*´ÓÕâÀï¿ÉÒÔ¿´µ½£¬Èç¹ûÊÇ·ÇÒ¶×Ó½Úµã£¬Ôò¿ÉÄÜÊÇÆäÏÂ¼¶class»òÕßÒ¶×Ó½ÚµãµÄ»ò²Ù×÷£¬
-	//ËùÒÔÈç¹ûÊÇ·ÇÒ¶×Ó½Úµã£¬µÚÒ»²ãlevel×î¶àÁ½¸öÓÅÏÈ¼¶£¬µÚ¶ş²ãlevel×î¶àÈı¸öÓÅÏÈ¼¶£¬µÚÆß²ãlevel×î¶à8¸öÓÅÏÈ¼¶£¬¼ûhtb_activate_prios*/
-    // ¼¤»îµÄÓÅÏÈÈ¨²ÎÊı, ·Ç0±íÊ¾ÏàÓ¦Î»ÊıµÄÊı¾İ¶ÓÁĞÓĞÊı¾İ°ü¿ÉÓÃ  Ä³Î»Îª1±íÊ¾¸ÃÎ»¶ÔÓ¦µÄun->inner->feed[i]ÓÅÏÈÈ¨µÄÊı¾İ¿ÉÓÃ
-	int prio_activity;	/* for which prios are we active */ //¸³Öµ¼ûhtb_activate  ºÍÉÏÃæµÄprioÒ»Ñù cl->prio_activity = 1 << cl->prio;
-	enum htb_cmode cmode;	/* current mode of the class */ // µ±Ç°Ä£Ê½, ±íÊ¾ÊÇ·ñ¿É·¢ËÍÊı¾İ°ü  Ä¬ÈÏHTB_CAN_SEND
+    /*ä»è¿™é‡Œå¯ä»¥çœ‹åˆ°ï¼Œå¦‚æœæ˜¯éå¶å­èŠ‚ç‚¹ï¼Œåˆ™å¯èƒ½æ˜¯å…¶ä¸‹çº§classæˆ–è€…å¶å­èŠ‚ç‚¹çš„æˆ–æ“ä½œï¼Œ
+	//æ‰€ä»¥å¦‚æœæ˜¯éå¶å­èŠ‚ç‚¹ï¼Œç¬¬ä¸€å±‚levelæœ€å¤šä¸¤ä¸ªä¼˜å…ˆçº§ï¼Œç¬¬äºŒå±‚levelæœ€å¤šä¸‰ä¸ªä¼˜å…ˆçº§ï¼Œç¬¬ä¸ƒå±‚levelæœ€å¤š8ä¸ªä¼˜å…ˆçº§ï¼Œè§htb_activate_prios*/
+    // æ¿€æ´»çš„ä¼˜å…ˆæƒå‚æ•°, é0è¡¨ç¤ºç›¸åº”ä½æ•°çš„æ•°æ®é˜Ÿåˆ—æœ‰æ•°æ®åŒ…å¯ç”¨  æŸä½ä¸º1è¡¨ç¤ºè¯¥ä½å¯¹åº”çš„un->inner->feed[i]ä¼˜å…ˆæƒçš„æ•°æ®å¯ç”¨
+	int prio_activity;	/* for which prios are we active */ //èµ‹å€¼è§htb_activate  å’Œä¸Šé¢çš„prioä¸€æ · cl->prio_activity = 1 << cl->prio;
+	enum htb_cmode cmode;	/* current mode of the class */ // å½“å‰æ¨¡å¼, è¡¨ç¤ºæ˜¯å¦å¯å‘é€æ•°æ®åŒ…  é»˜è®¤HTB_CAN_SEND
 
 	/* class attached filters *///tc filter add dev eth0 parent 1:3 protocol ip prio 100  xxxx
-	//¸Ãclass·ÖÀà¶ÔÓ¦µÄ¹ıÂËÆ÷  //ÔÚhtb_find_tcfÖĞÈç¹û²éÕÒ²»µ½classÔòÖ±½Ó°Ñ¹ıÂËÆ÷Ìí¼Óµ½¸ú¹ıÂËÆ÷ÉÏ
-	struct tcf_proto *filter_list; //Ã¿¸ö·ÖÀàĞÅÏ¢ÖĞ¶¼ÓĞÒ»¸öÕâÑùµÄ¹ıÂËÆ÷£¬¹ıÂËÆ÷ÊÇÎª¾ßÌåµÄÄ³¸öÀà½ÚµãÌí¼ÓµÄ,ÉÏÃæ¾ÍÊÇÔÚ1:3ÉÏÃæÌí¼ÓÒ»¸ö¹ıÂËÆ÷
-	int filter_cnt; //¼ûhtb_bind_filter // ¹ıÂËÆ÷Ê¹ÓÃ¼ÆÊı  
+	//è¯¥classåˆ†ç±»å¯¹åº”çš„è¿‡æ»¤å™¨  //åœ¨htb_find_tcfä¸­å¦‚æœæŸ¥æ‰¾ä¸åˆ°classåˆ™ç›´æ¥æŠŠè¿‡æ»¤å™¨æ·»åŠ åˆ°è·Ÿè¿‡æ»¤å™¨ä¸Š
+	struct tcf_proto *filter_list; //æ¯ä¸ªåˆ†ç±»ä¿¡æ¯ä¸­éƒ½æœ‰ä¸€ä¸ªè¿™æ ·çš„è¿‡æ»¤å™¨ï¼Œè¿‡æ»¤å™¨æ˜¯ä¸ºå…·ä½“çš„æŸä¸ªç±»èŠ‚ç‚¹æ·»åŠ çš„,ä¸Šé¢å°±æ˜¯åœ¨1:3ä¸Šé¢æ·»åŠ ä¸€ä¸ªè¿‡æ»¤å™¨
+	int filter_cnt; //è§htb_bind_filter // è¿‡æ»¤å™¨ä½¿ç”¨è®¡æ•°  
 
 	/* token bucket parameters */
-	struct qdisc_rate_table *rate;	/* rate table of the class itself */ // ÁîÅÆÂÊ  Í¨¹ıÕâ¸ö¼ÓÈëµ½qdisc_rtab_list£¬¼ûqdisc_put_rtab
-	struct qdisc_rate_table *ceil;	/* ceiling rate (limits borrows too) */ // ·åÖµÂÊ Í¨¹ıÕâ¸ö¼ÓÈëµ½qdisc_rtab_list£¬¼ûqdisc_put_rtab
-    //¶ÔÓ¦tc_htb_optÖĞµÄbufferºÍcbuffer
-	long buffer, cbuffer;	/* token bucket depth/rate */ // »º³åÇø/·åÖµ»º³åÇø ÕâÁ½¸öÊÇhtbÁîÅÆÍ°Ëã·¨ÖĞµÄÓÃ´¦ÊÇ:Èç¹ûÀ´ÁËÒ»¸öskb£¬¸Ãskb±ÈÁîÅÆÊı´ó£¬Ôò°ÑskbÊı¾İ»º´æµ½bufferÖĞ£¬µÈÁîÅÆ¹»µÄÊ±ºò°Ñskb·¢ËÍ³öÈ¥
-	psched_tdiff_t mbuffer;	/* max wait time */ // ×î´óµÈ´ıÊ±¼ä  Ä¬ÈÏ60 * PSCHED_TICKS_PER_SEC;
-	long tokens, ctokens;	/* current number of tokens */// µ±Ç°ÁîÅÆÊı/·åÖµÁîÅÆ  ¶ÔÓ¦tc_htb_optÖĞµÄbufferºÍcbuffer
-	psched_time_t t_c;	/* checkpoint time */// ¼ì²éµãÊ±¼ä
+	struct qdisc_rate_table *rate;	/* rate table of the class itself */ // ä»¤ç‰Œç‡  é€šè¿‡è¿™ä¸ªåŠ å…¥åˆ°qdisc_rtab_listï¼Œè§qdisc_put_rtab
+	struct qdisc_rate_table *ceil;	/* ceiling rate (limits borrows too) */ // å³°å€¼ç‡ é€šè¿‡è¿™ä¸ªåŠ å…¥åˆ°qdisc_rtab_listï¼Œè§qdisc_put_rtab
+    //å¯¹åº”tc_htb_optä¸­çš„bufferå’Œcbuffer
+	long buffer, cbuffer;	/* token bucket depth/rate */ // ç¼“å†²åŒº/å³°å€¼ç¼“å†²åŒº è¿™ä¸¤ä¸ªæ˜¯htbä»¤ç‰Œæ¡¶ç®—æ³•ä¸­çš„ç”¨å¤„æ˜¯:å¦‚æœæ¥äº†ä¸€ä¸ªskbï¼Œè¯¥skbæ¯”ä»¤ç‰Œæ•°å¤§ï¼Œåˆ™æŠŠskbæ•°æ®ç¼“å­˜åˆ°bufferä¸­ï¼Œç­‰ä»¤ç‰Œå¤Ÿçš„æ—¶å€™æŠŠskbå‘é€å‡ºå»
+	psched_tdiff_t mbuffer;	/* max wait time */ // æœ€å¤§ç­‰å¾…æ—¶é—´  é»˜è®¤60 * PSCHED_TICKS_PER_SEC;
+	long tokens, ctokens;	/* current number of tokens */// å½“å‰ä»¤ç‰Œæ•°/å³°å€¼ä»¤ç‰Œ  å¯¹åº”tc_htb_optä¸­çš„bufferå’Œcbuffer
+	psched_time_t t_c;	/* checkpoint time */// æ£€æŸ¥ç‚¹æ—¶é—´
 };
 
 struct htb_sched { 
-    //tc qdisc add class xxxx htbµÄÊ±ºò´´½¨µÄstruct htb_class¶¼Ìí¼Óµ½¸Ãhash±íÖĞ(Í¨¹ıhtb_class ->Qdisc_class_common ->hnode¼Óµ½ÕâÀïÃæ£¬
-    //¼ûhtb_change_class -> qdisc_class_hash_insert) £¬htb_classºÍhtb_sched¹ØÁªÆğÀ´£¬
-    //clhash³õÊ¼»¯µØ·½ÔÚqdisc_class_hash_init
-    ////´´½¨htb_classµÄÊ±ºò´´½¨µÄstruct htb_classÊÇ¼ÓÈëµ½htb_sched(htb qdiscµÄË½ÓĞÊı¾İ)->clhashÖĞ£¬µ«²¢Ã»ÓĞĞÎ³ÉÒ»¿ÅºìºÚÊ÷£¬ĞÎ³ÉºìºÚÊ÷ÊÇÔÚhtb_enqueue->htb_activateÊµÏÖ
-    struct Qdisc_class_hash clhash; //tc class add parent 2 classid 2:3 xx ,¸ù¾İclassid 2:3¼ÓÈëµ½¸ÃÁ´±íÖĞ£¬ÕâÀïÃæ´æ´¢µÄ¾ÍÊÇ¼òµ¥µÄclassidºÅÒÔ¼°¸ÃÁ´±íÉÏtc add classÓĞ¶àÉÙ¸öclass
+    //tc qdisc add class xxxx htbçš„æ—¶å€™åˆ›å»ºçš„struct htb_classéƒ½æ·»åŠ åˆ°è¯¥hashè¡¨ä¸­(é€šè¿‡htb_class ->Qdisc_class_common ->hnodeåŠ åˆ°è¿™é‡Œé¢ï¼Œ
+    //è§htb_change_class -> qdisc_class_hash_insert) ï¼Œhtb_classå’Œhtb_schedå…³è”èµ·æ¥ï¼Œ
+    //clhashåˆå§‹åŒ–åœ°æ–¹åœ¨qdisc_class_hash_init
+    ////åˆ›å»ºhtb_classçš„æ—¶å€™åˆ›å»ºçš„struct htb_classæ˜¯åŠ å…¥åˆ°htb_sched(htb qdiscçš„ç§æœ‰æ•°æ®)->clhashä¸­ï¼Œä½†å¹¶æ²¡æœ‰å½¢æˆä¸€é¢—çº¢é»‘æ ‘ï¼Œå½¢æˆçº¢é»‘æ ‘æ˜¯åœ¨htb_enqueue->htb_activateå®ç°
+    struct Qdisc_class_hash clhash; //tc class add parent 2 classid 2:3 xx ,æ ¹æ®classid 2:3åŠ å…¥åˆ°è¯¥é“¾è¡¨ä¸­ï¼Œè¿™é‡Œé¢å­˜å‚¨çš„å°±æ˜¯ç®€å•çš„classidå·ä»¥åŠè¯¥é“¾è¡¨ä¸Štc add classæœ‰å¤šå°‘ä¸ªclass
 
-    //cl->un.leaf.drop_listÊÇ¼Óµ½¸Ã±íÖĞµÄ£¬¼ûhtb_activate , htb_class->un.leaf.drop_listÌí¼Óµ½¶ÔÓ¦µÄdrops[]ÖĞ
-	struct list_head drops[TC_HTB_NUMPRIO];/* active leaves (for drops) */ //ºÍclass->prioÓĞ¹ØÏµ£¬¼ûhtb_activate
+    //cl->un.leaf.drop_listæ˜¯åŠ åˆ°è¯¥è¡¨ä¸­çš„ï¼Œè§htb_activate , htb_class->un.leaf.drop_listæ·»åŠ åˆ°å¯¹åº”çš„drops[]ä¸­
+	struct list_head drops[TC_HTB_NUMPRIO];/* active leaves (for drops) */ //å’Œclass->prioæœ‰å…³ç³»ï¼Œè§htb_activate
 
 	/* self list - roots of self generating tree */
-	// RBÊ÷¸ù½Úµã, ¶ÔÓ¦Ã¿Ò»²ãµÄÃ¿Ò»¸öÓÅÏÈÈ¨Öµ¶¼ÓĞÒ»¸öRBÊ÷£¬ ¼ûhtb_add_class_to_row
-	struct rb_root row[TC_HTB_MAXDEPTH][TC_HTB_NUMPRIO]; //row´æ·Ågreen½Úµã£¬¾ÍÊÇtoken¶î¶È»¹ÓĞÊ£Óà¡¢¿ÉÒÔ½øĞĞµ÷¶ÈµÄclass½Úµã£» 
-	int row_mask[TC_HTB_MAXDEPTH];// ÑÚÂë, ±íÊ¾¸Ã²ãµÄÄÄĞ©ÓÅÏÈÈ¨ÖµµÄÊ÷ÓĞĞ§¡£¼ûhtb_add_class_to_row
+	// RBæ ‘æ ¹èŠ‚ç‚¹, å¯¹åº”æ¯ä¸€å±‚çš„æ¯ä¸€ä¸ªä¼˜å…ˆæƒå€¼éƒ½æœ‰ä¸€ä¸ªRBæ ‘ï¼Œ è§htb_add_class_to_row
+	struct rb_root row[TC_HTB_MAXDEPTH][TC_HTB_NUMPRIO]; //rowå­˜æ”¾greenèŠ‚ç‚¹ï¼Œå°±æ˜¯tokené¢åº¦è¿˜æœ‰å‰©ä½™ã€å¯ä»¥è¿›è¡Œè°ƒåº¦çš„classèŠ‚ç‚¹ï¼› 
+	int row_mask[TC_HTB_MAXDEPTH];// æ©ç , è¡¨ç¤ºè¯¥å±‚çš„å“ªäº›ä¼˜å…ˆæƒå€¼çš„æ ‘æœ‰æ•ˆã€‚è§htb_add_class_to_row
 
-    /* ptrÊÇDRRËã·¨µÄÒ»¸ö±ê¼Ç£¬Ö¸Ïòµ±Ç°¿ÉÒÔ½øĞĞµ÷¶ÈµÄ½Úµã£¨Àà£©¡£ Èç¹ûµ±Ç°½ÚµãµÄdeficitÓÃÍêÁË£¬htb_next_rb_node()»á½«ptrÖ¸ÕëÖ¸Ïòµ±Ç°½Úµã
-    µÄÏÂÒ»¸ö½Úµã£¬È»ºóÔÙ´ÓptrÖ¸ÏòµÄ½Úµã½øĞĞµ÷¶È¡£*/
-	struct rb_node *ptr[TC_HTB_MAXDEPTH][TC_HTB_NUMPRIO];// ¸¸½ÚµãÖ¸Õë
-	u32 last_ptr_id[TC_HTB_MAXDEPTH][TC_HTB_NUMPRIO];// ÉÏ´ÎÊ¹ÓÃµÄ·Ç¿Õ¸¸½ÚµãµÄÀà±ğID
+    /* ptræ˜¯DRRç®—æ³•çš„ä¸€ä¸ªæ ‡è®°ï¼ŒæŒ‡å‘å½“å‰å¯ä»¥è¿›è¡Œè°ƒåº¦çš„èŠ‚ç‚¹ï¼ˆç±»ï¼‰ã€‚ å¦‚æœå½“å‰èŠ‚ç‚¹çš„deficitç”¨å®Œäº†ï¼Œhtb_next_rb_node()ä¼šå°†ptræŒ‡é’ˆæŒ‡å‘å½“å‰èŠ‚ç‚¹
+    çš„ä¸‹ä¸€ä¸ªèŠ‚ç‚¹ï¼Œç„¶åå†ä»ptræŒ‡å‘çš„èŠ‚ç‚¹è¿›è¡Œè°ƒåº¦ã€‚*/
+	struct rb_node *ptr[TC_HTB_MAXDEPTH][TC_HTB_NUMPRIO];// çˆ¶èŠ‚ç‚¹æŒ‡é’ˆ
+	u32 last_ptr_id[TC_HTB_MAXDEPTH][TC_HTB_NUMPRIO];// ä¸Šæ¬¡ä½¿ç”¨çš„éç©ºçˆ¶èŠ‚ç‚¹çš„ç±»åˆ«ID
 
 	/* self wait list - roots of wait PQs per row */
-	//wait_pq´æ·ÅyellowºÍred½Úµã£¬ÔÚÌØ¶¨Ê±¼ä½øĞĞ¼ì²éÊÇ·ñ¿ÉÒÔ°Ñ½Úµã»Ö¸´µ½green¡£   
-	struct rb_root wait_pq[TC_HTB_MAXDEPTH];// µÈ´ı¶ÓÁĞ, ÓÃÀ´¹Ò½ÓÄÇĞ©´ø¿í³¬³öÏŞÖÆµÄ½Úµã
+	//wait_pqå­˜æ”¾yellowå’ŒredèŠ‚ç‚¹ï¼Œåœ¨ç‰¹å®šæ—¶é—´è¿›è¡Œæ£€æŸ¥æ˜¯å¦å¯ä»¥æŠŠèŠ‚ç‚¹æ¢å¤åˆ°greenã€‚   
+	struct rb_root wait_pq[TC_HTB_MAXDEPTH];// ç­‰å¾…é˜Ÿåˆ—, ç”¨æ¥æŒ‚æ¥é‚£äº›å¸¦å®½è¶…å‡ºé™åˆ¶çš„èŠ‚ç‚¹
 
 	/* time of nearest event per level (row) */
 	psched_time_t near_ev_cache[TC_HTB_MAXDEPTH];
 
-    //tc qdisc del add eth0 root handle 22 htb default 3333333  // È±Ê¡Àà±ğ minor id of class to which unclassified packets are sent {0}
-	int defcls;		/* class where unclassified flows go to */ //ÎŞ·¨Í¨¹ı¹ıÂËÆ÷Ñ¡Ôñ×ÓÀàµÄSKBÄ¬ÈÏ×ß¸Ã·ÖÀà£¬
+    //tc qdisc del add eth0 root handle 22 htb default 3333333  // ç¼ºçœç±»åˆ« minor id of class to which unclassified packets are sent {0}
+	int defcls;		/* class where unclassified flows go to */ //æ— æ³•é€šè¿‡è¿‡æ»¤å™¨é€‰æ‹©å­ç±»çš„SKBé»˜è®¤èµ°è¯¥åˆ†ç±»ï¼Œ
 
 	/* filters for qdisc itself */
-	struct tcf_proto *filter_list;//ÔÚhtb_find_tcfÖĞÈç¹û²éÕÒ²»µ½classÔòÖ±½Ó°Ñ¹ıÂËÆ÷Ìí¼Óµ½¸ú¹ıÂËÆ÷ÉÏ
+	struct tcf_proto *filter_list;//åœ¨htb_find_tcfä¸­å¦‚æœæŸ¥æ‰¾ä¸åˆ°classåˆ™ç›´æ¥æŠŠè¿‡æ»¤å™¨æ·»åŠ åˆ°è·Ÿè¿‡æ»¤å™¨ä¸Š
 
-    //DRR quantums are computed as rate in Bps/r2q {10}   Ó¦ÓÃ²ãÉèÖÃµÄÄ¬ÈÏÖµÎª10£¬¼ûhtb_parse_opt
-	int rate2quantum;	/* quant = rate / rate2quantum */  // ËÙÂÊµ½¶¨¶î×ª»»²ÎÊı  ³õÊ¼ÖµÎª1£¬¼ûhtb_init
-	psched_time_t now;	/* cached dequeue time */ // µ±Ç°Ê±¼ä
+    //DRR quantums are computed as rate in Bps/r2q {10}   åº”ç”¨å±‚è®¾ç½®çš„é»˜è®¤å€¼ä¸º10ï¼Œè§htb_parse_opt
+	int rate2quantum;	/* quant = rate / rate2quantum */  // é€Ÿç‡åˆ°å®šé¢è½¬æ¢å‚æ•°  åˆå§‹å€¼ä¸º1ï¼Œè§htb_init
+	psched_time_t now;	/* cached dequeue time */ // å½“å‰æ—¶é—´
 	struct qdisc_watchdog watchdog;
 
 	/* non shaped skbs; let them go directly thru */
-	//Èç¹ûSKBµ½À´µÄÊ±ºòÃ»ÓĞÆ¥ÅäµÄ¹ıÂËÆ÷£¬²¢ÇÒÄ¬ÈÏdefault¶ÓÁĞ¹æ³ÌÒ²Ã»Æ¥Åä³É¹¦£¬ÔòÖ±½ÓÊ¹ÓÃË½ÓĞĞÅÏ¢ÖĞµÄdirect_queue¶ÓÁĞÈë¶Ó£¬¼ûhtb_enqueue
-	struct sk_buff_head direct_queue; //ÄÜ·ñÈë¶Ó¾ÍÊÇÓÃ¸Ã¶ÓÁĞÉÏµÄSKB¸öÊıÓëÏÂÃæµÄdirect_qlen×ö±È½Ï,  Õâ¸öskbÁ´±íÉÏÃæµÄ¶«Î÷ÊÇ²»ĞèÒªÏŞËÙµÄ£¬¼ûhtb_dequeue
+	//å¦‚æœSKBåˆ°æ¥çš„æ—¶å€™æ²¡æœ‰åŒ¹é…çš„è¿‡æ»¤å™¨ï¼Œå¹¶ä¸”é»˜è®¤defaulté˜Ÿåˆ—è§„ç¨‹ä¹Ÿæ²¡åŒ¹é…æˆåŠŸï¼Œåˆ™ç›´æ¥ä½¿ç”¨ç§æœ‰ä¿¡æ¯ä¸­çš„direct_queueé˜Ÿåˆ—å…¥é˜Ÿï¼Œè§htb_enqueue
+	struct sk_buff_head direct_queue; //èƒ½å¦å…¥é˜Ÿå°±æ˜¯ç”¨è¯¥é˜Ÿåˆ—ä¸Šçš„SKBä¸ªæ•°ä¸ä¸‹é¢çš„direct_qlenåšæ¯”è¾ƒ,  è¿™ä¸ªskbé“¾è¡¨ä¸Šé¢çš„ä¸œè¥¿æ˜¯ä¸éœ€è¦é™é€Ÿçš„ï¼Œè§htb_dequeue
 	int direct_qlen;	/* max qlen of above */ //q->direct_qlen = qdisc_dev(sch)->tx_queue_len;
 
-	long direct_pkts;// Ö±½Ó´¦ÀíµÄÊı¾İ°ü¼ÆÊı
+	long direct_pkts;// ç›´æ¥å¤„ç†çš„æ•°æ®åŒ…è®¡æ•°
 
 #define HTB_WARN_TOOMANYEVENTS	0x1
 	unsigned int warned;	/* only one warning */
 	struct work_struct work;
 };
 
-/* find class in global hash table using given handle */// ¸ù¾İÀà±ğID²éÕÒÀà±ğ½á¹¹ // ¸ù¾İ¾ä±úhandle²éÕÒHTB½Úµã
+/* find class in global hash table using given handle */// æ ¹æ®ç±»åˆ«IDæŸ¥æ‰¾ç±»åˆ«ç»“æ„ // æ ¹æ®å¥æŸ„handleæŸ¥æ‰¾HTBèŠ‚ç‚¹
 static inline struct htb_class *htb_find(u32 handle, struct Qdisc *sch)
 {
 	struct htb_sched *q = qdisc_priv(sch);
@@ -283,9 +283,9 @@ static inline struct htb_class *htb_find(u32 handle, struct Qdisc *sch)
  * have no valid leaf we try to use MAJOR:default leaf. It still unsuccessfull
  * then finish and return direct queue.
  */ 
-    // HTB·ÖÀà²Ù×÷, ¶ÔÊı¾İ°ü½øĞĞ·ÖÀà, È»ºó¸ù¾İÀà±ğ½øĞĞÏà¹Ø²Ù×÷
-    // ·µ»ØNULL±íÊ¾Ã»ÕÒµ½, ·µ»Ø-1±íÊ¾ÊÇÖ±½ÓÍ¨¹ı(²»·ÖÀà)µÄÊı¾İ°ü
-//¸ÃSKBÃ»ÓĞ¶ÔÓ¦Æ¥ÅäµÄ¹ıÂËÆ÷£¬ÔòÊ¹ÓÃÄ¬ÈÏµÄ¹ıÂËÆ÷£¬Ò²¾ÍÊÇtc qdisc add xxxxx htb default aÖĞµÄa¡£¼ûhtb_classify
+    // HTBåˆ†ç±»æ“ä½œ, å¯¹æ•°æ®åŒ…è¿›è¡Œåˆ†ç±», ç„¶åæ ¹æ®ç±»åˆ«è¿›è¡Œç›¸å…³æ“ä½œ
+    // è¿”å›NULLè¡¨ç¤ºæ²¡æ‰¾åˆ°, è¿”å›-1è¡¨ç¤ºæ˜¯ç›´æ¥é€šè¿‡(ä¸åˆ†ç±»)çš„æ•°æ®åŒ…
+//è¯¥SKBæ²¡æœ‰å¯¹åº”åŒ¹é…çš„è¿‡æ»¤å™¨ï¼Œåˆ™ä½¿ç”¨é»˜è®¤çš„è¿‡æ»¤å™¨ï¼Œä¹Ÿå°±æ˜¯tc qdisc add xxxxx htb default aä¸­çš„aã€‚è§htb_classify
 #define HTB_DIRECT (struct htb_class*)-1 
 static struct htb_class *htb_classify(struct sk_buff *skb, struct Qdisc *sch,
 				      int *qerr)
@@ -299,19 +299,19 @@ static struct htb_class *htb_classify(struct sk_buff *skb, struct Qdisc *sch,
 	/* allow to select class by setting skb->priority to valid classid;
 	   note that nfmark can be used too by attaching filter fw with no
 	   rules in it */
-	if (skb->priority == sch->handle)// Èç¹ûÊı¾İ°üÓÅÏÈÈ¨Öµ¾ÍµÈÓÚÁ÷¿Ø½ÚµãºÍ¾ä±úhandle, ÊôÓÚ¸ù½Úµã²Ù×÷, Ö±½Ó´¦Àí
+	if (skb->priority == sch->handle)// å¦‚æœæ•°æ®åŒ…ä¼˜å…ˆæƒå€¼å°±ç­‰äºæµæ§èŠ‚ç‚¹å’Œå¥æŸ„handle, å±äºæ ¹èŠ‚ç‚¹æ“ä½œ, ç›´æ¥å¤„ç†
 		return HTB_DIRECT;	/* X:0 (direct flow) selected */
-	if ((cl = htb_find(skb->priority, sch)) != NULL && cl->level == 0)// ²éÕÒºÍÊı¾İ°üÓÅÏÈÈ¨Öµ¶ÔÓ¦µÄHTBÒ¶×Ó½Úµã, ÕÒµ½Ôò·µ»Ø
+	if ((cl = htb_find(skb->priority, sch)) != NULL && cl->level == 0)// æŸ¥æ‰¾å’Œæ•°æ®åŒ…ä¼˜å…ˆæƒå€¼å¯¹åº”çš„HTBå¶å­èŠ‚ç‚¹, æ‰¾åˆ°åˆ™è¿”å›
 		return cl;
 
     /*
-    // ÒÔÏÂ´¦ÀíÊÇÃ»ÓĞÕÒµ½ºÍskb->priorityÖ±½Ó¶ÔÓ¦µÄHTBÒ¶×Ó½Úµã, Ó¦¸ÃËµÊµ¼ÊÓ¦ÓÃÖĞ´ó²¿·Ö¶¼ÊÇskb->priorityÎª0µÄ, ËùÒÔÒ»°ã¶¼»áÔËĞĞµ½ÕâÀï
+    // ä»¥ä¸‹å¤„ç†æ˜¯æ²¡æœ‰æ‰¾åˆ°å’Œskb->priorityç›´æ¥å¯¹åº”çš„HTBå¶å­èŠ‚ç‚¹, åº”è¯¥è¯´å®é™…åº”ç”¨ä¸­å¤§éƒ¨åˆ†éƒ½æ˜¯skb->priorityä¸º0çš„, æ‰€ä»¥ä¸€èˆ¬éƒ½ä¼šè¿è¡Œåˆ°è¿™é‡Œ
     */
 	*qerr = NET_XMIT_SUCCESS | __NET_XMIT_BYPASS;
-	tcf = q->filter_list;//¹ıÂËÆ÷Á´±í
-	//Í¨¹ıskbÄÚÈİÀ´Æ¥Åätc filterÁ´±ítp£¬ÕÒµ½·µ»Ø¶ÔÓ¦µÄ·ÖÀà½Úµã£¬Æ¥Åä³É¹¦·µ»Ø0²¢°ÑÆ¥ÅäµÄ¹ıÂËÆ÷ËùÔÚµÄtc class·ÖÀà½ÚµãĞÅÏ¢´æµ½resÖĞ£¬Æ¥Åä³É¹¦·µ»Ø0
+	tcf = q->filter_list;//è¿‡æ»¤å™¨é“¾è¡¨
+	//é€šè¿‡skbå†…å®¹æ¥åŒ¹é…tc filteré“¾è¡¨tpï¼Œæ‰¾åˆ°è¿”å›å¯¹åº”çš„åˆ†ç±»èŠ‚ç‚¹ï¼ŒåŒ¹é…æˆåŠŸè¿”å›0å¹¶æŠŠåŒ¹é…çš„è¿‡æ»¤å™¨æ‰€åœ¨çš„tc classåˆ†ç±»èŠ‚ç‚¹ä¿¡æ¯å­˜åˆ°resä¸­ï¼ŒåŒ¹é…æˆåŠŸè¿”å›0
 	while (tcf && (result = tc_classify(skb, tcf, &res)) >= 0) {
-#ifdef CONFIG_NET_CLS_ACT // ¶¨ÒåÁË¿É¶Ô·ÖÀà½á¹û½øĞĞ¶¯×÷µÄÄÚºËÑ¡ÏîµÄÇé¿ö
+#ifdef CONFIG_NET_CLS_ACT // å®šä¹‰äº†å¯å¯¹åˆ†ç±»ç»“æœè¿›è¡ŒåŠ¨ä½œçš„å†…æ ¸é€‰é¡¹çš„æƒ…å†µ
 		switch (result) {
 		case TC_ACT_QUEUED:
 		case TC_ACT_STOLEN:
@@ -320,8 +320,8 @@ static struct htb_class *htb_classify(struct sk_buff *skb, struct Qdisc *sch,
 			return NULL;
 		}
 #endif
-		if ((cl = (void *)res.class) == NULL) { //Èç¹û·µ»ØµÄ½á¹ûÖĞµÄres.class=0
-			if (res.classid == sch->handle)// Èç¹û·ÖÀà½á¹ûµÄIDµÈÓÚÁ÷¿Ø¾ä±ú, Ö±½Ó´¦Àí
+		if ((cl = (void *)res.class) == NULL) { //å¦‚æœè¿”å›çš„ç»“æœä¸­çš„res.class=0
+			if (res.classid == sch->handle)// å¦‚æœåˆ†ç±»ç»“æœçš„IDç­‰äºæµæ§å¥æŸ„, ç›´æ¥å¤„ç†
 				return HTB_DIRECT;	/* X:0 (direct flow) */
 			if ((cl = htb_find(res.classid, sch)) == NULL)
 				break;	/* filter selected invalid classid */
@@ -332,10 +332,10 @@ static struct htb_class *htb_classify(struct sk_buff *skb, struct Qdisc *sch,
 		/* we have got inner class; apply inner filter chain */
 		tcf = cl->filter_list;
 	}
-	// Ñ­»·ÍâÊÇÃ»ÕÒµ½·ÖÀàµÄÇé¿ö
-	/* classification failed; try to use default class */// ÓÃÈ±Ê¡Àà±ğID²éÕÒ, ¿´ÊÇ·ñ¶¨ÒåÁËÈ±Ê¡Àà±ğ
+	// å¾ªç¯å¤–æ˜¯æ²¡æ‰¾åˆ°åˆ†ç±»çš„æƒ…å†µ
+	/* classification failed; try to use default class */// ç”¨ç¼ºçœç±»åˆ«IDæŸ¥æ‰¾, çœ‹æ˜¯å¦å®šä¹‰äº†ç¼ºçœç±»åˆ«
 	cl = htb_find(TC_H_MAKE(TC_H_MAJ(sch->handle), q->defcls), sch);
-	if (!cl || cl->level) //¸ÃSKBÃ»ÓĞ¶ÔÓ¦Æ¥ÅäµÄ¹ıÂËÆ÷£¬ÔòÊ¹ÓÃÄ¬ÈÏµÄ¹ıÂËÆ÷²éÕÒ£¬Ò²¾ÍÊÇtc qdisc add xxxxx htb default aÖĞµÄa¡£Èç¹ûÄ¬ÈÏµÄ·ÖÀàÒ²Ã»ÕÒµ½£¬Ôò·µ»ØHTB_DIRECT
+	if (!cl || cl->level) //è¯¥SKBæ²¡æœ‰å¯¹åº”åŒ¹é…çš„è¿‡æ»¤å™¨ï¼Œåˆ™ä½¿ç”¨é»˜è®¤çš„è¿‡æ»¤å™¨æŸ¥æ‰¾ï¼Œä¹Ÿå°±æ˜¯tc qdisc add xxxxx htb default aä¸­çš„aã€‚å¦‚æœé»˜è®¤çš„åˆ†ç±»ä¹Ÿæ²¡æ‰¾åˆ°ï¼Œåˆ™è¿”å›HTB_DIRECT
 		return HTB_DIRECT;	/* bad default .. this is safe bet */
 	return cl;
 }
@@ -345,15 +345,15 @@ static struct htb_class *htb_classify(struct sk_buff *skb, struct Qdisc *sch,
  *
  * Routine adds class to the list (actually tree) sorted by classid.
  * Make sure that class is not already on such list for given prio.
- */ //°Ñclass  clÌí¼Óµ½ºìºÚÊ÷ÖĞ
+ */ //æŠŠclass  clæ·»åŠ åˆ°çº¢é»‘æ ‘ä¸­
 static void htb_add_to_id_tree(struct rb_root *root,
 			       struct htb_class *cl, int prio)
 {
 	struct rb_node **p = &root->rb_node, *parent = NULL;
     
-    // RBÊ÷ÊÇÓĞĞò±í, ¸ù¾İÀà±ğIDÅÅĞò, Öµ´óµÄµ½ÓÒ½Úµã, Ğ¡µÄµ½×ó½Úµã
-    // Ñ­»·, ²éÕÒÊ÷ÖĞºÏÊÊµÄÎ»ÖÃ²åÈëÀà±ğ½Úµãcl
-	while (*p) {//ÏÈÒªÕÒµ½²åÈëÄÇ¸örhÊı½ÚµãºóÃæ
+    // RBæ ‘æ˜¯æœ‰åºè¡¨, æ ¹æ®ç±»åˆ«IDæ’åº, å€¼å¤§çš„åˆ°å³èŠ‚ç‚¹, å°çš„åˆ°å·¦èŠ‚ç‚¹
+    // å¾ªç¯, æŸ¥æ‰¾æ ‘ä¸­åˆé€‚çš„ä½ç½®æ’å…¥ç±»åˆ«èŠ‚ç‚¹cl
+	while (*p) {//å…ˆè¦æ‰¾åˆ°æ’å…¥é‚£ä¸ªrhæ•°èŠ‚ç‚¹åé¢
 		struct htb_class *c;
 		parent = *p;
 		c = rb_entry(parent, struct htb_class, node[prio]);
@@ -364,7 +364,7 @@ static void htb_add_to_id_tree(struct rb_root *root,
 			p = &parent->rb_left;
 	}
 
-	// ½øĞĞRBÊ÷µÄ²åÈë²Ù×÷, RBÊ÷±ê×¼º¯Êı²Ù×÷
+	// è¿›è¡ŒRBæ ‘çš„æ’å…¥æ“ä½œ, RBæ ‘æ ‡å‡†å‡½æ•°æ“ä½œ
 	rb_link_node(&cl->node[prio], parent, p);
 	rb_insert_color(&cl->node[prio], root);
 }
@@ -376,7 +376,7 @@ static void htb_add_to_id_tree(struct rb_root *root,
  * change its mode in cl->pq_key microseconds. Make sure that class is not
  * already in the queue.
  *//*
-HTB³ö¶Ó¹ı³Ì
+HTBå‡ºé˜Ÿè¿‡ç¨‹
 __qdisc_run -> qdisc_restart -> dequeue_skb -> htb_dequeue
 htb_dequeue
   -> __skb_dequeue
@@ -428,7 +428,7 @@ static void htb_add_to_wait_tree(struct htb_sched *q,
  * When we are past last key we return NULL.
  * Average complexity is 2 steps per call.
  *//*
-HTB³ö¶Ó¹ı³Ì
+HTBå‡ºé˜Ÿè¿‡ç¨‹
 __qdisc_run -> qdisc_restart -> dequeue_skb -> htb_dequeue
 htb_dequeue
   -> __skb_dequeue
@@ -447,7 +447,7 @@ htb_dequeue
       -> htb_add_to_wait_tree
   -> htb_delay_by
 
-*/ //¸Ãº¯ÊıÖ´ĞĞºó£¬n»áÖ´ĞĞ¸ÃºìºÚÊ÷µÄÏÂÒ»¸ö½Úµã
+*/ //è¯¥å‡½æ•°æ‰§è¡Œåï¼Œnä¼šæ‰§è¡Œè¯¥çº¢é»‘æ ‘çš„ä¸‹ä¸€ä¸ªèŠ‚ç‚¹
 static inline void htb_next_rb_node(struct rb_node **n)
 {
 	*n = rb_next(*n);
@@ -459,23 +459,23 @@ static inline void htb_next_rb_node(struct rb_node **n)
  * The class is added to row at priorities marked in mask.
  * It does nothing if mask == 0.
  */ 
-//°ÑclÌí¼Óµ½q->row[cl->level] + prio(cl->level²ã£¬prioÓÅÏÈ¼¶)µÄºìºÚÊ÷¸úÖĞ¡£
-// RBÊ÷¸ù½Úµã, ¶ÔÓ¦Ã¿Ò»²ãµÄÃ¿Ò»¸öÓÅÏÈÈ¨Öµ¶¼ÓĞÒ»¸öRBÊ÷¡£ Ò²¾ÍÊÇ¸ù¾İcl->levelºÍmaskÖĞµÄprioÀ´È·¶¨°ÑclÌí¼Óµ½htb_schedË½ÓĞÊı¾İ²¿·ÖµÄÄÇ¸ö¸úrow[][]ÖĞ
+//æŠŠclæ·»åŠ åˆ°q->row[cl->level] + prio(cl->levelå±‚ï¼Œprioä¼˜å…ˆçº§)çš„çº¢é»‘æ ‘è·Ÿä¸­ã€‚
+// RBæ ‘æ ¹èŠ‚ç‚¹, å¯¹åº”æ¯ä¸€å±‚çš„æ¯ä¸€ä¸ªä¼˜å…ˆæƒå€¼éƒ½æœ‰ä¸€ä¸ªRBæ ‘ã€‚ ä¹Ÿå°±æ˜¯æ ¹æ®cl->levelå’Œmaskä¸­çš„prioæ¥ç¡®å®šæŠŠclæ·»åŠ åˆ°htb_schedç§æœ‰æ•°æ®éƒ¨åˆ†çš„é‚£ä¸ªè·Ÿrow[][]ä¸­
 static inline void htb_add_class_to_row(struct htb_sched *q,
 					struct htb_class *cl, int mask)
 {
-    // ½«cl²ã´Î¶ÔÓ¦µÄROWµÄrow_mask»òÉÏĞÂµÄmask, ±íÊ¾ÓĞ¶ÔÓ¦prioµÄÊı¾İÁË
+    // å°†clå±‚æ¬¡å¯¹åº”çš„ROWçš„row_maskæˆ–ä¸Šæ–°çš„mask, è¡¨ç¤ºæœ‰å¯¹åº”prioçš„æ•°æ®äº†
 	q->row_mask[cl->level] |= mask;
 	while (mask) {
 		int prio = ffz(~mask);
-		mask &= ~(1 << prio);//»ñÈ¡maskÖĞÃ¿Î»Îª1µÄÎ»£¬ÀıÈç0X23,ÔòwhileÑ­»·µÄprioÒÀ´ÎÊÇ0 1 5¼¸¸öÊı×Ö
-		htb_add_to_id_tree(q->row[cl->level] + prio, cl, prio);//q->row[cl->level] + prio¶ÔÓ¦cl->level²ãµÄprioÓÅÏÈ¼¶ºìºÚÊ÷¸ù
+		mask &= ~(1 << prio);//è·å–maskä¸­æ¯ä½ä¸º1çš„ä½ï¼Œä¾‹å¦‚0X23,åˆ™whileå¾ªç¯çš„prioä¾æ¬¡æ˜¯0 1 5å‡ ä¸ªæ•°å­—
+		htb_add_to_id_tree(q->row[cl->level] + prio, cl, prio);//q->row[cl->level] + prioå¯¹åº”cl->levelå±‚çš„prioä¼˜å…ˆçº§çº¢é»‘æ ‘æ ¹
 	}
 }
 
 /* If this triggers, it is a bug in this code, but it need not be fatal */
 /*
-HTB³ö¶Ó¹ı³Ì
+HTBå‡ºé˜Ÿè¿‡ç¨‹
 __qdisc_run -> qdisc_restart -> dequeue_skb -> htb_dequeue
 htb_dequeue
   -> __skb_dequeue
@@ -518,19 +518,19 @@ static inline void htb_remove_class_from_row(struct htb_sched *q,
 	int m = 0;
 
 	while (mask) {
-		int prio = ffz(~mask);// prioÎªmaskµÚÒ»¸ö1Î»µÄÎ»ÖÃ
+		int prio = ffz(~mask);// prioä¸ºmaskç¬¬ä¸€ä¸ª1ä½çš„ä½ç½®
 
-		mask &= ~(1 << prio);// È¥µô¸ÃÎ»
+		mask &= ~(1 << prio);// å»æ‰è¯¥ä½
 
-		// Èç¹ûÁ÷¿Ø½ÚµãµÄ¸Ã²ã¸ÃprioµÄrbÊ÷½ÚµãÖ¸ÏòµÄÊÇclµÄprioµÄrbÊ÷½Úµã, ¸üĞÂµ½Ê÷µÄÏÂÒ»¸örb½Úµã
+		// å¦‚æœæµæ§èŠ‚ç‚¹çš„è¯¥å±‚è¯¥prioçš„rbæ ‘èŠ‚ç‚¹æŒ‡å‘çš„æ˜¯clçš„prioçš„rbæ ‘èŠ‚ç‚¹, æ›´æ–°åˆ°æ ‘çš„ä¸‹ä¸€ä¸ªrbèŠ‚ç‚¹
 		if (q->ptr[cl->level][prio] == cl->node + prio)
 			htb_next_rb_node(q->ptr[cl->level] + prio);
 
-		htb_safe_rb_erase(cl->node + prio, q->row[cl->level] + prio);// ´ÓROWÊ÷ÖĞ¶Ï¿ªcl
-		if (!q->row[cl->level][prio].rb_node)// Èç¹û¸Ã²ã¸ÃprioµÄrbÊ÷Î»¿Õ, ¼ÇÂ¼ÆäÎ»ÖÃ
+		htb_safe_rb_erase(cl->node + prio, q->row[cl->level] + prio);// ä»ROWæ ‘ä¸­æ–­å¼€cl
+		if (!q->row[cl->level][prio].rb_node)// å¦‚æœè¯¥å±‚è¯¥prioçš„rbæ ‘ä½ç©º, è®°å½•å…¶ä½ç½®
 			m |= 1 << prio;
 	}
-	q->row_mask[cl->level] &= ~m;// ÔÚROWÑÚÂëÖĞ½«ÓërbÊ÷Îª¿ÕµÄÄÇĞ©prioÎ»Çå¿Õ
+	q->row_mask[cl->level] &= ~m;// åœ¨ROWæ©ç ä¸­å°†ä¸rbæ ‘ä¸ºç©ºçš„é‚£äº›prioä½æ¸…ç©º
 }
 
 /**
@@ -540,47 +540,47 @@ static inline void htb_remove_class_from_row(struct htb_sched *q,
  * for priorities it is participating on. cl->cmode must be new
  * (activated) mode. It does nothing if cl->prio_activity == 0.
  */
-// ¼¤»î²Ù×÷, ½¨Á¢Êı¾İÌá¹©Ê÷
-// cl->prio_activityÎª0Ê±¾ÍÊÇÒ»¸ö¿Õº¯Êı, ²»¹ı´ÓÇ°Ãæ¿´prio_activityËÆºõÊÇ²»»áÎª0µÄ
-//¸Ãº¯Êı¾ÍÊÇ°ÑclÌí¼Óµ½p->un.inner.feed[prio]ÉÏ£¬Í¬Ê±¸úĞÂ¸¸p->prio_activityÖĞµÄprioÎ»ÖÃ1£¬Í¬Ê±¸¸µÄ¸¸ÉÏ¶ÔÓ¦µÄp->prio_activityÖĞµÄprioÎ»ÖÃ1£¬
-//Ò²¾ÍÊÇÕû¿ÃÊ÷´Ó¸ÃclÒÔÉÏ¶¼¿ÉÓÃ¡£ ²Î¿¼http://luxik.cdi.cz/~devik/qos/htb/manual/theory.htm        http://blog.chinaunix.net/uid-7220314-id-208698.html 
+// æ¿€æ´»æ“ä½œ, å»ºç«‹æ•°æ®æä¾›æ ‘
+// cl->prio_activityä¸º0æ—¶å°±æ˜¯ä¸€ä¸ªç©ºå‡½æ•°, ä¸è¿‡ä»å‰é¢çœ‹prio_activityä¼¼ä¹æ˜¯ä¸ä¼šä¸º0çš„
+//è¯¥å‡½æ•°å°±æ˜¯æŠŠclæ·»åŠ åˆ°p->un.inner.feed[prio]ä¸Šï¼ŒåŒæ—¶è·Ÿæ–°çˆ¶p->prio_activityä¸­çš„prioä½ç½®1ï¼ŒåŒæ—¶çˆ¶çš„çˆ¶ä¸Šå¯¹åº”çš„p->prio_activityä¸­çš„prioä½ç½®1ï¼Œ
+//ä¹Ÿå°±æ˜¯æ•´æ£µæ ‘ä»è¯¥clä»¥ä¸Šéƒ½å¯ç”¨ã€‚ å‚è€ƒhttp://luxik.cdi.cz/~devik/qos/htb/manual/theory.htm        http://blog.chinaunix.net/uid-7220314-id-208698.html 
 static void htb_activate_prios(struct htb_sched *q, struct htb_class *cl)
 {
 	struct htb_class *p = cl->parent;
-	long m, mask = cl->prio_activity;// prio_activityÊÇ×÷ÎªÒ»¸öÑÚÂë, ¿ÉÓ¦¸ÃÖ»ÓĞÒ»Î»Îª1
+	long m, mask = cl->prio_activity;// prio_activityæ˜¯ä½œä¸ºä¸€ä¸ªæ©ç , å¯åº”è¯¥åªæœ‰ä¸€ä½ä¸º1
 
-    // ÔÚµ±Ç°Ä£Ê½ÊÇHTB_MAY_BORROWÇé¿öÏÂ½øÈëÑ­»·, Ä³Ğ©Çé¿öÏÂÕâĞ©Àà±ğÊÇ¿ÉÒÔ¼¤»îµÄ
-    // ¾ø´ó¶àÊıÇé¿öpºÍmaskµÄ³õÊ¼ÖµÓ¦¸Ã¶¼ÊÇ·Ç0Öµ
-	while (cl->cmode == HTB_MAY_BORROW && p && mask) {  //Í¼½â²Î¿¼<Hierachical token bucket theory>  http://luxik.cdi.cz/~devik/qos/htb/manual/theory.htm
-		m = mask;// ±¸·İmaskÖµ
+    // åœ¨å½“å‰æ¨¡å¼æ˜¯HTB_MAY_BORROWæƒ…å†µä¸‹è¿›å…¥å¾ªç¯, æŸäº›æƒ…å†µä¸‹è¿™äº›ç±»åˆ«æ˜¯å¯ä»¥æ¿€æ´»çš„
+    // ç»å¤§å¤šæ•°æƒ…å†µpå’Œmaskçš„åˆå§‹å€¼åº”è¯¥éƒ½æ˜¯é0å€¼
+	while (cl->cmode == HTB_MAY_BORROW && p && mask) {  //å›¾è§£å‚è€ƒ<Hierachical token bucket theory>  http://luxik.cdi.cz/~devik/qos/htb/manual/theory.htm
+		m = mask;// å¤‡ä»½maskå€¼
 		while (m) {
-            // ÑÚÂëÈ¡·´, ÕÒµÚÒ»¸ö0Î»µÄÎ»ÖÃ, Ò²¾ÍÊÇÔ­À´×îµÍÎª1µÄÎ»µÄÎ»ÖÃ
-            // prioÔ½Ğ¡, µÈ¼¶Ô½¸ß, È¡Êı¾İ°üÒ²ÊÇÏÈ´ÓprioÖµĞ¡µÄ½ÚµãÈ¡
-			int prio = ffz(~m); //Í¨¹ıwhile(m)¿ÉÒÔÖªµÀ£¬prio¾ÍÊÇmaskÖĞÃ¿Î»Îª1ËùÔÚµÄÎ»ÖÃ
-			m &= ~(1 << prio);// Çå³ı¸ÃÎ»   ×îºóµÃµ½µÄ½á¹û¾ÍÊÇmµÄÖµÎªmaskµÄ×îµÍÎ»1±ä0ºóµÄÖµ
+            // æ©ç å–å, æ‰¾ç¬¬ä¸€ä¸ª0ä½çš„ä½ç½®, ä¹Ÿå°±æ˜¯åŸæ¥æœ€ä½ä¸º1çš„ä½çš„ä½ç½®
+            // prioè¶Šå°, ç­‰çº§è¶Šé«˜, å–æ•°æ®åŒ…ä¹Ÿæ˜¯å…ˆä»prioå€¼å°çš„èŠ‚ç‚¹å–
+			int prio = ffz(~m); //é€šè¿‡while(m)å¯ä»¥çŸ¥é“ï¼Œprioå°±æ˜¯maskä¸­æ¯ä½ä¸º1æ‰€åœ¨çš„ä½ç½®
+			m &= ~(1 << prio);// æ¸…é™¤è¯¥ä½   æœ€åå¾—åˆ°çš„ç»“æœå°±æ˜¯mçš„å€¼ä¸ºmaskçš„æœ€ä½ä½1å˜0åçš„å€¼
      
-            // pÊÇ¸¸½Úµã, ËùÒÔinner½á¹¹¿Ï¶¨ÓĞĞ§, ²»»áÊ¹ÓÃleaf½á¹¹µÄ
-            // Èç¹û¸¸½ÚµãµÄprioÓÅÏÈÈ¨µÄÊı¾İ°üµÄÌá¹©Ê÷ÒÑ¾­´æÔÚ, ÔÚÑÚÂëÖĞÈ¥µô¸ÃÎ»
+            // pæ˜¯çˆ¶èŠ‚ç‚¹, æ‰€ä»¥innerç»“æ„è‚¯å®šæœ‰æ•ˆ, ä¸ä¼šä½¿ç”¨leafç»“æ„çš„
+            // å¦‚æœçˆ¶èŠ‚ç‚¹çš„prioä¼˜å…ˆæƒçš„æ•°æ®åŒ…çš„æä¾›æ ‘å·²ç»å­˜åœ¨, åœ¨æ©ç ä¸­å»æ‰è¯¥ä½
 			if (p->un.inner.feed[prio].rb_node)
 				/* parent already has its feed in use so that
 				   reset bit in mask as parent is already ok */
 				mask &= ~(1 << prio);                           
 
-            // ½«¸ÃÀà±ğ¼Óµ½¸¸½ÚµãµÄprioÓÅÏÈÈ¨Ìá¹©Êı¾İ°üµÄ½ÚµãÊ÷ÖĞ
+            // å°†è¯¥ç±»åˆ«åŠ åˆ°çˆ¶èŠ‚ç‚¹çš„prioä¼˜å…ˆæƒæä¾›æ•°æ®åŒ…çš„èŠ‚ç‚¹æ ‘ä¸­
 			htb_add_to_id_tree(p->un.inner.feed + prio, cl, prio);
 		}
 		
-        // ¸¸½ÚµãµÄprio_activity»òÉÏmaskÖĞµÄÖÃ1Î», Ä³Î»Îª1±íÊ¾¸ÃÎ»¶ÔÓ¦µÄÓÅÏÈÈ¨µÄÊı¾İ¿ÉÓÃ
-        //´ÓÕâÀï¿ÉÒÔ¿´µ½£¬Èç¹ûÊÇ·ÇÒ¶×Ó½Úµã£¬Ôò¿ÉÄÜÊÇÆäÏÂ¼¶class»òÕßÒ¶×Ó½ÚµãµÄ»ò²Ù×÷£¬
-		//ËùÒÔÈç¹ûÊÇ·ÇÒ¶×Ó½Úµã£¬µÚÒ»²ãlevel×î¶àÁ½¸öÓÅÏÈ¼¶£¬µÚ¶ş²ãlevel×î¶àÈı¸öÓÅÏÈ¼¶£¬µÚÆß²ãlevel×î¶à8¸öÓÅÏÈ¼¶
+        // çˆ¶èŠ‚ç‚¹çš„prio_activityæˆ–ä¸Šmaskä¸­çš„ç½®1ä½, æŸä½ä¸º1è¡¨ç¤ºè¯¥ä½å¯¹åº”çš„ä¼˜å…ˆæƒçš„æ•°æ®å¯ç”¨
+        //ä»è¿™é‡Œå¯ä»¥çœ‹åˆ°ï¼Œå¦‚æœæ˜¯éå¶å­èŠ‚ç‚¹ï¼Œåˆ™å¯èƒ½æ˜¯å…¶ä¸‹çº§classæˆ–è€…å¶å­èŠ‚ç‚¹çš„æˆ–æ“ä½œï¼Œ
+		//æ‰€ä»¥å¦‚æœæ˜¯éå¶å­èŠ‚ç‚¹ï¼Œç¬¬ä¸€å±‚levelæœ€å¤šä¸¤ä¸ªä¼˜å…ˆçº§ï¼Œç¬¬äºŒå±‚levelæœ€å¤šä¸‰ä¸ªä¼˜å…ˆçº§ï¼Œç¬¬ä¸ƒå±‚levelæœ€å¤š8ä¸ªä¼˜å…ˆçº§
 		p->prio_activity |= mask; 
-		// Ñ­»·µ½ÉÏÒ»²ã, µ±Ç°Àà±ğ¸üĞÂ¸¸½Úµã, ¸¸½Úµã¸üĞÂÎª×æ¸¸½Úµã
+		// å¾ªç¯åˆ°ä¸Šä¸€å±‚, å½“å‰ç±»åˆ«æ›´æ–°çˆ¶èŠ‚ç‚¹, çˆ¶èŠ‚ç‚¹æ›´æ–°ä¸ºç¥–çˆ¶èŠ‚ç‚¹
 		cl = p;
 		p = cl->parent;
 	}
 	
-    // Èç¹ûclÊÇHTB_CAN_SENDÄ£Ê½, ½«¸ÃÀà±ğÌí¼Óµ½ºÏÊÊµÄROWÖĞ
-    // ´ËÊ±µÄcl¿ÉÄÜÒÑ¾­²»ÊÇÔ­À´µÄclÁË,¶øÊÇÔ­clµÄ³¤±²½ÚµãÁË
+    // å¦‚æœclæ˜¯HTB_CAN_SENDæ¨¡å¼, å°†è¯¥ç±»åˆ«æ·»åŠ åˆ°åˆé€‚çš„ROWä¸­
+    // æ­¤æ—¶çš„clå¯èƒ½å·²ç»ä¸æ˜¯åŸæ¥çš„cläº†,è€Œæ˜¯åŸclçš„é•¿è¾ˆèŠ‚ç‚¹äº†
 	if (cl->cmode == HTB_CAN_SEND && mask)
 		htb_add_class_to_row(q, cl, mask);
 }
@@ -595,38 +595,38 @@ static void htb_activate_prios(struct htb_sched *q, struct htb_class *cl)
 static void htb_deactivate_prios(struct htb_sched *q, struct htb_class *cl)
 {
 	struct htb_class *p = cl->parent;
-	long m, mask = cl->prio_activity; // Àà±ğ½á¹¹µÄÓÅÏÈÈ¨»îĞÔÖµ×÷ÎªÑÚÂë, Èç¹ûÊÇ0µÄ»°±¾º¯ÊıÏàµ±ÓÚ¿Õº¯Êı
+	long m, mask = cl->prio_activity; // ç±»åˆ«ç»“æ„çš„ä¼˜å…ˆæƒæ´»æ€§å€¼ä½œä¸ºæ©ç , å¦‚æœæ˜¯0çš„è¯æœ¬å‡½æ•°ç›¸å½“äºç©ºå‡½æ•°
 
     
-    // ÔÚµ±Ç°Ä£Ê½ÊÇHTB_MAY_BORROWÇé¿öÏÂ½øÈëÑ­»·, 
-    // ¾ø´ó¶àÊıÇé¿öpºÍmaskµÄ³õÊ¼ÖµÓ¦¸Ã¶¼ÊÇ·Ç0Öµ
+    // åœ¨å½“å‰æ¨¡å¼æ˜¯HTB_MAY_BORROWæƒ…å†µä¸‹è¿›å…¥å¾ªç¯, 
+    // ç»å¤§å¤šæ•°æƒ…å†µpå’Œmaskçš„åˆå§‹å€¼åº”è¯¥éƒ½æ˜¯é0å€¼
 	while (cl->cmode == HTB_MAY_BORROW && p && mask) {
-		m = mask;// ±¸·İÑÚÂë
-		mask = 0;// ÑÚÂëÇåÁã
+		m = mask;// å¤‡ä»½æ©ç 
+		mask = 0;// æ©ç æ¸…é›¶
 		while (m) {
-			int prio = ffz(~m);// prioÎªmµÄµÚÒ»¸ö1ÖµµÄÎ»(È¡·´ºóµÚÒ»¸ö0ÖµµÄÎ»)
-			m &= ~(1 << prio);// È¥³ı¸ÃÎ»
+			int prio = ffz(~m);// prioä¸ºmçš„ç¬¬ä¸€ä¸ª1å€¼çš„ä½(å–ååç¬¬ä¸€ä¸ª0å€¼çš„ä½)
+			m &= ~(1 << prio);// å»é™¤è¯¥ä½
 
-			if (p->un.inner.ptr[prio] == cl->node + prio) {// Èç¹û¸ÃÀà±ğprio¶ÔÓ¦µÄrbÊ÷ÊÇ¸¸½ÚµãÖĞÕıÔÚ´¦ÀíµÄ
+			if (p->un.inner.ptr[prio] == cl->node + prio) {// å¦‚æœè¯¥ç±»åˆ«prioå¯¹åº”çš„rbæ ‘æ˜¯çˆ¶èŠ‚ç‚¹ä¸­æ­£åœ¨å¤„ç†çš„
 				/* we are removing child which is pointed to from
 				   parent feed - forget the pointer but remember
 				   classid */
-				p->un.inner.last_ptr_id[prio] = cl->common.classid;// ½«clµÄÀà±ğID±£´æµ½last_ptr_idÖĞprio¶ÔÓ¦Î»ÖÃ
+				p->un.inner.last_ptr_id[prio] = cl->common.classid;// å°†clçš„ç±»åˆ«IDä¿å­˜åˆ°last_ptr_idä¸­prioå¯¹åº”ä½ç½®
 				p->un.inner.ptr[prio] = NULL;
 			}
 
-			htb_safe_rb_erase(cl->node + prio, p->un.inner.feed + prio);// Àà±ğ½Úµã´ÓÓëprioÏàÓ¦rbÊ÷ÖĞ¶Ï¿ª
+			htb_safe_rb_erase(cl->node + prio, p->un.inner.feed + prio);// ç±»åˆ«èŠ‚ç‚¹ä»ä¸prioç›¸åº”rbæ ‘ä¸­æ–­å¼€
 
-			if(!p->un.inner.feed[prio].rb_node)//¶ÔÒÑ¾­¿ÕÁËµÄrbÊ÷±£´æÆäÎ»ÖÃ
+			if(!p->un.inner.feed[prio].rb_node)//å¯¹å·²ç»ç©ºäº†çš„rbæ ‘ä¿å­˜å…¶ä½ç½®
 				mask |= 1 << prio;
 		}
 
-		p->prio_activity &= ~mask;// ½«ÒÑ¾­¿ÕÁËµÄrbÊıÑÚÂë´Ó¸¸½ÚµãµÄ»îĞÔÖµÑÚÂëÖĞÈ¥µô
-		cl = p;// ×ªµ½ÉÏÒ»²ã´¦Àí
+		p->prio_activity &= ~mask;// å°†å·²ç»ç©ºäº†çš„rbæ•°æ©ç ä»çˆ¶èŠ‚ç‚¹çš„æ´»æ€§å€¼æ©ç ä¸­å»æ‰
+		cl = p;// è½¬åˆ°ä¸Šä¸€å±‚å¤„ç†
 		p = cl->parent;
 
 	}
-	if (cl->cmode == HTB_CAN_SEND && mask)// Èç¹ûµ±Ç°Àà±ğclµÄÄ£Ê½ÊÇ¿ÉÒÔ·¢ËÍ(ÎŞ×èÈû, ÎŞ½è´ø¿í), ½«cl´ÓROWµÄÏà¹ØÊ÷ÖĞ¶Ï¿ª
+	if (cl->cmode == HTB_CAN_SEND && mask)// å¦‚æœå½“å‰ç±»åˆ«clçš„æ¨¡å¼æ˜¯å¯ä»¥å‘é€(æ— é˜»å¡, æ— å€Ÿå¸¦å®½), å°†clä»ROWçš„ç›¸å…³æ ‘ä¸­æ–­å¼€
 		htb_remove_class_from_row(q, cl, mask);
 }
 
@@ -662,19 +662,19 @@ htb_class_mode(struct htb_class *cl, long *diff)
 {
 	long toks;
 
-	if ((toks = (cl->ctokens + *diff)) < htb_lowater(cl)) {// ¼ÆËãÀà±ğµÄCeilÁîÅÆ
-		*diff = -toks;// Èç¹ûÁîÅÆĞ¡ÓÚµÍÏŞ 
+	if ((toks = (cl->ctokens + *diff)) < htb_lowater(cl)) {// è®¡ç®—ç±»åˆ«çš„Ceilä»¤ç‰Œ
+		*diff = -toks;// å¦‚æœä»¤ç‰Œå°äºä½é™ 
 		return HTB_CANT_SEND;
 	}
 
     
-    // ¼ÆËãÀà±ğµÄÆÕÍ¨ÁîÅÆ
-    // Èç¹ûÁîÅÆ´óÓÚ¸ßÏŞ, Ä£Ê½Îª¿É·¢ËÍ
+    // è®¡ç®—ç±»åˆ«çš„æ™®é€šä»¤ç‰Œ
+    // å¦‚æœä»¤ç‰Œå¤§äºé«˜é™, æ¨¡å¼ä¸ºå¯å‘é€
 	if ((toks = (cl->tokens + *diff)) >= htb_hiwater(cl))
 		return HTB_CAN_SEND;
 
 	*diff = -toks;
-	return HTB_MAY_BORROW;// ·ñÔòÄ£Ê½Îª¿É½è
+	return HTB_MAY_BORROW;// å¦åˆ™æ¨¡å¼ä¸ºå¯å€Ÿ
 }
 
 /**
@@ -686,7 +686,7 @@ htb_class_mode(struct htb_class *cl, long *diff)
  * be different from old one and cl->pq_key has to be valid if changing
  * to mode other than HTB_CAN_SEND (see htb_add_to_wait_tree).
  *//*
-HTB³ö¶Ó¹ı³Ì
+HTBå‡ºé˜Ÿè¿‡ç¨‹
 __qdisc_run -> qdisc_restart -> dequeue_skb -> htb_dequeue
 htb_dequeue
   -> __skb_dequeue
@@ -706,7 +706,7 @@ htb_dequeue
   -> htb_delay_by
 
 *//*
-HTB³ö¶Ó¹ı³Ì
+HTBå‡ºé˜Ÿè¿‡ç¨‹
 __qdisc_run -> qdisc_restart -> dequeue_skb -> htb_dequeue
 htb_dequeue
   -> __skb_dequeue
@@ -725,22 +725,22 @@ htb_dequeue
       -> htb_add_to_wait_tree
   -> htb_delay_by
 
-*/ // µ÷ÕûÀà±ğ½ÚµãµÄ·¢ËÍÄ£Ê½
+*/ // è°ƒæ•´ç±»åˆ«èŠ‚ç‚¹çš„å‘é€æ¨¡å¼
 static void
-htb_change_class_mode(struct htb_sched *q, struct htb_class *cl, long *diff) //µ÷ÕûclassÄ£Ê½£¬Í¬Ê±Í¨¹ıhtb_activate_priosÖØĞÂĞÎ³Érow leafÊ÷µÈ
+htb_change_class_mode(struct htb_sched *q, struct htb_class *cl, long *diff) //è°ƒæ•´classæ¨¡å¼ï¼ŒåŒæ—¶é€šè¿‡htb_activate_priosé‡æ–°å½¢æˆrow leafæ ‘ç­‰
 {
-	enum htb_cmode new_mode = htb_class_mode(cl, diff);// ¸ù¾İ±ä»¯Öµ¼ÆËãĞÂÄ£Ê½
+	enum htb_cmode new_mode = htb_class_mode(cl, diff);// æ ¹æ®å˜åŒ–å€¼è®¡ç®—æ–°æ¨¡å¼
 
-	if (new_mode == cl->cmode)// Ä£Ê½Ã»±ä, ·µ»Ø
+	if (new_mode == cl->cmode)// æ¨¡å¼æ²¡å˜, è¿”å›
 		return;
 
-	if (cl->prio_activity) {	/* not necessary: speed optimization */// cl->prio_activity·Ç0±íÊ¾ÊÇ»î¶¯µÄ½Úµã, ĞèÒªÍ£Ö¹ºóÔÙ¸üĞÂÄ£Ê½
-		if (cl->cmode != HTB_CANT_SEND)// ÈçÔ­À´µÄÄ£Ê½²»¿É·¢ËÍÊı¾İ, ÏÈÍ£¸Ã½Úµã
+	if (cl->prio_activity) {	/* not necessary: speed optimization */// cl->prio_activityé0è¡¨ç¤ºæ˜¯æ´»åŠ¨çš„èŠ‚ç‚¹, éœ€è¦åœæ­¢åå†æ›´æ–°æ¨¡å¼
+		if (cl->cmode != HTB_CANT_SEND)// å¦‚åŸæ¥çš„æ¨¡å¼ä¸å¯å‘é€æ•°æ®, å…ˆåœè¯¥èŠ‚ç‚¹
 			htb_deactivate_prios(q, cl);
 		cl->cmode = new_mode;
-		if (new_mode != HTB_CANT_SEND)// Èç¹ûĞÂÄ£Ê½²»ÊÇ½ûÖ¹·¢ËÍ, ÖØĞÂ¼¤»î½Úµã
+		if (new_mode != HTB_CANT_SEND)// å¦‚æœæ–°æ¨¡å¼ä¸æ˜¯ç¦æ­¢å‘é€, é‡æ–°æ¿€æ´»èŠ‚ç‚¹
 			htb_activate_prios(q, cl);
-	} else // ·Ç»î¶¯Àà±ğ½Úµã, Ö±½Ó¸üĞÂÄ£Ê½Öµ
+	} else // éæ´»åŠ¨ç±»åˆ«èŠ‚ç‚¹, ç›´æ¥æ›´æ–°æ¨¡å¼å€¼
 		cl->cmode = new_mode;
 }
 
@@ -751,20 +751,20 @@ htb_change_class_mode(struct htb_sched *q, struct htb_class *cl, long *diff) //µ
  * for the prio. It can be called on already active leaf safely.
  * It also adds leaf into droplist.
  */
-// ¼¤»îÀà±ğ½á¹¹, ½«¸ÃÀà±ğ½Úµã×÷ÎªÊı¾İ°üÌá¹©Õß, ¶øÊı¾İÀà±ğ±íÌá¹©ÊÇÒ»¸ö
-// ÓĞĞò±í, ÒÔRBÊ÷ĞÎÊ½ÊµÏÖ
-//´´½¨htb_classµÄÊ±ºò´´½¨µÄstruct htb_classÊÇ¼ÓÈëµ½htb_sched(htb qdiscµÄË½ÓĞÊı¾İ)->clhashÖĞ£¬µ«²¢Ã»ÓĞĞÎ³ÉÒ»¿ÅºìºÚÊ÷£¬ĞÎ³ÉºìºÚÊ÷ÊÇÔÚhtb_enqueue->htb_activateÊµÏÖ
+// æ¿€æ´»ç±»åˆ«ç»“æ„, å°†è¯¥ç±»åˆ«èŠ‚ç‚¹ä½œä¸ºæ•°æ®åŒ…æä¾›è€…, è€Œæ•°æ®ç±»åˆ«è¡¨æä¾›æ˜¯ä¸€ä¸ª
+// æœ‰åºè¡¨, ä»¥RBæ ‘å½¢å¼å®ç°
+//åˆ›å»ºhtb_classçš„æ—¶å€™åˆ›å»ºçš„struct htb_classæ˜¯åŠ å…¥åˆ°htb_sched(htb qdiscçš„ç§æœ‰æ•°æ®)->clhashä¸­ï¼Œä½†å¹¶æ²¡æœ‰å½¢æˆä¸€é¢—çº¢é»‘æ ‘ï¼Œå½¢æˆçº¢é»‘æ ‘æ˜¯åœ¨htb_enqueue->htb_activateå®ç°
 static inline void htb_activate(struct htb_sched *q, struct htb_class *cl)
 {
 	WARN_ON(cl->level || !cl->un.leaf.q || !cl->un.leaf.q->q.qlen);
 
-	if (!cl->prio_activity) {// Èç¹ûÀà±ğµÄprio_activity²ÎÊıÎª0²Å½øĞĞ²Ù×÷, ·Ç0±íÊ¾ÒÑ¾­¼¤»îÁË	    
-        // prio_activityÊÇÍ¨¹ıÒ¶×Ó½ÚµãµÄprioÖµÀ´ÉèÖÃµÄ, ÖÁÉÙÊÇ1, ×î´óÊÇ1<<7, ·Ç0Öµ
-        // leaf.aprio±£´æµ±Ç°µÄleaf.prio
+	if (!cl->prio_activity) {// å¦‚æœç±»åˆ«çš„prio_activityå‚æ•°ä¸º0æ‰è¿›è¡Œæ“ä½œ, é0è¡¨ç¤ºå·²ç»æ¿€æ´»äº†	    
+        // prio_activityæ˜¯é€šè¿‡å¶å­èŠ‚ç‚¹çš„prioå€¼æ¥è®¾ç½®çš„, è‡³å°‘æ˜¯1, æœ€å¤§æ˜¯1<<7, é0å€¼
+        // leaf.aprioä¿å­˜å½“å‰çš„leaf.prio
 		cl->prio_activity = 1 << cl->prio;
-		htb_activate_prios(q, cl);// ½øĞĞÊµ¼ÊµÄ¼¤»î²Ù×÷
+		htb_activate_prios(q, cl);// è¿›è¡Œå®é™…çš„æ¿€æ´»æ“ä½œ
 		list_add_tail(&cl->un.leaf.drop_list,
-			      q->drops + cl->prio);// ¸ù¾İleaf.aprioÌí¼Óµ½Ö¸¶¨µÄÓÅÏÈÈ¨Î»ÖÃµÄ¶ª°üÁ´±í
+			      q->drops + cl->prio);// æ ¹æ®leaf.aprioæ·»åŠ åˆ°æŒ‡å®šçš„ä¼˜å…ˆæƒä½ç½®çš„ä¸¢åŒ…é“¾è¡¨
 	}
 }
 
@@ -774,7 +774,7 @@ static inline void htb_activate(struct htb_sched *q, struct htb_class *cl)
  * Make sure that leaf is active. In the other words it can't be called
  * with non-active leaf. It also removes class from the drop list.
  *//*
-HTB³ö¶Ó¹ı³Ì
+HTBå‡ºé˜Ÿè¿‡ç¨‹
 __qdisc_run -> qdisc_restart -> dequeue_skb -> htb_dequeue
 htb_dequeue
   -> __skb_dequeue
@@ -794,13 +794,13 @@ htb_dequeue
   -> htb_delay_by
 
 */
-//½«Àà±ğÒ¶×Ó½Úµã´Ó»î¶¯µÄÊı¾İ°üÌá¹©Ê÷ÖĞÈ¥µô,clÊÇÒ¶×Ó½Úµã
+//å°†ç±»åˆ«å¶å­èŠ‚ç‚¹ä»æ´»åŠ¨çš„æ•°æ®åŒ…æä¾›æ ‘ä¸­å»æ‰,clæ˜¯å¶å­èŠ‚ç‚¹
 static inline void htb_deactivate(struct htb_sched *q, struct htb_class *cl)
 {
 	WARN_ON(!cl->prio_activity);
 
-	htb_deactivate_prios(q, cl);// ¹Ø±Õ
-	cl->prio_activity = 0;// Àà±ğµÄ»îĞÔÖµprio_activityÇåÁã
+	htb_deactivate_prios(q, cl);// å…³é—­
+	cl->prio_activity = 0;// ç±»åˆ«çš„æ´»æ€§å€¼prio_activityæ¸…é›¶
 	list_del_init(&cl->un.leaf.drop_list);
 }
 
@@ -809,10 +809,10 @@ static int htb_enqueue(struct sk_buff *skb, struct Qdisc *sch)
 	int uninitialized_var(ret);
 	struct htb_sched *q = qdisc_priv(sch);
 
-	//ÕâÀïÍ¨¹ı¹ıÂËÆ÷Èç¹ûÆ¥ÅäµÄclassÎªÒ¶×ÓÎŞÁÄ¶ÓÁĞ¹æ³Ì£¬Ôò¿ÉÒÔÌø¹ıÖĞ¼ä¶ÓÁĞ¹æ³ÌÊ÷£¬Ö±½ÓÌøµ½Ò¶×Ó£¬Ö±½ÓÈë¶Ó¡£²Î¿¼<HTB½éÉÜÒÔ¼°Ê¹ÓÃ.doc>
-	struct htb_class *cl = htb_classify(skb, sch, &ret);//½ø¶ÓÊ×ÏÈµ÷ÓÃµÄÊÇ·ÖÀàÆ÷£¬²é¿´Êı¾İ°üÒª·Åµ½ÄÇ¸ö¶ÓÁĞÖĞ£¬È»ºóÔÙ½øĞĞ½ø¶Ó²Ù×÷
+	//è¿™é‡Œé€šè¿‡è¿‡æ»¤å™¨å¦‚æœåŒ¹é…çš„classä¸ºå¶å­æ— èŠé˜Ÿåˆ—è§„ç¨‹ï¼Œåˆ™å¯ä»¥è·³è¿‡ä¸­é—´é˜Ÿåˆ—è§„ç¨‹æ ‘ï¼Œç›´æ¥è·³åˆ°å¶å­ï¼Œç›´æ¥å…¥é˜Ÿã€‚å‚è€ƒ<HTBä»‹ç»ä»¥åŠä½¿ç”¨.doc>
+	struct htb_class *cl = htb_classify(skb, sch, &ret);//è¿›é˜Ÿé¦–å…ˆè°ƒç”¨çš„æ˜¯åˆ†ç±»å™¨ï¼ŒæŸ¥çœ‹æ•°æ®åŒ…è¦æ”¾åˆ°é‚£ä¸ªé˜Ÿåˆ—ä¸­ï¼Œç„¶åå†è¿›è¡Œè¿›é˜Ÿæ“ä½œ
 
-	if (cl == HTB_DIRECT) { //ÔÚ¹ıÂËÆ÷ÖĞÃ»ÓĞÕÒµ½Æ¥ÅäµÄ·ÖÀà£¬²¢ÇÒÄ¬ÈÏµÄclassÒ²Ã»ÕÒµ½£¬Ò²¾ÍÊÇtc adisc add xxxxx defualt 5ÖĞµÄ5¡£ÔòÖ±½ÓÊ¹ÓÃhtb_sched->direct_queueÈë¶Ó
+	if (cl == HTB_DIRECT) { //åœ¨è¿‡æ»¤å™¨ä¸­æ²¡æœ‰æ‰¾åˆ°åŒ¹é…çš„åˆ†ç±»ï¼Œå¹¶ä¸”é»˜è®¤çš„classä¹Ÿæ²¡æ‰¾åˆ°ï¼Œä¹Ÿå°±æ˜¯tc adisc add xxxxx defualt 5ä¸­çš„5ã€‚åˆ™ç›´æ¥ä½¿ç”¨htb_sched->direct_queueå…¥é˜Ÿ
 		/* enqueue to helper queue */
 		if (q->direct_queue.qlen < q->direct_qlen) {
 			__skb_queue_tail(&q->direct_queue, skb);
@@ -829,21 +829,21 @@ static int htb_enqueue(struct sk_buff *skb, struct Qdisc *sch)
 		kfree_skb(skb);
 		return ret;
 #endif
-	} else { //Èç¹ûSKBÊÇÂú×ã¹ıÂËÆ÷¶ÔÓ¦µÄ·ÖÀà¹æÔò£¬»òÕßÄ¬ÈÏdefaultÖĞµÄ¶ÓÁĞ¹æ³Ì´æÔÚ£¬Ôò×ßÕâÀï
-	    if ((ret = qdisc_enqueue(skb, cl->un.leaf.q)) != NET_XMIT_SUCCESS) { //µİ¹éÑ­»·Èë¶Ó£¬Ö±µ½ÕÒµ½Ò¶×Ó½Úµã,htbÄ¬ÈÏµÄÊÇpfifo_qdisc_ops
-    		if (net_xmit_drop_count(ret)) { //Èë¶ÓÊ§°Ü
+	} else { //å¦‚æœSKBæ˜¯æ»¡è¶³è¿‡æ»¤å™¨å¯¹åº”çš„åˆ†ç±»è§„åˆ™ï¼Œæˆ–è€…é»˜è®¤defaultä¸­çš„é˜Ÿåˆ—è§„ç¨‹å­˜åœ¨ï¼Œåˆ™èµ°è¿™é‡Œ
+	    if ((ret = qdisc_enqueue(skb, cl->un.leaf.q)) != NET_XMIT_SUCCESS) { //é€’å½’å¾ªç¯å…¥é˜Ÿï¼Œç›´åˆ°æ‰¾åˆ°å¶å­èŠ‚ç‚¹,htbé»˜è®¤çš„æ˜¯pfifo_qdisc_ops
+    		if (net_xmit_drop_count(ret)) { //å…¥é˜Ÿå¤±è´¥
     			sch->qstats.drops++;
     			cl->qstats.drops++;
     		}
     		return ret;
-    	} else { //Èë¶Ó³É¹¦£¬Èë¶ÓÊµ¼ÊÉÏÊÇ¼Óµ½Ò¶×ÓÎŞÀà¶ÓÁĞ¹æ³ÌÉÏÃæ£¬ÀıÈçpfifo fifo_fastµÈ
+    	} else { //å…¥é˜ŸæˆåŠŸï¼Œå…¥é˜Ÿå®é™…ä¸Šæ˜¯åŠ åˆ°å¶å­æ— ç±»é˜Ÿåˆ—è§„ç¨‹ä¸Šé¢ï¼Œä¾‹å¦‚pfifo fifo_fastç­‰
     		cl->bstats.packets +=
     			skb_is_gso(skb)?skb_shinfo(skb)->gso_segs:1;
 
     		/*
-                // ¼¤»îHTBÀà±ğ, ½¨Á¢¸ÃÀà±ğµÄÊı¾İÌá¹©Ê÷, ÕâÑùdequeueÊ±¿ÉÒÔ´ÓÖĞÈ¡Êı¾İ°ü
-                // Ö»ÓĞÀà±ğ½ÚµãµÄÄ£Ê½ÊÇ¿É·¢ËÍºÍ¿É×â½èµÄÇé¿öÏÂ²Å»á¼¤»î, Èç¹û½ÚµãÊÇ×èÈû
-                // Ä£Ê½, Ôò²»»á±»¼¤»î
+                // æ¿€æ´»HTBç±»åˆ«, å»ºç«‹è¯¥ç±»åˆ«çš„æ•°æ®æä¾›æ ‘, è¿™æ ·dequeueæ—¶å¯ä»¥ä»ä¸­å–æ•°æ®åŒ…
+                // åªæœ‰ç±»åˆ«èŠ‚ç‚¹çš„æ¨¡å¼æ˜¯å¯å‘é€å’Œå¯ç§Ÿå€Ÿçš„æƒ…å†µä¸‹æ‰ä¼šæ¿€æ´», å¦‚æœèŠ‚ç‚¹æ˜¯é˜»å¡
+                // æ¨¡å¼, åˆ™ä¸ä¼šè¢«æ¿€æ´»
     		    */
     		cl->bstats.bytes += qdisc_pkt_len(skb);
     		htb_activate(q, cl);
@@ -894,7 +894,7 @@ static inline void htb_accnt_ctokens(struct htb_class *cl, int bytes, long diff)
  * CAN_SEND) because we can use more precise clock that event queue here.
  * In such case we remove class from event queue first.
  *//*
-HTB³ö¶Ó¹ı³Ì
+HTBå‡ºé˜Ÿè¿‡ç¨‹
 __qdisc_run -> qdisc_restart -> dequeue_skb -> htb_dequeue
 htb_dequeue
   -> __skb_dequeue
@@ -913,7 +913,7 @@ htb_dequeue
       -> htb_add_to_wait_tree
   -> htb_delay_by
 
-*/// ´¦Àí¸ÃÁ÷¿Ø½ÚµãclÒÔ¼°ÆäËùÓĞ¸¸½ÚµãqµÄÁîÅÆÇé¿ö, µ÷Õû¸ÃÀà±ğµÄÄ£Ê½cmode         //µ÷ÕûclassÄ£Ê½£¬Í¬Ê±Í¨¹ıhtb_activate_priosÖØĞÂĞÎ³Érow leafÊ÷µÈ
+*/// å¤„ç†è¯¥æµæ§èŠ‚ç‚¹clä»¥åŠå…¶æ‰€æœ‰çˆ¶èŠ‚ç‚¹qçš„ä»¤ç‰Œæƒ…å†µ, è°ƒæ•´è¯¥ç±»åˆ«çš„æ¨¡å¼cmode         //è°ƒæ•´classæ¨¡å¼ï¼ŒåŒæ—¶é€šè¿‡htb_activate_priosé‡æ–°å½¢æˆrow leafæ ‘ç­‰
 static void htb_charge_class(struct htb_sched *q, struct htb_class *cl,
 			     int level, struct sk_buff *skb)
 {
@@ -921,43 +921,43 @@ static void htb_charge_class(struct htb_sched *q, struct htb_class *cl,
 	enum htb_cmode old_mode;
 	long diff;
 
-    // Ñ­»·ÏòÉÏµ½¸ù½Úµã
+    // å¾ªç¯å‘ä¸Šåˆ°æ ¹èŠ‚ç‚¹
 	while (cl) {
-	    // Ê±¼ä¼ä¸ô
+	    // æ—¶é—´é—´éš”
 		diff = psched_tdiff_bounded(q->now, cl->t_c, cl->mbuffer);
 		
-        // Àà±ğ²ã´Î¸ßµÄ½è³öÔö¼Ó
+        // ç±»åˆ«å±‚æ¬¡é«˜çš„å€Ÿå‡ºå¢åŠ 
 		if (cl->level >= level) {
 			if (cl->level == level)
 				cl->xstats.lends++;
 
-			//¼ÆËãÆÕÍ¨ÁîÅÆ
+			//è®¡ç®—æ™®é€šä»¤ç‰Œ
 			htb_accnt_tokens(cl, bytes, diff);
 		} else {
-            // Àà±ğ²ã´ÎµÍ
-            // ½èÈëÔö¼Ó
+            // ç±»åˆ«å±‚æ¬¡ä½
+            // å€Ÿå…¥å¢åŠ 
 			cl->xstats.borrows++;
-			cl->tokens += diff;	/* we moved t_c; update tokens */// ÁîÅÆÔö¼Ó
+			cl->tokens += diff;	/* we moved t_c; update tokens */// ä»¤ç‰Œå¢åŠ 
 		}
-		htb_accnt_ctokens(cl, bytes, diff);// ¼ÆËãCeilÁîÅÆ
+		htb_accnt_ctokens(cl, bytes, diff);// è®¡ç®—Ceilä»¤ç‰Œ
 		cl->t_c = q->now;
 
-		old_mode = cl->cmode;// ±£´æÀà±ğ½ÚµãÔ­À´µÄÄ£Ê½
+		old_mode = cl->cmode;// ä¿å­˜ç±»åˆ«èŠ‚ç‚¹åŸæ¥çš„æ¨¡å¼
 		diff = 0;
 		
-        // ¸ù¾İĞÂµÄÁîÅÆ,»º³åÇøÊıÀ´¸üĞÂÀà±ğ½ÚµãµÄÄ£Ê½, ÒòÎªÇ°ÃædiffÊı¾İÒÑ¾­ÔÚÁîÅÆÖĞĞŞ¸Ä¹ıÁË
-        // ËùÒÔÏÖÔÚdiffÊäÈëÖµÉèÎª0ÁË, º¯Êı½áÊø, Àà±ğÄ£Ê½²»ÊÇ¿É·¢ËÍÊ±, diffÖĞ±£´æµ±Ç°ÁîÅÆÊı
-        // µÄ¸ºÖµ
-		htb_change_class_mode(q, cl, &diff);//µ÷ÕûclassÄ£Ê½£¬Í¬Ê±Í¨¹ıhtb_activate_priosÖØĞÂĞÎ³Érow leafÊ÷µÈ
-		if (old_mode != cl->cmode) { // Èç¹ûÀà±ğÄ£Ê½·¢ÉúÁË±ä»¯¡£ 
-			if (old_mode != HTB_CAN_SEND)// Èç¹ûÀÏÄ£Ê½²»ÊÇ¿ÉÒÔÖ±½Ó·¢ËÍµÄÄ£Ê½(HTB_CAN_SEND), ËµÃ÷ÔÚµÈ´ıRBÊ÷ÖĞ, Òª´Ó¸ÃRBÊ÷ÖĞÉ¾³ı
+        // æ ¹æ®æ–°çš„ä»¤ç‰Œ,ç¼“å†²åŒºæ•°æ¥æ›´æ–°ç±»åˆ«èŠ‚ç‚¹çš„æ¨¡å¼, å› ä¸ºå‰é¢diffæ•°æ®å·²ç»åœ¨ä»¤ç‰Œä¸­ä¿®æ”¹è¿‡äº†
+        // æ‰€ä»¥ç°åœ¨diffè¾“å…¥å€¼è®¾ä¸º0äº†, å‡½æ•°ç»“æŸ, ç±»åˆ«æ¨¡å¼ä¸æ˜¯å¯å‘é€æ—¶, diffä¸­ä¿å­˜å½“å‰ä»¤ç‰Œæ•°
+        // çš„è´Ÿå€¼
+		htb_change_class_mode(q, cl, &diff);//è°ƒæ•´classæ¨¡å¼ï¼ŒåŒæ—¶é€šè¿‡htb_activate_priosé‡æ–°å½¢æˆrow leafæ ‘ç­‰
+		if (old_mode != cl->cmode) { // å¦‚æœç±»åˆ«æ¨¡å¼å‘ç”Ÿäº†å˜åŒ–ã€‚ 
+			if (old_mode != HTB_CAN_SEND)// å¦‚æœè€æ¨¡å¼ä¸æ˜¯å¯ä»¥ç›´æ¥å‘é€çš„æ¨¡å¼(HTB_CAN_SEND), è¯´æ˜åœ¨ç­‰å¾…RBæ ‘ä¸­, è¦ä»è¯¥RBæ ‘ä¸­åˆ é™¤
 				htb_safe_rb_erase(&cl->pq_node, q->wait_pq + cl->level);
 			if (cl->cmode != HTB_CAN_SEND)
-				htb_add_to_wait_tree(q, cl, diff);// Èç¹ûµ±Ç°ĞÂÄ£Ê½²»ÊÇ¿ÉÒÔÖ±½Ó·¢ËÍµÄÄ£Ê½(HTB_CAN_SEND), ¹Ò½Óµ½ºÏÊÊµÄµÈ´ıRBÊ÷
+				htb_add_to_wait_tree(q, cl, diff);// å¦‚æœå½“å‰æ–°æ¨¡å¼ä¸æ˜¯å¯ä»¥ç›´æ¥å‘é€çš„æ¨¡å¼(HTB_CAN_SEND), æŒ‚æ¥åˆ°åˆé€‚çš„ç­‰å¾…RBæ ‘
 		}
 
 		/* update byte stats except for leaves which are already updated */
-		if (cl->level) {// Èç¹ûÊÇÖĞ¼ä½Úµã, ¸üĞÂÆäÍ³¼ÆÖµ, ÒòÎª¶ÔÓÚÒ¶×Ó½ÚµãÒÑ¾­ÔÚÊı¾İ°ü³ö¶ÓÊ±´¦Àí¹ıÁË
+		if (cl->level) {// å¦‚æœæ˜¯ä¸­é—´èŠ‚ç‚¹, æ›´æ–°å…¶ç»Ÿè®¡å€¼, å› ä¸ºå¯¹äºå¶å­èŠ‚ç‚¹å·²ç»åœ¨æ•°æ®åŒ…å‡ºé˜Ÿæ—¶å¤„ç†è¿‡äº†
 			cl->bstats.bytes += bytes;
 			cl->bstats.packets += skb_is_gso(skb)?
 					skb_shinfo(skb)->gso_segs:1;
@@ -991,7 +991,7 @@ htb_dequeue
       -> htb_safe_rb_erase
       -> htb_add_to_wait_tree
   -> htb_delay_by
-*/ // ¶ÔµÚlevelºÅµÈ´ıÊ÷µÄÀà±ğ½Úµã½øĞĞÄ£Ê½µ÷Õû
+*/ // å¯¹ç¬¬levelå·ç­‰å¾…æ ‘çš„ç±»åˆ«èŠ‚ç‚¹è¿›è¡Œæ¨¡å¼è°ƒæ•´
 static psched_time_t htb_do_events(struct htb_sched *q, int level,
 				   unsigned long start)
 {
@@ -1054,7 +1054,7 @@ static struct rb_node *htb_id_find_next_upper(int prio, struct rb_node *n,
  *
  * Find leaf where current feed pointers points to.
  *//*
-HTB³ö¶Ó¹ı³Ì
+HTBå‡ºé˜Ÿè¿‡ç¨‹
 __qdisc_run -> qdisc_restart -> dequeue_skb -> htb_dequeue
 htb_dequeue
   -> __skb_dequeue
@@ -1072,71 +1072,71 @@ htb_dequeue
       -> htb_safe_rb_erase
       -> htb_add_to_wait_tree
   -> htb_delay_by
-*/ // ²éÕÒÒ¶×Ó·ÖÀà½Úµã  pptr´æ´¢×îºóÕÒµ½µÄÒ¶×Ó½ÚµãµÄ¸¸class£¬   Í¼ĞÎ»¯Àí½â²Î¿¼<Linux htb Ô´´úÂë·ÖÎö >
+*/ // æŸ¥æ‰¾å¶å­åˆ†ç±»èŠ‚ç‚¹  pptrå­˜å‚¨æœ€åæ‰¾åˆ°çš„å¶å­èŠ‚ç‚¹çš„çˆ¶classï¼Œ   å›¾å½¢åŒ–ç†è§£å‚è€ƒ<Linux htb æºä»£ç åˆ†æ >
 static struct htb_class *htb_lookup_leaf(struct rb_root *tree, int prio,
 					 struct rb_node **pptr, u32 * pid)
 {
 	int i;
 	struct {
-		struct rb_node *root;// ¸ù½Úµã
-		struct rb_node **pptr;// ¸¸½ÚµãµØÖ·
+		struct rb_node *root;// æ ¹èŠ‚ç‚¹
+		struct rb_node **pptr;// çˆ¶èŠ‚ç‚¹åœ°å€
 		u32 *pid;
-	} stk[TC_HTB_MAXDEPTH], *sp = stk; //¶¨ÒåÁË8¸öÔªËØµÄÊı×é£¬³õÊ¼spÖ¸ÏòµÚ0¸öÔªËØ¡£ 
+	} stk[TC_HTB_MAXDEPTH], *sp = stk; //å®šä¹‰äº†8ä¸ªå…ƒç´ çš„æ•°ç»„ï¼Œåˆå§‹spæŒ‡å‘ç¬¬0ä¸ªå…ƒç´ ã€‚ 
 
 	BUG_ON(!tree->rb_node);
 	sp->root = tree->rb_node;
 	sp->pptr = pptr;
 	sp->pid = pid;
 
-	for (i = 0; i < 65535; i++) {// 64K´ÎµÄÑ­»·, ÎªÊ²Ã´ÊÇ64KÄØ
-		if (!*sp->pptr && *sp->pid) {// ¸¸½ÚµãÎª¿Õ, ¿É¸¸ID·Ç0, ÖØĞÂ²éÕÒ¸¸½Úµã
+	for (i = 0; i < 65535; i++) {// 64Kæ¬¡çš„å¾ªç¯, ä¸ºä»€ä¹ˆæ˜¯64Kå‘¢
+		if (!*sp->pptr && *sp->pid) {// çˆ¶èŠ‚ç‚¹ä¸ºç©º, å¯çˆ¶IDé0, é‡æ–°æŸ¥æ‰¾çˆ¶èŠ‚ç‚¹
 			/* ptr was invalidated but id is valid - try to recover
 			   the original or next ptr */
 			*sp->pptr =
 			    htb_id_find_next_upper(prio, sp->root, *sp->pid);
 		}
 
-		// ¸¸IDÇåÁã
+		// çˆ¶IDæ¸…é›¶
 		*sp->pid = 0;	/* ptr is valid now so that remove this hint as it
 				   can become out of date quickly */
-		if (!*sp->pptr) {	/* we are at right end; rewind & go up */ // Èç¹û¸¸½Úµã»¹ÊÇÎª¿Õ
-			*sp->pptr = sp->root;// ¸¸½ÚµãÉèÖÃÎª¸ù½Úµã
+		if (!*sp->pptr) {	/* we are at right end; rewind & go up */ // å¦‚æœçˆ¶èŠ‚ç‚¹è¿˜æ˜¯ä¸ºç©º
+			*sp->pptr = sp->root;// çˆ¶èŠ‚ç‚¹è®¾ç½®ä¸ºæ ¹èŠ‚ç‚¹
 			while ((*sp->pptr)->rb_left)
-				*sp->pptr = (*sp->pptr)->rb_left;// ¸¸½ÚµãÉèÖÃÎª×îÏÂ²ãµÄ×óÒ¶×Ó½Úµã
+				*sp->pptr = (*sp->pptr)->rb_left;// çˆ¶èŠ‚ç‚¹è®¾ç½®ä¸ºæœ€ä¸‹å±‚çš„å·¦å¶å­èŠ‚ç‚¹
 
-			// Èç¹û²»ÔÙÊÇÊı×éµÄ0ÔªËØ, ÕâÊÇÏÂÃæ´úÂëÖ´ĞĞ¹ıµÄÇé¿ö
+			// å¦‚æœä¸å†æ˜¯æ•°ç»„çš„0å…ƒç´ , è¿™æ˜¯ä¸‹é¢ä»£ç æ‰§è¡Œè¿‡çš„æƒ…å†µ
 			if (sp > stk) {
-				sp--;// ÒÆµ½Ç°Ò»ÔªËØ
-				if (!*sp->pptr) {// Èç¹û¸ÃÔªËØµÄ¸¸½ÚµãÎª¿Õ, ·µ»Ø¿Õ, ÕâÀïÊÇÑ­»·³ö¿Ú1
+				sp--;// ç§»åˆ°å‰ä¸€å…ƒç´ 
+				if (!*sp->pptr) {// å¦‚æœè¯¥å…ƒç´ çš„çˆ¶èŠ‚ç‚¹ä¸ºç©º, è¿”å›ç©º, è¿™é‡Œæ˜¯å¾ªç¯å‡ºå£1
 					WARN_ON(1);
 					return NULL;
 				}
-				htb_next_rb_node(sp->pptr);// pptr¸üĞÂÎªÏÂÒ»¸ö½Úµã
+				htb_next_rb_node(sp->pptr);// pptræ›´æ–°ä¸ºä¸‹ä¸€ä¸ªèŠ‚ç‚¹
 			}
 		} else {
 			struct htb_class *cl;
-			// ÌáÈ¡¸¸½ÚµãÖĞµÄµÚprioºÅ½Úµã¶ÔÓ¦µÄHTBÀà±ğ½á¹¹
+			// æå–çˆ¶èŠ‚ç‚¹ä¸­çš„ç¬¬prioå·èŠ‚ç‚¹å¯¹åº”çš„HTBç±»åˆ«ç»“æ„
 			cl = rb_entry(*sp->pptr, struct htb_class, node[prio]);
-			if (!cl->level)// Èç¹ûÊÇÒ¶×Ó½Úµã, ·µ»Ø, ÕâÀïÊÇÑ­»·³ö¿Ú2
+			if (!cl->level)// å¦‚æœæ˜¯å¶å­èŠ‚ç‚¹, è¿”å›, è¿™é‡Œæ˜¯å¾ªç¯å‡ºå£2
 				return cl;
 			
-            // ÒÆ¶¯µ½stkÊı×éµÄÏÂÒ»Ïî
-            // ÓÃ¸ÃHTBÀà±ğ½á¹¹²ÎÊıÀ´³õÊ¼»¯¸ÃÊı×éÏîµÄ²ÎÊıÖØĞÂÑ­»·
+            // ç§»åŠ¨åˆ°stkæ•°ç»„çš„ä¸‹ä¸€é¡¹
+            // ç”¨è¯¥HTBç±»åˆ«ç»“æ„å‚æ•°æ¥åˆå§‹åŒ–è¯¥æ•°ç»„é¡¹çš„å‚æ•°é‡æ–°å¾ªç¯
 			(++sp)->root = cl->un.inner.feed[prio].rb_node;
 			sp->pptr = cl->un.inner.ptr + prio;
 			sp->pid = cl->un.inner.last_ptr_id + prio;
 		}
 	}
 	WARN_ON(1);
-	// Ñ­»·½áÊøÒ²Ã»ÕÒµ½ºÏÊÊ½Úµã, ·µ»Ø¿Õ
+	// å¾ªç¯ç»“æŸä¹Ÿæ²¡æ‰¾åˆ°åˆé€‚èŠ‚ç‚¹, è¿”å›ç©º
 	return NULL;
 }
 
 /* dequeues packet at given priority and level; call only if
    you are sure that there is active class at prio/level 
-   3.DRRÊÇÔõÃ´ÊµÏÖµÄ£¿ 
+   3.DRRæ˜¯æ€ä¹ˆå®ç°çš„ï¼Ÿ 
    
-   ËùÎ½deficit round robin£¬ÊÇÔÚhtb_dequeue_tree()º¯ÊıµÄÄ©Î²ÊµÏÖµÄ¡£ 
+   æ‰€è°“deficit round robinï¼Œæ˜¯åœ¨htb_dequeue_tree()å‡½æ•°çš„æœ«å°¾å®ç°çš„ã€‚ 
    
    860 if (likely(skb != NULL)) { 
    861      bstats_update(&cl->bstats, skb); 
@@ -1147,9 +1147,9 @@ static struct htb_class *htb_lookup_leaf(struct rb_root *tree, int prio,
    866                                              &q->hlevel[0].hprio[prio].ptr);   
    867      }  
    874 } 
-   ²î¶îÂÖÑ­µ÷¶È£»¿÷¿ÕÂÖÑ­£»²î¶îÂÖÑ¯
+   å·®é¢è½®å¾ªè°ƒåº¦ï¼›äºç©ºè½®å¾ªï¼›å·®é¢è½®è¯¢
    *//*
-HTB³ö¶Ó¹ı³Ì
+HTBå‡ºé˜Ÿè¿‡ç¨‹
 __qdisc_run -> qdisc_restart -> dequeue_skb -> htb_dequeue
 htb_dequeue
   -> __skb_dequeue
@@ -1169,7 +1169,7 @@ htb_dequeue
   -> htb_delay_by
 
 */
-// ´ÓÖ¸¶¨µÄ²ã´ÎºÍÓÅÏÈÈ¨µÄRBÊ÷½ÚµãÖĞÈ¡Êı¾İ°ü
+// ä»æŒ‡å®šçš„å±‚æ¬¡å’Œä¼˜å…ˆæƒçš„RBæ ‘èŠ‚ç‚¹ä¸­å–æ•°æ®åŒ…
 static struct sk_buff *htb_dequeue_tree(struct htb_sched *q, int prio,
 					int level)
 {
@@ -1178,79 +1178,79 @@ static struct sk_buff *htb_dequeue_tree(struct htb_sched *q, int prio,
 	/* look initial class up in the row */
 	start = cl = htb_lookup_leaf(q->row[level] + prio, prio,
 				     q->ptr[level] + prio,
-				     q->last_ptr_id[level] + prio); // ¸ù¾İ²ã´ÎºÍÓÅÏÈÈ¨Öµ²éÕÒÆğÊ¼Àà±ğ½Úµã
+				     q->last_ptr_id[level] + prio); // æ ¹æ®å±‚æ¬¡å’Œä¼˜å…ˆæƒå€¼æŸ¥æ‰¾èµ·å§‹ç±»åˆ«èŠ‚ç‚¹
 
 	do {
 next:
-		if (unlikely(!cl))// Èç¹ûÀà±ğÎª¿Õ, ·µ»ØÊı¾İ°üÎª¿Õ
+		if (unlikely(!cl))// å¦‚æœç±»åˆ«ä¸ºç©º, è¿”å›æ•°æ®åŒ…ä¸ºç©º
 			return NULL;
 
 		/* class can be empty - it is unlikely but can be true if leaf
 		   qdisc drops packets in enqueue routine or if someone used
 		   graft operation on the leaf since last dequeue;
 		   simply deactivate and skip such class */
-		if (unlikely(cl->un.leaf.q->q.qlen == 0)) {// Èç¹û¶ÓÁĞ³¤¶ÈÎª0, ¶ÓÁĞ¿ÕµÄÇé¿ö, ¿ÉÄÜĞÔ½ÏĞ¡
+		if (unlikely(cl->un.leaf.q->q.qlen == 0)) {// å¦‚æœé˜Ÿåˆ—é•¿åº¦ä¸º0, é˜Ÿåˆ—ç©ºçš„æƒ…å†µ, å¯èƒ½æ€§è¾ƒå°
 			struct htb_class *next;
-			htb_deactivate(q, cl);// ¸ÃÀà±ğ¶ÓÁĞÖĞÃ»Êı¾İ°üÁË, Í£Ö¹¸ÃÀà±ğ½á¹¹
+			htb_deactivate(q, cl);// è¯¥ç±»åˆ«é˜Ÿåˆ—ä¸­æ²¡æ•°æ®åŒ…äº†, åœæ­¢è¯¥ç±»åˆ«ç»“æ„
 
 			/* row/level might become empty */
-			if ((q->row_mask[level] & (1 << prio)) == 0)// ÑÚÂë¸ÃÎ»Îª0£¬ ±íÊ¾¸Ã²ã¸ÃprioµÄrbÊ÷Îª¿Õ, Ã»ÓĞÊı¾İÌá¹©Ê÷£¬ ·µ»ØÊı¾İ°üÎª¿Õ
+			if ((q->row_mask[level] & (1 << prio)) == 0)// æ©ç è¯¥ä½ä¸º0ï¼Œ è¡¨ç¤ºè¯¥å±‚è¯¥prioçš„rbæ ‘ä¸ºç©º, æ²¡æœ‰æ•°æ®æä¾›æ ‘ï¼Œ è¿”å›æ•°æ®åŒ…ä¸ºç©º
 				return NULL;
 
 			next = htb_lookup_leaf(q->row[level] + prio,
 					       prio, q->ptr[level] + prio,
-					       q->last_ptr_id[level] + prio);// ·ñÔòÖØĞÂ²éÕÒ¸Ã²ã¸ÃÓÅÏÈÈ¨µÄRBÊ÷£¬Ò²¾ÍÊÇ²éÕÒq->row[level] + prioºìºÚÊ÷ÖĞµÄÏÂÒ»¸öclass
+					       q->last_ptr_id[level] + prio);// å¦åˆ™é‡æ–°æŸ¥æ‰¾è¯¥å±‚è¯¥ä¼˜å…ˆæƒçš„RBæ ‘ï¼Œä¹Ÿå°±æ˜¯æŸ¥æ‰¾q->row[level] + prioçº¢é»‘æ ‘ä¸­çš„ä¸‹ä¸€ä¸ªclass
 
-            //´ÓĞÂÕÒµ½µÄÕâ¸öÀà±ğ½á¹¹cl¿ªÊ¼Ñ­»·, ÕÒ¶ÓÁĞ·Ç¿ÕµÄ½Úµã
+            //ä»æ–°æ‰¾åˆ°çš„è¿™ä¸ªç±»åˆ«ç»“æ„clå¼€å§‹å¾ªç¯, æ‰¾é˜Ÿåˆ—éç©ºçš„èŠ‚ç‚¹
 			if (cl == start)	/* fix start if we just deleted it */
 				start = next;
 			cl = next;
-			goto next; // Õâ¸ögotoĞÎ³ÉÁË´óÑ­»·ÖĞµÄĞ¡Ñ­»·, ÕÒ¶ÓÁĞ³¤¶È·Ç¿ÕµÄÀà±ğ½Úµã
+			goto next; // è¿™ä¸ªgotoå½¢æˆäº†å¤§å¾ªç¯ä¸­çš„å°å¾ªç¯, æ‰¾é˜Ÿåˆ—é•¿åº¦éç©ºçš„ç±»åˆ«èŠ‚ç‚¹
 		}
         
-        // ÒÔÏÂÊÇ¶ÓÁĞ³¤¶È·Ç¿ÕµÄÇé¿ö, ÔËĞĞ¸ÃÀà±ğ½á¹¹µÄÄÚ²¿Á÷¿Ø½ÚµãµÄ³ö¶Ó²Ù×÷, 
-        // ÕâÖ÷Òª¿´¸Ã½ÚµãÊ¹ÓÃÄÇÖÖÁ÷¿ØËã·¨ÁË, ÈçtbfÖ®Àà¾Í¿ÉÒÔÊµÏÖÁ÷Á¿ÏŞÖÆ 
+        // ä»¥ä¸‹æ˜¯é˜Ÿåˆ—é•¿åº¦éç©ºçš„æƒ…å†µ, è¿è¡Œè¯¥ç±»åˆ«ç»“æ„çš„å†…éƒ¨æµæ§èŠ‚ç‚¹çš„å‡ºé˜Ÿæ“ä½œ, 
+        // è¿™ä¸»è¦çœ‹è¯¥èŠ‚ç‚¹ä½¿ç”¨é‚£ç§æµæ§ç®—æ³•äº†, å¦‚tbfä¹‹ç±»å°±å¯ä»¥å®ç°æµé‡é™åˆ¶ 
 		skb = cl->un.leaf.q->dequeue(cl->un.leaf.q);
-		// È¡µÃÊı¾İ°ü, ÖĞ¶ÏÑ­»·×¼±¸·µ»Ø
+		// å–å¾—æ•°æ®åŒ…, ä¸­æ–­å¾ªç¯å‡†å¤‡è¿”å›
 		if (likely(skb != NULL))
 			break;
 
-		qdisc_warn_nonwc("htb", cl->un.leaf.q);// Ã»È¡µÃÊı¾İ°ü, ´òÓ¡¾¯¸æĞÅÏ¢, ¸ÃĞÅÏ¢ÔÚÑ­»·ÖĞÖ»´òÓ¡Ò»´Î
-		htb_next_rb_node((level ? cl->parent->un.inner.ptr : q->ptr[0]) + prio);// ¸üĞÂµ½ÏÂÒ»¸örbÊ÷½Úµã
+		qdisc_warn_nonwc("htb", cl->un.leaf.q);// æ²¡å–å¾—æ•°æ®åŒ…, æ‰“å°è­¦å‘Šä¿¡æ¯, è¯¥ä¿¡æ¯åœ¨å¾ªç¯ä¸­åªæ‰“å°ä¸€æ¬¡
+		htb_next_rb_node((level ? cl->parent->un.inner.ptr : q->ptr[0]) + prio);// æ›´æ–°åˆ°ä¸‹ä¸€ä¸ªrbæ ‘èŠ‚ç‚¹
 		cl = htb_lookup_leaf(q->row[level] + prio, prio,
 				     q->ptr[level] + prio,
-				     q->last_ptr_id[level] + prio);// ¼ÌĞø²éÕÒ¸Ã²ã¸ÃÓÅÏÈÈ¨µÄRBÊ÷ÖĞÕÒÒ¶×ÓÀà±ğ½Úµã, Ñ­»·
+				     q->last_ptr_id[level] + prio);// ç»§ç»­æŸ¥æ‰¾è¯¥å±‚è¯¥ä¼˜å…ˆæƒçš„RBæ ‘ä¸­æ‰¾å¶å­ç±»åˆ«èŠ‚ç‚¹, å¾ªç¯
     
-    // µ±ÕÒµ½µÄĞÂ½Úµã²»ÊÇÆğÊ¼½Úµã¾Í½øĞĞÑ­»·Ö±µ½È¡µÃÊı¾İ°ü, µ±±éÀúÍêºó»áÓÖ»Øµ½start½Úµã
-    // ¶øÖĞ¶ÏÑ­»·
+    // å½“æ‰¾åˆ°çš„æ–°èŠ‚ç‚¹ä¸æ˜¯èµ·å§‹èŠ‚ç‚¹å°±è¿›è¡Œå¾ªç¯ç›´åˆ°å–å¾—æ•°æ®åŒ…, å½“éå†å®Œåä¼šåˆå›åˆ°startèŠ‚ç‚¹
+    // è€Œä¸­æ–­å¾ªç¯
 	} while (cl != start);
 
 	if (likely(skb != NULL)) {    
-        // ÕÒµ½Êı¾İ°üµÄÇé¿ö, ¿ÉÄÜĞÔºÜ´ó
-        // ¼ÆËã³à×Ödeficit, ¼õÊı¾İ°ü³¤¶È, ¶ødeficitÊÇ³õÊ¼»¯Îª0µÄ
+        // æ‰¾åˆ°æ•°æ®åŒ…çš„æƒ…å†µ, å¯èƒ½æ€§å¾ˆå¤§
+        // è®¡ç®—èµ¤å­—deficit, å‡æ•°æ®åŒ…é•¿åº¦, è€Œdeficitæ˜¯åˆå§‹åŒ–ä¸º0çš„
 		cl->un.leaf.deficit[level] -= qdisc_pkt_len(skb);
-		// Èç¹û¸ÃÀà±ğ½ÚµãµÄ³à×ÖÎª¸º, Ôö¼ÓÒ»¸ö¶¨¶îÁ¿, È±Ê¡ÊÇÎïÀíÍø¿¨µÄ¶ÓÁĞ³¤¶È
+		// å¦‚æœè¯¥ç±»åˆ«èŠ‚ç‚¹çš„èµ¤å­—ä¸ºè´Ÿ, å¢åŠ ä¸€ä¸ªå®šé¢é‡, ç¼ºçœæ˜¯ç‰©ç†ç½‘å¡çš„é˜Ÿåˆ—é•¿åº¦
 		if (cl->un.leaf.deficit[level] < 0) {
 			cl->un.leaf.deficit[level] += cl->quantum;
-            // ¸üĞÂµ½ÏÂÒ»¸örbÊ÷½Úµã, Èç¹ûÊÇÖĞ¼ä½Úµã, Ôò¸üĞÂ¸¸½ÚµãµÄÄÚ²¿½á¹¹ÖĞµÄÖ¸Õë, ·ñÔò
-            // ´ÓÁ÷¿Ø½á¹¹ÖĞ¸üĞÂ, ÊµÏÖÍ¬Ò»Àà±ğÊ÷ÖĞ²»Í¬Àà±ğÀà±ğ½ÚµãµÄ×ª»», ²»»áÒ»Ö±ÏŞÖÆÔÚÒ»¸ö½Úµã
-            //¸Ãº¯Êıµ÷ÓÃºó»áÈÃcl->parent->un.inner.ptr + prio»òÕßq->ptr[0]  + prioÖ¸ÏòÏÂÒ»¸ö½Úµã
+            // æ›´æ–°åˆ°ä¸‹ä¸€ä¸ªrbæ ‘èŠ‚ç‚¹, å¦‚æœæ˜¯ä¸­é—´èŠ‚ç‚¹, åˆ™æ›´æ–°çˆ¶èŠ‚ç‚¹çš„å†…éƒ¨ç»“æ„ä¸­çš„æŒ‡é’ˆ, å¦åˆ™
+            // ä»æµæ§ç»“æ„ä¸­æ›´æ–°, å®ç°åŒä¸€ç±»åˆ«æ ‘ä¸­ä¸åŒç±»åˆ«ç±»åˆ«èŠ‚ç‚¹çš„è½¬æ¢, ä¸ä¼šä¸€ç›´é™åˆ¶åœ¨ä¸€ä¸ªèŠ‚ç‚¹
+            //è¯¥å‡½æ•°è°ƒç”¨åä¼šè®©cl->parent->un.inner.ptr + prioæˆ–è€…q->ptr[0]  + prioæŒ‡å‘ä¸‹ä¸€ä¸ªèŠ‚ç‚¹
 			htb_next_rb_node((level ? cl->parent->un.inner.ptr : q->ptr[0]) + prio);
 		}
-		// Èç¹û³à×ÖÎªÕı¾Í²»»á½øĞĞRBÊı½ÚµãµÄ¸ü»»
+		// å¦‚æœèµ¤å­—ä¸ºæ­£å°±ä¸ä¼šè¿›è¡ŒRBæ•°èŠ‚ç‚¹çš„æ›´æ¢
 		/* this used to be after charge_class but this constelation
 		   gives us slightly better performance */
-		// Èç¹û¶ÓÁĞ¿ÕÁË, Í£Ö¹¸ÃÀà±ğ
+		// å¦‚æœé˜Ÿåˆ—ç©ºäº†, åœæ­¢è¯¥ç±»åˆ«
 		if (!cl->un.leaf.q->q.qlen)
 			htb_deactivate(q, cl);
-		// ´¦Àí¸ÃÁ÷¿Ø½ÚµãÒÔ¼°ÆäËùÓĞ¸¸½ÚµãµÄÁîÅÆÇé¿ö, µ÷Õû¸ÃÀà±ğµÄÄ£Ê½cmode
+		// å¤„ç†è¯¥æµæ§èŠ‚ç‚¹ä»¥åŠå…¶æ‰€æœ‰çˆ¶èŠ‚ç‚¹çš„ä»¤ç‰Œæƒ…å†µ, è°ƒæ•´è¯¥ç±»åˆ«çš„æ¨¡å¼cmode
 		htb_charge_class(q, cl, level, skb);
 	}
 	return skb;
 }
 
 /*
-HTBµÄ³ö¶ÓÊÇ¸ö·Ç³£¸´ÔÓµÄ´¦Àí¹ı³Ì, º¯Êıµ÷ÓÃ¹ı³ÌÎª:
+HTBçš„å‡ºé˜Ÿæ˜¯ä¸ªéå¸¸å¤æ‚çš„å¤„ç†è¿‡ç¨‹, å‡½æ•°è°ƒç”¨è¿‡ç¨‹ä¸º:
 __qdisc_run -> qdisc_restart -> dequeue_skb -> htb_dequeue
 
 htb_dequeue
@@ -1279,50 +1279,50 @@ static struct sk_buff *htb_dequeue(struct Qdisc *sch)
 	unsigned long start_at;
 
 	/* try to dequeue direct packets as high prio (!) to minimize cpu work */
-	skb = __skb_dequeue(&q->direct_queue); //ÏÈ°Ñ²»ĞèÒªÏŞËÙµÄSKB±¨ÎÄ·¢ËÍ³öÈ¥
+	skb = __skb_dequeue(&q->direct_queue); //å…ˆæŠŠä¸éœ€è¦é™é€Ÿçš„SKBæŠ¥æ–‡å‘é€å‡ºå»
 	if (skb != NULL) {
-		sch->flags &= ~TCQ_F_THROTTLED;// È¡µ½Êı¾İ°ü, ¸üĞÂ²ÎÊı, ·Ç×èÈû, ·µ»Ø
+		sch->flags &= ~TCQ_F_THROTTLED;// å–åˆ°æ•°æ®åŒ…, æ›´æ–°å‚æ•°, éé˜»å¡, è¿”å›
 		sch->q.qlen--;
 		return skb;
 	}
 
 	if (!sch->q.qlen)
 		goto fin;
-	q->now = psched_get_time();// »ñÈ¡µ±Ç°ÓĞĞ§Ê±¼äÖµ
-	start_at = jiffies;// ±£´æµ±Ç°Ê±¼äµÎ´ğÊı
+	q->now = psched_get_time();// è·å–å½“å‰æœ‰æ•ˆæ—¶é—´å€¼
+	start_at = jiffies;// ä¿å­˜å½“å‰æ—¶é—´æ»´ç­”æ•°
 
 	next_event = q->now + 5 * PSCHED_TICKS_PER_SEC;
 
-	for (level = 0; level < TC_HTB_MAXDEPTH; level++) {// ±éÀúÊ÷µÄËùÓĞ²ã´Î, ´ÓÒ¶×Ó½Úµã¿ªÊ¼
+	for (level = 0; level < TC_HTB_MAXDEPTH; level++) {// éå†æ ‘çš„æ‰€æœ‰å±‚æ¬¡, ä»å¶å­èŠ‚ç‚¹å¼€å§‹
 		/* common case optimization - skip event handler quickly */
 		int m;
 		psched_time_t event;
      
-        // ¼ÆËãÑÓ³ÙÖµ, ÊÇÈ¡Êı¾İ°üÊ§°ÜµÄÇé¿öÏÂ¸üĞÂHTB¶¨Ê±Æ÷µÄÑÓ³ÙÊ±¼ä
-        // ±È½ÏROWÊ÷ÖĞ¸Ã²ã½Úµã×î½üµÄÊÂ¼ş¶¨Ê±Ê±¼äÊÇ·ñÒÑ¾­µ½ÁË 
+        // è®¡ç®—å»¶è¿Ÿå€¼, æ˜¯å–æ•°æ®åŒ…å¤±è´¥çš„æƒ…å†µä¸‹æ›´æ–°HTBå®šæ—¶å™¨çš„å»¶è¿Ÿæ—¶é—´
+        // æ¯”è¾ƒROWæ ‘ä¸­è¯¥å±‚èŠ‚ç‚¹æœ€è¿‘çš„äº‹ä»¶å®šæ—¶æ—¶é—´æ˜¯å¦å·²ç»åˆ°äº† 
 		if (q->now >= q->near_ev_cache[level]) {
-			event = htb_do_events(q, level, start_at);// Ê±¼äµ½ÁË, ´¦ÀíHTBÊÂ¼ş, ·µ»ØÖµÊÇÏÂÒ»¸öÊÂ¼şµÄÑÓ³ÙÊ±¼ä
+			event = htb_do_events(q, level, start_at);// æ—¶é—´åˆ°äº†, å¤„ç†HTBäº‹ä»¶, è¿”å›å€¼æ˜¯ä¸‹ä¸€ä¸ªäº‹ä»¶çš„å»¶è¿Ÿæ—¶é—´
 			if (!event)
 				event = q->now + PSCHED_TICKS_PER_SEC;
-			q->near_ev_cache[level] = event;// ¸üĞÂ±¾²ã×î½ü¶¨Ê±Ê±¼ä
+			q->near_ev_cache[level] = event;// æ›´æ–°æœ¬å±‚æœ€è¿‘å®šæ—¶æ—¶é—´
 		} else
-			event = q->near_ev_cache[level];// Ê±¼ä»¹Ã»µ½, ¼ÆËãÁ½ÕßÊ±¼ä²î
+			event = q->near_ev_cache[level];// æ—¶é—´è¿˜æ²¡åˆ°, è®¡ç®—ä¸¤è€…æ—¶é—´å·®
 
-        // ¸üĞÂ×îĞ¡ÑÓ³ÙÖµ, ×¢ÒâÕâÊÇÔÚÑ­»·ÀïÃæ½øĞĞ¸üĞÂµÄ, Ñ­»·ÕÒ³ö×îĞ¡µÄÑÓ³ÙÊ±¼ä
+        // æ›´æ–°æœ€å°å»¶è¿Ÿå€¼, æ³¨æ„è¿™æ˜¯åœ¨å¾ªç¯é‡Œé¢è¿›è¡Œæ›´æ–°çš„, å¾ªç¯æ‰¾å‡ºæœ€å°çš„å»¶è¿Ÿæ—¶é—´
 		if (next_event > event)
 			next_event = event;
 
-        //¸Ã²ã´ÎµÄrow_maskÈ¡·´, Êµ¼ÊÊÇÎªÕÒµ½row_mask[level]ÖĞÎª1µÄÎ», Îª1±íÊ¾¸ÃÊ÷ÓĞÊı¾İ°ü¿ÉÓÃ
+        //è¯¥å±‚æ¬¡çš„row_maskå–å, å®é™…æ˜¯ä¸ºæ‰¾åˆ°row_mask[level]ä¸­ä¸º1çš„ä½, ä¸º1è¡¨ç¤ºè¯¥æ ‘æœ‰æ•°æ®åŒ…å¯ç”¨
 		m = ~q->row_mask[level];
-		while (m != (int)(-1)) { //±éÀúÃ¿²ãlevelÖĞµÄËùÓĞprio, q->row[level] + prio
-            //mµÄÊı¾İÎ»ÖĞµÚÒ»¸ö0Î»µÄÎ»ÖÃ×÷ÎªÓÅÏÈ¼¶Öµ, ´ÓµÍÎ»¿ªÊ¼ÕÒ, Ò²¾ÍÊÇprioÔ½Ğ¡, Êµ¼ÊÊı¾İµÄÓÅÏÈÈ¨Ô½´ó, Ô½ÏÈ³ö¶Ó
+		while (m != (int)(-1)) { //éå†æ¯å±‚levelä¸­çš„æ‰€æœ‰prio, q->row[level] + prio
+            //mçš„æ•°æ®ä½ä¸­ç¬¬ä¸€ä¸ª0ä½çš„ä½ç½®ä½œä¸ºä¼˜å…ˆçº§å€¼, ä»ä½ä½å¼€å§‹æ‰¾, ä¹Ÿå°±æ˜¯prioè¶Šå°, å®é™…æ•°æ®çš„ä¼˜å…ˆæƒè¶Šå¤§, è¶Šå…ˆå‡ºé˜Ÿ
 			int prio = ffz(m);
 			m |= 1 << prio;
-            // ´Ó¸ÃÓÅÏÈÈ¨ÖµµÄÁ÷¿ØÊ÷ÖĞ½øĞĞ³ö¶Ó²Ù×÷HTBµÄÁ÷¿Ø¾ÍÔÚ¸Ãº¯ÊıÖĞÌåÏÖ
-			skb = htb_dequeue_tree(q, prio, level);// ´ÓÖ¸¶¨µÄ²ã´ÎºÍÓÅÏÈÈ¨µÄRBÊ÷½ÚµãÖĞÈ¡Êı¾İ°ü
+            // ä»è¯¥ä¼˜å…ˆæƒå€¼çš„æµæ§æ ‘ä¸­è¿›è¡Œå‡ºé˜Ÿæ“ä½œHTBçš„æµæ§å°±åœ¨è¯¥å‡½æ•°ä¸­ä½“ç°
+			skb = htb_dequeue_tree(q, prio, level);// ä»æŒ‡å®šçš„å±‚æ¬¡å’Œä¼˜å…ˆæƒçš„RBæ ‘èŠ‚ç‚¹ä¸­å–æ•°æ®åŒ…
 			if (likely(skb != NULL)) {
-                // Êı¾İ°ü³ö¶Ó³É¹¦, ¸üĞÂ²ÎÊı, ÍË³öÑ­»·, ·µ»ØÊı¾İ°ü
-                // È¡Êı¾İ°ü³É¹¦¾ÍÒªÈ¥µôÁ÷¿Ø½ÚµãµÄ×èÈû±êÖ¾
+                // æ•°æ®åŒ…å‡ºé˜ŸæˆåŠŸ, æ›´æ–°å‚æ•°, é€€å‡ºå¾ªç¯, è¿”å›æ•°æ®åŒ…
+                // å–æ•°æ®åŒ…æˆåŠŸå°±è¦å»æ‰æµæ§èŠ‚ç‚¹çš„é˜»å¡æ ‡å¿—
 				sch->q.qlen--;
 				sch->flags &= ~TCQ_F_THROTTLED;
 				goto fin;
@@ -1344,16 +1344,16 @@ static unsigned int htb_drop(struct Qdisc *sch)
 	struct htb_sched *q = qdisc_priv(sch);
 	int prio;
 
-	for (prio = TC_HTB_NUMPRIO - 1; prio >= 0; prio--) {// ±éÀú¸÷¸ö¼¶±ğµÄ¶ª°üÁ´±í, ×îÏÈ²Ù×÷µÄÊÇ7ºÅÁ´±í, ×îºó²Ù×÷µÄÊÇ0ºÅÁ´±í
+	for (prio = TC_HTB_NUMPRIO - 1; prio >= 0; prio--) {// éå†å„ä¸ªçº§åˆ«çš„ä¸¢åŒ…é“¾è¡¨, æœ€å…ˆæ“ä½œçš„æ˜¯7å·é“¾è¡¨, æœ€åæ“ä½œçš„æ˜¯0å·é“¾è¡¨
 		struct list_head *p;
 		list_for_each(p, q->drops + prio) {
 			struct htb_class *cl = list_entry(p, struct htb_class,
 							  un.leaf.drop_list);
 			unsigned int len;
 			if (cl->un.leaf.q->ops->drop &&
-			    (len = cl->un.leaf.q->ops->drop(cl->un.leaf.q))) {// Èç¹û¸ÃÀà±ğµÄÒ¶×Ó½ÚµãÁ÷¿Ø¶¨ÒåÁË¶ª°ü²Ù×÷, ½øĞĞÏàÓ¦¶ª°ü²Ù×÷
+			    (len = cl->un.leaf.q->ops->drop(cl->un.leaf.q))) {// å¦‚æœè¯¥ç±»åˆ«çš„å¶å­èŠ‚ç‚¹æµæ§å®šä¹‰äº†ä¸¢åŒ…æ“ä½œ, è¿›è¡Œç›¸åº”ä¸¢åŒ…æ“ä½œ
 				sch->q.qlen--;
-				if (!cl->un.leaf.q->q.qlen)// ×ÓÁ÷¿Ø½ÚµãÎª¿Õ, Í£Ö¹¸ÃÀà±ğ
+				if (!cl->un.leaf.q->q.qlen)// å­æµæ§èŠ‚ç‚¹ä¸ºç©º, åœæ­¢è¯¥ç±»åˆ«
 					htb_deactivate(q, cl);
 				return len;
 			}
@@ -1422,7 +1422,7 @@ static int htb_init(struct Qdisc *sch, struct nlattr *opt)
 	if (!opt)
 		return -EINVAL;
 
-	err = nla_parse_nested(tb, TCA_HTB_INIT, opt, htb_policy);// ¼ì²éÓÃ»§¿Õ¼ä´«¹ıÀ´µÄ³õÊ¼»¯Êı¾İµÄºÏ·¨ĞÔ
+	err = nla_parse_nested(tb, TCA_HTB_INIT, opt, htb_policy);// æ£€æŸ¥ç”¨æˆ·ç©ºé—´ä¼ è¿‡æ¥çš„åˆå§‹åŒ–æ•°æ®çš„åˆæ³•æ€§
 	if (err < 0)
 		return err;
 
@@ -1431,7 +1431,7 @@ static int htb_init(struct Qdisc *sch, struct nlattr *opt)
 		return -EINVAL;
 	}
 	gopt = nla_data(tb[TCA_HTB_INIT]);
-	if (gopt->version != HTB_VER >> 16) {// ¼ì²é°æ±¾ĞÅÏ¢ÊÇ·ñÆ¥Åä
+	if (gopt->version != HTB_VER >> 16) {// æ£€æŸ¥ç‰ˆæœ¬ä¿¡æ¯æ˜¯å¦åŒ¹é…
 		printk(KERN_ERR
 		       "HTB: need tc/htb version %d (minor is %d), you have %d\n",
 		       HTB_VER >> 16, HTB_VER & 0xffff, gopt->version);
@@ -1452,14 +1452,14 @@ static int htb_init(struct Qdisc *sch, struct nlattr *opt)
 	if (q->direct_qlen < 2)	/* some devices have zero tx_queue_len */
 		q->direct_qlen = 2;
 
-	if ((q->rate2quantum = gopt->rate2quantum) < 1) // Á÷Á¿µ½¶¨¶î×ª»»²ÎÊı, ÊÇTCÃüÁîÖĞµÄr2q²ÎÊı
+	if ((q->rate2quantum = gopt->rate2quantum) < 1) // æµé‡åˆ°å®šé¢è½¬æ¢å‚æ•°, æ˜¯TCå‘½ä»¤ä¸­çš„r2qå‚æ•°
 		q->rate2quantum = 1;
-	q->defcls = gopt->defcls;// È±Ê¡Àà±ğ
+	q->defcls = gopt->defcls;// ç¼ºçœç±»åˆ«
 
 	return 0;
 }
 
-//Êä³öHTB²ÎÊı
+//è¾“å‡ºHTBå‚æ•°
 static int htb_dump(struct Qdisc *sch, struct sk_buff *skb)
 {
 	spinlock_t *root_lock = qdisc_root_sleeping_lock(sch);
@@ -1469,17 +1469,17 @@ static int htb_dump(struct Qdisc *sch, struct sk_buff *skb)
 
 	spin_lock_bh(root_lock);
 
-	gopt.direct_pkts = q->direct_pkts;// Ö±½Ó·¢ËÍµÄÊı¾İ°üÊıÁ¿
+	gopt.direct_pkts = q->direct_pkts;// ç›´æ¥å‘é€çš„æ•°æ®åŒ…æ•°é‡
 	gopt.version = HTB_VER;
 	gopt.rate2quantum = q->rate2quantum;
 	gopt.defcls = q->defcls;
 	gopt.debug = 0;
 
-    // ·µ»ØÊı¾İÔÚÊı¾İ°üÖĞµÄ¾ßÌåÎ»ÖÃ
+    // è¿”å›æ•°æ®åœ¨æ•°æ®åŒ…ä¸­çš„å…·ä½“ä½ç½®
 	nest = nla_nest_start(skb, TCA_OPTIONS);
 	if (nest == NULL)
 		goto nla_put_failure;
-	NLA_PUT(skb, TCA_HTB_INIT, sizeof(gopt), &gopt);// ÌîÈëÑ¡Ïî²ÎÊı
+	NLA_PUT(skb, TCA_HTB_INIT, sizeof(gopt), &gopt);// å¡«å…¥é€‰é¡¹å‚æ•°
 	nla_nest_end(skb, nest);
 
 	spin_unlock_bh(root_lock);
@@ -1493,7 +1493,7 @@ nla_put_failure:
 /*
 root@mc_core:~# tc class show dev eth0
 class htb 2:3 root prio 0 rate 328bit ceil 4440bit burst 1599b cburst 1599b 
-*///Ó¦ÓÃ²ãÍ¨¹ıtc class show»ñÈ¡htb²ÎÊıĞÅÏ¢
+*///åº”ç”¨å±‚é€šè¿‡tc class showè·å–htbå‚æ•°ä¿¡æ¯
 static int htb_dump_class(struct Qdisc *sch, unsigned long arg,
 			  struct sk_buff *skb, struct tcmsg *tcm)
 {
@@ -1503,29 +1503,29 @@ static int htb_dump_class(struct Qdisc *sch, unsigned long arg,
 	struct tc_htb_opt opt;
 
 	spin_lock_bh(root_lock);
-	// ¸¸½ÚµãµÄÀà±ğID
+	// çˆ¶èŠ‚ç‚¹çš„ç±»åˆ«ID
 	tcm->tcm_parent = cl->parent ? cl->parent->common.classid : TC_H_ROOT;
-	// ±¾½ÚµãµÄÀà±ğID
+	// æœ¬èŠ‚ç‚¹çš„ç±»åˆ«ID
 	tcm->tcm_handle = cl->common.classid;
-	if (!cl->level && cl->un.leaf.q)// Èç¹ûÊÇÒ¶×Ó½Úµã, Ìá¹©Ò¶×Ó½ÚµãµÄÁ÷¿Ø½ÚµãµÄID
+	if (!cl->level && cl->un.leaf.q)// å¦‚æœæ˜¯å¶å­èŠ‚ç‚¹, æä¾›å¶å­èŠ‚ç‚¹çš„æµæ§èŠ‚ç‚¹çš„ID
 		tcm->tcm_info = cl->un.leaf.q->handle;
 
 	nest = nla_nest_start(skb, TCA_OPTIONS);
 	if (nest == NULL)
 		goto nla_put_failure;
 
-	memset(&opt, 0, sizeof(opt));// ÒÔÏÂÌá¹©¸ÃÀà±ğµÄ¸÷ÖÖ²ÎÊı
+	memset(&opt, 0, sizeof(opt));// ä»¥ä¸‹æä¾›è¯¥ç±»åˆ«çš„å„ç§å‚æ•°
 
-	opt.rate = cl->rate->rate;// ËÙÂÊ
-	opt.buffer = cl->buffer;// Êı¾İ»º³åÇø
-	opt.ceil = cl->ceil->rate;// ·åÖµËÙÂÊ
-	opt.cbuffer = cl->cbuffer;// ·åÖµÊı¾İ»º³åÇø
-	opt.quantum = cl->quantum;// ¶¨¶î
+	opt.rate = cl->rate->rate;// é€Ÿç‡
+	opt.buffer = cl->buffer;// æ•°æ®ç¼“å†²åŒº
+	opt.ceil = cl->ceil->rate;// å³°å€¼é€Ÿç‡
+	opt.cbuffer = cl->cbuffer;// å³°å€¼æ•°æ®ç¼“å†²åŒº
+	opt.quantum = cl->quantum;// å®šé¢
 	opt.prio = cl->prio;
-	opt.level = cl->level;// ²ã´ÎÖµ
+	opt.level = cl->level;// å±‚æ¬¡å€¼
 	NLA_PUT(skb, TCA_HTB_PARMS, sizeof(opt), &opt);
 
-	nla_nest_end(skb, nest);// Êµ¼ÊÊı¾İ³¤¶È
+	nla_nest_end(skb, nest);// å®é™…æ•°æ®é•¿åº¦
 	spin_unlock_bh(root_lock);
 	return skb->len;
 
@@ -1535,60 +1535,60 @@ nla_put_failure:
 	return -1;
 }
 
-//Ó¦ÓÃ²ãtc -s qdisc ls dev eth0    Àà±ğÍ³¼ÆĞÅÏ¢Êä³ö 
+//åº”ç”¨å±‚tc -s qdisc ls dev eth0    ç±»åˆ«ç»Ÿè®¡ä¿¡æ¯è¾“å‡º 
 static int
 htb_dump_class_stats(struct Qdisc *sch, unsigned long arg, struct gnet_dump *d)
 {
 	struct htb_class *cl = (struct htb_class *)arg;
 
-	if (!cl->level && cl->un.leaf.q)// Ò¶×Ó½Úµã, Ìá¹©µ±Ç°ÄÚ²¿Á÷¿Ø½á¹¹µÄ¶ÓÁĞ³¤¶È
+	if (!cl->level && cl->un.leaf.q)// å¶å­èŠ‚ç‚¹, æä¾›å½“å‰å†…éƒ¨æµæ§ç»“æ„çš„é˜Ÿåˆ—é•¿åº¦
 		cl->qstats.qlen = cl->un.leaf.q->q.qlen;
-	cl->xstats.tokens = cl->tokens; //µ±Ç°ÁîÅÆÊı
-	cl->xstats.ctokens = cl->ctokens;// ·åÖµÁîÅÆÊı
+	cl->xstats.tokens = cl->tokens; //å½“å‰ä»¤ç‰Œæ•°
+	cl->xstats.ctokens = cl->ctokens;// å³°å€¼ä»¤ç‰Œæ•°
 
-    // ·Ö±ğ½«»ù±¾²ÎÊı, ËÙÂÊ²ÎÊı, ¶ÓÁĞ²ÎÊı¿½±´µ½Ä¿µÄ»º´æ, ÕâĞ©¶¼ÊÇ±ê×¼²ÎÊı
+    // åˆ†åˆ«å°†åŸºæœ¬å‚æ•°, é€Ÿç‡å‚æ•°, é˜Ÿåˆ—å‚æ•°æ‹·è´åˆ°ç›®çš„ç¼“å­˜, è¿™äº›éƒ½æ˜¯æ ‡å‡†å‚æ•°
 	if (gnet_stats_copy_basic(d, &cl->bstats) < 0 ||
 	    gnet_stats_copy_rate_est(d, NULL, &cl->rate_est) < 0 ||
 	    gnet_stats_copy_queue(d, &cl->qstats) < 0)
 		return -1;
 
-    // ½«Ó¦ÓÃÊı¾İ(HTB×ÔÉíÍ³¼ÆÊı¾İ)¿½±´µ½Ä¿µÄ»º´æ
+    // å°†åº”ç”¨æ•°æ®(HTBè‡ªèº«ç»Ÿè®¡æ•°æ®)æ‹·è´åˆ°ç›®çš„ç¼“å­˜
 	return gnet_stats_copy_app(d, &cl->xstats, sizeof(cl->xstats));
 }
 
-//Ê¹ÓÃhtb_graft()º¯ÊıÀ´ÉèÖÃÒ¶×Ó½ÚµãµÄÁ÷¿Ø·½·¨.
+//ä½¿ç”¨htb_graft()å‡½æ•°æ¥è®¾ç½®å¶å­èŠ‚ç‚¹çš„æµæ§æ–¹æ³•.
 
 static int htb_graft(struct Qdisc *sch, unsigned long arg, struct Qdisc *new,
 		     struct Qdisc **old)
 {
 	struct htb_class *cl = (struct htb_class *)arg;
 
-	if (cl->level)// Àà±ğ½á¹¹·Ç¿Õ¶øÇÒ²ã´ÎÎª0(Ò¶×Ó½Úµã)
+	if (cl->level)// ç±»åˆ«ç»“æ„éç©ºè€Œä¸”å±‚æ¬¡ä¸º0(å¶å­èŠ‚ç‚¹)
 		return -EINVAL;
 	if (new == NULL &&
 	    (new = qdisc_create_dflt(qdisc_dev(sch), sch->dev_queue,
 				     &pfifo_qdisc_ops,
-				     cl->common.classid)) == NULL)// Èç¹ûÃ»¶¨Òå×¨ÃÅµÄÁ÷¿Ø·½·¨, ÔòÈ±Ê¡¶¨Òåpfifo×÷ÎªÈ±Ê¡µÄÁ÷¿Ø·½·¨
+				     cl->common.classid)) == NULL)// å¦‚æœæ²¡å®šä¹‰ä¸“é—¨çš„æµæ§æ–¹æ³•, åˆ™ç¼ºçœå®šä¹‰pfifoä½œä¸ºç¼ºçœçš„æµæ§æ–¹æ³•
 		return -ENOBUFS;
 
 	sch_tree_lock(sch);
 	*old = cl->un.leaf.q;
-	cl->un.leaf.q = new;// ½«ĞÂµÄÁ÷¿Ø·½·¨×÷ÎªÀà±ğ½á¹¹Ò¶×Ó½ÚµãµÄÁ÷¿Ø·½·¨
+	cl->un.leaf.q = new;// å°†æ–°çš„æµæ§æ–¹æ³•ä½œä¸ºç±»åˆ«ç»“æ„å¶å­èŠ‚ç‚¹çš„æµæ§æ–¹æ³•
 	if (*old != NULL) {
-        // Èç¹û¸ÃÀà±ğ»¹´¦ÓÚ»î¶¯×´Ì¬, Í£Ö¹, ÒòÎªÆäÔ­À´µÄÁ÷¿Ø·½·¨ÒÑ¾­Òª±»ÊÍ·Åµô, 
-        // ²»ÔÙ´¦ÀíÊı¾İ°ü
+        // å¦‚æœè¯¥ç±»åˆ«è¿˜å¤„äºæ´»åŠ¨çŠ¶æ€, åœæ­¢, å› ä¸ºå…¶åŸæ¥çš„æµæ§æ–¹æ³•å·²ç»è¦è¢«é‡Šæ”¾æ‰, 
+        // ä¸å†å¤„ç†æ•°æ®åŒ…
 		qdisc_tree_decrease_qlen(*old, (*old)->q.qlen);
-		qdisc_reset(*old);// ½«ÀÏÁ÷¿Ø½ÚµãÊÍ·Åµô
+		qdisc_reset(*old);// å°†è€æµæ§èŠ‚ç‚¹é‡Šæ”¾æ‰
 	}
 	sch_tree_unlock(sch);
 	return 0;
 }
 
-//ÔÚÄÚºËÖĞ»áÊ¹ÓÃhtb_leaf()²éÕÒHTBÒ¶×Ó½Úµã
+//åœ¨å†…æ ¸ä¸­ä¼šä½¿ç”¨htb_leaf()æŸ¥æ‰¾HTBå¶å­èŠ‚ç‚¹
 static struct Qdisc *htb_leaf(struct Qdisc *sch, unsigned long arg)
 {
 	struct htb_class *cl = (struct htb_class *)arg;
-	return !cl->level ? cl->un.leaf.q : NULL;// Èç¹ûÀà±ğ½á¹¹·Ç¿Õ¶øÇÒÊÇÒ¶×Ó½Úµã, ·µ»Ø¸ÃÀà±ğÒ¶×Ó½ÚµãµÄÁ÷¿Ø
+	return !cl->level ? cl->un.leaf.q : NULL;// å¦‚æœç±»åˆ«ç»“æ„éç©ºè€Œä¸”æ˜¯å¶å­èŠ‚ç‚¹, è¿”å›è¯¥ç±»åˆ«å¶å­èŠ‚ç‚¹çš„æµæ§
 }
 
 static void htb_qlen_notify(struct Qdisc *sch, unsigned long arg)
@@ -1599,8 +1599,8 @@ static void htb_qlen_notify(struct Qdisc *sch, unsigned long arg)
 		htb_deactivate(qdisc_priv(sch), cl);
 }
 
-//¸ù¾İtc class add parent 3 classid 3:4ÖĞµÄclassid 3:4ÕÒµ½¶ÔÓ¦µÄÄÚºË·ÖÀàĞÅÏ¢½á¹¹htb_class£¬²¢°ÑµØÖ·Ç¿ÖÆ×ª»»ÎªlongÀàĞÍ
-static unsigned long htb_get(struct Qdisc *sch, u32 classid) //Ôö¼ÓÀà±ğµÄÒıÓÃ¼ÆÊı,¼õÉÙhtb_put
+//æ ¹æ®tc class add parent 3 classid 3:4ä¸­çš„classid 3:4æ‰¾åˆ°å¯¹åº”çš„å†…æ ¸åˆ†ç±»ä¿¡æ¯ç»“æ„htb_classï¼Œå¹¶æŠŠåœ°å€å¼ºåˆ¶è½¬æ¢ä¸ºlongç±»å‹
+static unsigned long htb_get(struct Qdisc *sch, u32 classid) //å¢åŠ ç±»åˆ«çš„å¼•ç”¨è®¡æ•°,å‡å°‘htb_put
 {
 	struct htb_class *cl = htb_find(classid, sch);
 	if (cl)
@@ -1742,24 +1742,24 @@ static void htb_put(struct Qdisc *sch, unsigned long arg)
 		htb_destroy_class(sch, cl);
 }
 
-//¸ü¸ÄÀà±ğ½á¹¹ÄÚ²¿²ÎÊı
+//æ›´æ”¹ç±»åˆ«ç»“æ„å†…éƒ¨å‚æ•°
 static int htb_change_class(struct Qdisc *sch, u32 classid,
 			    u32 parentid, struct nlattr **tca,
 			    unsigned long *arg)
 {
 	int err = -EINVAL;
 	struct htb_sched *q = qdisc_priv(sch);
-	struct htb_class *cl = (struct htb_class *)*arg, *parent;// Àà±ğ½á¹¹Ö¸Õë, ´ÓÉÏ²ã´«Èë
-	struct nlattr *opt = tca[TCA_OPTIONS];// Í¨¹ınetlink½Ó¿Ú´«À´µÄÅäÖÃ²ÎÊı
-	struct qdisc_rate_table *rtab = NULL, *ctab = NULL;// ËÙÂÊ±í, ·åÖµËÙÂÊ±í½á¹¹
-	struct nlattr *tb[TCA_HTB_RTAB + 1];// ±£´æ½âÎöºóµÄ²ÎÊı
-	struct tc_htb_opt *hopt;// HTBÑ¡Ïî
+	struct htb_class *cl = (struct htb_class *)*arg, *parent;// ç±»åˆ«ç»“æ„æŒ‡é’ˆ, ä»ä¸Šå±‚ä¼ å…¥
+	struct nlattr *opt = tca[TCA_OPTIONS];// é€šè¿‡netlinkæ¥å£ä¼ æ¥çš„é…ç½®å‚æ•°
+	struct qdisc_rate_table *rtab = NULL, *ctab = NULL;// é€Ÿç‡è¡¨, å³°å€¼é€Ÿç‡è¡¨ç»“æ„
+	struct nlattr *tb[TCA_HTB_RTAB + 1];// ä¿å­˜è§£æåçš„å‚æ•°
+	struct tc_htb_opt *hopt;// HTBé€‰é¡¹
 
 	/* extract all subattrs from opt attr */
 	if (!opt)
 		goto failure;
 
-	err = nla_parse_nested(tb, TCA_HTB_RTAB, opt, htb_policy);// ½âÎöÊäÈë²ÎÊı, ½øĞĞÏà¹ØºÏ·¨ĞÔ¼ì²é
+	err = nla_parse_nested(tb, TCA_HTB_RTAB, opt, htb_policy);// è§£æè¾“å…¥å‚æ•°, è¿›è¡Œç›¸å…³åˆæ³•æ€§æ£€æŸ¥
 	if (err < 0)
 		goto failure;
 
@@ -1767,18 +1767,18 @@ static int htb_change_class(struct Qdisc *sch, u32 classid,
 	if (tb[TCA_HTB_PARMS] == NULL)
 		goto failure;
 
-    // Èç¹û¸¸½ÚµãID²»ÊÇ¸ùID, ¸ù¾İ´ËID²éÕÒ¸¸½Úµã, ·ñÔòÎª¸¸½Úµã¿Õ
+    // å¦‚æœçˆ¶èŠ‚ç‚¹IDä¸æ˜¯æ ¹ID, æ ¹æ®æ­¤IDæŸ¥æ‰¾çˆ¶èŠ‚ç‚¹, å¦åˆ™ä¸ºçˆ¶èŠ‚ç‚¹ç©º
 	parent = parentid == TC_H_ROOT ? NULL : htb_find(parentid, sch);
 
 	hopt = nla_data(tb[TCA_HTB_PARMS]);
 
-    // ´ÓÊäÈë²ÎÊıÖĞ»ñÈ¡ËÙÂÊ±í½á¹¹: ÆÕÍ¨ËÙÂÊºÍ·åÖµËÙÂÊ
+    // ä»è¾“å…¥å‚æ•°ä¸­è·å–é€Ÿç‡è¡¨ç»“æ„: æ™®é€šé€Ÿç‡å’Œå³°å€¼é€Ÿç‡
 	rtab = qdisc_get_rtab(&hopt->rate, tb[TCA_HTB_RTAB]);
 	ctab = qdisc_get_rtab(&hopt->ceil, tb[TCA_HTB_CTAB]);
 	if (!rtab || !ctab)
 		goto failure;
 
-	if (!cl) {		/* new class */ //clÎª¿Õ£¬±íÊ¾ĞèÒª´´½¨Ò»¸öclassÀà£¬²»Îª¿Õ±íÊ¾ÊÇĞŞ¸Äclass²ÎÊı
+	if (!cl) {		/* new class */ //clä¸ºç©ºï¼Œè¡¨ç¤ºéœ€è¦åˆ›å»ºä¸€ä¸ªclassç±»ï¼Œä¸ä¸ºç©ºè¡¨ç¤ºæ˜¯ä¿®æ”¹classå‚æ•°
 		struct Qdisc *new_q;
 		int prio;
 		struct {
@@ -1798,16 +1798,16 @@ static int htb_change_class(struct Qdisc *sch, u32 classid,
 
 		/* check for valid classid */
 		if (!classid || TC_H_MAJ(classid ^ sch->handle) ||
-		    htb_find(classid, sch))// Àà±ğIDºÏ·¨ĞÔ¼ì²é
+		    htb_find(classid, sch))// ç±»åˆ«IDåˆæ³•æ€§æ£€æŸ¥
 			goto failure;
 
-		/* check maximal depth */// Èç¹û×æ¸¸½Úµã²ã´Î¶¼Ğ¡ÓÚ2, Ò²¾ÍÊÇ×î´óÊÇ1, ±íÊ¾HTB½ÚµãÊ÷Ì«ÉîÁË, Ò¶×Ó½Úµã¶¼Ã»·¨±íÊ¾ÁË
+		/* check maximal depth */// å¦‚æœç¥–çˆ¶èŠ‚ç‚¹å±‚æ¬¡éƒ½å°äº2, ä¹Ÿå°±æ˜¯æœ€å¤§æ˜¯1, è¡¨ç¤ºHTBèŠ‚ç‚¹æ ‘å¤ªæ·±äº†, å¶å­èŠ‚ç‚¹éƒ½æ²¡æ³•è¡¨ç¤ºäº†
 		if (parent && parent->parent && parent->parent->level < 2) {
 			printk(KERN_ERR "htb: tree is too deep\n");
 			goto failure;
 		}
 		err = -ENOBUFS;
-		if ((cl = kzalloc(sizeof(*cl), GFP_KERNEL)) == NULL) //Îªhtb_class·ÖÀàĞÅÏ¢·ÖÅä¿Õ¼ä
+		if ((cl = kzalloc(sizeof(*cl), GFP_KERNEL)) == NULL) //ä¸ºhtb_classåˆ†ç±»ä¿¡æ¯åˆ†é…ç©ºé—´
 			goto failure;
 
 		err = gen_new_estimator(&cl->bstats, &cl->rate_est,
@@ -1818,56 +1818,56 @@ static int htb_change_class(struct Qdisc *sch, u32 classid,
 			goto failure;
 		}
 
-		cl->refcnt = 1;// ³õÊ¼»¯ÒıÓÃ¼ÆÊı
+		cl->refcnt = 1;// åˆå§‹åŒ–å¼•ç”¨è®¡æ•°
 		cl->children = 0;
-		INIT_LIST_HEAD(&cl->un.leaf.drop_list);// ³õÊ¼»¯¶ª°üÁ´±í
-		RB_CLEAR_NODE(&cl->pq_node);// ÉèÖÃÎª¿Õ½Úµã(¸¸½ÚµãÊÇ±¾Éí)
+		INIT_LIST_HEAD(&cl->un.leaf.drop_list);// åˆå§‹åŒ–ä¸¢åŒ…é“¾è¡¨
+		RB_CLEAR_NODE(&cl->pq_node);// è®¾ç½®ä¸ºç©ºèŠ‚ç‚¹(çˆ¶èŠ‚ç‚¹æ˜¯æœ¬èº«)
 
 		for (prio = 0; prio < TC_HTB_NUMPRIO; prio++)
-			RB_CLEAR_NODE(&cl->node[prio]);// ³õÊ¼»¯self or feed tree½Úµã
+			RB_CLEAR_NODE(&cl->node[prio]);// åˆå§‹åŒ–self or feed treeèŠ‚ç‚¹
 
 		/* create leaf qdisc early because it uses kmalloc(GFP_KERNEL)
 		   so that can't be used inside of sch_tree_lock
 		   -- thanks to Karlis Peisenieks */
 		new_q = qdisc_create_dflt(qdisc_dev(sch), sch->dev_queue,
-					  &pfifo_qdisc_ops, classid);// ĞÂµÄÁ÷¿Ø½ÚµãÈ±Ê¡ÊÇÊ¹ÓÃpfifo
+					  &pfifo_qdisc_ops, classid);// æ–°çš„æµæ§èŠ‚ç‚¹ç¼ºçœæ˜¯ä½¿ç”¨pfifo
 		sch_tree_lock(sch);
-		if (parent && !parent->level) { // Èç¹û¸¸½ÚµãÔ­ÏÈÊÇÒ¶×Ó½Úµã, ½«Æä×ªÎªÖĞ¼ä½Úµã, ÒòÎªÏÖÔÚÒÑ¾­ÓĞĞÂµÄÒ¶×Ó½Úµã×÷ÎªÆä×Ó½Úµã
+		if (parent && !parent->level) { // å¦‚æœçˆ¶èŠ‚ç‚¹åŸå…ˆæ˜¯å¶å­èŠ‚ç‚¹, å°†å…¶è½¬ä¸ºä¸­é—´èŠ‚ç‚¹, å› ä¸ºç°åœ¨å·²ç»æœ‰æ–°çš„å¶å­èŠ‚ç‚¹ä½œä¸ºå…¶å­èŠ‚ç‚¹
 			unsigned int qlen = parent->un.leaf.q->q.qlen;
 
 			/* turn parent into inner node */
-			qdisc_reset(parent->un.leaf.q);// ÊÍ·Å¸¸½ÚµãµÄÁ÷¿Ø½á¹¹
+			qdisc_reset(parent->un.leaf.q);// é‡Šæ”¾çˆ¶èŠ‚ç‚¹çš„æµæ§ç»“æ„
 			qdisc_tree_decrease_qlen(parent->un.leaf.q, qlen);
 			qdisc_destroy(parent->un.leaf.q);
-			if (parent->prio_activity)// Èç¹û¸Ã¸¸½ÚµãÕı´¦ÓÚ»î¶¯Çé¿ö, Í£Ö¹
+			if (parent->prio_activity)// å¦‚æœè¯¥çˆ¶èŠ‚ç‚¹æ­£å¤„äºæ´»åŠ¨æƒ…å†µ, åœæ­¢
 				htb_deactivate(q, parent);
 
 			/* remove from evt list because of level change */
-			if (parent->cmode != HTB_CAN_SEND) {// Èç¹û²»ÊÇHTB_CAN_SENDÄ£Ê½, ËµÃ÷¸Ã½ÚµãÔÚµÈ´ı½ÚµãÊ÷ÖĞ, ´Ó¸ÃÊ÷ÖĞÉ¾³ı
+			if (parent->cmode != HTB_CAN_SEND) {// å¦‚æœä¸æ˜¯HTB_CAN_SENDæ¨¡å¼, è¯´æ˜è¯¥èŠ‚ç‚¹åœ¨ç­‰å¾…èŠ‚ç‚¹æ ‘ä¸­, ä»è¯¥æ ‘ä¸­åˆ é™¤
 				htb_safe_rb_erase(&parent->pq_node, q->wait_pq);
 				parent->cmode = HTB_CAN_SEND;
 			}
 			parent->level = (parent->parent ? parent->parent->level
 					 : TC_HTB_MAXDEPTH) - 1;
-		    // ²»ÔÙÊ¹ÓÃÄÚ²¿Ò¶×Ó½á¹¹, ¶øÊÇ¸ÄÎªÊ¹ÓÃHTBÄÚ²¿½á¹¹, ²ÎÊıÇåÁã
+		    // ä¸å†ä½¿ç”¨å†…éƒ¨å¶å­ç»“æ„, è€Œæ˜¯æ”¹ä¸ºä½¿ç”¨HTBå†…éƒ¨ç»“æ„, å‚æ•°æ¸…é›¶
 			memset(&parent->un.inner, 0, sizeof(parent->un.inner));
 		}
 		/* leaf (we) needs elementary qdisc */
-		cl->un.leaf.q = new_q ? new_q : &noop_qdisc;// ÉèÖÃÀà±ğ½á¹¹µÄÒ¶×ÓÁ÷¿Ø½Úµã
+		cl->un.leaf.q = new_q ? new_q : &noop_qdisc;// è®¾ç½®ç±»åˆ«ç»“æ„çš„å¶å­æµæ§èŠ‚ç‚¹
 
-        // Àà±ğ½á¹¹µÄIDºÍ¸¸
+        // ç±»åˆ«ç»“æ„çš„IDå’Œçˆ¶
 		cl->common.classid = classid;
 		cl->parent = parent;
 
-		/* set class to be in HTB_CAN_SEND state */ // ÁîÅÆºÍ·åÖµÁîÅÆ
+		/* set class to be in HTB_CAN_SEND state */ // ä»¤ç‰Œå’Œå³°å€¼ä»¤ç‰Œ
 		cl->tokens = hopt->buffer;
 		cl->ctokens = hopt->cbuffer;
-		cl->mbuffer = 60 * PSCHED_TICKS_PER_SEC;	/* 1min */ // »º³åÇø´óĞ¡
-		cl->t_c = psched_get_time();// ³õÊ¼»¯Ê±¼ä
+		cl->mbuffer = 60 * PSCHED_TICKS_PER_SEC;	/* 1min */ // ç¼“å†²åŒºå¤§å°
+		cl->t_c = psched_get_time();// åˆå§‹åŒ–æ—¶é—´
 		cl->cmode = HTB_CAN_SEND;
 
 		/* attach to the hash list and parent's family */
-		qdisc_class_hash_insert(&q->clhash, &cl->common);// ¹Ò½Óµ½¹şÏ£Á´±í
+		qdisc_class_hash_insert(&q->clhash, &cl->common);// æŒ‚æ¥åˆ°å“ˆå¸Œé“¾è¡¨
 		if (parent)
 			parent->children++;
 	} else {
@@ -1883,7 +1883,7 @@ static int htb_change_class(struct Qdisc *sch, u32 classid,
 
 	/* it used to be a nasty bug here, we have to check that node
 	   is really leaf before changing cl->un.leaf ! */
-	if (!cl->level) {// Èç¹ûÊÇÒ¶×Ó½Úµã, ÉèÖÃÆä¶¨¶î, µ±³öÏÖ³à×ÖÊ±»á°´¶¨¶î´óĞ¡Ôö¼Ó
+	if (!cl->level) {// å¦‚æœæ˜¯å¶å­èŠ‚ç‚¹, è®¾ç½®å…¶å®šé¢, å½“å‡ºç°èµ¤å­—æ—¶ä¼šæŒ‰å®šé¢å¤§å°å¢åŠ 
 		cl->quantum = rtab->rate.rate / q->rate2quantum;
 		if (!hopt->quantum && cl->quantum < 1000) {
 			printk(KERN_WARNING
@@ -1892,7 +1892,7 @@ static int htb_change_class(struct Qdisc *sch, u32 classid,
 			cl->quantum = 1000;
 		}
 
-		// Èç¹û¼ÆËã³öµÄ¶¨¶îÁ¿Ì«Ğ¡»òÌ«´ó, ËµÃ÷rate2quantum²ÎÊı¸Ãµ÷ÕûÁË, Õâ¾ÍÊÇtcÃüÁîÖĞµÄr2q²ÎÊı
+		// å¦‚æœè®¡ç®—å‡ºçš„å®šé¢é‡å¤ªå°æˆ–å¤ªå¤§, è¯´æ˜rate2quantumå‚æ•°è¯¥è°ƒæ•´äº†, è¿™å°±æ˜¯tcå‘½ä»¤ä¸­çš„r2qå‚æ•°
 		if (!hopt->quantum && cl->quantum > 200000) {
 			printk(KERN_WARNING
 			       "HTB: quantum of class %X is big. Consider r2q change.\n",
@@ -1911,7 +1911,7 @@ static int htb_change_class(struct Qdisc *sch, u32 classid,
 	if (cl->rate)
 		qdisc_put_rtab(cl->rate);
 	cl->rate = rtab;
-	// ·åÖµËÙÂÊ¿ØÖÆ½á¹¹¸üĞÂ
+	// å³°å€¼é€Ÿç‡æ§åˆ¶ç»“æ„æ›´æ–°
 	if (cl->ceil)
 		qdisc_put_rtab(cl->ceil);
 	cl->ceil = ctab;
@@ -1930,12 +1930,12 @@ failure:
 	return err;
 }
 
-//²éÕÒ¹ıÂË¹æÔò±í
+//æŸ¥æ‰¾è¿‡æ»¤è§„åˆ™è¡¨
 static struct tcf_proto **htb_find_tcf(struct Qdisc *sch, unsigned long arg)
 {
 	struct htb_sched *q = qdisc_priv(sch);
 	struct htb_class *cl = (struct htb_class *)arg;
-	// Èç¹ûÀà±ğ½á¹¹·Ç¿Õ,Ê¹ÓÃÀà±ğ½á¹¹µÄ¹ıÂË±í, ·ñÔòÊ¹ÓÃHTBË½ÓĞ½á¹¹µÄ¹ıÂË±í
+	// å¦‚æœç±»åˆ«ç»“æ„éç©º,ä½¿ç”¨ç±»åˆ«ç»“æ„çš„è¿‡æ»¤è¡¨, å¦åˆ™ä½¿ç”¨HTBç§æœ‰ç»“æ„çš„è¿‡æ»¤è¡¨
 	struct tcf_proto **fl = cl ? &cl->filter_list : &q->filter_list;
 
 	return fl;
@@ -1944,7 +1944,7 @@ static struct tcf_proto **htb_find_tcf(struct Qdisc *sch, unsigned long arg)
 static unsigned long htb_bind_filter(struct Qdisc *sch, unsigned long parent,
 				     u32 classid)
 {
-	struct htb_class *cl = htb_find(classid, sch);// ¸ù¾İÀà±ğID²éÕÒÀà±ğ½á¹¹
+	struct htb_class *cl = htb_find(classid, sch);// æ ¹æ®ç±»åˆ«IDæŸ¥æ‰¾ç±»åˆ«ç»“æ„
 
 	/*if (cl && !cl->level) return 0;
 	   The line above used to be there to prevent attaching filters to
@@ -1955,7 +1955,7 @@ static unsigned long htb_bind_filter(struct Qdisc *sch, unsigned long parent,
 	   another way to "lock" the class - unlike "get" this lock can
 	   be broken by class during destroy IIUC.
 	 */
-	if (cl)// Èç¹ûÁ÷¿ØÀà±ğ½á¹¹ÓĞĞ§, Ôö¼ÓÆäÊ¹ÓÃ¼ÆÊı
+	if (cl)// å¦‚æœæµæ§ç±»åˆ«ç»“æ„æœ‰æ•ˆ, å¢åŠ å…¶ä½¿ç”¨è®¡æ•°
 		cl->filter_cnt++;
 	return (unsigned long)cl;
 }
@@ -1968,8 +1968,8 @@ static void htb_unbind_filter(struct Qdisc *sch, unsigned long arg)
 		cl->filter_cnt--;
 }
 
-//rtnl_register -> rtnl_dump_allÖĞÔÚÊÕµ½rtlnetlinkÓ¦ÓÃ²ãÅäÖÃĞÅÏ¢µÄÊ±ºò»áÖ´ĞĞcb->fn ,¼ûrtnetlink_init -> rtnl_dump_all
-//±éÀúHTB,Ö´ĞĞ¶ÔÓ¦µÄfn
+//rtnl_register -> rtnl_dump_allä¸­åœ¨æ”¶åˆ°rtlnetlinkåº”ç”¨å±‚é…ç½®ä¿¡æ¯çš„æ—¶å€™ä¼šæ‰§è¡Œcb->fn ,è§rtnetlink_init -> rtnl_dump_all
+//éå†HTB,æ‰§è¡Œå¯¹åº”çš„fn
 static void htb_walk(struct Qdisc *sch, struct qdisc_walker *arg)
 {
 	struct htb_sched *q = qdisc_priv(sch);
@@ -1977,18 +1977,18 @@ static void htb_walk(struct Qdisc *sch, struct qdisc_walker *arg)
 	struct hlist_node *n;
 	unsigned int i;
 
-	if (arg->stop)// Èç¹ûÉèÖÃÍ£Ö¹±êÖ¾, ·µ»Ø
+	if (arg->stop)// å¦‚æœè®¾ç½®åœæ­¢æ ‡å¿—, è¿”å›
 		return;
 
-	for (i = 0; i < q->clhash.hashsize; i++) {// ±éÀúËùÓĞHTB¹şÏ£±í
+	for (i = 0; i < q->clhash.hashsize; i++) {// éå†æ‰€æœ‰HTBå“ˆå¸Œè¡¨
 
-	    // ±éÀú¹şÏ£±íÖĞÃ¿¸öÔªËØ, ¼´HTBÀà±ğ½á¹¹
+	    // éå†å“ˆå¸Œè¡¨ä¸­æ¯ä¸ªå…ƒç´ , å³HTBç±»åˆ«ç»“æ„
 		hlist_for_each_entry(cl, n, &q->clhash.hash[i], common.hnode) {
-			if (arg->count < arg->skip) {// Èç¹ûÒªÌø¹ıskip¸ö¿ªÊ¼µÄÒ»Ğ©½Úµã, Ìø¹ıÕâĞ©½Úµã
+			if (arg->count < arg->skip) {// å¦‚æœè¦è·³è¿‡skipä¸ªå¼€å§‹çš„ä¸€äº›èŠ‚ç‚¹, è·³è¿‡è¿™äº›èŠ‚ç‚¹
 				arg->count++;
 				continue;
 			}
-			if (arg->fn(sch, (unsigned long)cl, arg) < 0) { //º¯ÊıÎªqdisc_class_dump  ¼ûtc_dump_tclass_qdisc
+			if (arg->fn(sch, (unsigned long)cl, arg) < 0) { //å‡½æ•°ä¸ºqdisc_class_dump  è§tc_dump_tclass_qdisc
 				arg->stop = 1;
 				return;
 			}
@@ -1997,8 +1997,8 @@ static void htb_walk(struct Qdisc *sch, struct qdisc_walker *arg)
 	}
 }
 
-//prio¶ÔÓ¦prio_class_ops htb¶ÔÓ¦htb_class_ops cbq¶ÔÓ¦cbq_class_opsµÈµÈ
-static const struct Qdisc_class_ops htb_class_ops = { //tcfÒ»°ã±íÊ¾tcf_proto¹ıÂËÆ÷
+//prioå¯¹åº”prio_class_ops htbå¯¹åº”htb_class_ops cbqå¯¹åº”cbq_class_opsç­‰ç­‰
+static const struct Qdisc_class_ops htb_class_ops = { //tcfä¸€èˆ¬è¡¨ç¤ºtcf_protoè¿‡æ»¤å™¨
 	.graft		=	htb_graft,
 	.leaf		=	htb_leaf,
 	.qlen_notify	=	htb_qlen_notify,
@@ -2014,8 +2014,8 @@ static const struct Qdisc_class_ops htb_class_ops = { //tcfÒ»°ã±íÊ¾tcf_proto¹ıÂË
 	.dump_stats	=	htb_dump_class_stats,
 };
 
-//HTB(·Ö²ãÁîÅÆÍ°)¿ÉÒÔ²Î¿¼:RouterOS QoS HTBÁ÷¿ØÔ­Àí  HTB·Ö²ãÁîÅÆÍ°ÅÅ¶Ó¹æÔò·ÖÎö
-static struct Qdisc_ops htb_qdisc_ops {//__read_mostly = { ²Î¿¼<HTB½éÉÜÒÔ¼°Ê¹ÓÃ.doc>
+//HTB(åˆ†å±‚ä»¤ç‰Œæ¡¶)å¯ä»¥å‚è€ƒ:RouterOS QoS HTBæµæ§åŸç†  HTBåˆ†å±‚ä»¤ç‰Œæ¡¶æ’é˜Ÿè§„åˆ™åˆ†æ
+static struct Qdisc_ops htb_qdisc_ops {//__read_mostly = { å‚è€ƒ<HTBä»‹ç»ä»¥åŠä½¿ç”¨.doc>
 	.next		=	NULL,
 	.cl_ops		=	&htb_class_ops,
 	.id		=	"htb",

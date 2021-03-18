@@ -136,9 +136,9 @@ static DEFINE_RWLOCK(qdisc_mod_lock);
 static struct Qdisc_ops *qdisc_base;
 
 /* Register/uregister queueing discipline */
-//    Ê¹ÓÃint register_qdisc(struct Qdisc_ops *qops)×¢²á¶ÔÏóÀàĞÍ¡£
-//    Ê¹ÓÃint register_tcf_proto_ops(struct tcf_proto_ops *ops)×¢²á¹ıÂËÆ÷ÀàĞÍ¡£
-//ËùÓĞµÄQdisc_ops½á¹¹Í¨¹ıregister_qdiscÌí¼Óµ½qdisc_baseÁ´±íÖĞ
+//    ä½¿ç”¨int register_qdisc(struct Qdisc_ops *qops)æ³¨å†Œå¯¹è±¡ç±»å‹ã€‚
+//    ä½¿ç”¨int register_tcf_proto_ops(struct tcf_proto_ops *ops)æ³¨å†Œè¿‡æ»¤å™¨ç±»å‹ã€‚
+//æ‰€æœ‰çš„Qdisc_opsç»“æ„é€šè¿‡register_qdiscæ·»åŠ åˆ°qdisc_baseé“¾è¡¨ä¸­
 int register_qdisc(struct Qdisc_ops *qops)
 {
 	struct Qdisc_ops *q, **qp;
@@ -243,18 +243,18 @@ static struct Qdisc *qdisc_leaf(struct Qdisc *p, u32 classid)
 
 	if (cops == NULL)
 		return NULL;
-		//ÀıÈçtc qdisc add dev eth0 parent 22:4 handle 33
-	cl = cops->get(p, classid); //prio_class_ops¶ÔÓ¦µÄÊÇ  Èç¹ûÊÇprio¶ÓÁĞ¹æÔò£¬ÔòÕâ¸öÊÇ»ñÈ¡¸¸QdiscÖĞµÄ22:4ÖĞµÄ4
+		//ä¾‹å¦‚tc qdisc add dev eth0 parent 22:4 handle 33
+	cl = cops->get(p, classid); //prio_class_opså¯¹åº”çš„æ˜¯  å¦‚æœæ˜¯prioé˜Ÿåˆ—è§„åˆ™ï¼Œåˆ™è¿™ä¸ªæ˜¯è·å–çˆ¶Qdiscä¸­çš„22:4ä¸­çš„4
 
 	if (cl == 0)
 		return NULL;
-	leaf = cops->leaf(p, cl);//Èç¹û¸¸ÎªprioÀàĞÍ¶ÓÁĞ¹æ³Ì£¬»ñÈ¡¸¸QDISC pÖĞµÄµÚclassid(µÍ16Î»)µÄqdisc£¬prio_sched_data->queues[cl]
+	leaf = cops->leaf(p, cl);//å¦‚æœçˆ¶ä¸ºprioç±»å‹é˜Ÿåˆ—è§„ç¨‹ï¼Œè·å–çˆ¶QDISC pä¸­çš„ç¬¬classid(ä½16ä½)çš„qdiscï¼Œprio_sched_data->queues[cl]
 	cops->put(p, cl);
 	return leaf;
 }
 
 /* Find queueing discipline by name */
-//¸ü¼ÓÅÅ¶Ó¹æÔòÃûµÃµ½ÏµÍ³ÒÑ×¢²áµÄÅÅ¶Ó¹æÔò
+//æ›´åŠ æ’é˜Ÿè§„åˆ™åå¾—åˆ°ç³»ç»Ÿå·²æ³¨å†Œçš„æ’é˜Ÿè§„åˆ™
 static struct Qdisc_ops *qdisc_lookup_ops(struct nlattr *kind)
 {
 	struct Qdisc_ops *q = NULL;
@@ -450,7 +450,7 @@ void qdisc_warn_nonwc(char *txt, struct Qdisc *qdisc)
 		printk(KERN_WARNING
 		       "%s: %s qdisc %X: is non-work-conserving?\n",
 		       txt, qdisc->ops->id, qdisc->handle >> 16);
-		qdisc->flags |= TCQ_F_WARN_NONWC;// ×÷ÎªÒÑ¾­´òÓ¡ÁË¾¯¸æĞÅÏ¢µÄ±êÖ¾
+		qdisc->flags |= TCQ_F_WARN_NONWC;// ä½œä¸ºå·²ç»æ‰“å°äº†è­¦å‘Šä¿¡æ¯çš„æ ‡å¿—
 	}
 }
 EXPORT_SYMBOL(qdisc_warn_nonwc);
@@ -533,13 +533,13 @@ void qdisc_class_hash_grow(struct Qdisc *sch, struct Qdisc_class_hash *clhash)
 	unsigned int i, h;
 
 	/* Rehash when load factor exceeds 0.75 */
-	if (clhash->hashelems * 4 <= clhash->hashsize * 3)//Èç¹ûhash½ÚµãÊıhashelems³¬¹ıÉèÖÃµÄhashsizeµÄ0.75£¬Ôò´ÓĞÂhash£¬hashsizeÀ©´óµ½Ö®Ç°hashsizeÁ½±¶£¬¼ûqdisc_class_hash_grow
+	if (clhash->hashelems * 4 <= clhash->hashsize * 3)//å¦‚æœhashèŠ‚ç‚¹æ•°hashelemsè¶…è¿‡è®¾ç½®çš„hashsizeçš„0.75ï¼Œåˆ™ä»æ–°hashï¼Œhashsizeæ‰©å¤§åˆ°ä¹‹å‰hashsizeä¸¤å€ï¼Œè§qdisc_class_hash_grow
 		return;
 
-    //Êµ¼ÊhashÊı³¬¹ıhashsizeµÄ0.75ºó£¬¾ÍÒªÖØĞÂhash£¬hashsizeÀ©´óµ½Ô­À´µÄ2±¶
-	nsize = clhash->hashsize * 2;//Èç¹ûhash½ÚµãÊıhashelems³¬¹ıÉèÖÃµÄhashsizeµÄ0.75£¬Ôò´ÓĞÂhash£¬hashsizeÀ©´óµ½Ö®Ç°hashsizeÁ½±¶£¬¼ûqdisc_class_hash_grow
+    //å®é™…hashæ•°è¶…è¿‡hashsizeçš„0.75åï¼Œå°±è¦é‡æ–°hashï¼Œhashsizeæ‰©å¤§åˆ°åŸæ¥çš„2å€
+	nsize = clhash->hashsize * 2;//å¦‚æœhashèŠ‚ç‚¹æ•°hashelemsè¶…è¿‡è®¾ç½®çš„hashsizeçš„0.75ï¼Œåˆ™ä»æ–°hashï¼Œhashsizeæ‰©å¤§åˆ°ä¹‹å‰hashsizeä¸¤å€ï¼Œè§qdisc_class_hash_grow
 	nmask = nsize - 1;
-	nhash = qdisc_class_hash_alloc(nsize); //´´½¨nhash[]Êı×é
+	nhash = qdisc_class_hash_alloc(nsize); //åˆ›å»ºnhash[]æ•°ç»„
 	if (nhash == NULL)
 		return;
 
@@ -548,7 +548,7 @@ void qdisc_class_hash_grow(struct Qdisc *sch, struct Qdisc_class_hash *clhash)
 
 	sch_tree_lock(sch);
 	for (i = 0; i < osize; i++) {
-		hlist_for_each_entry_safe(cl, n, next, &ohash[i], hnode) { //´ÓĞÂhashÒ»´Î
+		hlist_for_each_entry_safe(cl, n, next, &ohash[i], hnode) { //ä»æ–°hashä¸€æ¬¡
 			h = qdisc_class_hash(cl->classid, nmask);
 			hlist_add_head(&cl->hnode, &nhash[h]);
 		}
@@ -667,15 +667,15 @@ static void notify_and_destroy(struct net *net, struct sk_buff *skb,
  */
 
 /* 
-tc qdisc add dev eth0 parent 22:4 handle 33 prio bands 5  pÎª22¶ÔÓ¦µÄ¶ÓÁĞ¹æ³Ì qÎª33¶ÔÓ¦µÄ¶ÓÁĞ¹æ³Ì
-dev ÉÏÃæµÄdevºóÃæµÄeth0
-parent:¸¸Qdisc
-skb:Èë¶ÓµÄskb
-n:netlink·¢ËÍµÄnlmsghdr½á¹¹
-classid:¸¸handle£¬ÉÏÃæµÄ33
-new:×ÖQdisc
+tc qdisc add dev eth0 parent 22:4 handle 33 prio bands 5  pä¸º22å¯¹åº”çš„é˜Ÿåˆ—è§„ç¨‹ qä¸º33å¯¹åº”çš„é˜Ÿåˆ—è§„ç¨‹
+dev ä¸Šé¢çš„devåé¢çš„eth0
+parent:çˆ¶Qdisc
+skb:å…¥é˜Ÿçš„skb
+n:netlinkå‘é€çš„nlmsghdrç»“æ„
+classid:çˆ¶handleï¼Œä¸Šé¢çš„33
+new:å­—Qdisc
 */
-//Ìí¼Ó×Ó¶ÓÁĞ¹æ³ÌµÄÊ±ºò£¬Í¨¹ıclassidÀ´½øĞĞ·ÖÀà£¬´Ó¶ø¾ö¶¨°Ñ×ÓQdiscÌí¼Óµ½¸¸QdiscµÄÄÇ¸ö·ÖÀàĞÅÏ¢ÖĞ£¬Ò»°ãÒ»¸öQdisc´ø¶à¸ö·ÖÀàĞÅÏ¢£¬¿ÉÒÔ²Î¿¼prio_qdisc_opsÖĞµÄgetºÍgraft½Ó¿Ú£¬¾ÍºÃÀí½âÁË
+//æ·»åŠ å­é˜Ÿåˆ—è§„ç¨‹çš„æ—¶å€™ï¼Œé€šè¿‡classidæ¥è¿›è¡Œåˆ†ç±»ï¼Œä»è€Œå†³å®šæŠŠå­Qdiscæ·»åŠ åˆ°çˆ¶Qdiscçš„é‚£ä¸ªåˆ†ç±»ä¿¡æ¯ä¸­ï¼Œä¸€èˆ¬ä¸€ä¸ªQdiscå¸¦å¤šä¸ªåˆ†ç±»ä¿¡æ¯ï¼Œå¯ä»¥å‚è€ƒprio_qdisc_opsä¸­çš„getå’Œgraftæ¥å£ï¼Œå°±å¥½ç†è§£äº†
 static int qdisc_graft(struct net_device *dev, struct Qdisc *parent,
 		       struct sk_buff *skb, struct nlmsghdr *n, u32 classid,
 		       struct Qdisc *new, struct Qdisc *old)
@@ -684,7 +684,7 @@ static int qdisc_graft(struct net_device *dev, struct Qdisc *parent,
 	struct net *net = dev_net(dev);
 	int err = 0;
 
-	if (parent == NULL) { //Èç¹ûÊÇ¸ú¶ÓÁĞ¹æ³Ì£¬Ôò°Ñ¸ÃĞÂµÄ¶ÓÁĞ¹æ³ÌºÍdevÉè±¸¹ØÁªÆğÀ´
+	if (parent == NULL) { //å¦‚æœæ˜¯è·Ÿé˜Ÿåˆ—è§„ç¨‹ï¼Œåˆ™æŠŠè¯¥æ–°çš„é˜Ÿåˆ—è§„ç¨‹å’Œdevè®¾å¤‡å…³è”èµ·æ¥
 		unsigned int i, num_q, ingress;
 
 		ingress = 0; 
@@ -692,7 +692,7 @@ static int qdisc_graft(struct net_device *dev, struct Qdisc *parent,
 		if ((q && q->flags & TCQ_F_INGRESS) ||
 		    (new && new->flags & TCQ_F_INGRESS)) {
 			num_q = 1;
-			ingress = 1; //Èë¿Ú¶ÓÁĞ¹æ³Ì
+			ingress = 1; //å…¥å£é˜Ÿåˆ—è§„ç¨‹
 		}
 
 		if (dev->flags & IFF_UP)
@@ -706,12 +706,12 @@ static int qdisc_graft(struct net_device *dev, struct Qdisc *parent,
 		for (i = 0; i < num_q; i++) {
 			struct netdev_queue *dev_queue = &dev->rx_queue;
 
-            //////Èë¿Ú·½Ïò:ingress¶ÔÓ¦µÄÊÇnet_device devÖĞµÄrx_queue£¬³ö¿Ú·½ÏòÎª:net_device devÖĞµÄ_tx[i]
+            //////å…¥å£æ–¹å‘:ingresså¯¹åº”çš„æ˜¯net_device devä¸­çš„rx_queueï¼Œå‡ºå£æ–¹å‘ä¸º:net_device devä¸­çš„_tx[i]
 			if (!ingress)
 				dev_queue = netdev_get_tx_queue(dev, i);
 
 			old = dev_graft_qdisc(dev_queue, new); 
-			//½«¸úQdisc newºÍdevÉè±¸¹ØÁªÆğÀ´   ±£Ö¤net_device -> struct netdev_queue(ÕâÀïÓĞÇø·ÖÊÇÈç·½ÏòµÄ»¹ÊÇ³ö·½ÏòµÄqdisc)Óë¸Ãnew qdisc¹ØÁªÆğÀ´
+			//å°†è·ŸQdisc newå’Œdevè®¾å¤‡å…³è”èµ·æ¥   ä¿è¯net_device -> struct netdev_queue(è¿™é‡Œæœ‰åŒºåˆ†æ˜¯å¦‚æ–¹å‘çš„è¿˜æ˜¯å‡ºæ–¹å‘çš„qdisc)ä¸è¯¥new qdiscå…³è”èµ·æ¥
 			if (new && i > 0)
 				atomic_inc(&new->refcnt);
 
@@ -724,7 +724,7 @@ static int qdisc_graft(struct net_device *dev, struct Qdisc *parent,
 					   dev->qdisc, new);
 			if (new && !new->ops->attach)
 				atomic_inc(&new->refcnt);
-			dev->qdisc = new ? : &noop_qdisc; //dev->qdiscÖ¸ÏòĞÂ´´½¨µÄqdisc
+			dev->qdisc = new ? : &noop_qdisc; //dev->qdiscæŒ‡å‘æ–°åˆ›å»ºçš„qdisc
 		} else {
 			notify_and_destroy(net, skb, n, classid, old, new);
 		}
@@ -735,8 +735,8 @@ static int qdisc_graft(struct net_device *dev, struct Qdisc *parent,
 		const struct Qdisc_class_ops *cops = parent->ops->cl_ops;
 
 		err = -EOPNOTSUPP;
-		if (cops && cops->graft) { //ÒÔprioÓĞÀà¶ÓÁĞ¹æ³ÌÎªÀı£¬¼ûprio_qdisc_ops
-		//Èç¹û·µ»Ø0£¬Ôò±íÊ¾Ñ¡Ôñ·ÖÀàÊı×éµÄÊ±ºò£¬Ñ¡ÔñµÄ½á¹ûÔ½¹ıÁË·ÖÀàÊı×é£¬Ö±½Ó·µ»Ø´íÎó£¬ÀıÈçprioÖĞ¸¸QdiscÖĞÉèÖÃµÄbandÆµµÀÎ»5£¬¶ø´´½¨×ÓQdiscµÄÊ±ºòÊ¹ÓÃ¸¸parent 22:8±íÊ¾Ñ¡Ôñ8ÆµµÀ£¬Ô½½çÁË
+		if (cops && cops->graft) { //ä»¥prioæœ‰ç±»é˜Ÿåˆ—è§„ç¨‹ä¸ºä¾‹ï¼Œè§prio_qdisc_ops
+		//å¦‚æœè¿”å›0ï¼Œåˆ™è¡¨ç¤ºé€‰æ‹©åˆ†ç±»æ•°ç»„çš„æ—¶å€™ï¼Œé€‰æ‹©çš„ç»“æœè¶Šè¿‡äº†åˆ†ç±»æ•°ç»„ï¼Œç›´æ¥è¿”å›é”™è¯¯ï¼Œä¾‹å¦‚prioä¸­çˆ¶Qdiscä¸­è®¾ç½®çš„bandé¢‘é“ä½5ï¼Œè€Œåˆ›å»ºå­Qdiscçš„æ—¶å€™ä½¿ç”¨çˆ¶parent 22:8è¡¨ç¤ºé€‰æ‹©8é¢‘é“ï¼Œè¶Šç•Œäº†
 			unsigned long cl = cops->get(parent, classid); 
 			if (cl) {
 				err = cops->graft(parent, cl, new, &old);
@@ -760,7 +760,7 @@ static struct lock_class_key qdisc_rx_lock;
    Parameters are passed via opt.
  */
 
-//Ö÷ÒªÊÇ´´½¨Qdisc¶ÓÁĞ¹æ³ÌºÍ¶ÔÓ¦µÄQdisc_ops³õÊ¼»¯£¬Èçfifo_init prio_init
+//ä¸»è¦æ˜¯åˆ›å»ºQdiscé˜Ÿåˆ—è§„ç¨‹å’Œå¯¹åº”çš„Qdisc_opsåˆå§‹åŒ–ï¼Œå¦‚fifo_init prio_init
 static struct Qdisc *
 qdisc_create(struct net_device *dev, struct netdev_queue *dev_queue,
 	     struct Qdisc *p, u32 parent, u32 handle,
@@ -819,7 +819,7 @@ qdisc_create(struct net_device *dev, struct netdev_queue *dev_queue,
 		lockdep_set_class(qdisc_lock(sch), &qdisc_rx_lock);
 	} else {
 		if (handle == 0) {
-			handle = qdisc_alloc_handle(dev);//×Ô¶¯·ÖÅäÒ»¸öhandle
+			handle = qdisc_alloc_handle(dev);//è‡ªåŠ¨åˆ†é…ä¸€ä¸ªhandle
 			err = -ENOMEM;
 			if (handle == 0)
 				goto err_out3;
@@ -829,7 +829,7 @@ qdisc_create(struct net_device *dev, struct netdev_queue *dev_queue,
 
 	sch->handle = handle;
 
-	if (!ops->init || (err = ops->init(sch, tca[TCA_OPTIONS])) == 0) {//Èç¹ûÎªprio¶ÓÁĞ¹æ¶¨£¬prio_init³õÊ¼»¯prio²ÎÊı
+	if (!ops->init || (err = ops->init(sch, tca[TCA_OPTIONS])) == 0) {//å¦‚æœä¸ºprioé˜Ÿåˆ—è§„å®šï¼Œprio_initåˆå§‹åŒ–prioå‚æ•°
 		if (tca[TCA_STAB]) {
 			stab = qdisc_get_stab(tca[TCA_STAB]);
 			if (IS_ERR(stab)) {
@@ -838,7 +838,7 @@ qdisc_create(struct net_device *dev, struct netdev_queue *dev_queue,
 			}
 			sch->stab = stab;
 		}
-		if (tca[TCA_RATE]) {//cbq¶ÓÁĞ¹æÔòÖĞµÄrate²ÎÊı
+		if (tca[TCA_RATE]) {//cbqé˜Ÿåˆ—è§„åˆ™ä¸­çš„rateå‚æ•°
 			spinlock_t *root_lock;
 
 			err = -EOPNOTSUPP;
@@ -960,7 +960,7 @@ check_loop_fn(struct Qdisc *q, unsigned long cl, struct qdisc_walker *w)
 /*
  * Delete/get qdisc.
  */
-//Àí½â²Î¿¼pktsched_init
+//ç†è§£å‚è€ƒpktsched_init
 static int tc_get_qdisc(struct sk_buff *skb, struct nlmsghdr *n, void *arg)
 {
 	struct net *net = sock_net(skb->sk);
@@ -1020,22 +1020,22 @@ static int tc_get_qdisc(struct sk_buff *skb, struct nlmsghdr *n, void *arg)
 /*
    Create/change qdisc.
  */
-//Àí½â²Î¿¼pktsched_init         A:BÖĞµÄB¿Ï¶¨´óÓÚ0£¬·ñÔòÔÚÍâ²ã¾Í·µ»Ø´íÁË£¬ÒòÎªÊµ¼ÊÓÃµÄÊ±ºòB»á-1
+//ç†è§£å‚è€ƒpktsched_init         A:Bä¸­çš„Bè‚¯å®šå¤§äº0ï¼Œå¦åˆ™åœ¨å¤–å±‚å°±è¿”å›é”™äº†ï¼Œå› ä¸ºå®é™…ç”¨çš„æ—¶å€™Bä¼š-1
 static int tc_modify_qdisc(struct sk_buff *skb, struct nlmsghdr *n, void *arg)
 {
 	struct net *net = sock_net(skb->sk);
 	struct tcmsg *tcm;
 	struct nlattr *tca[TCA_MAX + 1];
 	struct net_device *dev;
-	u32 clid;//¸¸QdiscµÄhandle
-	//tc qdisc add dev eth0 parent 22:4 handle 33 prio bands 5  pÎª22¶ÔÓ¦µÄ¶ÓÁĞ¹æ³Ì qÎª33¶ÔÓ¦µÄ¶ÓÁĞ¹æ³Ì
-	struct Qdisc *q, *p; //pÊÇ¸¸¶ÓÁĞ¹æ³ÌQdisc, qÊÇ×Ó¶ÓÁĞ¹æ³ÌQdisc 
+	u32 clid;//çˆ¶Qdiscçš„handle
+	//tc qdisc add dev eth0 parent 22:4 handle 33 prio bands 5  pä¸º22å¯¹åº”çš„é˜Ÿåˆ—è§„ç¨‹ qä¸º33å¯¹åº”çš„é˜Ÿåˆ—è§„ç¨‹
+	struct Qdisc *q, *p; //pæ˜¯çˆ¶é˜Ÿåˆ—è§„ç¨‹Qdisc, qæ˜¯å­é˜Ÿåˆ—è§„ç¨‹Qdisc 
 	int err;
 
 replay:
 	/* Reinit, just in case something touches this. */
-	tcm = NLMSG_DATA(n);//nlmsghdrºóÃæ½ô¸úµÄ¾ÍÊÇtcmsg½á¹¹
-	clid = tcm->tcm_parent; //¸¸QdiscµÄhandle
+	tcm = NLMSG_DATA(n);//nlmsghdråé¢ç´§è·Ÿçš„å°±æ˜¯tcmsgç»“æ„
+	clid = tcm->tcm_parent; //çˆ¶Qdiscçš„handle
 	q = p = NULL;
 
 	if ((dev = __dev_get_by_index(net, tcm->tcm_ifindex)) == NULL)
@@ -1046,15 +1046,15 @@ replay:
 		return err;
 
 	if (clid) { //
-		if (clid != TC_H_ROOT) { //²»ÊÇ³ö¶ÓÁĞ¹æÔòµÄ¸ú
-			if (clid != TC_H_INGRESS) { //²»ÊÇÈë¶ÓÁĞ¹æÔòµÄ¸ú
-				if ((p = qdisc_lookup(dev, TC_H_MAJ(clid))) == NULL) //ÕÒ¸¸Qdisc
+		if (clid != TC_H_ROOT) { //ä¸æ˜¯å‡ºé˜Ÿåˆ—è§„åˆ™çš„è·Ÿ
+			if (clid != TC_H_INGRESS) { //ä¸æ˜¯å…¥é˜Ÿåˆ—è§„åˆ™çš„è·Ÿ
+				if ((p = qdisc_lookup(dev, TC_H_MAJ(clid))) == NULL) //æ‰¾çˆ¶Qdisc
 					return -ENOENT;
-				q = qdisc_leaf(p, clid); //»ñÈ¡¸¸¶ÓÁĞ¹æ³ÌpÖĞµÄË½ÓĞÊı¾İ²¿·ÖµÄprio_sched_data->queues[clid]×Ó¶ÓÁĞ¹æ³Ìqdisc
+				q = qdisc_leaf(p, clid); //è·å–çˆ¶é˜Ÿåˆ—è§„ç¨‹pä¸­çš„ç§æœ‰æ•°æ®éƒ¨åˆ†çš„prio_sched_data->queues[clid]å­é˜Ÿåˆ—è§„ç¨‹qdisc
 			} else { /*ingress */
 				q = dev->rx_queue.qdisc_sleeping;
 			}
-		} else { //¸ù¶ÓÁĞ¹æÔò
+		} else { //æ ¹é˜Ÿåˆ—è§„åˆ™
 			q = dev->qdisc;
 		}
 
@@ -1068,7 +1068,7 @@ replay:
 					return -EEXIST;
 				if (TC_H_MIN(tcm->tcm_handle))
 					return -EINVAL;
-				if ((q = qdisc_lookup(dev, tcm->tcm_handle)) == NULL) //Èç¹ûÃ»ÓĞÕÒµ½×ÓQdisc£¬ÔòĞèÒª´´½¨
+				if ((q = qdisc_lookup(dev, tcm->tcm_handle)) == NULL) //å¦‚æœæ²¡æœ‰æ‰¾åˆ°å­Qdiscï¼Œåˆ™éœ€è¦åˆ›å»º
 					goto create_n_graft;
 				if (n->nlmsg_flags&NLM_F_EXCL)
 					return -EEXIST;
@@ -1131,11 +1131,11 @@ replay:
 create_n_graft:
 	if (!(n->nlmsg_flags&NLM_F_CREATE))
 		return -ENOENT;
-	if (clid == TC_H_INGRESS) //Èë·½Ïò¹ıÂË ingress_qdisc_ops
+	if (clid == TC_H_INGRESS) //å…¥æ–¹å‘è¿‡æ»¤ ingress_qdisc_ops
 		q = qdisc_create(dev, &dev->rx_queue, p,
 				 tcm->tcm_parent, tcm->tcm_parent,
 				 tca, &err);
-	else { //³ö·½Ïò¹ıÂË
+	else { //å‡ºæ–¹å‘è¿‡æ»¤
 		struct netdev_queue *dev_queue;
 
 		if (p && p->ops->cl_ops && p->ops->cl_ops->select_queue)
@@ -1156,7 +1156,7 @@ create_n_graft:
 	}
 
 graft:
-	err = qdisc_graft(dev, p, skb, n, clid, q, NULL);//clid:¸¸QdiscµÄhandle
+	err = qdisc_graft(dev, p, skb, n, clid, q, NULL);//clid:çˆ¶Qdiscçš„handle
 	if (err) {
 		if (q)
 			qdisc_destroy(q);
@@ -1335,25 +1335,25 @@ done:
  *	Traffic classes manipulation.		*
  ************************************************/
 
-////classidÖĞµÄ¸ß16Î»±ØĞëºÍ¸¸QdiscµÄhandleµÄ¸ß16ÎªÏàÍ¬ ÀıÈçtc class add dev eth0 parent 1:0 classid 2:1 cbqÖ±½Ó·µ»ØÓ¦ÓÃ²ã´íÎó£¬ÒòÎª¸Ã·ÖÀàĞÅÏ¢ÊôÓÚ¸¸QdiscÎª2:µÄ·ÖÀàĞÅÏ¢£¬¶ø²»ÊÇÊôÓÚ1:
-//Àí½â²Î¿¼pktsched_init    A:BÖĞµÄB¿Ï¶¨´óÓÚ0£¬·ñÔòÔÚÍâ²ã¾Í·µ»Ø´íÁË£¬ÒòÎªÊµ¼ÊÓÃµÄÊ±ºòB»á-1
+////classidä¸­çš„é«˜16ä½å¿…é¡»å’Œçˆ¶Qdiscçš„handleçš„é«˜16ä¸ºç›¸åŒ ä¾‹å¦‚tc class add dev eth0 parent 1:0 classid 2:1 cbqç›´æ¥è¿”å›åº”ç”¨å±‚é”™è¯¯ï¼Œå› ä¸ºè¯¥åˆ†ç±»ä¿¡æ¯å±äºçˆ¶Qdiscä¸º2:çš„åˆ†ç±»ä¿¡æ¯ï¼Œè€Œä¸æ˜¯å±äº1:
+//ç†è§£å‚è€ƒpktsched_init    A:Bä¸­çš„Bè‚¯å®šå¤§äº0ï¼Œå¦åˆ™åœ¨å¤–å±‚å°±è¿”å›é”™äº†ï¼Œå› ä¸ºå®é™…ç”¨çš„æ—¶å€™Bä¼š-1
 static int tc_ctl_tclass(struct sk_buff *skb, struct nlmsghdr *n, void *arg)
 {
 	struct net *net = sock_net(skb->sk);
 	struct tcmsg *tcm = NLMSG_DATA(n);
 	struct nlattr *tca[TCA_MAX + 1];
 	struct net_device *dev;
-	struct Qdisc *q = NULL; //¸¸qdiscÒ²¾ÍÊÇ¸ÃclassËù´¦µÄ¸¸qdisc
+	struct Qdisc *q = NULL; //çˆ¶qdiscä¹Ÿå°±æ˜¯è¯¥classæ‰€å¤„çš„çˆ¶qdisc
 	//tc class add dev eth0 parent 1:0 classid 1:1 cbq 
 	const struct Qdisc_class_ops *cops;
 	unsigned long cl = 0;
 	unsigned long new_cl;
-	u32 pid = tcm->tcm_parent; //¸¸Qdisc£¬parent 1:0ÖĞµÄ1:0
-	u32 clid = tcm->tcm_handle; //¶ÔÓ¦classid 1:1 ÖĞµÄ1:1 
-	u32 qid = TC_H_MAJ(clid); //classidÖĞµÄ¸ß16Î»,Ò²¾ÍÊÇ¸¸qdisc¾ä±úĞÅÏ¢
+	u32 pid = tcm->tcm_parent; //çˆ¶Qdiscï¼Œparent 1:0ä¸­çš„1:0
+	u32 clid = tcm->tcm_handle; //å¯¹åº”classid 1:1 ä¸­çš„1:1 
+	u32 qid = TC_H_MAJ(clid); //classidä¸­çš„é«˜16ä½,ä¹Ÿå°±æ˜¯çˆ¶qdiscå¥æŸ„ä¿¡æ¯
 	int err;
 
-	if ((dev = __dev_get_by_index(net, tcm->tcm_ifindex)) == NULL) //»ñÈ¡//tc class add dev eth0 parent 1:0 classid 1:1 cbqÖĞµÄdevÉè±¸
+	if ((dev = __dev_get_by_index(net, tcm->tcm_ifindex)) == NULL) //è·å–//tc class add dev eth0 parent 1:0 classid 1:1 cbqä¸­çš„devè®¾å¤‡
 		return -ENODEV;
 
 	err = nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, NULL);
@@ -1361,28 +1361,28 @@ static int tc_ctl_tclass(struct sk_buff *skb, struct nlmsghdr *n, void *arg)
 		return err;
 
 	/*
-	   parent == TC_H_UNSPEC - unspecified parent. ËµÃ÷ÊÇÎŞĞ§¸¸ÅÅ¶Ó¹æÔò¾ä±ú
-	   parent == TC_H_ROOT   - class is root, which has no parent. ¸úÅÅ¶Ó¹æÔòµÄÀà£¬Ã»ÓĞ¸¸ÅÅ¶Ó¹æÔò
-	   parent == X:0	 - parent is root class. ¸¸ÅÅ¶Ó¹æÔòÊÇ¸úÅÅ¶Ó¹æÔò
-	   parent == X:Y	 - parent is a node in hierarchy. ¸¸ÅÅ¶Ó¹æÔòÊÇÒ»¸öÆÕÍ¨½Úµã
-	   parent == 0:Y	 - parent is X:Y, where X:0 is qdisc. Èç¹û¸¸ÅÅ¶Ó¹æÔòÎªX:Y£¬ÔòÅÅ¶Ó¹æÔòÎªX:0
+	   parent == TC_H_UNSPEC - unspecified parent. è¯´æ˜æ˜¯æ— æ•ˆçˆ¶æ’é˜Ÿè§„åˆ™å¥æŸ„
+	   parent == TC_H_ROOT   - class is root, which has no parent. è·Ÿæ’é˜Ÿè§„åˆ™çš„ç±»ï¼Œæ²¡æœ‰çˆ¶æ’é˜Ÿè§„åˆ™
+	   parent == X:0	 - parent is root class. çˆ¶æ’é˜Ÿè§„åˆ™æ˜¯è·Ÿæ’é˜Ÿè§„åˆ™
+	   parent == X:Y	 - parent is a node in hierarchy. çˆ¶æ’é˜Ÿè§„åˆ™æ˜¯ä¸€ä¸ªæ™®é€šèŠ‚ç‚¹
+	   parent == 0:Y	 - parent is X:Y, where X:0 is qdisc. å¦‚æœçˆ¶æ’é˜Ÿè§„åˆ™ä¸ºX:Yï¼Œåˆ™æ’é˜Ÿè§„åˆ™ä¸ºX:0
 
-	   handle == 0:0	 - generate handle from kernel pool. ÏµÍ³×Ô¶¯·ÖÅä¾ä±ú
-	   handle == 0:Y	 - class is X:Y, where X:0 is qdisc.  µ±Àà¾ä±úÎªX:Y£¬ÔòÓëÖ®°ó¶¨µÄÅÅ¶Ó¹æÔòÎªX:0
-	   handle == X:Y	 - clear.    //Çå³ı
-	   handle == X:0	 - root class. //¸úÀà
+	   handle == 0:0	 - generate handle from kernel pool. ç³»ç»Ÿè‡ªåŠ¨åˆ†é…å¥æŸ„
+	   handle == 0:Y	 - class is X:Y, where X:0 is qdisc.  å½“ç±»å¥æŸ„ä¸ºX:Yï¼Œåˆ™ä¸ä¹‹ç»‘å®šçš„æ’é˜Ÿè§„åˆ™ä¸ºX:0
+	   handle == X:Y	 - clear.    //æ¸…é™¤
+	   handle == X:0	 - root class. //è·Ÿç±»
 	 */
 
 	/* Step 1. Determine qdisc handle X:0 */
 
-	if (pid != TC_H_ROOT) { //¸úroot qdisc
-		u32 qid1 = TC_H_MAJ(pid); //¸¸QdiscµÄ¸ß16Î»
+	if (pid != TC_H_ROOT) { //è·Ÿroot qdisc
+		u32 qid1 = TC_H_MAJ(pid); //çˆ¶Qdiscçš„é«˜16ä½
 
-		if (qid && qid1) {//classidÖĞµÄ¸ß16Î»±ØĞëºÍ¸¸QdiscµÄhandleµÄ¸ß16ÎªÏàÍ¬£¬±íÊ¾ÊÇ¶Ô¸ÃQdisc¶ÓÁĞ¹æ³ÌÏÂÃæµÄ·ÖÀàĞÅÏ¢
+		if (qid && qid1) {//classidä¸­çš„é«˜16ä½å¿…é¡»å’Œçˆ¶Qdiscçš„handleçš„é«˜16ä¸ºç›¸åŒï¼Œè¡¨ç¤ºæ˜¯å¯¹è¯¥Qdiscé˜Ÿåˆ—è§„ç¨‹ä¸‹é¢çš„åˆ†ç±»ä¿¡æ¯
 			/* If both majors are known, they must be identical. */
 			if (qid != qid1)
 				return -EINVAL;
-		} else if (qid1) { //tc class add dev eth0 parent 1:0 classid 0:1µÄÇé¿ö£¬×Ô¶¯°ÑclaseeidÉèÖÃÎªÓë¸¸µÄ¸ß16Î»Ò»Ñù
+		} else if (qid1) { //tc class add dev eth0 parent 1:0 classid 0:1çš„æƒ…å†µï¼Œè‡ªåŠ¨æŠŠclaseeidè®¾ç½®ä¸ºä¸çˆ¶çš„é«˜16ä½ä¸€æ ·
 			qid = qid1;
 		} else if (qid == 0) 
 			qid = dev->qdisc->handle;
@@ -1404,27 +1404,27 @@ static int tc_ctl_tclass(struct sk_buff *skb, struct nlmsghdr *n, void *arg)
 		return -ENOENT;
 
 	/* An check that it supports classes */
-	cops = q->ops->cl_ops;//Ö»ÓĞ·ÖÀà¶ÓÁĞ¹æ³ÌÖ§³Ö·ÖÀàĞÅÏ¢
+	cops = q->ops->cl_ops;//åªæœ‰åˆ†ç±»é˜Ÿåˆ—è§„ç¨‹æ”¯æŒåˆ†ç±»ä¿¡æ¯
 	if (cops == NULL)
 		return -EINVAL;
 
 	/* Now try to get class */
-	if (clid == 0) { //Èç¹ûclassidÎª0£¬Ôò×Ô¶¯ÉèÖÃclassidÎª¸¸qdiscµÄ¸ß16Î»
+	if (clid == 0) { //å¦‚æœclassidä¸º0ï¼Œåˆ™è‡ªåŠ¨è®¾ç½®classidä¸ºçˆ¶qdiscçš„é«˜16ä½
 		if (pid == TC_H_ROOT)
 			clid = qid;
 	} else
-		clid = TC_H_MAKE(qid, clid);//tc class add dev eth0 parent 1:0 classid 0:1µÄÇé¿ö£¬×Ô¶¯°ÑclaseeidÉèÖÃÎªÓë1:1
+		clid = TC_H_MAKE(qid, clid);//tc class add dev eth0 parent 1:0 classid 0:1çš„æƒ…å†µï¼Œè‡ªåŠ¨æŠŠclaseeidè®¾ç½®ä¸ºä¸1:1
 
 	if (clid)
-		cl = cops->get(q, clid); //Í¨¹ıclassidÑ¡È¡classidËùÔÚqdiscÖĞµÄ¶ÔÓ¦·ÖÀàĞÅÏ¢±êÊ¶¡£Èç¹ûÊÇprio£¬ÕâÕâÀï»á·µ»ØÒ»¸ö´óÓÚ0µÄcl£¬
+		cl = cops->get(q, clid); //é€šè¿‡classidé€‰å–classidæ‰€åœ¨qdiscä¸­çš„å¯¹åº”åˆ†ç±»ä¿¡æ¯æ ‡è¯†ã€‚å¦‚æœæ˜¯prioï¼Œè¿™è¿™é‡Œä¼šè¿”å›ä¸€ä¸ªå¤§äº0çš„clï¼Œ
 
 	if (cl == 0) {
 		err = -ENOENT;
 		if (n->nlmsg_type != RTM_NEWTCLASS || !(n->nlmsg_flags&NLM_F_CREATE))
 			goto out;
-	} else {//Èç¹ûÊÇprio£¬»á×ßµ½ÕâÀïÃæ
+	} else {//å¦‚æœæ˜¯prioï¼Œä¼šèµ°åˆ°è¿™é‡Œé¢
 		switch (n->nlmsg_type) {
-		case RTM_NEWTCLASS: //ËùÒÔÔÚprio¸úÖĞ´´½¨classµÄÊ±ºò»áÖ±½Ó·´´í¡£
+		case RTM_NEWTCLASS: //æ‰€ä»¥åœ¨prioè·Ÿä¸­åˆ›å»ºclassçš„æ—¶å€™ä¼šç›´æ¥åé”™ã€‚
 			err = -EEXIST;
 			if (n->nlmsg_flags&NLM_F_EXCL)
 				goto out;
@@ -1445,10 +1445,10 @@ static int tc_ctl_tclass(struct sk_buff *skb, struct nlmsghdr *n, void *arg)
 		}
 	}
 
-	new_cl = cl;//Í¨¹ıparent a:bÖĞµÄbÑ¡Ôñ³öµÄ·ÖÀà±êÊ¶
+	new_cl = cl;//é€šè¿‡parent a:bä¸­çš„bé€‰æ‹©å‡ºçš„åˆ†ç±»æ ‡è¯†
 	err = -EOPNOTSUPP;
 	if (cops->change)
-		err = cops->change(q, clid, pid, tca, &new_cl);//²ÎÊı·Ö±ğÎª¸¸qdisc  ·ÖÀàclassid 1:2   ¸¸qdisc¾ä±ú(Ò²¾ÍÊÇ1:0)  classÅäÖÃĞÅÏ¢  ´´½¨µÄclassĞÅÏ¢
+		err = cops->change(q, clid, pid, tca, &new_cl);//å‚æ•°åˆ†åˆ«ä¸ºçˆ¶qdisc  åˆ†ç±»classid 1:2   çˆ¶qdiscå¥æŸ„(ä¹Ÿå°±æ˜¯1:0)  classé…ç½®ä¿¡æ¯  åˆ›å»ºçš„classä¿¡æ¯
 	if (err == 0)
 		tclass_notify(net, skb, n, q, new_cl, RTM_NEWTCLASS);
 
@@ -1536,7 +1536,7 @@ static int qdisc_class_dump(struct Qdisc *q, unsigned long cl, struct qdisc_walk
 			      a->cb->nlh->nlmsg_seq, NLM_F_MULTI, RTM_NEWTCLASS);
 }
 
-////rtnl_register -> rtnl_dump_allÖĞÔÚÊÕµ½rtlnetlinkÓ¦ÓÃ²ãÅäÖÃĞÅÏ¢µÄÊ±ºò»áÖ´ĞĞcb->fn ,¼ûrtnetlink_init -> rtnl_dump_all
+////rtnl_register -> rtnl_dump_allä¸­åœ¨æ”¶åˆ°rtlnetlinkåº”ç”¨å±‚é…ç½®ä¿¡æ¯çš„æ—¶å€™ä¼šæ‰§è¡Œcb->fn ,è§rtnetlink_init -> rtnl_dump_all
 static int tc_dump_tclass_qdisc(struct Qdisc *q, struct sk_buff *skb,
 				struct tcmsg *tcm, struct netlink_callback *cb,
 				int *t_p, int s_t)
@@ -1552,7 +1552,7 @@ static int tc_dump_tclass_qdisc(struct Qdisc *q, struct sk_buff *skb,
 	}
 	if (*t_p > s_t)
 		memset(&cb->args[1], 0, sizeof(cb->args)-sizeof(cb->args[0]));
-	arg.w.fn = qdisc_class_dump; //×¢ÒâfnÎªÕâ¸ö
+	arg.w.fn = qdisc_class_dump; //æ³¨æ„fnä¸ºè¿™ä¸ª
 	arg.skb = skb;
 	arg.cb = cb;
 	arg.w.stop  = 0;
@@ -1566,7 +1566,7 @@ static int tc_dump_tclass_qdisc(struct Qdisc *q, struct sk_buff *skb,
 	return 0;
 }
 
-//rtnl_register -> rtnl_dump_allÖĞÔÚÊÕµ½rtlnetlinkÓ¦ÓÃ²ãÅäÖÃĞÅÏ¢µÄÊ±ºò»áÖ´ĞĞcb->fn ,¼ûrtnetlink_init -> rtnl_dump_all¡£Ö´ĞĞº¯Êıtc_dump_tclass_qdisc
+//rtnl_register -> rtnl_dump_allä¸­åœ¨æ”¶åˆ°rtlnetlinkåº”ç”¨å±‚é…ç½®ä¿¡æ¯çš„æ—¶å€™ä¼šæ‰§è¡Œcb->fn ,è§rtnetlink_init -> rtnl_dump_allã€‚æ‰§è¡Œå‡½æ•°tc_dump_tclass_qdisc
 static int tc_dump_tclass_root(struct Qdisc *root, struct sk_buff *skb,
 			       struct tcmsg *tcm, struct netlink_callback *cb,
 			       int *t_p, int s_t)
@@ -1587,7 +1587,7 @@ static int tc_dump_tclass_root(struct Qdisc *root, struct sk_buff *skb,
 	return 0;
 }
 
-//rtnl_register -> rtnl_dump_allÖĞÔÚÊÕµ½rtlnetlinkÓ¦ÓÃ²ãÅäÖÃĞÅÏ¢µÄÊ±ºò»áÖ´ĞĞcb->fn ,¼ûrtnl_register -> rtnl_dump_all
+//rtnl_register -> rtnl_dump_allä¸­åœ¨æ”¶åˆ°rtlnetlinkåº”ç”¨å±‚é…ç½®ä¿¡æ¯çš„æ—¶å€™ä¼šæ‰§è¡Œcb->fn ,è§rtnl_register -> rtnl_dump_all
 static int tc_dump_tclass(struct sk_buff *skb, struct netlink_callback *cb)
 {
 	struct tcmsg *tcm = (struct tcmsg*)NLMSG_DATA(cb->nlh);
@@ -1621,7 +1621,7 @@ done:
 /* Main classifier routine: scans classifier chain attached
    to this qdisc, (optionally) tests for protocol and asks
    specific classifiers.
- */ //Í¨¹ıskbÄÚÈİÀ´Æ¥Åätc filterÁ´±ítp£¬ÕÒµ½·µ»Ø¶ÔÓ¦µÄ·ÖÀà½Úµã£¬Æ¥Åä³É¹¦·µ»Ø0²¢°ÑÆ¥ÅäµÄ¹ıÂËÆ÷ËùÔÚµÄtc class·ÖÀà½ÚµãĞÅÏ¢´æµ½resÖĞ£¬Æ¥Åä³É¹¦·µ»Ø0
+ */ //é€šè¿‡skbå†…å®¹æ¥åŒ¹é…tc filteré“¾è¡¨tpï¼Œæ‰¾åˆ°è¿”å›å¯¹åº”çš„åˆ†ç±»èŠ‚ç‚¹ï¼ŒåŒ¹é…æˆåŠŸè¿”å›0å¹¶æŠŠåŒ¹é…çš„è¿‡æ»¤å™¨æ‰€åœ¨çš„tc classåˆ†ç±»èŠ‚ç‚¹ä¿¡æ¯å­˜åˆ°resä¸­ï¼ŒåŒ¹é…æˆåŠŸè¿”å›0
 int tc_classify_compat(struct sk_buff *skb, struct tcf_proto *tp,
 		       struct tcf_result *res)
 {
@@ -1631,7 +1631,7 @@ int tc_classify_compat(struct sk_buff *skb, struct tcf_proto *tp,
 	for (; tp; tp = tp->next) {
 		if ((tp->protocol == protocol ||
 		     tp->protocol == htons(ETH_P_ALL)) &&
-		    (err = tp->classify(skb, tp, res)) >= 0) {//Í¨¹ıskbÄÚÈİÀ´Æ¥Åätc filterÁ´±ítp£¬ÕÒµ½·µ»Ø¶ÔÓ¦µÄ·ÖÀà½Úµã£¬Æ¥Åä³É¹¦·µ»Ø0²¢°ÑÆ¥ÅäµÄ¹ıÂËÆ÷ËùÔÚµÄtc class·ÖÀà½ÚµãĞÅÏ¢´æµ½resÖĞ£¬Æ¥Åä³É¹¦·µ»Ø0
+		    (err = tp->classify(skb, tp, res)) >= 0) {//é€šè¿‡skbå†…å®¹æ¥åŒ¹é…tc filteré“¾è¡¨tpï¼Œæ‰¾åˆ°è¿”å›å¯¹åº”çš„åˆ†ç±»èŠ‚ç‚¹ï¼ŒåŒ¹é…æˆåŠŸè¿”å›0å¹¶æŠŠåŒ¹é…çš„è¿‡æ»¤å™¨æ‰€åœ¨çš„tc classåˆ†ç±»èŠ‚ç‚¹ä¿¡æ¯å­˜åˆ°resä¸­ï¼ŒåŒ¹é…æˆåŠŸè¿”å›0
 #ifdef CONFIG_NET_CLS_ACT
 			if (err != TC_ACT_RECLASSIFY && skb->tc_verd)
 				skb->tc_verd = SET_TC_VERD(skb->tc_verd, 0);
@@ -1643,7 +1643,7 @@ int tc_classify_compat(struct sk_buff *skb, struct tcf_proto *tp,
 }
 EXPORT_SYMBOL(tc_classify_compat);
 
-//Í¨¹ıskbÄÚÈİÀ´Æ¥Åätc filterÁ´±ítp£¬ÕÒµ½·µ»Ø¶ÔÓ¦µÄ·ÖÀà½Úµã£¬Æ¥Åä³É¹¦·µ»Ø0²¢°ÑÆ¥ÅäµÄ¹ıÂËÆ÷ËùÔÚµÄtc class·ÖÀà½ÚµãĞÅÏ¢´æµ½resÖĞ£¬Æ¥Åä³É¹¦·µ»Ø0
+//é€šè¿‡skbå†…å®¹æ¥åŒ¹é…tc filteré“¾è¡¨tpï¼Œæ‰¾åˆ°è¿”å›å¯¹åº”çš„åˆ†ç±»èŠ‚ç‚¹ï¼ŒåŒ¹é…æˆåŠŸè¿”å›0å¹¶æŠŠåŒ¹é…çš„è¿‡æ»¤å™¨æ‰€åœ¨çš„tc classåˆ†ç±»èŠ‚ç‚¹ä¿¡æ¯å­˜åˆ°resä¸­ï¼ŒåŒ¹é…æˆåŠŸè¿”å›0
 int tc_classify(struct sk_buff *skb, struct tcf_proto *tp, 
 		struct tcf_result *res)
 {
@@ -1655,7 +1655,7 @@ reclassify:
 #endif
 	protocol = skb->protocol;
 
-	err = tc_classify_compat(skb, tp, res);//Í¨¹ıskbÄÚÈİÀ´Æ¥Åätc filterÁ´±ítp£¬ÕÒµ½·µ»Ø¶ÔÓ¦µÄ·ÖÀà½Úµã£¬Æ¥Åä³É¹¦·µ»Ø0²¢°ÑÆ¥ÅäµÄ¹ıÂËÆ÷ËùÔÚµÄtc class·ÖÀà½ÚµãĞÅÏ¢´æµ½resÖĞ£¬Æ¥Åä³É¹¦·µ»Ø0
+	err = tc_classify_compat(skb, tp, res);//é€šè¿‡skbå†…å®¹æ¥åŒ¹é…tc filteré“¾è¡¨tpï¼Œæ‰¾åˆ°è¿”å›å¯¹åº”çš„åˆ†ç±»èŠ‚ç‚¹ï¼ŒåŒ¹é…æˆåŠŸè¿”å›0å¹¶æŠŠåŒ¹é…çš„è¿‡æ»¤å™¨æ‰€åœ¨çš„tc classåˆ†ç±»èŠ‚ç‚¹ä¿¡æ¯å­˜åˆ°resä¸­ï¼ŒåŒ¹é…æˆåŠŸè¿”å›0
 #ifdef CONFIG_NET_CLS_ACT
 	if (err == TC_ACT_RECLASSIFY) {
 		u32 verd = G_TC_VERD(skb->tc_verd);
@@ -1754,12 +1754,12 @@ static struct pernet_operations psched_net_ops = {
 	.exit = psched_net_exit,
 };
 /*
-tc¿ÉÒÔÊ¹ÓÃÒÔÏÂÃüÁî¶ÔQDisc¡¢ÀàºÍ¹ıÂËÆ÷½øĞĞ²Ù×÷£º
-add£¬ÔÚÒ»¸ö½ÚµãÀï¼ÓÈëÒ»¸öQDisc¡¢Àà»òÕß¹ıÂËÆ÷¡£Ìí¼ÓÊ±£¬ĞèÒª´«µİÒ»¸ö×æÏÈ×÷Îª²ÎÊı£¬´«µİ²ÎÊıÊ±¼È¿ÉÒÔÊ¹ÓÃIDÒ²¿ÉÒÔÖ±½Ó´«µİÉè±¸µÄ¸ù¡£Èç¹ûÒª½¨Á¢Ò»¸öQDisc»òÕß¹ıÂËÆ÷£¬¿ÉÒÔÊ¹ÓÃ¾ä±ú(handle)À´ÃüÃû£»Èç¹ûÒª½¨Á¢Ò»¸öÀà£¬¿ÉÒÔÊ¹ÓÃÀàÊ¶±ğ·û(classid)À´ÃüÃû¡£
-remove£¬É¾³ıÓĞÄ³¸ö¾ä±ú(handle)Ö¸¶¨µÄQDisc£¬¸ùQDisc(root)Ò²¿ÉÒÔÉ¾³ı¡£±»É¾³ıQDiscÉÏµÄËùÓĞ×ÓÀàÒÔ¼°¸½ÊôÓÚ¸÷¸öÀàµÄ¹ıÂËÆ÷¶¼»á±»×Ô¶¯É¾³ı¡£
-change£¬ÒÔÌæ´úµÄ·½Ê½ĞŞ¸ÄÄ³Ğ©ÌõÄ¿¡£³ıÁË¾ä±ú(handle)ºÍ×æÏÈ²»ÄÜĞŞ¸ÄÒÔÍâ£¬changeÃüÁîµÄÓï·¨ºÍaddÃüÁîÏàÍ¬¡£»»¾ä»°Ëµ£¬changeÃüÁî²»ÄÜÒ»¶¨½ÚµãµÄÎ»ÖÃ¡£
-replace£¬¶ÔÒ»¸öÏÖÓĞ½Úµã½øĞĞ½üÓÚÔ­×Ó²Ù×÷µÄÉ¾³ı£¯Ìí¼Ó¡£Èç¹û½Úµã²»´æÔÚ£¬Õâ¸öÃüÁî¾Í»á½¨Á¢½Úµã¡£
-link£¬Ö»ÊÊÓÃÓÚDQisc£¬Ìæ´úÒ»¸öÏÖÓĞµÄ½Úµã¡£
+tcå¯ä»¥ä½¿ç”¨ä»¥ä¸‹å‘½ä»¤å¯¹QDiscã€ç±»å’Œè¿‡æ»¤å™¨è¿›è¡Œæ“ä½œï¼š
+addï¼Œåœ¨ä¸€ä¸ªèŠ‚ç‚¹é‡ŒåŠ å…¥ä¸€ä¸ªQDiscã€ç±»æˆ–è€…è¿‡æ»¤å™¨ã€‚æ·»åŠ æ—¶ï¼Œéœ€è¦ä¼ é€’ä¸€ä¸ªç¥–å…ˆä½œä¸ºå‚æ•°ï¼Œä¼ é€’å‚æ•°æ—¶æ—¢å¯ä»¥ä½¿ç”¨IDä¹Ÿå¯ä»¥ç›´æ¥ä¼ é€’è®¾å¤‡çš„æ ¹ã€‚å¦‚æœè¦å»ºç«‹ä¸€ä¸ªQDiscæˆ–è€…è¿‡æ»¤å™¨ï¼Œå¯ä»¥ä½¿ç”¨å¥æŸ„(handle)æ¥å‘½åï¼›å¦‚æœè¦å»ºç«‹ä¸€ä¸ªç±»ï¼Œå¯ä»¥ä½¿ç”¨ç±»è¯†åˆ«ç¬¦(classid)æ¥å‘½åã€‚
+removeï¼Œåˆ é™¤æœ‰æŸä¸ªå¥æŸ„(handle)æŒ‡å®šçš„QDiscï¼Œæ ¹QDisc(root)ä¹Ÿå¯ä»¥åˆ é™¤ã€‚è¢«åˆ é™¤QDiscä¸Šçš„æ‰€æœ‰å­ç±»ä»¥åŠé™„å±äºå„ä¸ªç±»çš„è¿‡æ»¤å™¨éƒ½ä¼šè¢«è‡ªåŠ¨åˆ é™¤ã€‚
+changeï¼Œä»¥æ›¿ä»£çš„æ–¹å¼ä¿®æ”¹æŸäº›æ¡ç›®ã€‚é™¤äº†å¥æŸ„(handle)å’Œç¥–å…ˆä¸èƒ½ä¿®æ”¹ä»¥å¤–ï¼Œchangeå‘½ä»¤çš„è¯­æ³•å’Œaddå‘½ä»¤ç›¸åŒã€‚æ¢å¥è¯è¯´ï¼Œchangeå‘½ä»¤ä¸èƒ½ä¸€å®šèŠ‚ç‚¹çš„ä½ç½®ã€‚
+replaceï¼Œå¯¹ä¸€ä¸ªç°æœ‰èŠ‚ç‚¹è¿›è¡Œè¿‘äºåŸå­æ“ä½œçš„åˆ é™¤ï¼æ·»åŠ ã€‚å¦‚æœèŠ‚ç‚¹ä¸å­˜åœ¨ï¼Œè¿™ä¸ªå‘½ä»¤å°±ä¼šå»ºç«‹èŠ‚ç‚¹ã€‚
+linkï¼Œåªé€‚ç”¨äºDQiscï¼Œæ›¿ä»£ä¸€ä¸ªç°æœ‰çš„èŠ‚ç‚¹ã€‚
 tc qdisc [ add | change | replace | link ] dev DEV [ parent qdisc-id | root ] [ handle qdisc-id ] qdisc [ qdisc specific parameters ]
 tc class [ add | change | replace ] dev DEV parent qdisc-id [ classid class-id ] qdisc [ qdisc specific parameters ]
 tc filter [ add | change | replace ] dev DEV [ parent qdisc-id | root ] protocol protocol prio priority filtertype [ filtertype specific parameters ] flowid flow-id
@@ -1767,10 +1767,10 @@ tc [-s | -d ] qdisc show [ dev DEV ]
 tc [-s | -d ] class show dev DEV tc filter show dev DEV
 */
 /*
-£¨ËÄ£©ÓÃ»§¿Õ¼äÈçºÎºÍÄÚºËÍ¨ĞÅ
-iproute2ÊÇÒ»¸öÓÃ»§¿Õ¼äµÄ³ÌĞò£¬ËüµÄ¹¦ÄÜÊÇ½âÊÍÒÔtc¿ªÍ·µÄÃüÁî£¬Èç¹û½âÊÍ³É¹¦£¬°ÑËüÃÇÍ¨¹ıAF_NETLINKµÄsocket´«¸øLinuxµÄÄÚºË¿Õ¼ä£¬Ê¹ÓÃµÄnetlinkĞ­ÒéÀàĞÍÊÇNETLINK_ROUTE¡£
-·¢ËÍµÄnetlinkÊı¾İ°ü¶¼±ØĞë°üº¬Á½¸ö×Ö¶Î£ºprotocolºÍmsgtype£¬ÄÚºË¸ù¾İÕâÁ½¸ö×Ö¶ÎÀ´¶¨Î»½ÓÊÕº¯Êı¡£
-ÔÚÏµÍ³³õÊ¼»¯µÄÊ±ºò½«»áµ÷ÓÃÈçÏÂº¯Êı£º
+ï¼ˆå››ï¼‰ç”¨æˆ·ç©ºé—´å¦‚ä½•å’Œå†…æ ¸é€šä¿¡
+iproute2æ˜¯ä¸€ä¸ªç”¨æˆ·ç©ºé—´çš„ç¨‹åºï¼Œå®ƒçš„åŠŸèƒ½æ˜¯è§£é‡Šä»¥tcå¼€å¤´çš„å‘½ä»¤ï¼Œå¦‚æœè§£é‡ŠæˆåŠŸï¼ŒæŠŠå®ƒä»¬é€šè¿‡AF_NETLINKçš„socketä¼ ç»™Linuxçš„å†…æ ¸ç©ºé—´ï¼Œä½¿ç”¨çš„netlinkåè®®ç±»å‹æ˜¯NETLINK_ROUTEã€‚
+å‘é€çš„netlinkæ•°æ®åŒ…éƒ½å¿…é¡»åŒ…å«ä¸¤ä¸ªå­—æ®µï¼šprotocolå’Œmsgtypeï¼Œå†…æ ¸æ ¹æ®è¿™ä¸¤ä¸ªå­—æ®µæ¥å®šä½æ¥æ”¶å‡½æ•°ã€‚
+åœ¨ç³»ç»Ÿåˆå§‹åŒ–çš„æ—¶å€™å°†ä¼šè°ƒç”¨å¦‚ä¸‹å‡½æ•°ï¼š
 */
 static int __init pktsched_init(void)
 {
@@ -1788,15 +1788,15 @@ static int __init pktsched_init(void)
 	register_qdisc(&pfifo_head_drop_qdisc_ops);
 	register_qdisc(&mq_qdisc_ops);
 
-    //tc filer µÄ×¢²áÔÚtc_filter_init
-//Í¨¹ırtnetlink_rcv_msgºÍÓ¦ÓÃ²ãnetlink·½Ê½½»»¥
-//ÆäÖĞµÄrtnl_register()º¯ÊıÓÃÓÚ×¢²áTCÒª½ÓÊÕµÄÏûÏ¢ÀàĞÍÒÔ¼°¶ÔÓ¦µÄ½ÓÊÕº¯Êı¡£ //Ã¿¸ö±íÍ·rtnl_msg_handlers[i]ÉÏÃæ´æ´¢RTM_NR_MSGTYPES¸örtnl_link£¬Í¼½â¼ûTCÁ÷Á¿¿ØÖÆÊµÏÖ·ÖÎö
-	rtnl_register(PF_UNSPEC, RTM_NEWQDISC, tc_modify_qdisc, NULL); //tc qdisc addºÍtc calss changeµÄÊ±ºò»áµ÷ÓÃtc_modify_qdisc
-	rtnl_register(PF_UNSPEC, RTM_DELQDISC, tc_get_qdisc, NULL);//tc qdisc delµÄÊ±ºò»áµ÷ÓÃtc_modify_qdisc
-	rtnl_register(PF_UNSPEC, RTM_GETQDISC, tc_get_qdisc, tc_dump_qdisc);//tc qdisc ls µÄÊ±ºò»áµ÷ÓÃtc_modify_qdisc
-	rtnl_register(PF_UNSPEC, RTM_NEWTCLASS, tc_ctl_tclass, NULL); //tc class add µÄÊ±ºò»áµ÷ÓÃÕâ¸ö
-	rtnl_register(PF_UNSPEC, RTM_DELTCLASS, tc_ctl_tclass, NULL);//tc class del µÄÊ±ºò»áµ÷ÓÃÕâ¸ö
-	rtnl_register(PF_UNSPEC, RTM_GETTCLASS, tc_ctl_tclass, tc_dump_tclass);//tc class lsµÄÊ±ºòµ÷ÓÃÕâ¸ö
+    //tc filer çš„æ³¨å†Œåœ¨tc_filter_init
+//é€šè¿‡rtnetlink_rcv_msgå’Œåº”ç”¨å±‚netlinkæ–¹å¼äº¤äº’
+//å…¶ä¸­çš„rtnl_register()å‡½æ•°ç”¨äºæ³¨å†ŒTCè¦æ¥æ”¶çš„æ¶ˆæ¯ç±»å‹ä»¥åŠå¯¹åº”çš„æ¥æ”¶å‡½æ•°ã€‚ //æ¯ä¸ªè¡¨å¤´rtnl_msg_handlers[i]ä¸Šé¢å­˜å‚¨RTM_NR_MSGTYPESä¸ªrtnl_linkï¼Œå›¾è§£è§TCæµé‡æ§åˆ¶å®ç°åˆ†æ
+	rtnl_register(PF_UNSPEC, RTM_NEWQDISC, tc_modify_qdisc, NULL); //tc qdisc addå’Œtc calss changeçš„æ—¶å€™ä¼šè°ƒç”¨tc_modify_qdisc
+	rtnl_register(PF_UNSPEC, RTM_DELQDISC, tc_get_qdisc, NULL);//tc qdisc delçš„æ—¶å€™ä¼šè°ƒç”¨tc_modify_qdisc
+	rtnl_register(PF_UNSPEC, RTM_GETQDISC, tc_get_qdisc, tc_dump_qdisc);//tc qdisc ls çš„æ—¶å€™ä¼šè°ƒç”¨tc_modify_qdisc
+	rtnl_register(PF_UNSPEC, RTM_NEWTCLASS, tc_ctl_tclass, NULL); //tc class add çš„æ—¶å€™ä¼šè°ƒç”¨è¿™ä¸ª
+	rtnl_register(PF_UNSPEC, RTM_DELTCLASS, tc_ctl_tclass, NULL);//tc class del çš„æ—¶å€™ä¼šè°ƒç”¨è¿™ä¸ª
+	rtnl_register(PF_UNSPEC, RTM_GETTCLASS, tc_ctl_tclass, tc_dump_tclass);//tc class lsçš„æ—¶å€™è°ƒç”¨è¿™ä¸ª
 
 	return 0;
 }

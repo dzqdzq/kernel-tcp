@@ -34,7 +34,7 @@
  *	Save time not doing access_ok. copy_*_user will make this work
  *	in any case.
  */
-//»ñÈ¡Ó¦ÓÃ²ãsendmsg·¢ËÍ¹ıÀ´µÄÊµ¼Êmsg_nameºÍiov
+//è·å–åº”ç”¨å±‚sendmsgå‘é€è¿‡æ¥çš„å®é™…msg_nameå’Œiov
 int verify_iovec(struct msghdr *m, struct iovec *iov, struct sockaddr *address, int mode)
 {
 	int size, err, ct;
@@ -52,10 +52,10 @@ int verify_iovec(struct msghdr *m, struct iovec *iov, struct sockaddr *address, 
 	}
 
 	size = m->msg_iovlen * sizeof(struct iovec);
-	if (copy_from_user(iov, m->msg_iov, size))//ÓÃ»§¿Ø¼şmsg_iov¿½±´µ½ÄÚºËiovÖĞ
+	if (copy_from_user(iov, m->msg_iov, size))//ç”¨æˆ·æ§ä»¶msg_iovæ‹·è´åˆ°å†…æ ¸iovä¸­
 		return -EFAULT;
 
-	m->msg_iov = iov;//msg_iovÖ¸ÏòÄÚºËiovÁË
+	m->msg_iov = iov;//msg_iovæŒ‡å‘å†…æ ¸ioväº†
 	err = 0;
 
 	for (ct = 0; ct < m->msg_iovlen; ct++) {
@@ -76,7 +76,7 @@ int verify_iovec(struct msghdr *m, struct iovec *iov, struct sockaddr *address, 
  *
  *	Note: this modifies the original iovec.
  */
-//½«ÄÚºË¿Õ¼äÖĞÊı¾İ¸´ÖÆµ½ÓÃ»§¿Õ¼äµÄÓÉiovec½á¹¹±äÁ¿ÃèÊöµÄ»º³åÇøÖĞ£¬¸Ãº¯Êı±»skb_copy_datagram_iovecµ÷ÓÃ
+//å°†å†…æ ¸ç©ºé—´ä¸­æ•°æ®å¤åˆ¶åˆ°ç”¨æˆ·ç©ºé—´çš„ç”±iovecç»“æ„å˜é‡æè¿°çš„ç¼“å†²åŒºä¸­ï¼Œè¯¥å‡½æ•°è¢«skb_copy_datagram_iovecè°ƒç”¨
 int memcpy_toiovec(struct iovec *iov, unsigned char *kdata, int len)
 {
 	while (len > 0) {
@@ -125,7 +125,7 @@ int memcpy_toiovecend(const struct iovec *iov, unsigned char *kdata,
  *
  *	Note: this modifies the original iovec.
  */
-//½²ÓÃ»§¿Õ¼äiovec½á¹¹±äÁ¿ÃèÊöµÄ»º³åÇø¸´ÖÆµ½ÄÚºË¿Õ¼ä
+//è®²ç”¨æˆ·ç©ºé—´iovecç»“æ„å˜é‡æè¿°çš„ç¼“å†²åŒºå¤åˆ¶åˆ°å†…æ ¸ç©ºé—´
 int memcpy_fromiovec(unsigned char *kdata, struct iovec *iov, int len)
 {
 	while (len > 0) {
@@ -147,8 +147,8 @@ int memcpy_fromiovec(unsigned char *kdata, struct iovec *iov, int len)
 /*
  *	Copy iovec from kernel. Returns -EFAULT on error.
  */
-//½²ÓÃ»§¿Õ¼äiovec½á¹¹ÃèÊöµÄ»º³åÇøÖĞµÄĞÅÏ¢´ÓoffsetÆ«ÒÆ´¦¿ªÊ¼¸´ÖÆ£¬¸´ÖÆµ½ÄÚºË¿Õ¼ä£¬ºÍmemcpy_fromiovecµÄÇø±ğÔÚÓÚ¶àÁË¸öoffsetÆ«ÒÆ£¬Ïàµ±ÓÚmemcpy_fromiovec
-//µÄÆ«ÒÆÁ¿Îª0
+//è®²ç”¨æˆ·ç©ºé—´iovecç»“æ„æè¿°çš„ç¼“å†²åŒºä¸­çš„ä¿¡æ¯ä»offsetåç§»å¤„å¼€å§‹å¤åˆ¶ï¼Œå¤åˆ¶åˆ°å†…æ ¸ç©ºé—´ï¼Œå’Œmemcpy_fromiovecçš„åŒºåˆ«åœ¨äºå¤šäº†ä¸ªoffsetåç§»ï¼Œç›¸å½“äºmemcpy_fromiovec
+//çš„åç§»é‡ä¸º0
 int memcpy_fromiovecend(unsigned char *kdata, const struct iovec *iov,
 			int offset, int len)
 {
@@ -180,7 +180,7 @@ int memcpy_fromiovecend(unsigned char *kdata, const struct iovec *iov,
  *
  *	ip_build_xmit must ensure that when fragmenting only the last
  *	call to this function will be unaligned also.
- *///¸ömemcpy_fromiovecendµÄ¹¦ÄÜÀàËÆ£¬Ö»ÊÇ¶àÁË¼ÆËãĞ£ÑéºÍ¹¦ÄÜ
+ *///ä¸ªmemcpy_fromiovecendçš„åŠŸèƒ½ç±»ä¼¼ï¼Œåªæ˜¯å¤šäº†è®¡ç®—æ ¡éªŒå’ŒåŠŸèƒ½
 int csum_partial_copy_fromiovecend(unsigned char *kdata, struct iovec *iov,
 				 int offset, unsigned int len, __wsum *csump)
 {

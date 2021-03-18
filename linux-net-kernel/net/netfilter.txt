@@ -1,5 +1,5 @@
-http://bbs.chinaunix.net/thread-3749229-1-2.html          [ÍøÂç×ÓÏµÍ³] linux-2.6.35.6 xtables&iptables&hipac [¸´ÖÆÁ´½Ó]
+http://bbs.chinaunix.net/thread-3749229-1-2.html          [ç½‘ç»œå­ç³»ç»Ÿ] linux-2.6.35.6 xtables&iptables&hipac [å¤åˆ¶é“¾æ¥]
 
-http://bbs.chinaunix.net/thread-4082396-1-2.html          [ÍøÂç×ÓÏµÍ³] linux-2.6.35.6 nf_conntrack [¸´ÖÆÁ´½Ó]
+http://bbs.chinaunix.net/thread-4082396-1-2.html          [ç½‘ç»œå­ç³»ç»Ÿ] linux-2.6.35.6 nf_conntrack [å¤åˆ¶é“¾æ¥]
 
-http://bbs.chinaunix.net/thread-1970484-1-1.html          Snort ÈëÇÖ¼ì²âÏµÍ³Ô´Âë·ÖÎö [¸´ÖÆÁ´½Ó]
+http://bbs.chinaunix.net/thread-1970484-1-1.html          Snort å…¥ä¾µæ£€æµ‹ç³»ç»Ÿæºç åˆ†æ [å¤åˆ¶é“¾æ¥]

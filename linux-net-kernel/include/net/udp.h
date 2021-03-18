@@ -72,7 +72,7 @@ struct udp_hslot {
  *	@log:	log2(number of slots in hash table)
  */
 /*
-tcp udpºÍrawµÄhash
+tcp udpå’Œrawçš„hash
 union {
         struct inet_hashinfo    *hashinfo; //tcp_hashinfo
         struct udp_table    *udp_table; //udp_table
@@ -86,7 +86,7 @@ struct udp_table {
 	unsigned int		log;
 };
 //extern struct udp_table udp_table;
-//Ìí¼Óµ½udp_protµÄ.h.udp_tableÖĞ£¬ udpÌ×½Ó×ÖµÄstruct sock½á¹¹×îÖÕÁ¬½ÓÔÚ¸ÃhashÖĞ  Í¨¹ıº¯Êıudp_v4_rehashÌí¼Ó°ÑudpĞ­ÒéµÄstruct udp_sockÌí¼Óµ½udp_table,
+//æ·»åŠ åˆ°udp_protçš„.h.udp_tableä¸­ï¼Œ udpå¥—æ¥å­—çš„struct sockç»“æ„æœ€ç»ˆè¿æ¥åœ¨è¯¥hashä¸­  é€šè¿‡å‡½æ•°udp_v4_rehashæ·»åŠ æŠŠudpåè®®çš„struct udp_sockæ·»åŠ åˆ°udp_table,
 struct udp_table udp_table;
 extern void udp_table_init(struct udp_table *, const char *);
 static inline struct udp_hslot *udp_hashslot(struct udp_table *table,

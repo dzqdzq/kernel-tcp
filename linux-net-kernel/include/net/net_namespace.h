@@ -55,8 +55,8 @@ struct neAAt {
 	struct net_device       *loopback_dev;          /* The loopback */
 
 	struct list_head 	dev_base_head;
-	struct hlist_head 	*dev_name_head; //dev nameÁ´±í£¬²éÕÒdevµÄÊ±ºò¿ÉÒÔ¸ù¾İeth0×ö¼üÖµÕÒ  struct net_dev
-	struct hlist_head	*dev_index_head; //devË÷ÒıºÅ£¬´´½¨devµÄÊ±ºò£¬¶¼»áÓĞÒ»¸ö£¬²»»áÖØ¸´
+	struct hlist_head 	*dev_name_head; //dev nameé“¾è¡¨ï¼ŒæŸ¥æ‰¾devçš„æ—¶å€™å¯ä»¥æ ¹æ®eth0åšé”®å€¼æ‰¾  struct net_dev
+	struct hlist_head	*dev_index_head; //devç´¢å¼•å·ï¼Œåˆ›å»ºdevçš„æ—¶å€™ï¼Œéƒ½ä¼šæœ‰ä¸€ä¸ªï¼Œä¸ä¼šé‡å¤
 
 	/* core fib_rules */
 	struct list_head	rules_ops;
@@ -100,11 +100,11 @@ struct ctl_table_header;
 struct net_generic;
 struct sock;
 
-//¿ÉÒÔÍ¨¹ısock_net(skb->sk);»ñÈ¡
+//å¯ä»¥é€šè¿‡sock_net(skb->sk);è·å–
 struct net {
-     /* ÓÃÓÚÅĞ¶ÏºÎÊ±ÊÍ·ÅÍøÂçÃüÃû¿Õ¼ä
-         ÔÚÊ¹ÓÃÌØ¶¨µÄnetÊµÀıÇ°ºó£¬ĞèÒª·Ö±ğµ÷ÓÃ
-         ¸¨Öúº¯Êıget_netºÍput_net
+     /* ç”¨äºåˆ¤æ–­ä½•æ—¶é‡Šæ”¾ç½‘ç»œå‘½åç©ºé—´
+         åœ¨ä½¿ç”¨ç‰¹å®šçš„netå®ä¾‹å‰åï¼Œéœ€è¦åˆ†åˆ«è°ƒç”¨
+         è¾…åŠ©å‡½æ•°get_netå’Œput_net
      */
 	atomic_t		count;		/* To decided when the network
 						 *  namespace should be freed.
@@ -114,16 +114,16 @@ struct net {
 						 * destroy on demand
 						 */
 #endif
-       /* ÍøÂçÃüÃû¿Õ¼äµÄÁ´½Ó */
+       /* ç½‘ç»œå‘½åç©ºé—´çš„é“¾æ¥ */
 	struct list_head	list;		/* list of network namespaces */
 	struct work_struct	work;		/* work struct for freeing */
 
-       /*  ÓÉÓÚÃ¿¸öÃüÃû¿Õ¼ä¶¼°üº¬²»Í¬µÄÍøÂçÉè±¸£¬
-        *  Õâ±ØÈ»»á·´Ó³µ½procfsµÄÄÚÈİÉÏ¡£
-        *  ¸÷ÃüÃû¿Õ¼äµÄ´¦ÀíĞèÒªÈı¸öÊı¾İÏî:
-        *  /proc/netÓÉproc_net±íÊ¾£¬¶ø/proc/net/statÓÉproc_net_stats
-        *  ±íÊ¾£¬proc_net_root(ÏÖÔÚÒÑ²»ÓÃ)Ö¸Ïòµ±Ç°ÃüÃû¿Õ¼äµÄprocfsÊµÀı
-        *  µÄ¸ù½Úµã,¼´/proc
+       /*  ç”±äºæ¯ä¸ªå‘½åç©ºé—´éƒ½åŒ…å«ä¸åŒçš„ç½‘ç»œè®¾å¤‡ï¼Œ
+        *  è¿™å¿…ç„¶ä¼šåæ˜ åˆ°procfsçš„å†…å®¹ä¸Šã€‚
+        *  å„å‘½åç©ºé—´çš„å¤„ç†éœ€è¦ä¸‰ä¸ªæ•°æ®é¡¹:
+        *  /proc/netç”±proc_netè¡¨ç¤ºï¼Œè€Œ/proc/net/statç”±proc_net_stats
+        *  è¡¨ç¤ºï¼Œproc_net_root(ç°åœ¨å·²ä¸ç”¨)æŒ‡å‘å½“å‰å‘½åç©ºé—´çš„procfså®ä¾‹
+        *  çš„æ ¹èŠ‚ç‚¹,å³/proc
         */
 	struct proc_dir_entry 	*proc_net;
 	struct proc_dir_entry 	*proc_net_stat;
@@ -131,24 +131,24 @@ struct net {
 #ifdef CONFIG_SYSCTL
 	struct ctl_table_set	sysctls;
 #endif
-       /* »·»Ø½Ó¿ÚÉè±¸*/
+       /* ç¯å›æ¥å£è®¾å¤‡*/
 	struct net_device       *loopback_dev;          /* The loopback */
 
-       /* ÓëÌØ¶¨ÃüÃû¿Õ¼ä¹ØÁªµÄËùÓĞÉè±¸¶¼±£´æÔÚ
-         * Ò»¸öË«ÏòÁ´±íÉÏ£¬±íÍ·Îªdev_base_head 
-         */ //ËùÓĞµÄnet_device¶¼Ìí¼Óµ½¸ÃÁ´±íÖĞ
-    //struct net_device»áÌí¼Óµ½struct netµÄÏÂÃæµÄdev_base_headÁ´±íÖĞ£¬Í¬Ê±É¢ÁĞµ½dev_name_headºÍdev_index_headÖĞ,¼û·®¶«¶«ÉÏP72
-    //Í¨¹ılist_netdeviceÌí¼Óµ½¸ÃÁ´±íºÍÏÂÃæµÄhash±íÖĞ
-    //dev_getbyhwaddr   __dev_getfirstbyhwtype    dev_get_by_flags      Í¨¹ıfor_each_netdev±äÁ¿dev_base_headÁ´±í
-	struct list_head 	dev_base_head; //¼ûlist_netdevice            Ò»°ã»ùÓÚMACµØÖ·»òÕßÉè±¸ÀàĞÍ¾ÍÓÃ¸ÃÁ´±í²éÕÒ£¬»ùÓÚ½Ó¿ÚÃû»òÕßË÷ÒıÊ¹ÓÃÏÂÃæÁ½¸ö²éÕÒ
+       /* ä¸ç‰¹å®šå‘½åç©ºé—´å…³è”çš„æ‰€æœ‰è®¾å¤‡éƒ½ä¿å­˜åœ¨
+         * ä¸€ä¸ªåŒå‘é“¾è¡¨ä¸Šï¼Œè¡¨å¤´ä¸ºdev_base_head 
+         */ //æ‰€æœ‰çš„net_deviceéƒ½æ·»åŠ åˆ°è¯¥é“¾è¡¨ä¸­
+    //struct net_deviceä¼šæ·»åŠ åˆ°struct netçš„ä¸‹é¢çš„dev_base_headé“¾è¡¨ä¸­ï¼ŒåŒæ—¶æ•£åˆ—åˆ°dev_name_headå’Œdev_index_headä¸­,è§æ¨Šä¸œä¸œä¸ŠP72
+    //é€šè¿‡list_netdeviceæ·»åŠ åˆ°è¯¥é“¾è¡¨å’Œä¸‹é¢çš„hashè¡¨ä¸­
+    //dev_getbyhwaddr   __dev_getfirstbyhwtype    dev_get_by_flags      é€šè¿‡for_each_netdevå˜é‡dev_base_headé“¾è¡¨
+	struct list_head 	dev_base_head; //è§list_netdevice            ä¸€èˆ¬åŸºäºMACåœ°å€æˆ–è€…è®¾å¤‡ç±»å‹å°±ç”¨è¯¥é“¾è¡¨æŸ¥æ‰¾ï¼ŒåŸºäºæ¥å£åæˆ–è€…ç´¢å¼•ä½¿ç”¨ä¸‹é¢ä¸¤ä¸ªæŸ¥æ‰¾
        /*
-         * ½«Éè±¸Ãû×÷ÎªÉ¢ÁĞ¼üµÄÁ´±í
+         * å°†è®¾å¤‡åä½œä¸ºæ•£åˆ—é”®çš„é“¾è¡¨
          *///dev_get_by_name
-	struct hlist_head 	*dev_name_head;//dev nameÁ´±í£¬²éÕÒdevµÄÊ±ºò¿ÉÒÔ¸ù¾İeth0×ö¼üÖµÕÒ  struct net_dev   
+	struct hlist_head 	*dev_name_head;//dev nameé“¾è¡¨ï¼ŒæŸ¥æ‰¾devçš„æ—¶å€™å¯ä»¥æ ¹æ®eth0åšé”®å€¼æ‰¾  struct net_dev   
        /*
-         * ½«½Ó¿ÚË÷ÒıÓÃ×÷É¢ÁĞ¼ü
+         * å°†æ¥å£ç´¢å¼•ç”¨ä½œæ•£åˆ—é”®
          *///dev_get_by_index
-	struct hlist_head	*dev_index_head;//devË÷ÒıºÅ£¬´´½¨devµÄÊ±ºò£¬¶¼»áÓĞÒ»¸ö£¬²»»áÖØ¸´
+	struct hlist_head	*dev_index_head;//devç´¢å¼•å·ï¼Œåˆ›å»ºdevçš„æ—¶å€™ï¼Œéƒ½ä¼šæœ‰ä¸€ä¸ªï¼Œä¸ä¼šé‡å¤
 
 	/* core fib_rules */
 	struct list_head	rules_ops;
@@ -201,7 +201,7 @@ static inline struct net *copy_net_ns(unsigned long flags, struct net *net_ns)
 #endif /* CONFIG_NET */
 
 
-extern struct list_head net_namespace_list;//init_netÓĞ¼Óµ½¸ÃÁ´±íÖĞ
+extern struct list_head net_namespace_list;//init_netæœ‰åŠ åˆ°è¯¥é“¾è¡¨ä¸­
 
 extern struct net *get_net_ns_by_pid(pid_t pid);
 

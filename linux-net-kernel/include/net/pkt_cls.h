@@ -40,14 +40,14 @@ cls_set_class(struct tcf_proto *tp, unsigned long *clp,
 	return old_cl;
 }
 
-//base为flowid 22:4对应的htb_class结构，见htb_get
+//base涓篺lowid 22:4瀵瑰簲鐨刪tb_class缁撴瀯锛岃htb_get
 static inline void
 tcf_bind_filter(struct tcf_proto *tp, struct tcf_result *r, unsigned long base)
 {
 	unsigned long cl;
 
-	cl = tp->q->ops->cl_ops->bind_tcf(tp->q, base, r->classid);//htb的class ops对应的是htb_class_ops
-	//cl为从过滤器tp所在的qdisc队列规则的下级class中找到的子class, struct htb_class *cl
+	cl = tp->q->ops->cl_ops->bind_tcf(tp->q, base, r->classid);//htb鐨刢lass ops瀵瑰簲鐨勬槸htb_class_ops
+	//cl涓轰粠杩囨护鍣╰p鎵�鍦ㄧ殑qdisc闃熷垪瑙勫垯鐨勪笅绾lass涓壘鍒扮殑瀛恈lass, struct htb_class *cl
 	cl = cls_set_class(tp, &r->class, cl);//
 	if (cl)
 		tp->q->ops->cl_ops->unbind_tcf(tp->q, cl);

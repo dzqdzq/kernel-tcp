@@ -150,7 +150,7 @@ static void ip_cmsg_recv_dstaddr(struct msghdr *msg, struct sk_buff *skb)
 	put_cmsg(msg, SOL_IP, IP_ORIGDSTADDR, sizeof(sin), &sin);
 }
 
-//±¨ÎÄ¿ØÖÆÐÅÏ¢µÄÊäÈë ·®¶«¶«P236
+//æŠ¥æ–‡æŽ§åˆ¶ä¿¡æ¯çš„è¾“å…¥ æ¨Šä¸œä¸œP236
 void ip_cmsg_recv(struct msghdr *msg, struct sk_buff *skb)
 {
 	struct inet_sock *inet = inet_sk(skb->sk);
@@ -193,27 +193,27 @@ void ip_cmsg_recv(struct msghdr *msg, struct sk_buff *skb)
 }
 EXPORT_SYMBOL(ip_cmsg_recv);
 
-//·®¶«¶«P235 UDP»òÕßRAWÔÚsendmsgµÄÊ±ºò£¬Èç¹ûÓ¦ÓÃ³ÌÐòµÄhsghdrÖÐ´øÓÐ¿ØÖÆÐÅÏ¢£¬Ôò»áÖ´ÐÐ¸Ãº¯Êý¡£
-//±¨ÎÄ¿ØÖÆÐÅÏ¢µÄÊä³ö
+//æ¨Šä¸œä¸œP235 UDPæˆ–è€…RAWåœ¨sendmsgçš„æ—¶å€™ï¼Œå¦‚æžœåº”ç”¨ç¨‹åºçš„hsghdrä¸­å¸¦æœ‰æŽ§åˆ¶ä¿¡æ¯ï¼Œåˆ™ä¼šæ‰§è¡Œè¯¥å‡½æ•°ã€‚
+//æŠ¥æ–‡æŽ§åˆ¶ä¿¡æ¯çš„è¾“å‡º
 int ip_cmsg_send(struct net *net, struct msghdr *msg, struct ipcm_cookie *ipc)
 {
 	int err;
 	struct cmsghdr *cmsg;
 
-	for (cmsg = CMSG_FIRSTHDR(msg); cmsg; cmsg = CMSG_NXTHDR(msg, cmsg)) {//±éÀúÏûÏ¢Í·ÖÐ¸÷ÖÖÀàÐÍµÄ¿ØÖÆÐÅÏ¢
+	for (cmsg = CMSG_FIRSTHDR(msg); cmsg; cmsg = CMSG_NXTHDR(msg, cmsg)) {//éåŽ†æ¶ˆæ¯å¤´ä¸­å„ç§ç±»åž‹çš„æŽ§åˆ¶ä¿¡æ¯
 		if (!CMSG_OK(msg, cmsg))
 			return -EINVAL;
 		if (cmsg->cmsg_level != SOL_IP)
 			continue;
 		switch (cmsg->cmsg_type) {
-		case IP_RETOPTS: //½âÎöIPÑ¡ÏîÐÅÏ¢
+		case IP_RETOPTS: //è§£æžIPé€‰é¡¹ä¿¡æ¯
 			err = cmsg->cmsg_len - CMSG_ALIGN(sizeof(struct cmsghdr));
 			err = ip_options_get(net, &ipc->opt, CMSG_DATA(cmsg),
 					     err < 40 ? err : 40);
 			if (err)
 				return err;
 			break;
-		case IP_PKTINFO:  //½âÎö³öÊä³ö½Ó¿ÚºÍ
+		case IP_PKTINFO:  //è§£æžå‡ºè¾“å‡ºæŽ¥å£å’Œ
 		{
 			struct in_pktinfo *info;
 			if (cmsg->cmsg_len != CMSG_LEN(sizeof(struct in_pktinfo)))

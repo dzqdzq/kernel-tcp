@@ -212,7 +212,7 @@ error:
 	return err;
 }
 
-//Ìî³ästruct msghdr£¬È»ºó¿½±´struct msghdrÍ·²¿ºÍdataÊı¾İ²¿·Öµ½ÓÃ»§¿Õ¼ä
+//å¡«å……struct msghdrï¼Œç„¶åæ‹·è´struct msghdrå¤´éƒ¨å’Œdataæ•°æ®éƒ¨åˆ†åˆ°ç”¨æˆ·ç©ºé—´
 int put_cmsg(struct msghdr * msg, int level, int type, int len, void *data)
 {
 	struct cmsghdr __user *cm

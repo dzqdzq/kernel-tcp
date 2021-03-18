@@ -271,7 +271,7 @@ static const u8 tcp_conntracks[2][6][TCP_CONNTRACK_MAX] = {
 	}
 };
 
-//¿½±´±¨ÎÄÖĞµÄ¶Ë¿Ú  L4
+//æ‹·è´æŠ¥æ–‡ä¸­çš„ç«¯å£  L4
 static bool tcp_pkt_to_tuple(const struct sk_buff *skb, unsigned int dataoff,
 			     struct nf_conntrack_tuple *tuple)
 {
@@ -508,8 +508,8 @@ static inline s16 nat_offset(const struct nf_conn *ct,
 #define NAT_OFFSET(pf, ct, dir, seq)	0
 #endif
 
-//Í¨¹ıÈ·ÈÏºÅ¡¢ĞòÁĞºÅºÍ´°¿ÚÅĞ¶ÏÊı¾İ°üºÏ·¨ĞÔ
-//²Î¿¼:http://blog.csdn.net/efan_linux/article/details/4604375
+//é€šè¿‡ç¡®è®¤å·ã€åºåˆ—å·å’Œçª—å£åˆ¤æ–­æ•°æ®åŒ…åˆæ³•æ€§
+//å‚è€ƒ:http://blog.csdn.net/efan_linux/article/details/4604375
 static bool tcp_in_window(const struct nf_conn *ct,
 			  struct ip_ct_tcp *state,
 			  enum ip_conntrack_dir dir,
@@ -529,15 +529,15 @@ static bool tcp_in_window(const struct nf_conn *ct,
 
 	/*
 	 * Get the required data from the packet.
-	 // ¿Í»§¶Ë·¢µÄµÚÒ»¸öSYN°üÊÇµ½²»ÁËÕâ¸öº¯ÊıµÄ,Ö±½Ó¾Í½ÓÊÜÁË,
-// ÊÇ´ÓÁ¬½ÓµÄµÚ2¸ö°üÒÔºó²Å½øÈë±¾º¯Êı´¦Àí
+	 // å®¢æˆ·ç«¯å‘çš„ç¬¬ä¸€ä¸ªSYNåŒ…æ˜¯åˆ°ä¸äº†è¿™ä¸ªå‡½æ•°çš„,ç›´æ¥å°±æ¥å—äº†,
+// æ˜¯ä»è¿æ¥çš„ç¬¬2ä¸ªåŒ…ä»¥åæ‰è¿›å…¥æœ¬å‡½æ•°å¤„ç†
 	 */
 	seq = ntohl(tcph->seq);
 	ack = sack = ntohl(tcph->ack_seq);
 	win = ntohs(tcph->window);
-	end = segment_seq_plus_len(seq, skb->len, dataoff, tcph);// ±¾Êı¾İ°ü½áÊøĞòÁĞºÅ
+	end = segment_seq_plus_len(seq, skb->len, dataoff, tcph);// æœ¬æ•°æ®åŒ…ç»“æŸåºåˆ—å·
 
-	if (receiver->flags & IP_CT_TCP_FLAG_SACK_PERM)// ½ÓÊÕ·½Ö§³ÖSACKµÄ»°¼ì²éÊÇ·ñÔÚTCPÑ¡ÏîÖĞÓĞSACK 
+	if (receiver->flags & IP_CT_TCP_FLAG_SACK_PERM)// æ¥æ”¶æ–¹æ”¯æŒSACKçš„è¯æ£€æŸ¥æ˜¯å¦åœ¨TCPé€‰é¡¹ä¸­æœ‰SACK 
 		tcp_sack(skb, dataoff, tcph, &sack);
 
 	/* Take into account NAT sequence number mangling */

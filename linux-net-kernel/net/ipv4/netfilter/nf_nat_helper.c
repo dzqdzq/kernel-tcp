@@ -441,7 +441,7 @@ nf_nat_seq_adjust(struct sk_buff *skb,
 
 /* Setup NAT on this expected conntrack so it follows master. */
 /* If we fail to get a free NAT slot, we'll get dropped on confirm 
-对子连接做NAT转换
+瀵瑰瓙杩炴帴鍋歂AT杞崲
 */
 void nf_nat_follow_master(struct nf_conn *ct,
 			  struct nf_conntrack_expect *exp)

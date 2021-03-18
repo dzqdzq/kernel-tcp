@@ -931,8 +931,8 @@ void netdev_class_remove_file(struct class_attribute *class_attr)
 EXPORT_SYMBOL(netdev_class_create_file);
 EXPORT_SYMBOL(netdev_class_remove_file);
 
-//netdev_kobject_init»á´´½¨/sys/class/netÄ¿Â¼£¬ÔÚ´ËÄ¿Â¼ÏÂ£¬Ã¿¸öÒÑ×¢²áµÄÍøÂçÉè±¸¶¼»áÓĞÒ»¸ö×ÓÄ¿Â¼¡£ÀıÈçifconfigÀïÃæµÄeth0ĞÅÏ¢¶¼¿ÉÒÔÔÚÕâÀïÃæ²é¿´
-int netdev_kobject_init(void) ////netdev_kobject_init»á´´½¨/sys/class/netÄ¿Â¼£¬ÔÚ´ËÄ¿Â¼ÏÂ£¬Ã¿¸öÒÑ×¢²áµÄÍøÂçÉè±¸¶¼»áÓĞÒ»¸ö×ÓÄ¿Â¼¡£ÀıÈçifconfigÀïÃæµÄeth0ĞÅÏ¢¶¼¿ÉÒÔÔÚÕâÀïÃæ²é¿´
+//netdev_kobject_initä¼šåˆ›å»º/sys/class/netç›®å½•ï¼Œåœ¨æ­¤ç›®å½•ä¸‹ï¼Œæ¯ä¸ªå·²æ³¨å†Œçš„ç½‘ç»œè®¾å¤‡éƒ½ä¼šæœ‰ä¸€ä¸ªå­ç›®å½•ã€‚ä¾‹å¦‚ifconfigé‡Œé¢çš„eth0ä¿¡æ¯éƒ½å¯ä»¥åœ¨è¿™é‡Œé¢æŸ¥çœ‹
+int netdev_kobject_init(void) ////netdev_kobject_initä¼šåˆ›å»º/sys/class/netç›®å½•ï¼Œåœ¨æ­¤ç›®å½•ä¸‹ï¼Œæ¯ä¸ªå·²æ³¨å†Œçš„ç½‘ç»œè®¾å¤‡éƒ½ä¼šæœ‰ä¸€ä¸ªå­ç›®å½•ã€‚ä¾‹å¦‚ifconfigé‡Œé¢çš„eth0ä¿¡æ¯éƒ½å¯ä»¥åœ¨è¿™é‡Œé¢æŸ¥çœ‹
 {
 	kobj_ns_type_register(&net_ns_type_operations);
 	register_pernet_subsys(&kobj_net_ops);

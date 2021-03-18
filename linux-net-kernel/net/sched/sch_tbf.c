@@ -96,14 +96,14 @@
 	It is passed to the default bfifo qdisc - if the inner qdisc is
 	changed the limit is not effective anymore.
 */
-//Ò²¾ÍÊÇtbfµÄ²ÎÊıÅäÖÃĞÅÏ¢£¬Èçtbf rate 220kbit latency 50ms burst 1540
-struct tbf_sched_data  //tbf_initÀïÃæ³õÊ¼»¯
+//ä¹Ÿå°±æ˜¯tbfçš„å‚æ•°é…ç½®ä¿¡æ¯ï¼Œå¦‚tbf rate 220kbit latency 50ms burst 1540
+struct tbf_sched_data  //tbf_inité‡Œé¢åˆå§‹åŒ–
 {
 /* Parameters */
 	u32		limit;		/* Maximal length of backlog: bytes */
 	u32		buffer;		/* Token bucket depth/rate: MUST BE >= MTU/B */
 	u32		mtu;
-	u32		max_size;////tc qdisc add dev eth0 root handle 1: tbf latency 50ms  burst 10000 rate 256kbitÖĞµÄburst²ÎÊıÉèÖÃ
+	u32		max_size;////tc qdisc add dev eth0 root handle 1: tbf latency 50ms  burst 10000 rate 256kbitä¸­çš„burstå‚æ•°è®¾ç½®
 	struct qdisc_rate_table	*R_tab;
 	struct qdisc_rate_table	*P_tab;
 
@@ -111,7 +111,7 @@ struct tbf_sched_data  //tbf_initÀïÃæ³õÊ¼»¯
 	long	tokens;			/* Current number of B tokens */
 	long	ptokens;		/* Current number of P tokens */
 	psched_time_t	t_c;		/* Time check-point */
-	struct Qdisc	*qdisc;		/* Inner qdisc, default - bfifo queue */  //¸ÃqdiscÖ¸ÏòµÄÊÇÒ»¸ö×Óbfifo_qdisc_ops
+	struct Qdisc	*qdisc;		/* Inner qdisc, default - bfifo queue */  //è¯¥qdiscæŒ‡å‘çš„æ˜¯ä¸€ä¸ªå­bfifo_qdisc_ops
 	struct qdisc_watchdog watchdog;	/* Watchdog timer */
 };
 
@@ -228,7 +228,7 @@ static const struct nla_policy tbf_policy[TCA_TBF_MAX + 1] = {
 	[TCA_TBF_PTAB]	= { .type = NLA_BINARY, .len = TC_RTAB_SIZE },
 };
 
-//tc qdisc add dev eth0 root handle 1: tbf latency 50ms  burst 10000 rate 256kbit ,optÎªtbfºóÃæµÄ²ÎÊı
+//tc qdisc add dev eth0 root handle 1: tbf latency 50ms  burst 10000 rate 256kbit ,optä¸ºtbfåé¢çš„å‚æ•°
 static int tbf_change(struct Qdisc* sch, struct nlattr *opt)
 {
 	int err;
@@ -274,12 +274,12 @@ static int tbf_change(struct Qdisc* sch, struct nlattr *opt)
 	if (max_size < 0)
 		goto done;
 
-	if (q->qdisc != &noop_qdisc) {//ÔÚtbf_initÖĞ£¬q->qdisc = &noop_qdisc
+	if (q->qdisc != &noop_qdisc) {//åœ¨tbf_initä¸­ï¼Œq->qdisc = &noop_qdisc
 		err = fifo_set_limit(q->qdisc, qopt->limit);
 		if (err)
 			goto done;
 	} else if (qopt->limit > 0) {
-		child = fifo_create_dflt(sch, &bfifo_qdisc_ops, qopt->limit); //Ä¬ÈÏÎªtbf_sched_data->qdisc´´½¨Ò»¸öbfifo_qdisc_ops
+		child = fifo_create_dflt(sch, &bfifo_qdisc_ops, qopt->limit); //é»˜è®¤ä¸ºtbf_sched_data->qdiscåˆ›å»ºä¸€ä¸ªbfifo_qdisc_ops
 		if (IS_ERR(child)) {
 			err = PTR_ERR(child);
 			goto done;
@@ -290,7 +290,7 @@ static int tbf_change(struct Qdisc* sch, struct nlattr *opt)
 	if (child) {
 		qdisc_tree_decrease_qlen(q->qdisc, q->qdisc->q.qlen);
 		qdisc_destroy(q->qdisc);
-		q->qdisc = child;//°ÑĞÂ´´½¨µÄtbf_sched_data->qdisc = bfifo_qdisc_ops
+		q->qdisc = child;//æŠŠæ–°åˆ›å»ºçš„tbf_sched_data->qdisc = bfifo_qdisc_ops
 	}
 	q->limit = qopt->limit;
 	q->mtu = qopt->mtu;
@@ -312,7 +312,7 @@ done:
 	return err;
 }
 
-//schÎªĞÂ´´½¨µÄqdisc£¬¼û
+//schä¸ºæ–°åˆ›å»ºçš„qdiscï¼Œè§
 static int tbf_init(struct Qdisc* sch, struct nlattr *opt)
 {
 	struct tbf_sched_data *q = qdisc_priv(sch);
@@ -435,7 +435,7 @@ static const struct Qdisc_class_ops tbf_class_ops =
 	.dump		=	tbf_dump_class,
 };
 
-/*pfifo_qdisc_ops tbf_qdisc_ops sfq_qdisc_ops prio_class_opsÕâ¼¸¸ö¶¼Îª³ö¿Ú£¬ingress_qdisc_opsÎªÈë¿Ú */
+/*pfifo_qdisc_ops tbf_qdisc_ops sfq_qdisc_ops prio_class_opsè¿™å‡ ä¸ªéƒ½ä¸ºå‡ºå£ï¼Œingress_qdisc_opsä¸ºå…¥å£ */
 static struct Qdisc_ops tbf_qdisc_ops ;//__read_mostly = {
 	.next		=	NULL,
 	.cl_ops		=	&tbf_class_ops,
@@ -445,7 +445,7 @@ static struct Qdisc_ops tbf_qdisc_ops ;//__read_mostly = {
 	.dequeue	=	tbf_dequeue,
 	.peek		=	qdisc_peek_dequeued,
 	.drop		=	tbf_drop,
-	.init		=	tbf_init, //qdisc_createÖĞµ÷ÓÃ
+	.init		=	tbf_init, //qdisc_createä¸­è°ƒç”¨
 	.reset		=	tbf_reset,
 	.destroy	=	tbf_destroy,
 	.change		=	tbf_change,

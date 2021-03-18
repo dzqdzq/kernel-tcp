@@ -31,8 +31,8 @@
 #include "../../netfilter/xt_repldata.h"
 
 /*
-ip_tablesÄ£¿éËüÊÇ·À»ğÇ½µÄºËĞÄÄ£¿é£¬¸ºÔğÎ¬»¤·À»ğÇ½µÄ¹æÔò±í£¬Í¨¹ıÕâĞ©¹æÔò£¬ÊµÏÖ·À»ğÇ½µÄºËĞÄ¹¦ÄÜ¡£¹éÄÉÆğÀ´£¬Ö÷ÒªÓĞÈıÖÖ¹¦ÄÜ£º°ü¹ıÂË£¨filter£©¡¢
-NATÒÔ¼°°ü´¦Àí£¨mangle£©¡£Í¬½ø¸ÃÄ£¿éÁôÓĞÓëÓÃ»§¿Õ¼äÍ¨Ñ¶µÄ½Ó¿Ú¡£
+ip_tablesæ¨¡å—å®ƒæ˜¯é˜²ç«å¢™çš„æ ¸å¿ƒæ¨¡å—ï¼Œè´Ÿè´£ç»´æŠ¤é˜²ç«å¢™çš„è§„åˆ™è¡¨ï¼Œé€šè¿‡è¿™äº›è§„åˆ™ï¼Œå®ç°é˜²ç«å¢™çš„æ ¸å¿ƒåŠŸèƒ½ã€‚å½’çº³èµ·æ¥ï¼Œä¸»è¦æœ‰ä¸‰ç§åŠŸèƒ½ï¼šåŒ…è¿‡æ»¤ï¼ˆfilterï¼‰ã€
+NATä»¥åŠåŒ…å¤„ç†ï¼ˆmangleï¼‰ã€‚åŒè¿›è¯¥æ¨¡å—ç•™æœ‰ä¸ç”¨æˆ·ç©ºé—´é€šè®¯çš„æ¥å£ã€‚
 */
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Netfilter Core Team <coreteam@netfilter.org>");
@@ -42,7 +42,7 @@ MODULE_DESCRIPTION("IPv4 packet filter");
 /*#define DEBUG_ALLOW_ALL*/ /* Useful for remote debugging */
 /*#define DEBUG_IP_FIREWALL_USER*/
 
-#ifdef DEBUG_IP_FIREWALL //Ö»ÓĞ´ò¿ªÕâ¸ö¿ª¹Øºó£¬dprintf²Å»á´òÓ¡
+#ifdef DEBUG_IP_FIREWALL //åªæœ‰æ‰“å¼€è¿™ä¸ªå¼€å…³åï¼Œdprintfæ‰ä¼šæ‰“å°
 #define dprintf(format, args...) pr_info(format , ## args)
 #else 
 #define dprintf(format, args...)
@@ -83,7 +83,7 @@ EXPORT_SYMBOL_GPL(ipt_alloc_initial_table);
 
 /* Returns whether matches rule or not. */
 /* Performance critical - called for every packet */
-//Æ¥Åästruct ipt_ip
+//åŒ¹é…struct ipt_ip
 static inline bool
 ip_packet_match(const struct iphdr *ip,
 		const char *indev,
@@ -299,7 +299,7 @@ struct ipt_entry *ipt_next_entry(const struct ipt_entry *entry)
 }
 
 /* Returns one of the generic firewall policies, like NF_ACCEPT.
-°ü¹ıÂË×Ó¹¦ÄÜ£º°ü¹ıÂËÒ»¹²¶¨ÒåÁËËÄ¸öhookº¯Êı£¬ÕâËÄ¸öhookº¯Êı±¾ÖÊ×îºó¶¼µ÷ÓÃÁËipt_do_table()º¯Êı¡£
+åŒ…è¿‡æ»¤å­åŠŸèƒ½ï¼šåŒ…è¿‡æ»¤ä¸€å…±å®šä¹‰äº†å››ä¸ªhookå‡½æ•°ï¼Œè¿™å››ä¸ªhookå‡½æ•°æœ¬è´¨æœ€åéƒ½è°ƒç”¨äº†ipt_do_table()å‡½æ•°ã€‚
 */
 unsigned int
 ipt_do_table(struct sk_buff *skb,
@@ -368,10 +368,10 @@ ipt_do_table(struct sk_buff *skb,
 			acpar.match     = ematch->u.kernel.match;
 			acpar.matchinfo = ematch->data;
 			if (!acpar.match->match(skb, &acpar))
-				goto no_match;//marchÊ§°Ü£¬¼ÌĞøÏÂÒ»¸öipt_entry
+				goto no_match;//marchå¤±è´¥ï¼Œç»§ç»­ä¸‹ä¸€ä¸ªipt_entry
 		}
 
-		ADD_COUNTER(e->counters, ntohs(ip->tot_len), 1);/* ¼ÇÂ¼¸Ã¹æÔò´¦Àí¹ıµÄ±¨ÎÄÊıºÍ±¨ÎÄ×Ü×Ö½ÚÊı */ 
+		ADD_COUNTER(e->counters, ntohs(ip->tot_len), 1);/* è®°å½•è¯¥è§„åˆ™å¤„ç†è¿‡çš„æŠ¥æ–‡æ•°å’ŒæŠ¥æ–‡æ€»å­—èŠ‚æ•° */ 
 
 		t = ipt_get_target(e);
 		IP_NF_ASSERT(t->u.kernel.target);
@@ -763,7 +763,7 @@ check_entry_size_and_hooks(struct ipt_entry *e,
 		if (!(valid_hooks & (1 << h)))
 			continue;
 		if ((unsigned char *)e - base == hook_entries[h])
-			newinfo->hook_entry[h] = hook_entries[h];//È·¶¨Æ«ÒÆÁ¿
+			newinfo->hook_entry[h] = hook_entries[h];//ç¡®å®šåç§»é‡
 		if ((unsigned char *)e - base == underflows[h]) {
 			if (!check_underflow(e)) {
 				pr_err("Underflows must be unconditional and "
@@ -804,9 +804,9 @@ cleanup_entry(struct ipt_entry *e, struct net *net)
 
 /* Checks and translates the user-supplied table segment (held in
    newinfo) */
-//entry0Ö¸ÏòµÚÒ»Ìõ¹æÔò£¬Ò²¾ÍÊÇnewinfoÀïÃæµÄentries½Úµã
-/*translate_tableº¯Êı½«ÓÉnewinfoËù±íÊ¾µÄtableµÄ¸÷¸ö¹æÔò½øĞĞ±ß½ç¼ì²é£¬È»ºó¶ÔÓÚnewinfoËùÖ¸µÄxt_talbe_info½á¹¹ÖĞµÄhook_entries
-ºÍunderflows¸³ÓèÕıÈ·µÄÖµ£¬×îºó½«±íÏîÏòÆäËûcpu¿½±´*/
+//entry0æŒ‡å‘ç¬¬ä¸€æ¡è§„åˆ™ï¼Œä¹Ÿå°±æ˜¯newinfoé‡Œé¢çš„entriesèŠ‚ç‚¹
+/*translate_tableå‡½æ•°å°†ç”±newinfoæ‰€è¡¨ç¤ºçš„tableçš„å„ä¸ªè§„åˆ™è¿›è¡Œè¾¹ç•Œæ£€æŸ¥ï¼Œç„¶åå¯¹äºnewinfoæ‰€æŒ‡çš„xt_talbe_infoç»“æ„ä¸­çš„hook_entries
+å’Œunderflowsèµ‹äºˆæ­£ç¡®çš„å€¼ï¼Œæœ€åå°†è¡¨é¡¹å‘å…¶ä»–cpuæ‹·è´*/
 static int translate_table(struct net *net, struct xt_table_info *newinfo, void *entry0,
                 const struct ipt_replace *repl)
 {
@@ -2088,14 +2088,14 @@ do_ipt_get_ctl(struct sock *sk, int cmd, void __user *user, int *len)
 
 
 /*
-¼ò¶øÑÔÖ®ipt_register_table()Ëù×öµÄÊÂÇé¾ÍÊÇ´ÓÄ£°åinitial_table±äÁ¿µÄrepl³ÉÔ±ÀïÈ¡³ö³õÊ¼»¯Êı¾İ£¬È»ºóÉêÇëÒ»¿éÄÚ´æ²¢ÓÃreplÀïµÄÖµÀ´³õÊ¼»¯Ëü£¬
-Ö®ºó½«Õâ¿éÄÚ´æµÄÊ×µØÖ·¸³¸øpacket_filter±íµÄprivate³ÉÔ±£¬×îºó½«packet_filter¹ÒÔØµ½xt[2].tablesµÄË«ÏòÁ´±íÖĞ¡£
+ç®€è€Œè¨€ä¹‹ipt_register_table()æ‰€åšçš„äº‹æƒ…å°±æ˜¯ä»æ¨¡æ¿initial_tableå˜é‡çš„replæˆå‘˜é‡Œå–å‡ºåˆå§‹åŒ–æ•°æ®ï¼Œç„¶åç”³è¯·ä¸€å—å†…å­˜å¹¶ç”¨replé‡Œçš„å€¼æ¥åˆå§‹åŒ–å®ƒï¼Œ
+ä¹‹åå°†è¿™å—å†…å­˜çš„é¦–åœ°å€èµ‹ç»™packet_filterè¡¨çš„privateæˆå‘˜ï¼Œæœ€åå°†packet_filteræŒ‚è½½åˆ°xt[2].tablesçš„åŒå‘é“¾è¡¨ä¸­ã€‚
 
 
-²Î¿¼:(ËÄ)¶´Ï¤linuxÏÂµÄNetfilter&iptables£º°ü¹ıÂË×ÓÏµÍ³iptable_filter
+å‚è€ƒ:(å››)æ´æ‚‰linuxä¸‹çš„Netfilter&iptablesï¼šåŒ…è¿‡æ»¤å­ç³»ç»Ÿiptable_filter
 */
-////iptable netfilter±í×¢²áÌí¼Óµ½¸ÃÁ´±íÖĞ   iptable_filter.koÀïÃæÓÃ½á¹¹xt_table,¸Ã±íÏÖÔ´´Ópacket_filterÀ´µÄ           ¼ûxt_register_table
-//tableÍ·²¿:net->xt.tables[table->af],ËùÓĞtableµÄÍ·²¿Á´±í
+////iptable netfilterè¡¨æ³¨å†Œæ·»åŠ åˆ°è¯¥é“¾è¡¨ä¸­   iptable_filter.koé‡Œé¢ç”¨ç»“æ„xt_table,è¯¥è¡¨ç°æºä»packet_filteræ¥çš„           è§xt_register_table
+//tableå¤´éƒ¨:net->xt.tables[table->af],æ‰€æœ‰tableçš„å¤´éƒ¨é“¾è¡¨
 struct xt_table *ipt_register_table(struct net *net,
 				    const struct xt_table *table,
 				    const struct ipt_replace *repl)
@@ -2114,7 +2114,7 @@ struct xt_table *ipt_register_table(struct net *net,
 
 	/* choose the copy on our node/cpu, but dont care about preemption */
 	loc_cpu_entry = newinfo->entries[raw_smp_processor_id()];
-	memcpy(loc_cpu_entry, repl->entries, repl->size);//¿½±´replÀïÃæµÄentries¹æÔòµ½xt_table_info±íÀïÃæµÄentriesÀïÃæ
+	memcpy(loc_cpu_entry, repl->entries, repl->size);//æ‹·è´replé‡Œé¢çš„entriesè§„åˆ™åˆ°xt_table_infoè¡¨é‡Œé¢çš„entriesé‡Œé¢
 
 	ret = translate_table(net, newinfo, loc_cpu_entry, repl);
 	if (ret != 0)
@@ -2278,7 +2278,7 @@ static int __init ip_tables_init(void)
 		goto err4;
 
 	/* Register setsockopt
-    nf_register_sockopt()Îªiptables×¢²áÒ»¸ösocket option£¬Õâ¸öoptionÓÃÓÚ¶Á»òĞ´iptableµÄÅäÖÃ£ºLinuxµÄ·À»ğÇ½¹æÔò¡¢NAT×ª»»Ó³Éä×îÖÕ¶¼ÊÇÍ¨¹ıÕâ¸ö½Ó¿ÚÍ¨ÖªÄÚºËµÄ¡£
+    nf_register_sockopt()ä¸ºiptablesæ³¨å†Œä¸€ä¸ªsocket optionï¼Œè¿™ä¸ªoptionç”¨äºè¯»æˆ–å†™iptableçš„é…ç½®ï¼šLinuxçš„é˜²ç«å¢™è§„åˆ™ã€NATè½¬æ¢æ˜ å°„æœ€ç»ˆéƒ½æ˜¯é€šè¿‡è¿™ä¸ªæ¥å£é€šçŸ¥å†…æ ¸çš„ã€‚
 	*/
 	ret = nf_register_sockopt(&ipt_sockopts);
 	if (ret < 0)

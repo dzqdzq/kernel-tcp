@@ -61,7 +61,7 @@ static void __neigh_notify(struct neighbour *n, int type, int flags);
 static void neigh_update_notify(struct neighbour *neigh);
 static int pneigh_ifdown(struct neigh_table *tbl, struct net_device *dev);
 
-static struct neigh_table *neigh_tables;//Ò»¸öneigh_table½á¹¹ÊµÀı¶ÔÓ¦Ò»¸öÁÚ¾ÓĞ­Òé£¬ËùÓĞµÄÊµÀı¶¼Á¬½ÓÔÚÈ«¾ÖÁ´±íneigh_tablesÖĞ¡£¶ÔÓÚarpĞ­Òé£¬neigh_table½á¹¹ÊµÀıÊÇarp_tbl¡£
+static struct neigh_table *neigh_tables;//ä¸€ä¸ªneigh_tableç»“æ„å®ä¾‹å¯¹åº”ä¸€ä¸ªé‚»å±…åè®®ï¼Œæ‰€æœ‰çš„å®ä¾‹éƒ½è¿æ¥åœ¨å…¨å±€é“¾è¡¨neigh_tablesä¸­ã€‚å¯¹äºarpåè®®ï¼Œneigh_tableç»“æ„å®ä¾‹æ˜¯arp_tblã€‚
 #ifdef CONFIG_PROC_FS
 static const struct file_operations neigh_stat_seq_fops;
 #endif
@@ -126,7 +126,7 @@ unsigned long neigh_rand_reach_time(unsigned long base)
 }
 EXPORT_SYMBOL(neigh_rand_reach_time);
 
-//ÓÃÀ´×÷ÎªÊÇ·ñ½øĞĞÀ¬»ø»ØÊÕµÄÅĞ¶ÏÌõ¼ş¡£
+//ç”¨æ¥ä½œä¸ºæ˜¯å¦è¿›è¡Œåƒåœ¾å›æ”¶çš„åˆ¤æ–­æ¡ä»¶ã€‚
 static int neigh_forced_gc(struct neigh_table *tbl)
 {
 	int shrunk = 0;
@@ -258,7 +258,7 @@ int neigh_ifdown(struct neigh_table *tbl, struct net_device *dev)
 }
 EXPORT_SYMBOL(neigh_ifdown);
 
-//¸Ãº¯ÊıÀïÃæ»áÌí¼Ó¶¨Ê±Æ÷£¬ÓÃÓÚ·¢ËÍARPÇëÇó
+//è¯¥å‡½æ•°é‡Œé¢ä¼šæ·»åŠ å®šæ—¶å™¨ï¼Œç”¨äºå‘é€ARPè¯·æ±‚
 static struct neighbour *neigh_alloc(struct neigh_table *tbl)
 {
 	struct neighbour *n = NULL;
@@ -358,7 +358,7 @@ static void neigh_hash_grow(struct neigh_table *tbl, unsigned long new_entries)
 	neigh_hash_free(old_hash, old_entries);
 }
 
-//neigh_lookupÖ»ĞèÒª¶ÁÁÚ¾Ó±í¡£¶øneigh_periodic_timerÔòÑªÒ©¶ÁĞ´ÁÚ¾Ó±í
+//neigh_lookupåªéœ€è¦è¯»é‚»å±…è¡¨ã€‚è€Œneigh_periodic_timeråˆ™è¡€è¯è¯»å†™é‚»å±…è¡¨
 struct neighbour *neigh_lookup(struct neigh_table *tbl, const void *pkey,
 			       struct net_device *dev)
 {
@@ -892,7 +892,7 @@ out:
 	neigh_release(neigh);
 }
 
-//·µ»Ø0±íÊ¾ÓĞĞ§£¬¿ÉÒÔÖ±½Ó·¢ËÍ¡£·µ»Ø1
+//è¿”å›0è¡¨ç¤ºæœ‰æ•ˆï¼Œå¯ä»¥ç›´æ¥å‘é€ã€‚è¿”å›1
 int __neigh_event_send(struct neighbour *neigh, struct sk_buff *skb)
 {
 	int rc;
@@ -2572,7 +2572,7 @@ static struct neigh_sysctl_table {
 	struct ctl_table_header *sysctl_header;
 	struct ctl_table neigh_vars[NEIGH_VARS_MAX];
 	char *dev_name;
-} neigh_sysctl_template __read_mostly = {  /*/proc/sys/net/ipv4/neigh/eth ¸ÃÂ·¾¶ÏÂÃæ¿ÉÒÔÉèÖÃÕâĞ©±äÁ¿µÄÖµ ²Î¿¼Linux ÄÚºËÔ´ÂëÆÊÎö- TCP.IP ÊµÏÖ, ·®¶«¶«, ÄªÀ½, ÉÏ²á, 2011(1)*/
+} neigh_sysctl_template __read_mostly = {  /*/proc/sys/net/ipv4/neigh/eth è¯¥è·¯å¾„ä¸‹é¢å¯ä»¥è®¾ç½®è¿™äº›å˜é‡çš„å€¼ å‚è€ƒLinux å†…æ ¸æºç å‰–æ- TCP.IP å®ç°, æ¨Šä¸œä¸œ, è«æ¾œ, ä¸Šå†Œ, 2011(1)*/
 	.neigh_vars = {
 		{
 			.procname	= "mcast_solicit",

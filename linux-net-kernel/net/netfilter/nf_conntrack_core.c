@@ -56,7 +56,7 @@ EXPORT_SYMBOL_GPL(nfnetlink_parse_nat_setup_hook);
 DEFINE_SPINLOCK(nf_conntrack_lock);
 EXPORT_SYMBOL_GPL(nf_conntrack_lock);
 
-unsigned int nf_conntrack_htable_size __read_mostly;//Õâ¸öhash±íµÄ´óÐ¡ÊÇÓÐÏÞÖÆµÄ£¬±íµÄ´óÐ¡ÓÉip_conntrack_htable_size È«¾Ö±äÁ¿¾ö¶¨
+unsigned int nf_conntrack_htable_size __read_mostly;//è¿™ä¸ªhashè¡¨çš„å¤§å°æ˜¯æœ‰é™åˆ¶çš„ï¼Œè¡¨çš„å¤§å°ç”±ip_conntrack_htable_size å…¨å±€å˜é‡å†³å®š
 EXPORT_SYMBOL_GPL(nf_conntrack_htable_size);
 
 unsigned int nf_conntrack_max __read_mostly;
@@ -86,7 +86,7 @@ static u_int32_t __hash_conntrack(const struct nf_conntrack_tuple *tuple,
 	return ((u64)h * size) >> 32;
 }
 
-//»ñÈ¡net->ct.hash[hash]ÖÐµÄhash¼üÖµ
+//èŽ·å–net->ct.hash[hash]ä¸­çš„hashé”®å€¼
 static inline u_int32_t hash_conntrack(const struct net *net, u16 zone,
 				       const struct nf_conntrack_tuple *tuple)
 {
@@ -94,7 +94,7 @@ static inline u_int32_t hash_conntrack(const struct net *net, u16 zone,
 				nf_conntrack_hash_rnd);
 }
 
-//½«Êý¾Ý°ü×ª»»³ÉÒ»¸ötuple£»
+//å°†æ•°æ®åŒ…è½¬æ¢æˆä¸€ä¸ªtupleï¼›
 bool
 nf_ct_get_tuple(const struct sk_buff *skb,
 		unsigned int nhoff,
@@ -146,7 +146,7 @@ bool nf_ct_get_tuplepr(const struct sk_buff *skb, unsigned int nhoff,
 }
 EXPORT_SYMBOL_GPL(nf_ct_get_tuplepr);
 
-//°ÑorigÖÐµÄÐÅÏ¢¿½±´µ½inverseÖÐ£¬µ«ÊÇdirÁ½¸öÏà·´
+//æŠŠorigä¸­çš„ä¿¡æ¯æ‹·è´åˆ°inverseä¸­ï¼Œä½†æ˜¯dirä¸¤ä¸ªç›¸å
 bool
 nf_ct_invert_tuple(struct nf_conntrack_tuple *inverse,
 		   const struct nf_conntrack_tuple *orig,
@@ -166,7 +166,7 @@ nf_ct_invert_tuple(struct nf_conntrack_tuple *inverse,
 }
 EXPORT_SYMBOL_GPL(nf_ct_invert_tuple);
 
-//½«orig_tupleºÍreply_tuple´Ónet->ct.hashÖÐÉ¾³ý
+//å°†orig_tupleå’Œreply_tupleä»Žnet->ct.hashä¸­åˆ é™¤
 static void
 clean_from_lists(struct nf_conn *ct)
 {
@@ -216,7 +216,7 @@ destroy_conntrack(struct nf_conntrack *nfct)
 	spin_unlock_bh(&nf_conntrack_lock);
 
 	if (ct->master)
-		nf_ct_put(ct->master);//¼õÉÙ¶ÔÖ÷Á¬½ÓµÄÒýÓÃ¼ÆÊý
+		nf_ct_put(ct->master);//å‡å°‘å¯¹ä¸»è¿žæŽ¥çš„å¼•ç”¨è®¡æ•°
 
 	pr_debug("destroy_conntrack: returning ct=%p to slab\n", ct);
 	nf_conntrack_free(ct);
@@ -251,7 +251,7 @@ static void death_by_event(unsigned long ul_conntrack)
 	/* we've got the event delivered, now it's dying */
 	set_bit(IPS_DYING_BIT, &ct->status);
 	spin_lock(&nf_conntrack_lock);
-	hlist_nulls_del(&ct->tuplehash[IP_CT_DIR_ORIGINAL].hnnode);//ÊÂ¼þÍ¨¸æ½áÊø£¬É¾³ý
+	hlist_nulls_del(&ct->tuplehash[IP_CT_DIR_ORIGINAL].hnnode);//äº‹ä»¶é€šå‘Šç»“æŸï¼Œåˆ é™¤
 	spin_unlock(&nf_conntrack_lock);
 	nf_ct_put(ct);
 }
@@ -266,14 +266,14 @@ void nf_ct_insert_dying_list(struct nf_conn *ct)
 			     &net->ct.dying);
 	spin_unlock_bh(&nf_conntrack_lock);
 	/* set a new timer to retry event delivery */
-	setup_timer(&ct->timeout, death_by_event, (unsigned long)ct);//ÉèÖÃÏÂ´ÎÍ¨¹ýdestroyÊ±¼ä¶¨Ê±Æ÷
+	setup_timer(&ct->timeout, death_by_event, (unsigned long)ct);//è®¾ç½®ä¸‹æ¬¡é€šè¿‡destroyæ—¶é—´å®šæ—¶å™¨
 	ct->timeout.expires = jiffies +
 		(random32() % net->ct.sysctl_events_retry_timeout);
 	add_timer(&ct->timeout);
 }
 EXPORT_SYMBOL_GPL(nf_ct_insert_dying_list);
 
-/*¸Ãº¯Êý¸ºÔðÁ´½Óµ½ÆÚÊ±É¾³ý¸ÃÁ´½Ó¡£*/
+/*è¯¥å‡½æ•°è´Ÿè´£é“¾æŽ¥åˆ°æœŸæ—¶åˆ é™¤è¯¥é“¾æŽ¥ã€‚*/
 static void death_by_timeout(unsigned long ul_conntrack)
 {
 	struct nf_conn *ct = (void *)ul_conntrack;
@@ -335,7 +335,7 @@ begin:
 EXPORT_SYMBOL_GPL(__nf_conntrack_find);
 
 /* Find a connection corresponding to a tuple. */
-//ÅÐ¶ÏÁ¬½Ó¸ú×Ù±íµÄtupleÊÇ·ñÒÑ´æÔÚ
+//åˆ¤æ–­è¿žæŽ¥è·Ÿè¸ªè¡¨çš„tupleæ˜¯å¦å·²å­˜åœ¨
 struct nf_conntrack_tuple_hash *
 nf_conntrack_find_get(struct net *net, u16 zone,
 		      const struct nf_conntrack_tuple *tuple)
@@ -455,7 +455,7 @@ __nf_conntrack_confirm(struct sk_buff *skb)
 			goto out;
 
 	/* Remove from unconfirmed list */
-	hlist_nulls_del_rcu(&ct->tuplehash[IP_CT_DIR_ORIGINAL].hnnode);//½²orig_tumple´ÓunconfirmÁ´±íÖÐÉ¾³ý  init_conntrackÖÐ³õÊ¼»¯ctµÄÊ±ºòÌí¼Óµ½net->ct.unconfirmedÁ´±í
+	hlist_nulls_del_rcu(&ct->tuplehash[IP_CT_DIR_ORIGINAL].hnnode);//è®²orig_tumpleä»Žunconfirmé“¾è¡¨ä¸­åˆ é™¤  init_conntrackä¸­åˆå§‹åŒ–ctçš„æ—¶å€™æ·»åŠ åˆ°net->ct.unconfirmedé“¾è¡¨
 
 	/* Timer relative to confirmation time, not original
 	   setting time, otherwise we'd get timer wrap in
@@ -527,7 +527,7 @@ EXPORT_SYMBOL_GPL(nf_conntrack_tuple_taken);
 
 /* There's a small race here where we may free a just-assured
    connection.  Too bad: we're in trouble anyway. 
-    ÊÍ·ÅÒ»Ð©Á¬½Ó
+    é‡Šæ”¾ä¸€äº›è¿žæŽ¥
 */
 static noinline int early_drop(struct net *net, unsigned int hash)
 {
@@ -576,7 +576,7 @@ static noinline int early_drop(struct net *net, unsigned int hash)
 }
 
 
-//¿ª±Ùnf_conn¿Õ¼ä£¬²¢¸øtuplehash[]¸³Öµ
+//å¼€è¾Ÿnf_connç©ºé—´ï¼Œå¹¶ç»™tuplehash[]èµ‹å€¼
 struct nf_conn *nf_conntrack_alloc(struct net *net, u16 zone,
 				   const struct nf_conntrack_tuple *orig,
 				   const struct nf_conntrack_tuple *repl,
@@ -623,7 +623,7 @@ struct nf_conn *nf_conntrack_alloc(struct net *net, u16 zone,
 	memset(&ct->tuplehash[IP_CT_DIR_MAX], 0,
 	       sizeof(*ct) - offsetof(struct nf_conn, tuplehash[IP_CT_DIR_MAX]));
 	spin_lock_init(&ct->lock);
-	ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple = *orig;//ËûºÍÏÂÃæµÄreplµÄdirÊÇÏà·´µÄ
+	ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple = *orig;//ä»–å’Œä¸‹é¢çš„replçš„diræ˜¯ç›¸åçš„
 	ct->tuplehash[IP_CT_DIR_ORIGINAL].hnnode.pprev = NULL;
 	ct->tuplehash[IP_CT_DIR_REPLY].tuple = *repl;
 	ct->tuplehash[IP_CT_DIR_REPLY].hnnode.pprev = NULL;
@@ -636,7 +636,7 @@ struct nf_conn *nf_conntrack_alloc(struct net *net, u16 zone,
 	if (zone) {
 		struct nf_conntrack_zone *nf_ct_zone;
 
-		nf_ct_zone = nf_ct_ext_add(ct, NF_CT_EXT_ZONE, GFP_ATOMIC);//Ìí¼ÓCTÀ©Õ¹Çø  struct nf_connµÄextÖ¸Õë¿ÉÄÜÖ¸ÏòÀ©Õ¹µÄhelper,ecacheµÈ
+		nf_ct_zone = nf_ct_ext_add(ct, NF_CT_EXT_ZONE, GFP_ATOMIC);//æ·»åŠ CTæ‰©å±•åŒº  struct nf_connçš„extæŒ‡é’ˆå¯èƒ½æŒ‡å‘æ‰©å±•çš„helper,ecacheç­‰
 		if (!nf_ct_zone)
 			goto out_free;
 		nf_ct_zone->id = zone;
@@ -671,7 +671,7 @@ EXPORT_SYMBOL_GPL(nf_conntrack_free);
 /* Allocate a new conntrack: we return -ENOMEM if classification
    failed due to stress.  Otherwise it really is unclassifiable. */
 
-//·µ»Øreturn &ct->tuplehash[IP_CT_DIR_ORIGINAL];
+//è¿”å›žreturn &ct->tuplehash[IP_CT_DIR_ORIGINAL];
 static struct nf_conntrack_tuple_hash *
 init_conntrack(struct net *net, struct nf_conn *tmpl,
 	       const struct nf_conntrack_tuple *tuple,
@@ -718,7 +718,7 @@ init_conntrack(struct net *net, struct nf_conn *tmpl,
 			 ct, exp);
 		/* Welcome, Mr. Bond.  We've been expecting you... */
 		__set_bit(IPS_EXPECTED_BIT, &ct->status);
-		ct->master = exp->master;//½«×ÓÁ¬½ÓÓëÖ÷Á¬½ÓÏà¹ØÁª
+		ct->master = exp->master;//å°†å­è¿žæŽ¥ä¸Žä¸»è¿žæŽ¥ç›¸å…³è”
 		if (exp->helper) {
 			help = nf_ct_helper_ext_add(ct, GFP_ATOMIC);
 			if (help)
@@ -726,12 +726,12 @@ init_conntrack(struct net *net, struct nf_conn *tmpl,
 		}
 
 #ifdef CONFIG_NF_CONNTRACK_MARK
-		ct->mark = exp->master->mark;//½«Ö÷Á¬½ÓµÄmark¸³Öµ¸ø×ÓÁ¬½Ó
+		ct->mark = exp->master->mark;//å°†ä¸»è¿žæŽ¥çš„markèµ‹å€¼ç»™å­è¿žæŽ¥
 #endif
 #ifdef CONFIG_NF_CONNTRACK_SECMARK
 		ct->secmark = exp->master->secmark;
 #endif
-		nf_conntrack_get(&ct->master->ct_general);//Ôö¼ÓÖ÷Á¬½ÓÒýÓÃ¼ÆÊý
+		nf_conntrack_get(&ct->master->ct_general);//å¢žåŠ ä¸»è¿žæŽ¥å¼•ç”¨è®¡æ•°
 		NF_CT_STAT_INC(net, expect_new);
 	} else {
 		__nf_ct_try_assign_helper(ct, tmpl, GFP_ATOMIC);
@@ -770,7 +770,7 @@ resolve_normal_ct(struct net *net, struct nf_conn *tmpl,
 	struct nf_conn *ct;
 	u16 zone = tmpl ? nf_ct_zone(tmpl) : NF_CT_DEFAULT_ZONE;
 
-    //°Ñ°ü×ª»»Îªtuple
+    //æŠŠåŒ…è½¬æ¢ä¸ºtuple
 	if (!nf_ct_get_tuple(skb, skb_network_offset(skb),
 			     dataoff, l3num, protonum, &tuple, l3proto,
 			     l4proto)) {
@@ -780,7 +780,7 @@ resolve_normal_ct(struct net *net, struct nf_conn *tmpl,
 
 	/* look for tuple match */
 	h = nf_conntrack_find_get(net, zone, &tuple);
-	if (!h) {//ÔÚÁ¬½Ó¸ú×Ù±íÖÐÃ»ÓÐÕÒµ½¸Ãtuple
+	if (!h) {//åœ¨è¿žæŽ¥è·Ÿè¸ªè¡¨ä¸­æ²¡æœ‰æ‰¾åˆ°è¯¥tuple
 		h = init_conntrack(net, tmpl, &tuple, l3proto, l4proto,
 				   skb, dataoff);
 		if (!h)
@@ -792,21 +792,21 @@ resolve_normal_ct(struct net *net, struct nf_conn *tmpl,
 
 	/* It exists; we have (non-exclusive) reference. */
 	if (NF_CT_DIRECTION(h) == IP_CT_DIR_REPLY) {
-		*ctinfo = IP_CT_ESTABLISHED + IP_CT_IS_REPLY;//// ±íÊ¾Õâ¸öÊý¾Ý°ü¶ÔÓ¦µÄÁ¬½ÓÔÚÁ½¸ö·½Ïò¶¼ÓÐÊý¾Ý°üÍ¨¹ý£¬²¢ÇÒÕâÊÇREPLYÓ¦´ð·½ÏòÊý¾Ý°ü¡£µ«Ëü±íÊ¾²»ÁËÕâÊÇ µÚ¼¸¸öÊý¾Ý°ü£¬Ò²ËµÃ÷²»ÁËÕâ¸öCTÊÇ·ñÊÇ×ÓÁ¬½Ó¡£
+		*ctinfo = IP_CT_ESTABLISHED + IP_CT_IS_REPLY;//// è¡¨ç¤ºè¿™ä¸ªæ•°æ®åŒ…å¯¹åº”çš„è¿žæŽ¥åœ¨ä¸¤ä¸ªæ–¹å‘éƒ½æœ‰æ•°æ®åŒ…é€šè¿‡ï¼Œå¹¶ä¸”è¿™æ˜¯REPLYåº”ç­”æ–¹å‘æ•°æ®åŒ…ã€‚ä½†å®ƒè¡¨ç¤ºä¸äº†è¿™æ˜¯ ç¬¬å‡ ä¸ªæ•°æ®åŒ…ï¼Œä¹Ÿè¯´æ˜Žä¸äº†è¿™ä¸ªCTæ˜¯å¦æ˜¯å­è¿žæŽ¥ã€‚
 		/* Please set reply bit if this packet OK */
 		*set_reply = 1;
 	} else {
 		/* Once we've had two way comms, always ESTABLISHED. */
 		if (test_bit(IPS_SEEN_REPLY_BIT, &ct->status)) {
 			pr_debug("nf_conntrack_in: normal packet for %p\n", ct);
-			*ctinfo = IP_CT_ESTABLISHED;// ±íÊ¾Õâ¸öÊý¾Ý°ü¶ÔÓ¦µÄÁ¬½ÓÔÚÁ½¸ö·½Ïò¶¼ÓÐÊý¾Ý°üÍ¨¹ý£¬²¢ÇÒÕâÊÇORIGINAL³õÊ¼·½ÏòÊý¾Ý°ü
+			*ctinfo = IP_CT_ESTABLISHED;// è¡¨ç¤ºè¿™ä¸ªæ•°æ®åŒ…å¯¹åº”çš„è¿žæŽ¥åœ¨ä¸¤ä¸ªæ–¹å‘éƒ½æœ‰æ•°æ®åŒ…é€šè¿‡ï¼Œå¹¶ä¸”è¿™æ˜¯ORIGINALåˆå§‹æ–¹å‘æ•°æ®åŒ…
 		} else if (test_bit(IPS_EXPECTED_BIT, &ct->status)) {
 			pr_debug("nf_conntrack_in: related packet for %p\n",
 				 ct);
-			*ctinfo = IP_CT_RELATED;//±íÊ¾Õâ¸öÊý¾Ý°ü¶ÔÓ¦µÄÁ¬½Ó»¹Ã»ÓÐREPLY·½ÏòÊý¾Ý°ü£¬µ±Ç°Êý¾Ý°üÊÇORIGINAL·½ÏòÊý¾Ý°ü¡£
+			*ctinfo = IP_CT_RELATED;//è¡¨ç¤ºè¿™ä¸ªæ•°æ®åŒ…å¯¹åº”çš„è¿žæŽ¥è¿˜æ²¡æœ‰REPLYæ–¹å‘æ•°æ®åŒ…ï¼Œå½“å‰æ•°æ®åŒ…æ˜¯ORIGINALæ–¹å‘æ•°æ®åŒ…ã€‚
 		} else {
 			pr_debug("nf_conntrack_in: new packet for %p\n", ct);
-			*ctinfo = IP_CT_NEW;// ±íÊ¾Õâ¸öÊý¾Ý°ü¶ÔÓ¦µÄÁ¬½Ó»¹Ã»ÓÐREPLY·½ÏòÊý¾Ý°ü£¬µ±Ç°Êý¾Ý°üÊÇORIGINAL·½ÏòÊý¾Ý°ü£¬¸ÃÁ¬½Ó²»ÊÇ×ÓÁ¬½Ó¡£
+			*ctinfo = IP_CT_NEW;// è¡¨ç¤ºè¿™ä¸ªæ•°æ®åŒ…å¯¹åº”çš„è¿žæŽ¥è¿˜æ²¡æœ‰REPLYæ–¹å‘æ•°æ®åŒ…ï¼Œå½“å‰æ•°æ®åŒ…æ˜¯ORIGINALæ–¹å‘æ•°æ®åŒ…ï¼Œè¯¥è¿žæŽ¥ä¸æ˜¯å­è¿žæŽ¥ã€‚
 		}
 		*set_reply = 0;
 	}
@@ -815,13 +815,13 @@ resolve_normal_ct(struct net *net, struct nf_conn *tmpl,
 	return ct;
 }
 
-//µ÷ÓÃnf_conntrack_in()º¯Êý½¨Á¢Á¬½Ó±íÏî£¬Á¬½Ó±íÏîÖÐµÄtupleÓÉipv4×¢²áµÄ3/4²ãÐ­Òé´¦Àíº¯Êý¹¹½¨,Ò²¾ÍÊÇÓÉL3ºÍL4µÄÏà¹ØÐ­Òé½á¹¹Íê³ÉÁ¬½Ó±í
-//ÏîµÄ¸³ÖµµÈ²Ù×÷¡£¸Ãº¯ÊýÖ÷Òª¹¦ÄÜÊÇ´´½¨Á´½Ó£¬¼´´´½¨struct nf_conn½á¹¹£¬Í¬Ê±Ìî³ästruct nf_connÖÐµÄÒ»Ð©±ØÒªµÄÐÅÏ¢£¬ÀýÈçÁ´½Ó×´Ì¬¡¢ÒýÓÃ¼ÆÊý¡¢helper½á¹¹µÈ¡£
-//¶ÔÓÚÒ»¸öÐÂÁ´½Ó£¬ÔÚipv4_conntrack_in()º¯ÊýÖÐÖ»ÊÇ´´½¨ÁËstruct nf_conn½á¹¹£¬µ«²¢Ã»ÓÐ½«¸Ã½á¹¹¹ÒÔØµ½Á´½Ó¸ú×ÙµÄHash±íÖÐ
+//è°ƒç”¨nf_conntrack_in()å‡½æ•°å»ºç«‹è¿žæŽ¥è¡¨é¡¹ï¼Œè¿žæŽ¥è¡¨é¡¹ä¸­çš„tupleç”±ipv4æ³¨å†Œçš„3/4å±‚åè®®å¤„ç†å‡½æ•°æž„å»º,ä¹Ÿå°±æ˜¯ç”±L3å’ŒL4çš„ç›¸å…³åè®®ç»“æž„å®Œæˆè¿žæŽ¥è¡¨
+//é¡¹çš„èµ‹å€¼ç­‰æ“ä½œã€‚è¯¥å‡½æ•°ä¸»è¦åŠŸèƒ½æ˜¯åˆ›å»ºé“¾æŽ¥ï¼Œå³åˆ›å»ºstruct nf_connç»“æž„ï¼ŒåŒæ—¶å¡«å……struct nf_connä¸­çš„ä¸€äº›å¿…è¦çš„ä¿¡æ¯ï¼Œä¾‹å¦‚é“¾æŽ¥çŠ¶æ€ã€å¼•ç”¨è®¡æ•°ã€helperç»“æž„ç­‰ã€‚
+//å¯¹äºŽä¸€ä¸ªæ–°é“¾æŽ¥ï¼Œåœ¨ipv4_conntrack_in()å‡½æ•°ä¸­åªæ˜¯åˆ›å»ºäº†struct nf_connç»“æž„ï¼Œä½†å¹¶æ²¡æœ‰å°†è¯¥ç»“æž„æŒ‚è½½åˆ°é“¾æŽ¥è·Ÿè¸ªçš„Hashè¡¨ä¸­
 
 /*
-¶ÔÓÚÒ»¸öÐÂÁ´½Ó£¬ÔÚipv4_conntrack_in()º¯ÊýÖÐÖ»ÊÇ´´½¨ÁËstruct nf_conn½á¹¹£¬µ«²¢Ã»ÓÐ½«¸Ã½á¹¹¹ÒÔØµ½Á´½Ó¸ú×ÙµÄHash±íÖÐ£¬ÒòÎª´ËÊ±»¹
-²»ÄÜÈ·¶¨¸ÃÁ´½ÓÊÇ·ñ»á±»NF_IP_FORWARDµãÉÏµÄ¹³×Óº¯Êý¹ýÂËµô£¬ËùÒÔ½«¹ÒÔØµ½Hash±íµÄ¹¤×÷·Åµ½ÁËipv4_confirm()º¯ÊýÖÐ¡£
+å¯¹äºŽä¸€ä¸ªæ–°é“¾æŽ¥ï¼Œåœ¨ipv4_conntrack_in()å‡½æ•°ä¸­åªæ˜¯åˆ›å»ºäº†struct nf_connç»“æž„ï¼Œä½†å¹¶æ²¡æœ‰å°†è¯¥ç»“æž„æŒ‚è½½åˆ°é“¾æŽ¥è·Ÿè¸ªçš„Hashè¡¨ä¸­ï¼Œå› ä¸ºæ­¤æ—¶è¿˜
+ä¸èƒ½ç¡®å®šè¯¥é“¾æŽ¥æ˜¯å¦ä¼šè¢«NF_IP_FORWARDç‚¹ä¸Šçš„é’©å­å‡½æ•°è¿‡æ»¤æŽ‰ï¼Œæ‰€ä»¥å°†æŒ‚è½½åˆ°Hashè¡¨çš„å·¥ä½œæ”¾åˆ°äº†ipv4_confirm()å‡½æ•°ä¸­ã€‚
 */
 unsigned int
 nf_conntrack_in(struct net *net, u_int8_t pf, unsigned int hooknum,
@@ -848,7 +848,7 @@ nf_conntrack_in(struct net *net, u_int8_t pf, unsigned int hooknum,
 
 	/* rcu_read_lock()ed by nf_hook_slow */
 	l3proto = __nf_ct_l3proto_find(pf);
-	//µ±pfÎªIPV4µÄÊ±ºò£¬²Î¿¼struct nf_conntrack_l3proto nf_conntrack_l3proto_ipv4 __read_mostly
+	//å½“pfä¸ºIPV4çš„æ—¶å€™ï¼Œå‚è€ƒstruct nf_conntrack_l3proto nf_conntrack_l3proto_ipv4 __read_mostly
 	ret = l3proto->get_l4proto(skb, skb_network_offset(skb),
 				   &dataoff, &protonum);
 	if (ret <= 0) {
@@ -1259,7 +1259,7 @@ void nf_conntrack_cleanup(struct net *net)
 }
 
 
-//¿ª±ÙhashÁ´±íÍ·²¿¿Õ¼ä
+//å¼€è¾Ÿhashé“¾è¡¨å¤´éƒ¨ç©ºé—´
 void *nf_ct_alloc_hashtable(unsigned int *sizep, int *vmalloced, int nulls)
 {
 	struct hlist_nulls_head *hash;

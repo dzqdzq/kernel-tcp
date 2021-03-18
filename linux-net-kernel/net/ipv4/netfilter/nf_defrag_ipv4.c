@@ -5,7 +5,7 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
-//yang ¸ÃÄ£¿éÃ»ÓĞµ÷ÓÃÈÎºÎÄ£¿é
+//yang è¯¥æ¨¡å—æ²¡æœ‰è°ƒç”¨ä»»ä½•æ¨¡å—
 #include <linux/types.h>
 #include <linux/ip.h>
 #include <linux/netfilter.h>
@@ -23,7 +23,7 @@
 #include <net/netfilter/nf_conntrack_zones.h>
 
 /* Returns new sk_buff, or NULL */
-//Ö»ÓĞµ±IP·ÖÆ¬ÖØ×é³É¹¦Ê±£¬nf_ct_ipv4_gather_frags²Å»á·µ»ØÎª0¡£Ò²¾ÍÊÇËµ£¬µ±IP·ÖÆ¬ÖØ×é²»³É¹¦£¬¼´IP·ÖÆ¬±»kernel·ÖÆ¬Ä£¿é»º´æÊ±£¬¸Ãº¯Êı·µ»ØÎªNF_STOLEN¡£
+//åªæœ‰å½“IPåˆ†ç‰‡é‡ç»„æˆåŠŸæ—¶ï¼Œnf_ct_ipv4_gather_fragsæ‰ä¼šè¿”å›ä¸º0ã€‚ä¹Ÿå°±æ˜¯è¯´ï¼Œå½“IPåˆ†ç‰‡é‡ç»„ä¸æˆåŠŸï¼Œå³IPåˆ†ç‰‡è¢«kernelåˆ†ç‰‡æ¨¡å—ç¼“å­˜æ—¶ï¼Œè¯¥å‡½æ•°è¿”å›ä¸ºNF_STOLENã€‚
 static int nf_ct_ipv4_gather_frags(struct sk_buff *skb, u_int32_t user)
 {
 	int err;
@@ -61,8 +61,8 @@ static enum ip_defrag_users nf_ct_defrag_user(unsigned int hooknum,
 		return IP_DEFRAG_CONNTRACK_OUT + zone;
 }
 
-/*¶ÔÓÚPREROUTINGÕâ¸öHOOKµãµÄ·ÖÆ¬ÖØ×é£¬ÎŞÒÉ¶ÔÓÚ·ÖÆ¬¶øÑÔ£¬Ö»ÊÇ½øÈëHOOK£¬ÔİÊ±±£´æÔÚÀïÃæ£¬Ö±µ½ËùÓĞ·ÖÆ¬¶¼À´ÁËÇĞÖØ×é³É¹¦ ºó²ÅÒ»´ÎĞÔÁ÷³öÕâ¸öHOOKµã*/
-//frag·ÖÆ¬ defrag·ÖÆ¬ÖØ×é
+/*å¯¹äºPREROUTINGè¿™ä¸ªHOOKç‚¹çš„åˆ†ç‰‡é‡ç»„ï¼Œæ— ç–‘å¯¹äºåˆ†ç‰‡è€Œè¨€ï¼Œåªæ˜¯è¿›å…¥HOOKï¼Œæš‚æ—¶ä¿å­˜åœ¨é‡Œé¢ï¼Œç›´åˆ°æ‰€æœ‰åˆ†ç‰‡éƒ½æ¥äº†åˆ‡é‡ç»„æˆåŠŸ åæ‰ä¸€æ¬¡æ€§æµå‡ºè¿™ä¸ªHOOKç‚¹*/
+//fragåˆ†ç‰‡ defragåˆ†ç‰‡é‡ç»„
 static unsigned int ipv4_conntrack_defrag(unsigned int hooknum,
 					  struct sk_buff *skb,
 					  const struct net_device *in,
@@ -86,7 +86,7 @@ static unsigned int ipv4_conntrack_defrag(unsigned int hooknum,
 	return NF_ACCEPT;
 }
 
-//Ö»ÓĞµ±IP·ÖÆ¬ÖØ×é³É¹¦Ê±£¬nf_ct_ipv4_gather_frags²Å»á·µ»ØÎª0¡£Ò²¾ÍÊÇËµ£¬µ±IP·ÖÆ¬ÖØ×é²»³É¹¦£¬¼´IP·ÖÆ¬±»kernel·ÖÆ¬Ä£¿é»º´æÊ±£¬¸Ãº¯Êı·µ»ØÎªNF_STOLEN¡£
+//åªæœ‰å½“IPåˆ†ç‰‡é‡ç»„æˆåŠŸæ—¶ï¼Œnf_ct_ipv4_gather_fragsæ‰ä¼šè¿”å›ä¸º0ã€‚ä¹Ÿå°±æ˜¯è¯´ï¼Œå½“IPåˆ†ç‰‡é‡ç»„ä¸æˆåŠŸï¼Œå³IPåˆ†ç‰‡è¢«kernelåˆ†ç‰‡æ¨¡å—ç¼“å­˜æ—¶ï¼Œè¯¥å‡½æ•°è¿”å›ä¸ºNF_STOLENã€‚
 unsigned int ipv4_conntrack_defrag2(unsigned int hooknum,
 					  struct sk_buff *skb)
 {

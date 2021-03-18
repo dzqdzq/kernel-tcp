@@ -19,7 +19,7 @@
 /*
  * General list handling functions
  */
-//Ê×ÏÈ²éÕÒlistÁ´±íÖĞÊÇ·ñÒÑ¾­´æÔÚÏàÍ¬µÄhwaddr£¬Èç¹û´æÔÚÔòÔö¼ÓÒıÓÃ¼ÆÊı£¬·ñÔò´´½¨Ò»¸öĞÂµÄhwaddr½Úµã£¬ÈÃºó¼ÓÈë¸ÃÁ´±í
+//é¦–å…ˆæŸ¥æ‰¾listé“¾è¡¨ä¸­æ˜¯å¦å·²ç»å­˜åœ¨ç›¸åŒçš„hwaddrï¼Œå¦‚æœå­˜åœ¨åˆ™å¢åŠ å¼•ç”¨è®¡æ•°ï¼Œå¦åˆ™åˆ›å»ºä¸€ä¸ªæ–°çš„hwaddrèŠ‚ç‚¹ï¼Œè®©ååŠ å…¥è¯¥é“¾è¡¨
 static int __hw_addr_add_ex(struct netdev_hw_addr_list *list,
 			    unsigned char *addr, int addr_len,
 			    unsigned char addr_type, bool global)
@@ -31,8 +31,8 @@ static int __hw_addr_add_ex(struct netdev_hw_addr_list *list,
 		return -EINVAL;
 
     /* 
-        * dev_addr_initµ÷ÓÃ¸Ãº¯ÊıÊ±ÏÂÃæ²»»áÖ´ĞĞ£¬ÒòÎª
-        * ²ÎÊılistÎª¿Õ
+        * dev_addr_initè°ƒç”¨è¯¥å‡½æ•°æ—¶ä¸‹é¢ä¸ä¼šæ‰§è¡Œï¼Œå› ä¸º
+        * å‚æ•°listä¸ºç©º
         *
     */
 	list_for_each_entry(ha, &list->list, list) {
@@ -45,7 +45,7 @@ static int __hw_addr_add_ex(struct netdev_hw_addr_list *list,
 				else
 					ha->global_use = true;
 			}
-			ha->refcount++; /* Èç¹ûÒªÌí¼ÓµÄµØÖ·ÏàÍ¬£¬ÔòÖ»Ôö¼ÓÒıÓÃ¼ÆÊı*/
+			ha->refcount++; /* å¦‚æœè¦æ·»åŠ çš„åœ°å€ç›¸åŒï¼Œåˆ™åªå¢åŠ å¼•ç”¨è®¡æ•°*/
 			return 0;
 		}
 	}
@@ -256,7 +256,7 @@ int dev_addr_init(struct net_device *dev)
 	__hw_addr_init(&dev->dev_addrs);
 	memset(addr, 0, sizeof(addr));
 	err = __hw_addr_add(&dev->dev_addrs, addr, sizeof(addr),
-			    NETDEV_HW_ADDR_T_LAN);//Ê×ÏÈ²éÕÒlistÁ´±íÖĞÊÇ·ñÒÑ¾­´æÔÚÏàÍ¬µÄhwaddr£¬Èç¹û´æÔÚÔòÔö¼ÓÒıÓÃ¼ÆÊı£¬·ñÔò´´½¨Ò»¸öĞÂµÄhwaddr½Úµã£¬ÈÃºó¼ÓÈë¸ÃÁ´±í
+			    NETDEV_HW_ADDR_T_LAN);//é¦–å…ˆæŸ¥æ‰¾listé“¾è¡¨ä¸­æ˜¯å¦å·²ç»å­˜åœ¨ç›¸åŒçš„hwaddrï¼Œå¦‚æœå­˜åœ¨åˆ™å¢åŠ å¼•ç”¨è®¡æ•°ï¼Œå¦åˆ™åˆ›å»ºä¸€ä¸ªæ–°çš„hwaddrèŠ‚ç‚¹ï¼Œè®©ååŠ å…¥è¯¥é“¾è¡¨
 	if (!err) {
 		/*
 		 * Get the first (previously created) address from the list
@@ -724,7 +724,7 @@ static const struct file_operations dev_mc_seq_fops = {
 
 static int __net_init dev_mc_net_init(struct net *net)
 {
-	if (!proc_net_fops_create(net, "dev_mcast", 0, &dev_mc_seq_fops)) //ip×é²¥Ïà¹Ø
+	if (!proc_net_fops_create(net, "dev_mcast", 0, &dev_mc_seq_fops)) //ipç»„æ’­ç›¸å…³
 		return -ENOMEM;
 	return 0;
 }
@@ -739,7 +739,7 @@ static struct pernet_operations __net_initdata dev_mc_net_ops = {
 	.exit = dev_mc_net_exit,
 };
 
-//³õÊ¼»¯ÍøÂçÉè±¸²ãµÄ×é²¥Ä£¿é£¬Ôö¼Ó/proc/net/dev_mcastÓÃÀ´´æ·ÅÓëIP×é²¥ÓĞ¹ØµÄ²ÎÊıĞÅÏ¢
+//åˆå§‹åŒ–ç½‘ç»œè®¾å¤‡å±‚çš„ç»„æ’­æ¨¡å—ï¼Œå¢åŠ /proc/net/dev_mcastç”¨æ¥å­˜æ”¾ä¸IPç»„æ’­æœ‰å…³çš„å‚æ•°ä¿¡æ¯
 void __init dev_mcast_init(void)
 {
 	register_pernet_subsys(&dev_mc_net_ops);

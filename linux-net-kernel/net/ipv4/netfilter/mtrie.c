@@ -87,34 +87,34 @@
  *------------------------------------------------------------------
  * $Log: not supported by cvs2svn $
  * Revision 1.8  2010/01/15 06:27:53  zhengjiangyong
- * ±àÒëÎÊÌâ
+ * ç¼–è¯‘é—®é¢˜
  *
  * Revision 1.7  2010/01/15 03:33:24  zhengjiangyong
- * ±àÒëÎÊÌâ
+ * ç¼–è¯‘é—®é¢˜
  *
  * Revision 1.6  2010/01/12 10:31:03  zhouzhiyuan
  * *** empty log message ***
  *
  * Revision 1.5  2010/01/12 02:01:42  zhengjiangyong
- * mtrieµÄmaskºÍprefix±ØÐëÎªºÏ·¨Öµ£¬·ñÔò¹ÒÆð¡£
+ * mtrieçš„maskå’Œprefixå¿…é¡»ä¸ºåˆæ³•å€¼ï¼Œå¦åˆ™æŒ‚èµ·ã€‚
  *
  * Revision 1.4  2010/01/11 06:34:05  zhouzhiyuan
  * *** empty log message ***
  *
  * Revision 1.3  2010/01/11 02:49:05  zhengjiangyong
- * mtrieÌí¼ÓÊÍ·ÅÒ¶º¯Êý
+ * mtrieæ·»åŠ é‡Šæ”¾å¶å‡½æ•°
  *
  * Revision 1.2  2010/01/09 06:19:48  zhouzhiyuan
  * *** empty log message ***
  *
  * Revision 1.1  2010/01/08 06:53:32  zhengjiangyong
- * Ä¿Â¼ÒÆ¶¯
+ * ç›®å½•ç§»åŠ¨
  *
  * Revision 1.1  2010/01/08 02:45:16  zhengjiangyong
- * ³õÊ¼Ìá½»
+ * åˆå§‹æäº¤
  *
  * Revision 1.1  2008/10/13 01:56:50  chenshijian
- * NRSISS-213: (R3804×ª·¢Æ½Ãæ) Ôö¼ÓR3804¿ìËÙ×ª·¢Æ½Ãæ´úÂë
+ * NRSISS-213: (R3804è½¬å‘å¹³é¢) å¢žåŠ R3804å¿«é€Ÿè½¬å‘å¹³é¢ä»£ç 
  *
  * Revision 3.2  1996/03/04  15:31:15  dkerr
  * CSCdi50623:  IP flow cache needs better accounting granularity
@@ -630,7 +630,7 @@ mtrie_add_range(mtrie_root_t *root, mtrie_leaf_t *leaf, int bits)
     add_leaves(mnode, leaf, idx, bits);
 }
 
-//YANG ÒÔleaf->prefix, leaf->maskÎª¼üÖµ±éÀúroot
+//YANG ä»¥leaf->prefix, leaf->maskä¸ºé”®å€¼éåŽ†root
 mtrie_leaf_t *
 mtrie_lookup_exact(mtrie_root_t *root, u32 dst, u32 mask)
 {
@@ -650,7 +650,7 @@ EXPORT_SYMBOL_GPL(mtrie_lookup_exact);
 /*
  * Add an IP prefix to the radix m-way trie
  * Leaf must be created using mtrie_leaf_alloc to init refcount.
- Ìí¼Óleaf½Úµãµ½root mtrie±íÖÐ £¬ÒÔleaf->prefix, leaf->maskÎª¼üÖµ
+ æ·»åŠ leafèŠ‚ç‚¹åˆ°root mtrieè¡¨ä¸­ ï¼Œä»¥leaf->prefix, leaf->maskä¸ºé”®å€¼
  */
 int
 mtrie_leaf_insert(mtrie_root_t *root, mtrie_leaf_t *leaf)

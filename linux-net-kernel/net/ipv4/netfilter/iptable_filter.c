@@ -19,10 +19,10 @@
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Netfilter Core Team <coreteam@netfilter.org>");
 MODULE_DESCRIPTION("iptables filter table");
-//iptable的三个mange filter nat表的内核对应hook为MANGLE_VALID_HOOKS  FILTER_VALID_HOOKS   NAT_VALID_HOOKS
+//iptable鐨勪笁涓猰ange filter nat琛ㄧ殑鍐呮牳瀵瑰簲hook涓篗ANGLE_VALID_HOOKS  FILTER_VALID_HOOKS   NAT_VALID_HOOKS
 #define FILTER_VALID_HOOKS ((1 << NF_INET_LOCAL_IN) | \
 			    (1 << NF_INET_FORWARD) | \
-			    (1 << NF_INET_LOCAL_OUT))//表示filter表注册到IN    FORWARD   OUT三个HOOK点上
+			    (1 << NF_INET_LOCAL_OUT))//琛ㄧずfilter琛ㄦ敞鍐屽埌IN    FORWARD   OUT涓変釜HOOK鐐逛笂
 
 static const struct xt_table packet_filter = {
 	.name		= "filter",
@@ -32,7 +32,7 @@ static const struct xt_table packet_filter = {
 	.priority	= NF_IP_PRI_FILTER,
 };
 
-//filter  报文可以在这里面进行过滤处理
+//filter  鎶ユ枃鍙互鍦ㄨ繖閲岄潰杩涜杩囨护澶勭悊
 static unsigned int
 iptable_filter_hook(unsigned int hook, struct sk_buff *skb,
 		    const struct net_device *in, const struct net_device *out,
@@ -121,7 +121,7 @@ static void __exit iptable_filter_fini(void)
 iptable_filter          1178  0 
 ip_tables               8342  1 iptable_filter
 x_tables               12002  2 iptable_filter,ip_tables
-加载iptable_filter前需要先加载ip_tables和x_tables
+鍔犺浇iptable_filter鍓嶉渶瑕佸厛鍔犺浇ip_tables鍜寈_tables
 */
 module_init(iptable_filter_init);
 module_exit(iptable_filter_fini);

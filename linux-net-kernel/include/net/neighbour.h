@@ -72,11 +72,11 @@ struct neigh_22parms {
 struct neighbour;
 
 /*
- * �ھ�Э��������ÿ飬���ڴ洢�ɵ��ڵ��ھ�Э��
- * ���������ش���ʱʱ�䡢proxy_queue���г��ȵȡ�һ��
- * �ھ�Э���Ӧһ���������ÿ飬��ÿһ�������豸
- * ��IPv4�����ÿ���Ҳ����һ�����Ĭ��ֵ���ھ�����
- * �顣
+ * 邻居协议参数配置块，用于存储可调节的邻居协议
+ * 参数，如重传超时时间、proxy_queue队列长度等。一个
+ * 邻居协议对应一个参数配置块，而每一个网络设备
+ * 的IPv4的配置块中也存在一个存放默认值的邻居配置
+ * 块。
  */
 struct neigh_parms
 {
@@ -84,113 +84,113 @@ struct neigh_parms
 	struct net *net;
 #endif
 	/*
-	 * ָ���neigh_parmsʵ������Ӧ�������豸��
-	 * ��ͨ��neigh_parms_alloc()����neigh_parmsʵ��ʱ
-	 * ���á�
+	 * 指向该neigh_parms实例所对应的网络设备，
+	 * 在通过neigh_parms_alloc()创建neigh_parms实例时
+	 * 设置。
 	 */
 	struct net_device *dev;
 	/*
-	 * ͨ��next������ͬһ��Э���������neigh_parmsʵ��
-	 * ������һ��ÿ��neigh_tableʵ�����и��Ե�neigh_parms
-	 * ���С�
+	 * 通过next将属于同一个协议族的所有neigh_parms实例
+	 * 链接在一起，每个neigh_table实例都有各自的neigh_parms
+	 * 队列。
 	 */
 	struct neigh_parms *next;
 	/*
-	 * �ṩ����Щ����ʹ����ʽ�ӿ��豸�ĳ�ʼ��������
-	 * �ӿڡ�net_device�ṹ��Ҳ��һ��neigh_setup��Ա����ָ�룬
-	 * ��Ҫ��֮������
+	 * 提供给那些仍在使用老式接口设备的初始化和销毁
+	 * 接口。net_device结构中也有一个neigh_setup成员函数指针，
+	 * 不要与之混淆。
 	 */
 	int	(*neigh_setup)(struct neighbour *);
 	void	(*neigh_cleanup)(struct neighbour *);
 	/*
-	 * ָ���neigh_parmsʵ���������ھӱ���
+	 * 指向该neigh_parms实例所属的邻居表。
 	 */
 	struct neigh_table *tbl;
 
 	/*
-	 * �ھӱ���sysctl������ARP����ARPģ���ʼ������
-	 * arp_init()�ж����ʼ���ģ������û�����ͨ��
-	 * proc�ļ�ϵͳ����д�ھӱ��Ĳ�����
+	 * 邻居表的sysctl表，对ARP是在ARP模块初始化函数
+	 * arp_init()中对其初始化的，这样用户可以通过
+	 * proc文件系统来读写邻居表的参数。
 	 */
 	void	*sysctl_table;
 
 	/*
-	 * ���ֶ�ֵ���Ϊ1������ھӲ���ʵ�����ڱ�ɾ����
-	 * ������ʹ�ã�Ҳ�����ٴ�����Ӧ�����豸���ھ��
-	 * ���磬�������豸����ʱ����neigh_parms_release()���á�
+	 * 该字段值如果为1，则该邻居参数实例正在被删除，
+	 * 不能再使用，也不能再创建对应网络设备的邻居项。
+	 * 例如，在网络设备禁用时调用neigh_parms_release()设置。
 	 */
 	int dead;
 	/*
-	 * ���ü�����
+	 * 引用计数。
 	 */
 	atomic_t refcnt;
 	/*
-	 * Ϊ����ͬ�����ʶ����õĲ�����
+	 * 为控制同步访问而设置的参数。
 	 */
 	struct rcu_head rcu_head;
 
 	/*
-	 * base_reachable_timeΪ����reachable_time�Ļ�׼ֵ����reachable_time
-	 * ΪNUD_REACHABLE״̬��ʱʱ�䣬��ֵΪ���ֵ������
-	 * base_reachable_time��1.5����base_reachable_time֮�䣬ͨ��ÿ300s
-	 * ��neigh_periodic_timer()�и���һ�Ρ�
+	 * base_reachable_time为计算reachable_time的基准值；而reachable_time
+	 * 为NUD_REACHABLE状态超时时间，该值为随机值，介于
+	 * base_reachable_time和1.5倍的base_reachable_time之间，通常每300s
+	 * 在neigh_periodic_timer()中更新一次。
 	 */
 	int	base_reachable_time;
 	/*
-	 * �����ش�ARP�����ĵĳ�ʱʱ�䡣���������һ��ARP
-	 * ������֮���retrans_time��jiffies�ڣ����û�н��յ�Ӧ��
-	 * ���ģ�����������һ���µ�ARP�����ġ�
+	 * 用于重传ARP请求报文的超时时间。主机在输出一个ARP
+	 * 请求报文之后的retrans_time个jiffies内，如果没有接收到应答
+	 * 报文，则会重新输出一个新的ARP请求报文。
 	 */
 	int	retrans_time;
 	/*
-	 * һ���ھ��������������(û�б�ʹ��)ʱ��ﵽgc_staletime��
-	 * ��û�б����ã���Ὣ��ɾ����
+	 * 一个邻居项如果持续闲置(没有被使用)时间达到gc_staletime，
+	 * 且没有被引用，则会将被删除。
 	 */
 	int	gc_staletime;
 	int	reachable_time;
 	/*
-	 * �ھ���ά����NUD_DELAY״̬delay_probe_time֮�����NUD_PROBE״̬��
-	 * ���ߣ�����NUD_REACHABLE״̬���ھ�������ʱ�䳬��delay_probe_time
-	 * ��ֱ�ӽ���NUD_DELAY״̬��
+	 * 邻居项维持在NUD_DELAY状态delay_probe_time之后进入NUD_PROBE状态；
+	 * 或者，处于NUD_REACHABLE状态的邻居项闲置时间超过delay_probe_time
+	 * 后，直接进入NUD_DELAY状态。
 	 */
 	int	delay_probe_time;
 
 	/*
-	 * proxy_queue���г������ޡ�
+	 * proxy_queue队列长度上限。
 	 */
 	int	queue_len;
 	/*
-	 * ���Ͳ�ȷ�Ͽɴ�ĵ���ARP��������Ŀ��
+	 * 发送并确认可达的单播ARP请求报文数目。
 	 */
 	int	ucast_probes;
 	/*
-	 * ��ַ����ʱ��Ӧ�ó���(ͨ����arpd)�ɷ���ARP������
-	 * ����Ŀ��
+	 * 地址解析时，应用程序(通常是arpd)可发送ARP请求报文
+	 * 的数目。
 	 */
 	int	app_probes;
 	/*
-	 * Ϊ�˽���һ���ھӵ�ַ���ɷ��͵Ĺ㲥ARP��������Ŀ��
-	 * ��Ҫע�����app_probes��mcast_probes֮���ǻ���ģ�ARP���͵�
-	 * �Ƕಥ���ģ����ǹ㲥���ġ�
+	 * 为了解析一个邻居地址，可发送的广播ARP请求报文数目。
+	 * 需要注意的是app_probes和mcast_probes之间是互斥的，ARP发送的
+	 * 是多播报文，而非广播报文。
 	 */
 	int	mcast_probes;
 	/*
-	 * δʹ��
+	 * 未使用
 	 */
 	int	anycast_delay;
 	/*
-	 * �������������Ŀ���ʱ��ʱ��
+	 * 处理代理请求报文可延时的时间
 	 */
 	int	proxy_delay;
 	/*
-	 * proxy_queue���еĳ��ȵ����ޡ�
+	 * proxy_queue队列的长度的上限。
 	 */
 	int	proxy_qlen;
 	/*
-	 * ���ھ���������θ��µ�ʱ����С�ڸ�ֵʱ��
-	 * �ø��ǵķ�ʽ�������ھ�����磬���ж��
-	 * ��ͬһ���εĴ���ARP�������𸴶���ͬ��ַ��
-	 * ��ѯ
+	 * 当邻居项最近两次更新的时间间隔小于该值时，
+	 * 用覆盖的方式来更新邻居项。例如，当有多个
+	 * 在同一网段的代理ARP服务器答复对相同地址的
+	 * 查询
 	 */
 	int	locktime;
 };
@@ -241,49 +241,49 @@ struct neighbour {
 };
 
 /*
- * neigh_ops�ṹʵ������һ������ָ�����������һ��
- * ����ָ�룬��Щ������һ��neighbourʵ������������
- * �����ڻᱻʹ�õ����ɴ�ʵ��������Ͷ����
- * dev_queue_xmit()֮���ת�ӡ�
+ * neigh_ops结构实际上是一个函数指针表，包含了一组
+ * 函数指针，这些函数在一个neighbour实例的整个生命
+ * 周期内会被使用到，由此实现了三层和二层的
+ * dev_queue_xmit()之间的转接。
  */
 struct neigh_ops
 {
 	/*
-	 * ��ʶ�����ĵ�ַ�壬����ARPΪAF_INET�ȡ�
+	 * 标识所属的地址族，比如ARP为AF_INET等。
 	 */
 	int			family;
 	/*
-	 * ���������ĺ������ڷ��͵�һ������ʱ����Ҫ
-	 * �µ��ھ�����ͱ��ı����浽arp_queue�����У�
-	 * Ȼ������solicit()���������ġ�
+	 * 发送请求报文函数。在发送第一个报文时，需要
+	 * 新的邻居项，发送报文被缓存到arp_queue队列中，
+	 * 然后会调用solicit()发送请求报文。
 	 */
 	void			(*solicit)(struct neighbour *, struct sk_buff*);
 	/*
-	 * ���ھ������δ���͵ı��ģ������ھ����ֲ��ɴ�ʱ��
-	 * �������������㱨�����ĺ�����ARP��Ϊarp_error_report()��
-	 * ���ջ�����ķ��ͷ�����һ���������ɴ��ICMP������ġ�
+	 * 当邻居项缓存着未发送的报文，而该邻居项又不可达时，
+	 * 被调用来向三层报告错误的函数。ARP中为arp_error_report()，
+	 * 最终会给报文发送方发送一个主机不可达的ICMP差错报文。
 	 */
 	void			(*error_report)(struct neighbour *, struct sk_buff*);
 	/*
-	 * ��ͨ�õ����������������������������������ʵ����
-	 * ������������̣���˴��ڽ϶��У�����������ȷ��
-	 * ���ĵ��������˸ú�����Խ�������Դ�����⣬��Ҫ
-	 * ��neigh_ops->output()��neighbour->output()������
+	 * 最通用的输出函数，可用于所有情况。此输出函数实现了
+	 * 完整的输出过程，因此存在较多的校验与操作，以确保
+	 * 报文的输出，因此该函数相对较消耗资源。此外，不要
+	 * 将neigh_ops->output()与neighbour->output()混淆。
 	 */
 	int			(*output)(struct sk_buff*);
 	/*
-	 * ��ȷ���ھӿɴ�ʱ����״̬ΪNUD_CONNECTEDʱʹ�õ����������
-	 * ���������������Ҫ����Ϣ���Ѿ߱�����˸ú���ֻ�Ǽ�
-	 * �����Ӷ����ײ���Ҳ��˱�output()��öࡣ
+	 * 在确定邻居可达时，即状态为NUD_CONNECTED时使用的输出函数。
+	 * 由于所有输出所需要的信息都已具备，因此该函数只是简单
+	 * 地添加二层首部，也因此比output()快得多。
 	 */
 	int			(*connected_output)(struct sk_buff*);
 	/*
-	 * ���ѻ����˶����ײ��������ʹ�õ����������
+	 * 在已缓存了二层首部的情况下使用的输出函数。
 	 */
 	int			(*hh_output)(struct sk_buff*);
 	/*
-	 * ʵ���ϣ����ϼ�������ӿڣ�����hh_output�⣬������������
-	 * ���ݰ���ֻ����׼���ö����ײ�֮�󣬵���queue_xmit�ӿڡ�
+	 * 实际上，以上几个输出接口，除了hh_output外，并不真正传输
+	 * 数据包，只是在准备好二层首部之后，调用queue_xmit接口。
 	 */
 	int			(*queue_xmit)(struct sk_buff*);
 };

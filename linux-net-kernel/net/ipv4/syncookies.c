@@ -250,13 +250,13 @@ void cookie_check_timestamp(struct tcp_options_received *tcp_opt)
 }
 EXPORT_SYMBOL(cookie_check_timestamp);
 /*
- * ����ڱ���ʱ������SYN cookies���ҽ��յ��Ķ�ֻ��ACK��־��
- * �����cookie_v4_check�����������ֵļ�⡣���������ͻ���
- * ��ACK���кż�ȥ1�õ�cookie�Ƚ�ֵ�������ͻ���IP��ַ���ͻ�
- * �˶˿ڡ�������IP��ַ�ͷ������˿ڡ����յ�TCP���к��Լ�����
- * һЩ��ȫ��ֵ��Ҫ�ؽ���hash��������cookie�Ƚ�ֵ�Ƚϣ�
- * �����ȣ���ֱ������������֣���ʱ���ز鿴�������Ƿ�����
- * �������Ӷ���
+ * 如果在编译时启用了SYN cookies，且接收到的段只有ACK标志，
+ * 则调用cookie_v4_check进行三次握手的检测。服务器将客户端
+ * 的ACK序列号减去1得到cookie比较值，并将客户端IP地址、客户
+ * 端端口、服务器IP地址和服务器端口、接收到TCP序列号以及其他
+ * 一些安全数值等要素进行hash运算后，与该cookie比较值比较，
+ * 如果相等，则直接完成三次握手，此时不必查看该连接是否属于
+ * 请求连接队列
  */
 struct sock *cookie_v4_check(struct sock *sk, struct sk_buff *skb,
 			     struct ip_options *opt)

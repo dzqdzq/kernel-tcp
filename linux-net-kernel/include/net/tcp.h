@@ -76,11 +76,11 @@ extern void tcp_time_wait(struct sock *sk, int state, int timeo);
 #define TCP_MAX_QUICKACKS	16U
 
 /* urg_data states */
-/* ��ʶ��������ʱ��Ч�ģ��û����Զ�ȡ*/
+/* 标识紧急数据时有效的，用户可以读取*/
 #define TCP_URG_VALID	0x0100
-/* ��ʶ���յ��Ķ��д��ڽ�������*/
+/* 标识接收到的段中存在紧急数据*/
 #define TCP_URG_NOTYET	0x0200
-/* ��ʶ����������ȫ������ȡ*/
+/* 标识紧急数据已全部被读取*/
 #define TCP_URG_READ	0x0400
 
 
@@ -160,7 +160,7 @@ extern void tcp_time_wait(struct sock *sk, int state, int timeo);
 /*
  *	TCP option
  */
-//��Щһ����SYN���У��ο�tcp_parse_options
+//这些一般在SYN段中，参考tcp_parse_options
 #define TCPOPT_NOP		1	/* Padding */
 #define TCPOPT_EOL		0	/* End of options */
 #define TCPOPT_MSS		2	/* Segment size negotiating */
@@ -175,7 +175,7 @@ extern void tcp_time_wait(struct sock *sk, int state, int timeo);
  *     TCP option lengths
  */
 
-#define TCPOLEN_MSS            4 //ֻ�ܳ�����SYN����
+#define TCPOLEN_MSS            4 //只能出现在SYN段中
 #define TCPOLEN_WINDOW         3
 #define TCPOLEN_SACK_PERM      2
 #define TCPOLEN_TIMESTAMP      10
@@ -206,181 +206,181 @@ extern void tcp_time_wait(struct sock *sk, int state, int timeo);
 
 /*
 /proc/sys/net/ipv4/icmp_timeexceed_rate
-�����tracerouteʱ���������ġ�Solaris middle star��������ļ����Ʒ���ICMP Time Exceeded��Ϣ�ı��ʡ�
+这个在traceroute时导致著名的“Solaris middle star”。这个文件控制发送ICMP Time Exceeded消息的比率。
 /proc/sys/net/ipv4/igmp_max_memberships
-����������ж��ٸ�igmp (�ಥ)�׽��ֽ��м�����
+主机上最多有多少个igmp (多播)套接字进行监听。
 /proc/sys/net/ipv4/inet_peer_gc_maxtime
-�� ��: Add a little explanation about the inet peer storage? Minimum interval between garbage collection passes. This interval is in effect under low (or absent) memory pressure on the pool. Measured in jiffies.
+求 助: Add a little explanation about the inet peer storage? Minimum interval between garbage collection passes. This interval is in effect under low (or absent) memory pressure on the pool. Measured in jiffies.
 /proc/sys/net/ipv4/inet_peer_gc_mintime
-ÿһ����Ƭ�ռ�֮�����Сʱ���������ڴ�ѹ���Ƚϴ��ʱ�򣬵�������������Ч����jiffies�ơ�
+每一遍碎片收集之间的最小时间间隔。当内存压力比较大的时候，调整这个间隔很有效。以jiffies计。
 /proc/sys/net/ipv4/inet_peer_maxttl
-entries����������ڡ���poolû���ڴ�ѹ���������(���磬pool��entries���������ٵ�ʱ��)��δʹ�õ�entries����һ��ʱ��ͻ���ڡ���jiffies�ơ�
+entries的最大生存期。在pool没有内存压力的情况下(比如，pool中entries的数量很少的时候)，未使用的entries经过一段时间就会过期。以jiffies计。
 /proc/sys/net/ipv4/inet_peer_minttl
-entries����С�����ڡ�Ӧ�ò�С�ڻ�۶˷�Ƭ�������ڡ���pool�Ĵ�С������inet_peer_thresholdʱ�������С�����ڱ������Ա�֤����jiffies�ơ�
+entries的最小生存期。应该不小于汇聚端分片的生存期。当pool的大小不大于inet_peer_threshold时，这个最小生存期必须予以保证。以jiffies计。
 /proc/sys/net/ipv4/inet_peer_threshold
-The approximate size of the INET peer storage. Starting from this threshold entries will be thrown aggressively. This threshold also determines entries' time-to-live an�� time intervals between garbage collection passes. More entries, less time-to-live, less GC interval.
+The approximate size of the INET peer storage. Starting from this threshold entries will be thrown aggressively. This threshold also determines entries' time-to-live anｄ time intervals between garbage collection passes. More entries, less time-to-live, less GC interval.
 /proc/sys/net/ipv4/ip_autoconfig
-����ļ�����д��һ�����֣���ʾ�����Ƿ�ͨ��RARP��BOOTP��DHCP������������ȡ����IP���á��������0��
+这个文件里面写着一个数字，表示主机是否通过RARP、BOOTP、DHCP或者其它机制取得其IP配置。否则就是0。
 /proc/sys/net/ipv4/ip_default_ttl
-���ݰ��������ڡ�����Ϊ64�ǰ�ȫ�ġ������������ģ�޴��������ֵ����Ҫ��Ϊ�������ô����������������к���·�ɻ�·��ʵ���ϣ��ںܶ��������Ҫ�����ܷ��С���ֵ��
+数据包的生存期。设置为64是安全的。如果你的网络规模巨大就提高这个值。不要因为好玩而这么做――那样会产生有害的路由环路。实际上，在很多情况下你要考虑能否减小这个值。
 /proc/sys/net/ipv4/ip_dynaddr/proc/sys/net/ipv4/icmp_destunreach_rate
-�������һ����̬��ַ���Զ����Žӿڣ��͵���������������Զ����Žӿڼ����ʱ�򣬱�������û���յ��𸴵�TCP�׽��ֻ����°󶨵���ȷ�ĵ�ַ�ϡ�����Խ���������ŵ��׽��ֱ����޷�����������һ��ȴ���Ե����⡣
+如果你有一个动态地址的自动拨号接口，就得设置它。当你的自动拨号接口激活的时候，本地所有没有收到答复的TCP套接字会重新绑定到正确的地址上。这可以解决引发拨号的套接字本身无法工作，重试一次却可以的问题。
 /proc/sys/net/ipv4/ip_forward
-�ں��Ƿ�ת�����ݰ���ȱʡ��ֹ��
+内核是否转发数据包。缺省禁止。
 /proc/sys/net/ipv4/ip_local_port_range
-�����������ӵĶ˿ڷ�Χ��ȱʡ�������ʵ��С��1024��4999��
+用于向外连接的端口范围。缺省情况下其实很小：1024到4999。
 /proc/sys/net/ipv4/ip_no_pmtu_disc
-��������ֹ����;MTU���֡���������������;MTU���֡���һ�ּ����������ڴ���·���ϼ��������ܵ�MTUֵ���μ�Cookbookһ���й��ڡ���;MTU���֡������ݡ�
+如果你想禁止“沿途MTU发现”就设置它。“沿途MTU发现”是一种技术，可以在传输路径上检测出最大可能的MTU值。参见Cookbook一章中关于“沿途MTU发现”的内容。
 /proc/sys/net/ipv4/ipfrag_high_thresh
-�� ��IP��Ƭ��۵�����ڴ���������������ô���ֽڵ��ڴ��һ���þ�����Ƭ��������ͻᶪ����Ƭ��When ipfrag_high_thresh bytes of memory is allocated for this purpose, the fragment handler will toss packets until ipfrag_low_thresh is reached.
+用 于IP分片汇聚的最大内存用量。分配了这么多字节的内存后，一旦用尽，分片处理程序就会丢弃分片。When ipfrag_high_thresh bytes of memory is allocated for this purpose, the fragment handler will toss packets until ipfrag_low_thresh is reached.
 /proc/sys/net/ipv4/ip_nonlocal_bind
-�����ϣ�����Ӧ�ó����ܹ��󶨵������ڱ��������ĵ�ַ��ʱ���������ѡ������Ļ���û��ר������(�����Ƕ�̬����)ʱ�ǳ����ã���ʹ������ӶϿ�����ķ���Ҳ��������������һ��ָ���ĵ�ַ�ϡ�
+如果你希望你的应用程序能够绑定到不属于本地网卡的地址上时，设置这个选项。如果你的机器没有专线连接(甚至是动态连接)时非常有用，即使你的连接断开，你的服务也可以启动并绑定在一个指定的地址上。
 /proc/sys/net/ipv4/ipfrag_low_thresh
-����IP��Ƭ��۵���С�ڴ�������
+用于IP分片汇聚的最小内存用量。
 /proc/sys/net/ipv4/ipfrag_time
-IP��Ƭ���ڴ��еı���ʱ��(����)��
+IP分片在内存中的保留时间(秒数)。
 /proc/sys/net/ipv4/tcp_abort_on_overflow
-һ���������͵ı�־�������ŵ��кܶ����������ʱ�ں˵���Ϊ�����õĻ�����������أ��ں˽������ط���RST����
+一个布尔类型的标志，控制着当有很多的连接请求时内核的行为。启用的话，如果服务超载，内核将主动地发送RST包。
 /proc/sys/net/ipv4/tcp_fin_timeout
-�� ���׽����ɱ���Ҫ��رգ����������������������FIN-WAIT-2״̬��ʱ�䡣�Զ˿��Գ�������Զ���ر����ӣ��������⵱����ȱʡֵ��60�롣2.2 �ں˵�ͨ��ֵ��180�룬����԰�������ã���Ҫ��ס���ǣ���ʹ��Ļ�����һ�����ص�WEB��������Ҳ����Ϊ���������׽��ֶ��ڴ�����ķ��գ�FIN- WAIT-2��Σ���Ա�FIN-WAIT-1ҪС����Ϊ�����ֻ�ܳԵ�1.5K�ڴ棬�������ǵ������ڳ�Щ���μ�tcp_max_orphans��
+如 果套接字由本端要求关闭，这个参数决定了它保持在FIN-WAIT-2状态的时间。对端可以出错并永远不关闭连接，甚至意外当机。缺省值是60秒。2.2 内核的通常值是180秒，你可以按这个设置，但要记住的是，即使你的机器是一个轻载的WEB服务器，也有因为大量的死套接字而内存溢出的风险，FIN- WAIT-2的危险性比FIN-WAIT-1要小，因为它最多只能吃掉1.5K内存，但是它们的生存期长些。参见tcp_max_orphans。
 /proc/sys/net/ipv4/tcp_keepalive_time
-��keepalive���õ�ʱ��TCP����keepalive��Ϣ��Ƶ�ȡ�ȱʡ��2Сʱ��
+当keepalive起用的时候，TCP发送keepalive消息的频度。缺省是2小时。
 /proc/sys/net/ipv4/tcp_keepalive_intvl
-��̽��û��ȷ��ʱ�����·���̽���Ƶ�ȡ�ȱʡ��75�롣
+当探测没有确认时，重新发送探测的频度。缺省是75秒。
 /proc/sys/net/ipv4/tcp_keepalive_probes
-���϶�����ʧЧ֮ǰ�����Ͷ��ٸ�TCP��keepalive̽�����ȱʡֵ��9�����ֵ����tcp_keepalive_intvl֮������ˣ�һ�����ӷ�����keepalive֮������ж���ʱ��û�л�Ӧ��
+在认定连接失效之前，发送多少个TCP的keepalive探测包。缺省值是9。这个值乘以tcp_keepalive_intvl之后决定了，一个连接发送了keepalive之后可以有多少时间没有回应。
 /proc/sys/net/ipv4/tcp_max_orphans
-ϵ ͳ������ж��ٸ�TCP�׽��ֲ����������κ�һ���û��ļ�����ϡ��������������֣��¶����ӽ����̱���λ����ӡ��������Ϣ��������ƽ�����Ϊ�˷�ֹ�򵥵�DoS����������Բ��ܹ���������������Ϊ�ؼ�С���ֵ����Ӧ���������ֵ(����������ڴ�֮��)��This limit exists only to prevent simple DoS attacks, you _must_ not rely on this o�� lower the limit artificially, but rather increase it (probably, after increasing installed memory), if network conditions require more than default value, an�� tune network services to linger an�� kill such states more aggressively. �����ٴ������㣺ÿ���¶��׽�������ܹ��Ե���64K���ɽ������ڴ档
+系 统中最多有多少个TCP套接字不被关联到任何一个用户文件句柄上。如果超过这个数字，孤儿连接将即刻被复位并打印出警告信息。这个限制仅仅是为了防止简单的DoS攻击，你绝对不能过分依靠它或者人为地减小这个值，更应该增加这个值(如果增加了内存之后)。This limit exists only to prevent simple DoS attacks, you _must_ not rely on this oｒ lower the limit artificially, but rather increase it (probably, after increasing installed memory), if network conditions require more than default value, anｄ tune network services to linger anｄ kill such states more aggressively. 让我再次提醒你：每个孤儿套接字最多能够吃掉你64K不可交换的内存。
 /proc/sys/net/ipv4/tcp_orphan_retries
-������ͼ�ر�TCP����֮ǰ���Զ��ٴΡ�ȱʡֵ��7���൱��50��~16����(ȡ����RTO)�������Ļ�����һ�����ص�WEB����������Ӧ�ÿ��Ǽ������ֵ����Ϊ�������׽��ֻ����ĺܶ���Ҫ����Դ���μ�tcp_max_orphans��
+本端试图关闭TCP连接之前重试多少次。缺省值是7，相当于50秒~16分钟(取决于RTO)。如果你的机器是一个重载的WEB服务器，你应该考虑减低这个值，因为这样的套接字会消耗很多重要的资源。参见tcp_max_orphans。
 /proc/sys/net/ipv4/tcp_max_syn_backlog
-�� ¼����Щ��δ�յ��ͻ���ȷ����Ϣ��������������ֵ��������128M�ڴ��ϵͳ���ԣ�ȱʡֵ��1024��С�ڴ��ϵͳ����128����������������ظ����� ��������ֵ��ע�⣡������������ֵ����1024�����ͬʱ����include/net/tcp.h�е�TCP_SYNQ_HSIZE���Ա�֤ TCP_SYNQ_HSIZE*16 ��tcp_max_syn_backlo��Ȼ�����±����ںˡ�
+记 录的那些尚未收到客户端确认信息的连接请求的最大值。对于有128M内存的系统而言，缺省值是1024，小内存的系统则是128。如果服务器不堪重负，试 试提高这个值。注意！如果你设置这个值大于1024，最好同时调整include/net/tcp.h中的TCP_SYNQ_HSIZE，以保证 TCP_SYNQ_HSIZE*16 ≤tcp_max_syn_backlo，然后重新编译内核。
 /proc/sys/net/ipv4/tcp_max_tw_buckets
-ϵ ͳͬʱ����timewait�׽��ֵ�����������������������֣�time-wait�׽��ֽ����̱��������ӡ������Ϣ��������ƽ�����Ϊ�˷�ֹ�򵥵� DoS����������Բ��ܹ���������������Ϊ�ؼ�С���ֵ���������ʵ����Ҫ����ȱʡֵ����Ӧ���������ֵ(����������ڴ�֮��)��
+系 统同时保持timewait套接字的最大数量。如果超过这个数字，time-wait套接字将立刻被清除并打印警告信息。这个限制仅仅是为了防止简单的 DoS攻击，你绝对不能过分依靠它或者人为地减小这个值，如果网络实际需要大于缺省值，更应该增加这个值(如果增加了内存之后)。
 /proc/sys/net/ipv4/tcp_retrans_collapse
-Ϊ����ĳЩ���Ĵ�ӡ�����õġ������ʹ���ѡ��ٴη���ʱ�������ݰ�����һЩ��������ĳЩTCPЭ��ջ��BUG��
+为兼容某些糟糕的打印机设置的“将错就错”选项。再次发送时，把数据包增大一些，来避免某些TCP协议栈的BUG。
 /proc/sys/net/ipv4/tcp_retries1
-���϶���������������ύ���󱨸�֮ǰ�����Զ��ٴΡ�ȱʡ����ΪRFC�涨����Сֵ��3���൱��3��~8���ӣ�ȡ����RIO����
+在认定出错并向网络层提交错误报告之前，重试多少次。缺省设置为RFC规定的最小值：3，相当于3秒~8分钟（取决于RIO）。
 /proc/sys/net/ipv4/tcp_retries2
-��ɱ��һ�����TCP����֮ǰ���Զ��ٴΡ�RFC 1122�涨�������Ӧ�ó���100�롣���ֵ̫С�ˡ�ȱʡֵ��15���൱��13~30���ӣ�ȡ����RIO����
+在杀死一个活动的TCP连接之前重试多少次。RFC 1122规定这个限制应该长于100秒。这个值太小了。缺省值是15，相当于13~30分钟（取决于RIO）。
 /proc/sys/net/ipv4/tcp_rfc1337
-������ؿ�������������RFC1337�������ġ�tcp��time-wait��ɱΣ����������޸������ú��ں˽�������Щ����time-wait״̬TCP�׽��ֵ�RST����ȴʡΪ0��
+这个开关可以启动对于在RFC1337中描述的“tcp的time-wait暗杀危机”问题的修复。启用后，内核将丢弃那些发往time-wait状态TCP套接字的RST包。却省为0。
 /proc/sys/net/ipv4/tcp_sack
-�ر���Զ�ʧ�����ݰ�ʹ��ѡ����ACK�����������ڿ��ٻָ���
+特别针对丢失的数据包使用选择性ACK，这样有助于快速恢复。
 /proc/sys/net/ipv4/tcp_stdurg
-ʹ��TCP����ָ�������������͡���Ϊ���������������BSD���ͣ������������Linux�ϴ��������ܻ�Ӱ��������������������ͨѶ��ȱʡ��FALSE��
+使用TCP紧急指针的主机需求解释。因为绝大多数主机采用BSD解释，所以如果你在Linux上打开它，可能会影响它与其它机器的正常通讯。缺省是FALSE。
 /proc/sys/net/ipv4/tcp_syn_retries
-���ں˷�����������֮ǰ����SYN����������
+在内核放弃建立连接之前发送SYN包的数量。
 /proc/sys/net/ipv4/tcp_synack_retries
-Ϊ�˴򿪶Զ˵����ӣ��ں���Ҫ����һ��SYN������һ����Ӧǰ��һ��SYN��ACK��Ҳ������ν���������еĵڶ������֡�������þ������ں˷�������֮ǰ����SYN+ACK����������
+为了打开对端的连接，内核需要发送一个SYN并附带一个回应前面一个SYN的ACK。也就是所谓三次握手中的第二次握手。这个设置决定了内核放弃连接之前发送SYN+ACK包的数量。
 /proc/sys/net/ipv4/tcp_timestamps
-ʱ������Ա������кŵľ��ơ�һ��1Gbps����·�϶���������ǰ�ù������кš�ʱ����ܹ����ں˽������֡��쳣�������ݰ���
+时间戳可以避免序列号的卷绕。一个1Gbps的链路肯定会遇到以前用过的序列号。时间戳能够让内核接受这种“异常”的数据包。
 /proc/sys/net/ipv4/tcp_tw_recycle
-�ܹ�����ػ���TIME-WAIT�׽��֡�ȱʡֵ��1�������м���ר�ҵĽ����Ҫ�󣬷���Ӧ�޸ġ�
+能够更快地回收TIME-WAIT套接字。缺省值是1。除非有技术专家的建议和要求，否则不应修改。
 /proc/sys/net/ipv4/tcp_window_scaling
-һ����˵TCP/IP�������ڳߴ�ﵽ65535�ֽڡ������ٶ�ȷʵ�ܸߵ�����������ֵ���ܻ���̫С�����ѡ������������G�ֽڵĴ��ڴ�С���������ڴ���*�ӳٺܴ�Ļ�����ʹ�á�
-һ���ں���Ϊ���޷��������ͻᶪ������������򷢰�����������ICMP֪ͨ��
+一般来说TCP/IP允许窗口尺寸达到65535字节。对于速度确实很高的网络而言这个值可能还是太小。这个选项允许设置上G字节的窗口大小，有利于在带宽*延迟很大的环境中使用。
+一旦内核认为它无法发包，就会丢弃这个包，并向发包的主机发送ICMP通知。
 /proc/sys/net/ipv4/icmp_echo_ignore_all
-������Ҫ��Ӧecho�����벻Ҫ����Ϊȱʡ�������������������ó�ΪDoS����������ʱ�������á�
+根本不要响应echo包。请不要设置为缺省，它可能在你正被利用成为DoS攻击的跳板时可能有用。
 /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts [Useful]
-�����ping������������ַ�����еĻ�����Ӧ�����Ի�Ӧ������ܳ�Ϊ�ǳ����õľܾ����񹥻����ߡ�����Ϊ1��������Щ�����㲥��Ϣ��
+如果你ping子网的子网地址，所有的机器都应该予以回应。这可能成为非常好用的拒绝服务攻击工具。设置为1来忽略这些子网广播消息。
 /proc/sys/net/ipv4/icmp_echoreply_rate
-������������������Ӧecho����ı��ʡ�
+设置了向任意主机回应echo请求的比率。
 /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
-������֮�󣬿��Ժ����������е���Щ���ƻ�Ӧ��ַ�ǹ㲥��ַ���������ɵ�ICMP����
+设置它之后，可以忽略由网络中的那些声称回应地址是广播地址的主机生成的ICMP错误。
 /proc/sys/net/ipv4/icmp_paramprob_rate
-һ����Բ�����ȷ��ICMP��Ϣ��������ӦIPͷ��TCPͷ�𻵵��쳣���ݰ��������ͨ������ļ�������Ϣ�ķ��ͱ��ʡ�
+一个相对不很明确的ICMP消息，用来回应IP头或TCP头损坏的异常数据包。你可以通过这个文件控制消息的发送比率。
 */
 
-//��Щֵ��Ӧ��proc�ļ�������ipv4_table��Ӧ�ò�����������Щֵ����ipv4_table�е�data��Ч
+//这些值对应的proc文件名，见ipv4_table，应用层设置下面这些值是在ipv4_table中的data生效
 
 extern struct inet_timewait_death_row tcp_death_row;
 
 /* sysctl variables for tcp */
-//��tcp_syn_options
-//tcp_timestamps�������������Ƿ�����ʱ���ѡ�tcp_tw_recycle�����������ÿ��ٻ���TIME_WAIT�׽��֡�tcp_timestamps������Ӱ�쵽tcp_tw_recycle������Ч�������û��ʱ���ѡ��Ļ���tcp_tw_recycle������Ч
-extern int sysctl_tcp_timestamps;//  tcp_timestamps�������������Ƿ�����ʱ���ѡ���������ˣ����ͱ��ĵ�ʱ��TCP�ײ����Ȼ����ⲿ�ֳ���
+//见tcp_syn_options
+//tcp_timestamps参数用来设置是否启用时间戳选项，tcp_tw_recycle参数用来启用快速回收TIME_WAIT套接字。tcp_timestamps参数会影响到tcp_tw_recycle参数的效果。如果没有时间戳选项的话，tcp_tw_recycle参数无效
+extern int sysctl_tcp_timestamps;//  tcp_timestamps参数用来设置是否启用时间戳选项，如果启用了，则发送报文的时候TCP首部长度会多出这部分长度
 extern int sysctl_tcp_window_scaling;
 extern int sysctl_tcp_sack;
 
-//���ڱ��˶Ͽ���socket���ӣ�TCP������FIN_WAIT_2״̬��ʱ�䡣�Է����ܻ�Ͽ����ӻ�һֱ���������ӻ򲻿�Ԥ�ϵĽ�������,����ͨ���������ʱ����wait2�˳���CLOSE״̬
+//对于本端断开的socket连接，TCP保持在FIN_WAIT_2状态的时间。对方可能会断开连接或一直不结束连接或不可预料的进程死亡,可以通过这个超市时间让wait2退出到CLOSE状态
 extern int sysctl_tcp_fin_timeout;
 
-//tcpkeepalivetime�ĵ�λ���룬��ʾTCP�����ڶ�����֮��û�����ݱ��Ĵ�������̽�ⱨ��; 
-//tcpkeepaliveintvl��λ��Ҳ��,��ʾǰһ��̽�ⱨ�ĺͺ�һ��̽�ⱨ��֮���ʱ������
-//tcpkeepaliveprobes��ʾ̽��Ĵ�����
+//tcpkeepalivetime的单位是秒，表示TCP链接在多少秒之后没有数据报文传输启动探测报文; 
+//tcpkeepaliveintvl单位是也秒,表示前一个探测报文和后一个探测报文之间的时间间隔，
+//tcpkeepaliveprobes表示探测的次数。
 extern int sysctl_tcp_keepalive_time;
 extern int sysctl_tcp_keepalive_probes;
 extern int sysctl_tcp_keepalive_intvl;
 extern int sysctl_tcp_syn_retries;
 
 /*
- * ������õ�ֵ��ֻ���ش�������Ĭ��ֵ�����
- * �����Ӷ����а����������������Ӷ��г��ȵ�һ�룬
- * ��ݼ��ش�������
- * �����������һ�����ã�����
- * ���������ش����������Ǽ�ʹ������TCP_DEFER_ACCEPT
- * ѡ��ܵ��ش�����Ҳ���ܳ������������ֵ��
- * �μ�inet_csk_reqsk_queue_prune()��
+ * 这个设置的值，只是重传次数的默认值。如果
+ * 半连接队列中半连接数超过半连接队列长度的一半，
+ * 会递减重传次数。
+ * 这个参数还有一个作用，就是
+ * 控制最大的重传次数，就是即使启用了TCP_DEFER_ACCEPT
+ * 选项，总的重传次数也不能超过这个变量的值。
+ * 参见inet_csk_reqsk_queue_prune()。
  */
 extern int sysctl_tcp_synack_retries;
-extern int sysctl_tcp_retries1; //����ʾ�����������Դ����������������ֵ�����Ǿ���Ҫ���·�ɱ��ˡ�
+extern int sysctl_tcp_retries1; //它表示的是最大的重试次数，当超过了这个值，我们就需要检测路由表了。
 /*
- * ��ȡȷ���Ͽ�����ǰ������ʱ�������Է���
- * TCP�ε���Ŀ���ޣ����ڳ�����ʱ����������
- * ���ļ�⡣
- */ //���ֵҲ�Ǳ�ʾ������������ֻ�������ֵһ��Ҫ�������ֵ�󡣺������Ǹ���ͬ���ǣ������Դ����������ֵ�����Ǿͱ�����������ˡ�
+ * 获取确定断开连接前持续定时器周期性发送
+ * TCP段的数目上限，用于持续定时器发出段数
+ * 量的检测。
+ */ //这个值也是表示重试最大次数，只不过这个值一般要比上面的值大。和上面那个不同的是，当重试次数超过这个值，我们就必须放弃重试了。
 extern int sysctl_tcp_retries2;
 
-//��Ҫ����Թ�����socket(Ҳ�����Ѿ��ӽ�����������ɾ���ˣ����ǻ���һЩ��������û�����).��������socket���������Ե����Ĵ�����������
+//主要是针对孤立的socket(也就是已经从进程上下文中删除了，可是还有一些清理工作没有完成).对于这种socket，我们重试的最大的次数就是它。
 extern int sysctl_tcp_orphan_retries;
 extern int sysctl_tcp_syncookies;
 extern int sysctl_tcp_retrans_collapse;
 extern int sysctl_tcp_stdurg;
 extern int sysctl_tcp_rfc1337;
 extern int sysctl_tcp_abort_on_overflow;
-extern int sysctl_tcp_max_orphans;//��tcp_close��ʱ���ڹرչ����л����ӣ���ʾ��δ�Ĵλ��ֳ������׽���������tcp_too_many_orphans�����ιر�close��ʱ���Ѿ��ﵽ�����ֵ�����������������̣�����ֱ�ӷ���rst
+extern int sysctl_tcp_max_orphans;//在tcp_close的时候，在关闭过程中会增加，表示还未四次挥手超过的套接字数。见tcp_too_many_orphans如果这次关闭close的时候，已经达到这个阀值，则不走正常挥手流程，而是直接发送rst
 extern int sysctl_tcp_fack;
 extern int sysctl_tcp_reordering;
 extern int sysctl_tcp_ecn;
 extern int sysctl_tcp_dsack;
-//��tcp_memory_allocated����sysctl_tcp_mem[1]ʱ��TCP����������뾯��״̬��tcp_memory_pressure��Ϊ1�� �⼸�������浽proto�еĶ�Ӧ�����С�������뾯��״̬�����ڽ������ݵ�ʱ���tcp_should_expand_sndbuf
-//��tcp_memory_allocatedС��sysctl_tcp_mem[0]ʱ��TCP��������˳�����״̬��tcp_memory_pressure��Ϊ0�� 
-extern int sysctl_tcp_mem[3];///proc/sys/net/ipv4/tcp_mem�в鿴   tcp_init�����ڴ������ֵ��ʼ��
+//当tcp_memory_allocated大于sysctl_tcp_mem[1]时，TCP缓存管理进入警告状态，tcp_memory_pressure置为1。 这几个变量存到proto中的对应变量中。如果进入警告状态，则在接收数据的时候会tcp_should_expand_sndbuf
+//当tcp_memory_allocated小于sysctl_tcp_mem[0]时，TCP缓存管理退出警告状态，tcp_memory_pressure置为0。 
+extern int sysctl_tcp_mem[3];///proc/sys/net/ipv4/tcp_mem中查看   tcp_init更加内存情况赋值初始化
 extern int sysctl_tcp_wmem[3];
 
 /*
- * 3��������Ĭ��ֵΪ: 4096,87380,174760,�ֱ��Ӧ��min��
- * default��max��
- * min:���ն����б��������ܳ���(sock�ṹ��sk_rmem_alloc)������
- * default: ���ջ������������޵ĳ�ʼֵ��������ʼ��sock�ṹ
- *             �ĳ�Աsk_rcvbuf
- * max: ���ջ������������޵����ֵ����������sock
- *          �ṹ�ĳ�Աsk_rcvbuf
+ * 3个整数，默认值为: 4096,87380,174760,分别对应于min，
+ * default，max。
+ * min:接收队列中报文数据总长度(sock结构的sk_rmem_alloc)的上限
+ * default: 接收缓冲区长度上限的初始值，用来初始化sock结构
+ *             的成员sk_rcvbuf
+ * max: 接收缓冲区长度上限的最大值，用来调整sock
+ *          结构的成员sk_rcvbuf
  */
 extern int sysctl_tcp_rmem[3];
 extern int sysctl_tcp_app_win;
 extern int sysctl_tcp_adv_win_scale;
 
-// ��ʾ�������á�������TIME-WAIT sockets���������µ�TCP���ӣ�Ĭ��Ϊ0����ʾ�رգ�ע������������SO_REUSEADDR
+// 表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；注意和这个的区别SO_REUSEADDR
 extern int sysctl_tcp_tw_reuse;
 extern int sysctl_tcp_frto;
 extern int sysctl_tcp_frto_response;
 extern int sysctl_tcp_low_latency;
 extern int sysctl_tcp_dma_copybreak;
 extern int sysctl_tcp_nometrics_save;
-/*��ô�����ú���󻺴����ƺ�͸����������𣿶���һ��TCP������˵�������Ѿ��������������Դ��ʹ�ô󴰿ڡ��󻺴������ָ��ٴ����ˡ������ڳ��������У��������޿��ܻᱻ����Ϊ��ʮ���ֽڣ���ϵͳ�����ڴ�ȴ�����޵ģ���ÿһ�����Ӷ�ȫ�ٷɱ�ʹ�õ���󴰿�ʱ��1������Ӿͻ�ռ���ڴ浽����G�ˣ���������˸߲���������ʹ�ã���ƽ��Ҳ�ò�����֤������ϣ���ĳ����ǣ��ڲ������ӱȽ���ʱ���ѻ������ƷŴ�һЩ����ÿһ��TCP���ӿ����������������������Ӻܶ�ʱ����ʱϵͳ�ڴ���Դ���㣬��ô�Ͱѻ���������СһЩ��ʹÿһ��TCP���ӵĻ��澡����СһЩ�������ɸ�������ӡ�
+/*那么，设置好最大缓存限制后就高枕无忧了吗？对于一个TCP连接来说，可能已经充分利用网络资源，使用大窗口、大缓存来保持高速传输了。比如在长肥网络中，缓存上限可能会被设置为几十兆字节，但系统的总内存却是有限的，当每一个连接都全速飞奔使用到最大窗口时，1万个连接就会占用内存到几百G了，这就限制了高并发场景的使用，公平性也得不到保证。我们希望的场景是，在并发连接比较少时，把缓存限制放大一些，让每一个TCP连接开足马力工作；当并发连接很多时，此时系统内存资源不足，那么就把缓存限制缩小一些，使每一个TCP连接的缓存尽量的小一些，以容纳更多的连接。
 
-linuxΪ��ʵ�����ֳ������������Զ������ڴ����Ĺ��ܣ���tcp_moderate_rcvbuf���þ��������£�
+linux为了实现这种场景，引入了自动调整内存分配的功能，由tcp_moderate_rcvbuf配置决定，如下：
 net.ipv4.tcp_moderate_rcvbuf = 1
-Ĭ��tcp_moderate_rcvbuf����Ϊ1����ʾ����TCP�ڴ��Զ��������ܡ�������Ϊ0��������ܽ�������Ч�����ã���
+默认tcp_moderate_rcvbuf配置为1，表示打开了TCP内存自动调整功能。若配置为0，这个功能将不会生效（慎用）。
 
-������ע�⣺�������ڱ���ж�����������SO_SNDBUF��SO_RCVBUF������ʹlinux�ں˲��ٶ�����������ִ���Զ��������ܣ�*/
+另外请注意：当我们在编程中对连接设置了SO_SNDBUF、SO_RCVBUF，将会使linux内核不再对这样的连接执行自动调整功能！*/
 extern int sysctl_tcp_moderate_rcvbuf;
 extern int sysctl_tcp_tso_win_divisor;
 extern int sysctl_tcp_abc;
 extern int sysctl_tcp_mtu_probing;
-extern int sysctl_tcp_base_mss; //��tcp_mtup_init
+extern int sysctl_tcp_base_mss; //见tcp_mtup_init
 extern int sysctl_tcp_workaround_signed_windows;
 extern int sysctl_tcp_slow_start_after_idle;
 extern int sysctl_tcp_max_ssthresh;
@@ -391,14 +391,14 @@ extern int sysctl_tcp_thin_dupack;
 extern atomic_t tcp_memory_allocated;
 extern struct percpu_counter tcp_sockets_allocated;
 
-//��tcp_memory_allocated����sysctl_tcp_mem[1]ʱ��TCP����������뾯��״̬��tcp_memory_pressure��Ϊ1�� �⼸�������浽proto�еĶ�Ӧ�����С�������뾯��״̬�����ڽ������ݵ�ʱ���tcp_should_expand_sndbuf
-//��tcp_memory_allocatedС��sysctl_tcp_mem[0]ʱ��TCP��������˳�����״̬��tcp_memory_pressure��Ϊ0�� 
+//当tcp_memory_allocated大于sysctl_tcp_mem[1]时，TCP缓存管理进入警告状态，tcp_memory_pressure置为1。 这几个变量存到proto中的对应变量中。如果进入警告状态，则在接收数据的时候会tcp_should_expand_sndbuf
+//当tcp_memory_allocated小于sysctl_tcp_mem[0]时，TCP缓存管理退出警告状态，tcp_memory_pressure置为0。 
 extern int tcp_memory_pressure;
 /*
- * ������Ϊ���Ͷ�����SKB�����ǽ����Ľ��յ�TCP����㣬����Ҫ���½��봫����ƿ�Ļ������ȷ�ϡ�ȷ��ʱ����׽��ֻ����е����ݳ��ȴ���
- * Ԥ���������������ȫ���ȷ�ϣ����������__sk_mem_schedule()ʵ�֡�
- * @size:Ҫȷ�ϵĻ��泤��
- * @kind:���ͣ�0Ϊ���ͻ��棬1Ϊ���ջ��档
+ * 无论是为发送而分配SKB，还是将报文接收到TCP传输层，都需要对新进入传输控制块的缓存进行确认。确认时如果套接字缓存中的数据长度大于
+ * 预分配量，则需进行全面的确认，这个过程由__sk_mem_schedule()实现。
+ * @size:要确认的缓存长度
+ * @kind:类型，0为发送缓存，1为接收缓存。
  */
 
 /*
@@ -419,12 +419,12 @@ static inline int between(__u32 seq1, __u32 seq2, __u32 seq3)
 }
 
 /*
- * ����������·���1:
- * a. �����ٵ�sock�ṹ����Ŀ����sysctl_tcp_max_orphans��ֵ
- *     ��ϵͳ�������
- * b. sock�ķ��Ͷ��������ݵ��ܳ��ȴ���SOCK_MIN_SNDBUF
- *     ���ҵ�ǰTCP��Ϊ������������ڴ����TCP�����pressure״̬��
- *     �ڴ�����
+ * 在以下情况下返回1:
+ * a. 待销毁的sock结构的数目超过sysctl_tcp_max_orphans的值
+ *     即系统最大限制
+ * b. sock的发送队列中数据的总长度大于SOCK_MIN_SNDBUF
+ *     并且当前TCP层为缓冲区分配的内存大于TCP层进入pressure状态的
+ *     内存限制
  */
 static inline bool tcp_too_many_orphans(struct sock *sk, int shift)
 {
@@ -731,8 +731,8 @@ static inline void __tcp_fast_path_on(struct tcp_sock *tp, u32 snd_wnd)
 }
 
 /*
- * tcp_fast_path_on()�Ƕ�__tcp_fast_path_on()�ķ�װ���ṩ����
- * ���ڴ�С����snd_wnd�ʹ����������Ӽ���õ�
+ * tcp_fast_path_on()是对__tcp_fast_path_on()的封装，提供发送
+ * 窗口大小，由snd_wnd和窗口扩大因子计算得到
  */
 static inline void tcp_fast_path_on(struct tcp_sock *tp)
 {
@@ -740,19 +740,19 @@ static inline void tcp_fast_path_on(struct tcp_sock *tp)
 }
 
 /*
- * ��������Ԥ���־����Ȼ������������
- * Ԥ���־������
+ * 用于设置预测标志，当然必须满足设置
+ * 预测标志的条件
  */
 static inline void tcp_fast_path_check(struct sock *sk)
 {
 	struct tcp_sock *tp = tcp_sk(sk);
 
 	/*
-	 * ����Ԥ���־��������:
-	 * 1)�����������Ϊ�գ�˵������Ƚϳ�ͨ��
-	 * 2)���մ��ڲ�Ϊ0��˵����ǰ���ܽ������ݡ�
-	 * 3)��ǰ��ʹ�õĽ��ջ���δ�ﵽ���ޣ�Ҳ˵��Ŀǰ���ܽ�������
-	 * 4)û���յ�����ָ�룬����·���������������ݡ�
+	 * 设置预测标志的条件是:
+	 * 1)缓存乱序队列为空，说明网络比较畅通。
+	 * 2)接收窗口不为0，说明当前还能接收数据。
+	 * 3)当前已使用的接收缓存未达到上限，也说明目前还能接收数据
+	 * 4)没有收到紧急指针，快速路径不处理带外数据。
 	 */
 	if (skb_queue_empty(&tp->out_of_order_queue) &&
 	    tp->rcv_wnd &&
@@ -844,50 +844,50 @@ struct tcp_skb_cb {
 };
 
 /*
- * TCP����SKB���е�˽����Ϣ���ƿ飬��skb_buff�ṹ��cb��Ա��TCP����
+ * TCP层在SKB区中的私有信息控制块，即skb_buff结构的cb成员，TCP利用
  *
- ����ֶδ洢��һ��tcp_skb_cb�ṹ����TCP�㣬�ú�TCP_SKB_CBʵ�ַ�
- * �ʸ���Ϣ���ƿ飬����ǿ����Ŀɶ��ԡ������˽����Ϣ���ƿ�ĸ�ֵ
- * һ���ڱ�����յ��λ��Ͷ�֮ǰ���С�����:tcp_v4_rcv��TCP�������ں��������յ�TCP�β�������б�Ҫ��У��󣬾ͻ�Դ˶ε�tcp_skb_cb�������á������͹����У�
- �󲿷���������TCP��ʱ�������ڶ�TCP�ν��зֶ�ʱ���ã����紴��TCP�ֶκ���tcp_fragment����MAC�㷢��ǰ����tso�ֶεĺ���tso_fragment������·��MTU̽��ĺ���tcp_mtu_probe��
- ����FIN�εĺ���tcp_send_fin,��Щ�������ᴴ��һ��TCP�Ρ��ڷ���TCP��ǰ�����tcp_skb_cb��ֵ���д��������ȡֵ���緢��TCP�εĺ���tcp_transmit_skb���Ӵ�TCP�ε�
- ����tcp_retransmit_skb.
- */ //TCP���չ����е�TCPѡ���ֶδӽ��յ�SKB�н�����������tcp_parse_options������TCPѡ���ֶδ����inet_request_sock��,IPѡ���ֶδ洢��skb->cb��
-struct tcp_skb_cb { //��������TCP��IP�ײ�ѡ���ֶΣ����δ0����ʾû��Я����Ӧ��ѡ���ֶ�                
-// //�ڷ�������tcp_sendmsg�е�skb_entail�����и�ֵ
+ 这个字段存储了一个tcp_skb_cb结构。在TCP层，用宏TCP_SKB_CB实现访
+ * 问该信息控制块，已增强代码的可读性。对这个私有信息控制块的赋值
+ * 一般在本层接收到段或发送段之前进行。例如:tcp_v4_rcv是TCP层接收入口函数，当收到TCP段并对其进行必要的校验后，就会对此段的tcp_skb_cb进行设置。而发送过程中，
+ 大部分是在生成TCP段时，或是在对TCP段进行分段时设置，例如创建TCP分段函数tcp_fragment，在MAC层发送前进行tso分段的函数tso_fragment，进行路径MTU探测的函数tcp_mtu_probe，
+ 发送FIN段的函数tcp_send_fin,这些函数都会创建一个TCP段。在发送TCP段前会根据tcp_skb_cb的值进行处理或从中取值，如发送TCP段的函数tcp_transmit_skb，从传TCP段的
+ 函数tcp_retransmit_skb.
+ */ //TCP接收过程中的TCP选项字段从接收的SKB中解析出来，见tcp_parse_options，最终TCP选项字段存放在inet_request_sock中,IP选项字段存储在skb->cb中
+struct tcp_skb_cb { //这下面是TCP和IP首部选项字段，如果未0，表示没有携带对应的选项字段                
+// //在发送数据tcp_sendmsg中的skb_entail函数中赋值
     /*
-     * ��TCP�������յ���TCP��֮ǰ���²�Э��(IPv4��IPv6)���ȴ����öΣ��һ�
-     * ����SKB�еĿ��ƿ�����¼ÿһ�����е���Ϣ������IPv4���¼��IP�ײ���
-     * ��������IP�ײ�ѡ�Ϊ�˲��ƻ�����Э��˽�����ݣ���SKB��TCP���ƿ�
-     * ��ǰ������������ṹ�������IPv4��IPv6��
+     * 在TCP处理接收到的TCP段之前，下层协议(IPv4或IPv6)会先处理该段，且会
+     * 利用SKB中的控制块来记录每一个包中的信息，例如IPv4会记录从IP首部中
+     * 解析出的IP首部选项。为了不破坏三层协议私有数据，在SKB中TCP控制块
+     * 的前部定义了这个结构，这包括IPv4和IPv6。
      */
 	union {
 		struct inet_skb_parm	h4;
 #if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
 		struct inet6_skb_parm	h6;
 #endif
-	} header;	/* For incoming frames	����IPѡ��������Щ��TCPѡ��	*/ 
+	} header;	/* For incoming frames	这是IP选项，后面的这些是TCP选项	*/ 
     /*
-     * seqΪ��ǰ�ο�ʼ��ţ���end_seqΪ��ǰ�ο�ʼ��ż��ϵ�ǰ��
-     * ���ݳ��ȣ������־���д���SYN��FIN��־������Ҫ��1����Ϊ
-     * SYN��FIN��־��������һ����š�����end_seq��seq�ͱ�־����
-     * ���׵õ����ݳ���
-     */ //�⼸������Ǵ�TCP�ײ�����ȡ�����ģ���tcp_v4_rcv
+     * seq为当前段开始序号，而end_seq为当前段开始序号加上当前段
+     * 数据长度，如果标志域中存在SYN或FIN标志，则还需要加1，因为
+     * SYN和FIN标志都会消耗一个序号。利用end_seq、seq和标志，很
+     * 容易得到数据长度
+     */ //这几个序号是从TCP首部中提取出来的，见tcp_v4_rcv
 
-     //�����seq end_seqӦ����Ӧ�ò������������ֱ�Ӵ浽SKB�У���ʱ�����ݳ���Ӧ��û�зֶεģ����ܴ���1500
+     //这里的seq end_seq应该是应用层接收来的数据直接存到SKB中，这时的数据长度应该没有分段的，可能大于1500
 	__u32		seq;		/* Starting sequence number	*/
 	__u32		end_seq;	/* SEQ + FIN + SYN + datalen	*/
     /*
-     * �η���ʱ�估�η���ʱ��¼�ĵ�ǰjiffiesֵ����Ҫʱ����ֵҲ
-     * ��������RTT��
-     * ��ֵͨ�������ⷢ��SKBʱʹ��tcp_time_stamp���ã�����tcp_write_xmit()��
+     * 段发送时间及段发送时记录的当前jiffies值。必要时，此值也
+     * 用来计算RTT。
+     * 该值通常在向外发送SKB时使用tcp_time_stamp设置，例如tcp_write_xmit()。
      */
 	__u32		when;		/* used to compute rtt's	*/
     /*
-     * ��¼ԭʼTCP�ײ���־�����͹����У�tcp_transmit_skb()�ڷ���TCP
-     * ��֮ǰ����ݴ˱�־����䷢�Ͷε�TCP�ײ��ı�־�򣻽��չ����У�
-     * ����ȡ���նε�TCP�ײ���־�����ֶ���  ֵΪTCPCB_FLAG_SYN  FEN PUSH��
-     */ //��tcp_sendmsg�е�TCP_SKB_CB�����øñ�־�� ��tcp_transmit_skb
+     * 记录原始TCP首部标志。发送过程中，tcp_transmit_skb()在发送TCP
+     * 段之前会根据此标志来填充发送段的TCP首部的标志域；接收过程中，
+     * 会提取接收段的TCP首部标志到该字段中  值为TCPCB_FLAG_SYN  FEN PUSH等
+     */ //在tcp_sendmsg中的TCP_SKB_CB会设置该标志， 见tcp_transmit_skb
 	__u8		flags;		/* TCP header flags.		*/
 
 	/* NOTE: These must match up to the flags byte in a
@@ -903,29 +903,29 @@ struct tcp_skb_cb { //��������TCP��IP�ײ�ѡ���ֶΣ����δ0����ʾû��Я����Ӧ��ѡ
 #define TCPCB_FLAG_CWR		0x80
 
     /*
-     * ��Ҫ���������ε��ش�״̬��ͬʱ��ʶ���Ƿ�����������ݣ����ܵ�ȡֵ
-     * ΪTCPCB_SACKED_ACKED�ȡ������յ���SACK��������Ҫ����TCPCB_TAGBITS
-     * ��־λ���ش��������ݸñ�־λ��ȷ���Ƿ���Ҫ�ش���һ���ش���ʱ������
-     * ���е�SACK״̬��־�����������Ϊ�����ٹ�����״̬������ͨ�����ַ�ʽ
-     * �ش��˰����ش���ʱ������ش�����������TCPCB_EVER_RETRANS��־λ��
-     * tcp_retransmit_skb()������TCPCB_SACKED_RETRANS��TCPCB_EVER_RETRANS
-     * ��־λ��tcp_enter_loss()�������TCPCB_SACKED_RETRANS��־λ��
-     * ֵ��ע����ǣ������������ش�״̬֮ǰ��sackedֵ���Ƕε��ش���־������
-     * SACKѡ����TCP�ײ��е�ƫ�ƣ���ֵ�ڽ���TCP��֮���tcp_parse_options()��
-     * ����TCPѡ��ʱ����ֵ��������tcp_sacktag_write_queue()�в���������SACK
-     * ѡ���Ƕε��ش�״̬��
+     * 主要用来描述段的重传状态，同时标识包是否包含紧急数据，可能的取值
+     * 为TCPCB_SACKED_ACKED等。检查接收到的SACK，根据需要更新TCPCB_TAGBITS
+     * 标志位，重传引擎会根据该标志位来确定是否需要重传。一旦重传超时发生，
+     * 所有的SACK状态标志将被清除，因为无需再关心其状态。无论通过哪种方式
+     * 重传了包，重传超时或快速重传，都会设置TCPCB_EVER_RETRANS标志位。
+     * tcp_retransmit_skb()中设置TCPCB_SACKED_RETRANS和TCPCB_EVER_RETRANS
+     * 标志位，tcp_enter_loss()中则清除TCPCB_SACKED_RETRANS标志位。
+     * 值得注意的是，在描述包的重传状态之前的sacked值并非段的重传标志，而是
+     * SACK选项在TCP首部中的偏移，此值在接收TCP段之后的tcp_parse_options()中
+     * 解析TCP选项时被赋值。而后在tcp_sacktag_write_queue()中才真正根据SACK
+     * 选项标记段的重传状态等
      */
 	__u8		sacked;		/* State flags for SACK/FACK.	*/
 /*
- * �ö�ͨ��SACK��ȷ��
+ * 该段通过SACK被确认
  */
 #define TCPCB_SACKED_ACKED	0x01	/* SKB ACK'd by a SACK block	*/
 /*
- * �ö��Ѿ��ش�
+ * 该段已经重传
  */
 #define TCPCB_SACKED_RETRANS	0x02	/* SKB retransmitted		*/
 /*
- * �ö��ڴ���������Ѷ�ʧ
+ * 该段在传输过程中已丢失
  */
 #define TCPCB_LOST		0x04	/* SKB is lost			*/
 #define TCPCB_TAGBITS		0x07	/* All tag bits			*/
@@ -934,7 +934,7 @@ struct tcp_skb_cb { //��������TCP��IP�ײ�ѡ���ֶΣ����δ0����ʾû��Я����Ӧ��ѡ
 #define TCPCB_RETRANS		(TCPCB_SACKED_RETRANS|TCPCB_EVER_RETRANS)
 
     /*
-     * ���յ���TCP���ײ��е�ȷ�����
+     * 接收到的TCP段首部中的确认序号
      */
 	__u32		ack_seq;	/* Sequence number ACK'd	*/
 };
@@ -978,82 +978,82 @@ enum tcp_ca_event {
 #define TCP_CONG_RTT_STAMP	0x2
 
 /*
- * tcp_congestion_ops�ṹ�ṩ��֧�ֶ���ӵ�������㷨�Ļ��ơ�
- * ӵ�������㷨ֻҪΪtcp_congestion_ops�ṹʵ��һ��ʵ����
- * ����ʵ�����е�һЩ�ӿڡ����磬����ʵ�ֽӿ�
- * ssthresh()��cong_avoid()�������ӿڿ�ѡ��
+ * tcp_congestion_ops结构提供了支持多种拥塞控制算法的机制。
+ * 拥塞控制算法只要为tcp_congestion_ops结构实现一个实例，
+ * 并且实现其中的一些接口。比如，必须实现接口
+ * ssthresh()和cong_avoid()，其他接口可选。
  */
 struct tcp_congestion_ops {
 	/*
-	 * ����ע�ᵽϵͳ�в�ͬ�ĸ���ӵ���㷨��
+	 * 连接注册到系统中不同的各种拥塞算法。
 	 */
 	struct list_head	list;
-	unsigned long flags; //ȡֵTCP_CONG_RTT_STAMP��
+	unsigned long flags; //取值TCP_CONG_RTT_STAMP等
 
 	/* initialize private data (optional) */
 	/*
-	 * ӵ���㷨�ĳ�ʼ�������������ض���
-	 * ��ʼ�����̣���������ƿ��ĳ��
-	 * ӵ�������㷨��ѡ��ʱ�����á�
+	 * 拥塞算法的初始化函数，进行特定的
+	 * 初始化过程，当传输控制块的某种
+	 * 拥塞控制算法被选中时被调用。
 	 */
 	void (*init)(struct sock *sk);
 	/* cleanup private data  (optional) */
 	/*
-	 * ���ر��׽��֣�������ƿ�ѡ������һ��ӵ��
-	 * �����㷨ʱ��ԭ��ӵ�������㷨�Ĵ˽ӿ�����ʽ
-	 * ����ǰ�ͻᱻ���ã������������������ر��׽�
-	 * ��ʱ���˽ӿ�Ҳ�ᱻ���á��������Ҫ��������
-	 * ����Ҳ���Բ�ʵ�ִ˽ӿڡ�
+	 * 当关闭套接字，或传输控制块选择了另一种拥塞
+	 * 控制算法时，原先拥塞控制算法的此接口在正式
+	 * 设置前就会被调用，进行清理工作。当关闭套接
+	 * 字时，此接口也会被调用。如果不需要进行清理
+	 * 工作也可以不实现此接口。
 	 */
 	void (*release)(struct sock *sk);
 
 	/* return slow start threshold (required) */
 	/*
-	 * ���㲢�������������ޡ�
+	 * 计算并返回慢启动门限。
 	 */
 	u32 (*ssthresh)(struct sock *sk);
 	/* lower bound for congestion window (optional) */
 	/*
-	 * ���㲢����ӵ��������Сֵ��
+	 * 计算并返回拥塞窗口最小值。
 	 */
 	u32 (*min_cwnd)(const struct sock *sk);
 	/* do new cwnd calculation (required) */
 	/*
-	 * ��ӵ������ģʽ�����¼���ӵ�����ڡ�
-	 * �ڽӿ���tcp_cong_avoid()�����л���á�
+	 * 在拥塞避免模式下重新计算拥塞窗口。
+	 * 在接口在tcp_cong_avoid()函数中会调用。
 	 */
 	void (*cong_avoid)(struct sock *sk, u32 ack, u32 in_flight);
 	/* call before changing ca_state (optional) */
 	/*
-	 * ��ӵ������״̬�ı�ǰ���˽ӿڻᱻ���á�
+	 * 在拥塞控制状态改变前，此接口会被调用。
 	 */
 	void (*set_state)(struct sock *sk, u8 new_state);
 	/* call when cwnd event occurs (optional) */
 	/*
-	 * ����֪ͨӵ�������㷨�ڲ��¼��Ľӿڣ�����
-	 * ӵ�����Ƶ��¼�����ʱ�����á�
+	 * 用于通知拥塞控制算法内部事件的接口，当有
+	 * 拥塞控制的事件发生时被调用。
 	 */
 	void (*cwnd_event)(struct sock *sk, enum tcp_ca_event ev);
 	/* new value of cwnd after loss (optional) */
 	/*
-	 * �ڳ���"��Сӵ������"ʱ�����ʵ�ִ˽ӿڣ���
-	 * ����ô˽ӿڳ���ӵ�����ڡ�
+	 * 在撤销"缩小拥塞窗口"时，如果实现此接口，则
+	 * 会调用此接口撤销拥塞窗口。
 	 */
 	u32  (*undo_cwnd)(struct sock *sk);
 	/* hook for packet ack accounting (optional) */
 	/*
-	 * �����ͷ����յ�ACK���жα�ȷ��ʱ���˽ӿڱ����á�
-	 * ����num_ackedΪ�˴�ACKȷ�ϵĶ�����
+	 * 当发送方接收到ACK后，有段被确认时，此接口被调用。
+	 * 参数num_acked为此次ACK确认的段数。
 	 */
 	void (*pkts_acked)(struct sock *sk, u32 num_acked, s32 rtt_us);
 	/* get info for inet_diag (optional) */
 	/*
-	 * �ṩ��inet_diag�Ļ�ȡ��Ϣ�Ľӿڡ�
+	 * 提供给inet_diag的获取信息的接口。
 	 */
 	void (*get_info)(struct sock *sk, u32 ext, struct sk_buff *skb);
 
 	/*
-	 * ӵ�������㷨�����ơ�
+	 * 拥塞控制算法的名称。
 	 */
 	char 		name[TCP_CA_NAME_MAX];
 	struct module 	*owner;
@@ -1173,14 +1173,14 @@ static inline unsigned int tcp_left_out(const struct tcp_sock *tp)
  *	"Packets left network, but not honestly ACKed yet" PLUS
  *	"Packets fast retransmitted"
  *//*
-	 * ��ȡ���ڴ����еĶ���
+	 * 获取正在传输中的段数
 	 */
 static inline unsigned int tcp_packets_in_flight(const struct tcp_sock *tp)
 {
     /*
-	  * "�ѷ��͵���δȷ�ϵĶ���Ŀ"��ȥ"�Ѿ����������еĶ�
-	  * ��Ŀ"���ټ���"�ش���δ�õ�ȷ�ϵĶ���Ŀ"���Ϳ���
-	  * �õ��������еĶ���Ŀ��
+	  * "已发送但是未确认的段数目"减去"已经不在网络中的段
+	  * 数目"，再加上"重传还未得到确认的段数目"，就可以
+	  * 得到在网络中的段数目。
 	  */
 	return tp->packets_out - tcp_left_out(tp) + tp->retrans_out;
 }
@@ -1273,11 +1273,11 @@ static inline __sum16 __tcp_checksum_complete(struct sk_buff *skb)
 }
 
 /*
- * tcp_checksum_complete��tcp_checksum_complete_user���ǻ���α�ײ��ۼӺ�
- * ���ȫ��У��͵ļ�⡣��֮ͬ�����ڣ�ǰ������У��û�и��ص�TCP�Σ�������
- * ����У����ESTABLISHED״̬�½��յ��ĶΣ���Ȼ������������󶼵���
- * __tcp_checksum_complete���У�飬������ESTABLISHED״̬���漰������ƿ�
- * �Ƿ񱻽�������
+ * tcp_checksum_complete和tcp_checksum_complete_user都是基于伪首部累加和
+ * 完成全包校验和的检测。不同之处在于，前者用于校验没有负载的TCP段，而后者
+ * 用于校验在ESTABLISHED状态下接收到的段，虽然这两个函数最后都调用
+ * __tcp_checksum_complete完成校验，但是在ESTABLISHED状态下涉及传输控制块
+ * 是否被进程锁定
  */
 static inline int tcp_checksum_complete(struct sk_buff *skb)
 {
@@ -1425,8 +1425,8 @@ static inline int keepalive_probes(const struct tcp_sock *tp)
 }
 
 /*
- * ��ȡ���һ���յ��Ķε�ĿǰΪֹ��ʱ�䣬
- * ����������ʱ�䡣
+ * 获取最近一次收到的段到目前为止的时间，
+ * 即持续空闲时间。
  */
 static inline u32 keepalive_time_elapsed(const struct tcp_sock *tp)
 {
@@ -1442,20 +1442,20 @@ static inline int tcp_fin_time(const struct sock *sk)
 	const int rto = inet_csk(sk)->icsk_rto;
 
    /*
-    ������������Ϊʲôrto��ֵҪѡ��Ϊicsk->icsk_rto��3.5����Ҳ����RTO*3.5��������2����4���أ�����֪������FIN_WAIT_2״̬�½��յ�FIN���󣬻���Զ˷���ACK����
-    ���TCP���ӵĹرա������������ACK�����ܶԶ�û���յ����ڹ���RTO����ʱ�ش�ʱ�䣩ʱ��󣬶Զ˻����·���FIN������ʱ��Ҫ�ٴθ��Զ˷���ACK��������TIME_WAIT
-    ״̬�ĳ���ʱ��Ҫ��֤�Զ˿����ش�����FIN��������ش����εĻ���TIME_WAIT��ʱ��Ӧ��ΪRTO*��0.5+0.5+0.5��=RTO*1.5����������ȴ��RTO*3.5��������Ϊ���ش�����£�
-    �ش���ʱʱ�����һ�ֳ�Ϊ��ָ���˱ܡ��ķ�ʽ���㡣���磺���ش���ʱʱ��Ϊ1S������·����������ش������Ǿ����ش���ʱʱ��Ϊ2S�Ķ�ʱ�����ش����ݣ���һ����4S��
-    һֱ���ӵ�64SΪֹ���μ�tcp_retransmit_timer�����������������RTO*3.5=RTO*0.5+RTO*1+RTO*2,����RTO*0.5�ǵ�һ�η���ACK��ʱ�䵽�Զ˵ĳ�ʱʱ�䣨ϵ�����ǳ���RTO
-    ��ֵ����RTO*1�ǶԶ˵�һ���ش�FIN����ACK������Զ˵ĳ�ʱʱ�䣬RTO*2�ǶԶ˵ڶ����ش�FIN����ACK������Զ˵ĳ�ʱʱ�䡣ע�⣬�ش���ʱʱ���ָ���˱ܲ���
-    �����ǳ���2�������ش�֮��ִ�еģ����Ե�һ���ش��ĳ�ʱʱ��͵�һ�η��͵ĳ�ʱʱ����ͬ���������̼�ʱ��ֲ�����ͼ��ʾ��ע�⣺��ͷ��Ȼָ��Զˣ�ֻ����������
-    ���̣����ݰ���δ�����յ�����
-    �ο�:http://blog.csdn.net/justlinux2010/article/details/9070057
+    下面在来看看为什么rto的值要选择为icsk->icsk_rto的3.5倍，也就是RTO*3.5，而不是2倍、4倍呢？我们知道，在FIN_WAIT_2状态下接收到FIN包后，会给对端发送ACK包，
+    完成TCP连接的关闭。但是最后的这个ACK包可能对端没有收到，在过了RTO（超时重传时间）时间后，对端会重新发送FIN包，这时需要再次给对端发送ACK包，所以TIME_WAIT
+    状态的持续时间要保证对端可以重传两次FIN包。如果重传两次的话，TIME_WAIT的时间应该为RTO*（0.5+0.5+0.5）=RTO*1.5，但是这里却是RTO*3.5。这是因为在重传情况下，
+    重传超时时间采用一种称为“指数退避”的方式计算。例如：当重传超时时间为1S的情况下发生了数据重传，我们就用重传超时时间为2S的定时器来重传数据，下一次用4S，
+    一直增加到64S为止（参见tcp_retransmit_timer（））。所以这里的RTO*3.5=RTO*0.5+RTO*1+RTO*2,其中RTO*0.5是第一次发送ACK的时间到对端的超时时间（系数就是乘以RTO
+    的值），RTO*1是对端第一次重传FIN包到ACK包到达对端的超时时间，RTO*2是对端第二次重传FIN包到ACK包到达对端的超时时间。注意，重传超时时间的指数退避操作
+    （就是乘以2）是在重传之后执行的，所以第一次重传的超时时间和第一次发送的超时时间相同。整个过程及时间分布如下图所示（注意：箭头虽然指向对端，只是用于描述
+    过程，数据包并未被接收到）：
+    参考:http://blog.csdn.net/justlinux2010/article/details/9070057
    
-    * ���fin_timeoutʱ��С��3.5*rto,����������fin_timeoutʱ�䡣
+    * 如果fin_timeout时间小于3.5*rto,则重新设置fin_timeout时间。
     */
 	if (fin_timeout < (rto << 2) - (rto >> 1))
-		fin_timeout = (rto << 2) - (rto >> 1);  //fin��ʱʱ������Ҫ��֤3.5��rto
+		fin_timeout = (rto << 2) - (rto >> 1);  //fin超时时间至少要保证3.5个rto
 
 	return fin_timeout;
 }

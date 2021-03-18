@@ -322,11 +322,11 @@ static void unlink_from_pool(struct inet_peer *p)
 
 /* May be called with local BH enabled. */
 /*
- * cleanup_once()ÓÃÀ´¼ì²âinet_peer_unused_head¶ÓÁĞÖĞ
- * µÚÒ»¸öÏĞÖÃµÄ¶Ô¶ËĞÅÏ¢¿é£¬Ò»µ©¼ì²âµ½
- * ¸Ã¶Ô¶ËĞÅÏ¢¿éÏĞÖÃÊ±¼ä´ïµ½ãĞÖµ£¬¼´½«
- * ÆäÊÍ·Å¡£
- * @ttl:ÓÃÀ´¼ì²â¶Ô¶ËĞÅÏ¢¿éÏĞÖÃÊ±¼äµÄãĞÖµ¡£
+ * cleanup_once()ç”¨æ¥æ£€æµ‹inet_peer_unused_headé˜Ÿåˆ—ä¸­
+ * ç¬¬ä¸€ä¸ªé—²ç½®çš„å¯¹ç«¯ä¿¡æ¯å—ï¼Œä¸€æ—¦æ£€æµ‹åˆ°
+ * è¯¥å¯¹ç«¯ä¿¡æ¯å—é—²ç½®æ—¶é—´è¾¾åˆ°é˜ˆå€¼ï¼Œå³å°†
+ * å…¶é‡Šæ”¾ã€‚
+ * @ttl:ç”¨æ¥æ£€æµ‹å¯¹ç«¯ä¿¡æ¯å—é—²ç½®æ—¶é—´çš„é˜ˆå€¼ã€‚
  */
 static int cleanup_once(unsigned long ttl)
 {
@@ -335,11 +335,11 @@ static int cleanup_once(unsigned long ttl)
 	/* Remove the first entry from the list of unused nodes. */
 	spin_lock_bh(&inet_peer_unused_lock);
 	/*
-	 * Èç¹ûinet_peer_unused_head¶ÓÁĞ²»Îª¿Õ£¬Ôò»ñÈ¡
-	 * ÆäÉÏµÚÒ»¸öÏĞÖÃµÄ¶Ô¶ËĞÅÏ¢¿é¡£¼ì²â¸Ã
-	 * ¶Ô¶ËĞÅÏ¢¿éµÄÏĞÖÃÊ±¼äÊÇ·ñ´ïµ½ãĞÖµ¡£
-	 * Èç¹û´ïµ½£¬Ôò½«Æä´Ó¶ÓÁĞÖĞÕª³ı£¬·ñÔò
-	 * ·µ»Ø·Ç0£¬±íÊ¾Ã»ÓĞ¶Ô¶ËĞÅÏ¢¿é¿ÉÊÍ·Å¡£
+	 * å¦‚æœinet_peer_unused_headé˜Ÿåˆ—ä¸ä¸ºç©ºï¼Œåˆ™è·å–
+	 * å…¶ä¸Šç¬¬ä¸€ä¸ªé—²ç½®çš„å¯¹ç«¯ä¿¡æ¯å—ã€‚æ£€æµ‹è¯¥
+	 * å¯¹ç«¯ä¿¡æ¯å—çš„é—²ç½®æ—¶é—´æ˜¯å¦è¾¾åˆ°é˜ˆå€¼ã€‚
+	 * å¦‚æœè¾¾åˆ°ï¼Œåˆ™å°†å…¶ä»é˜Ÿåˆ—ä¸­æ‘˜é™¤ï¼Œå¦åˆ™
+	 * è¿”å›é0ï¼Œè¡¨ç¤ºæ²¡æœ‰å¯¹ç«¯ä¿¡æ¯å—å¯é‡Šæ”¾ã€‚
 	 */
 	if (!list_empty(&unused_peers)) {
 		__u32 delta;
@@ -362,8 +362,8 @@ static int cleanup_once(unsigned long ttl)
 	spin_unlock_bh(&inet_peer_unused_lock);
 
 	/*
-	 * Èç¹ûinet_peer_unused_head¶ÓÁĞÎª¿Õ£¬Ôò·µ»Ø·Ç0£¬±íÊ¾
-	 * Ã»ÓĞ¶ËĞÅÏ¢¿é¿ÉÊÍ·Å¡£
+	 * å¦‚æœinet_peer_unused_headé˜Ÿåˆ—ä¸ºç©ºï¼Œåˆ™è¿”å›é0ï¼Œè¡¨ç¤º
+	 * æ²¡æœ‰ç«¯ä¿¡æ¯å—å¯é‡Šæ”¾ã€‚
 	 */
 	if (p == NULL)
 		/* It means that the total number of USED entries has
@@ -372,13 +372,13 @@ static int cleanup_once(unsigned long ttl)
 		return -1;
 
 	/*
-	 * µ÷ÓÃunlink_from_pool()½«¶Ô¶ËĞÅÏ¢¿é´ÓAVL
-	 * Ê÷ÖĞÉ¾³ı²¢ÊÍ·Å¡£
+	 * è°ƒç”¨unlink_from_pool()å°†å¯¹ç«¯ä¿¡æ¯å—ä»AVL
+	 * æ ‘ä¸­åˆ é™¤å¹¶é‡Šæ”¾ã€‚
 	 */
 	unlink_from_pool(p);
 	/*
-	 * ·µ»Ø0£¬±íÊ¾inet_peer_unused_head¶ÓÁĞÖĞ¿ÉÄÜ
-	 * »¹ÓĞ¶Ô¶ËĞÅÏ¢¿é¿ÉÊÍ·Å¡£
+	 * è¿”å›0ï¼Œè¡¨ç¤ºinet_peer_unused_headé˜Ÿåˆ—ä¸­å¯èƒ½
+	 * è¿˜æœ‰å¯¹ç«¯ä¿¡æ¯å—å¯é‡Šæ”¾ã€‚
 	 */
 	return 0;
 }
@@ -387,22 +387,22 @@ static int cleanup_once(unsigned long ttl)
 /* Called with or without local BH being disabled. */
 /* Called with or without local BH being disabled. */
 /*
- * ¶Ô¶ËĞÅÏ¢¿éµÄ´´½¨ºÍ²éÕÒ¶¼ÊÇÍ¨¹ıinet_getpeer()À´ÊµÏÖµÄ£¬
- * ÓÉ²ÎÊıcreateÀ´Çø·ÖÊÇ´´½¨»¹ÊÇ²éÕÒ¡£Ê×ÏÈ¼ì²éÖ¸¶¨µØÖ·
- * µÄ¶Ô¶ËĞÅÏ¢¿é£¬Èç¹û²éÕÒÃüÖĞ£¬Ôò·µ»Ø²éÕÒµÄ½á¹û£¬
- * ·ñÔò£¬µ±createÎª0Ê±·µ»ØNULL£¬·Ç0Ê±´´½¨ĞÂµÄ¶Ô¶Ë
- * ĞÅÏ¢¿é²¢Ìí¼Óµ½AVLÊ÷ÖĞ£¬²¢·µ»Ø¸ÃĞÂ´´½¨µÄ¶Ô¶ËĞÅÏ¢¿é¡£
+ * å¯¹ç«¯ä¿¡æ¯å—çš„åˆ›å»ºå’ŒæŸ¥æ‰¾éƒ½æ˜¯é€šè¿‡inet_getpeer()æ¥å®ç°çš„ï¼Œ
+ * ç”±å‚æ•°createæ¥åŒºåˆ†æ˜¯åˆ›å»ºè¿˜æ˜¯æŸ¥æ‰¾ã€‚é¦–å…ˆæ£€æŸ¥æŒ‡å®šåœ°å€
+ * çš„å¯¹ç«¯ä¿¡æ¯å—ï¼Œå¦‚æœæŸ¥æ‰¾å‘½ä¸­ï¼Œåˆ™è¿”å›æŸ¥æ‰¾çš„ç»“æœï¼Œ
+ * å¦åˆ™ï¼Œå½“createä¸º0æ—¶è¿”å›NULLï¼Œé0æ—¶åˆ›å»ºæ–°çš„å¯¹ç«¯
+ * ä¿¡æ¯å—å¹¶æ·»åŠ åˆ°AVLæ ‘ä¸­ï¼Œå¹¶è¿”å›è¯¥æ–°åˆ›å»ºçš„å¯¹ç«¯ä¿¡æ¯å—ã€‚
  */ //
-struct inet_peer *inet_getpeer(__be32 daddr, int create)//¶Ô¶ËĞÅÏ¢¿éµÄ´´½¨ºÍ²éÕÒ
+struct inet_peer *inet_getpeer(__be32 daddr, int create)//å¯¹ç«¯ä¿¡æ¯å—çš„åˆ›å»ºå’ŒæŸ¥æ‰¾
 {
 	struct inet_peer *p, *n;
 	struct inet_peer **stack[PEER_MAXDEPTH], ***stackptr;
 
 	/* Look up for the address quickly. */
 	/*
-	 * ¸ù¾İµØÖ·ÔÚAVLÊ÷ÖĞ²éÕÒ¶ÔÓ¦µÄ¶Ô¶ËĞÅÏ¢
-	 * ¿é£¬Èç¹û²éÕÒÃüÖĞ£¬ÔòÔö¼Ó¶Ô¸Ã¶Ô¶Ë
-	 * ĞÅÏ¢¿éµÄÒıÓÃ¼ÆÊı¡£
+	 * æ ¹æ®åœ°å€åœ¨AVLæ ‘ä¸­æŸ¥æ‰¾å¯¹åº”çš„å¯¹ç«¯ä¿¡æ¯
+	 * å—ï¼Œå¦‚æœæŸ¥æ‰¾å‘½ä¸­ï¼Œåˆ™å¢åŠ å¯¹è¯¥å¯¹ç«¯
+	 * ä¿¡æ¯å—çš„å¼•ç”¨è®¡æ•°ã€‚
 	 */
 	read_lock_bh(&peer_pool_lock);
 	p = lookup(daddr, NULL);
@@ -411,10 +411,10 @@ struct inet_peer *inet_getpeer(__be32 daddr, int create)//¶Ô¶ËĞÅÏ¢¿éµÄ´´½¨ºÍ²éÕÒ
 	read_unlock_bh(&peer_pool_lock);
 
 	/*
-	 * Èç¹û²éÕÒµ½µÄ¶Ô¶ËĞÅÏ¢¿éÒÑ¾­Ìí¼Óµ½
-	 * inet_peer_unused_head¶ÓÁĞÉÏ£¬ÔòÏÈ½«ÆäÉ¾³ı£¬
-	 * ÒÔÃâ±»µ±×÷À¬»ø»ØÊÕ£¬È»ºó·µ»Ø²éÕÒ
-	 * µ½µÄ¶Ô¶ËĞÅÏ¢¿é¡£
+	 * å¦‚æœæŸ¥æ‰¾åˆ°çš„å¯¹ç«¯ä¿¡æ¯å—å·²ç»æ·»åŠ åˆ°
+	 * inet_peer_unused_headé˜Ÿåˆ—ä¸Šï¼Œåˆ™å…ˆå°†å…¶åˆ é™¤ï¼Œ
+	 * ä»¥å…è¢«å½“ä½œåƒåœ¾å›æ”¶ï¼Œç„¶åè¿”å›æŸ¥æ‰¾
+	 * åˆ°çš„å¯¹ç«¯ä¿¡æ¯å—ã€‚
 	 */
 	if (p != peer_avl_empty) {
 		/* The existing node has been found. */
@@ -424,17 +424,17 @@ struct inet_peer *inet_getpeer(__be32 daddr, int create)//¶Ô¶ËĞÅÏ¢¿éµÄ´´½¨ºÍ²éÕÒ
 	}
 
 	/*
-	 * Èç¹û¸ù¾İµØÖ·Ã»ÓĞÕÒµ½ÏàÓ¦µÄ¶Ô¶Ë
-	 * ĞÅÏ¢¿é£¬ÇÒÊÇ²éÕÒ²Ù×÷£¬Ôò·µ»ØNULL¡£
+	 * å¦‚æœæ ¹æ®åœ°å€æ²¡æœ‰æ‰¾åˆ°ç›¸åº”çš„å¯¹ç«¯
+	 * ä¿¡æ¯å—ï¼Œä¸”æ˜¯æŸ¥æ‰¾æ“ä½œï¼Œåˆ™è¿”å›NULLã€‚
 	 */
 	if (!create)
 		return NULL;
 
 	/* Allocate the space outside the locked region. */
 	/*
-	 * Èç¹û¸ù¾İµØÖ·Ã»ÕÒµ½ÏàÓ¦µÄ¶Ô¶ËĞÅÏ¢¿é£¬
-	 * ÇÒÔÊĞí´´½¨£¬Ôò´Ó¸ßËÙ»º´æÖĞ·ÖÅä¶Ô¶Ë
-	 * ĞÅÏ¢¿é£¬²¢ÉèÖÃÏàÓ¦µÄÖµ¡£
+	 * å¦‚æœæ ¹æ®åœ°å€æ²¡æ‰¾åˆ°ç›¸åº”çš„å¯¹ç«¯ä¿¡æ¯å—ï¼Œ
+	 * ä¸”å…è®¸åˆ›å»ºï¼Œåˆ™ä»é«˜é€Ÿç¼“å­˜ä¸­åˆ†é…å¯¹ç«¯
+	 * ä¿¡æ¯å—ï¼Œå¹¶è®¾ç½®ç›¸åº”çš„å€¼ã€‚
 	 */
 	n = kmem_cache_alloc(peer_cachep, GFP_ATOMIC);
 	if (n == NULL)
@@ -446,13 +446,13 @@ struct inet_peer *inet_getpeer(__be32 daddr, int create)//¶Ô¶ËĞÅÏ¢¿éµÄ´´½¨ºÍ²éÕÒ
 	n->tcp_ts_stamp = 0;
 
 	/*
-	 * ÏÈ¼ì²éÊÇ·ñÓĞÍ¬ÑùµÄµØÖ·µÄ¶Ô¶ËĞÅÏ¢
-	 * ¿éÒÑÌí¼Óµ½AVLÊ÷£¬ÒòÎªÔÚ·ÖÅä¶Ô¶Ë
-	 * ĞÅÏ¢¿éÊ±£¬ÆäËûÄ£¿éÓĞ¿ÉÄÜÒÑ´´½¨ÁË
-	 * ÏàÍ¬µØÖ·µÄ¶Ô¶ËĞÅÏ¢¿é¡£Èç¹ûÓĞ£¬Ôò
-	 * ²»ÊÊÓÃ¸Õ´´½¨µÄ¶Ô¶ËĞÅÏ¢¿é²¢½«ÆäÊÍ·Å¡£
-	 * Èç¹ûÃ»ÓĞ£¬Ôò½«ĞÂ´´½¨µÄ¶Ô¶ËĞÅÏ¢¿é
-	 * Ìí¼Óµ½AVLÊ÷²¢¸üĞÂµ±Ç°µÄ¶Ô¶ËĞÅÏ¢¿éÊı¡£
+	 * å…ˆæ£€æŸ¥æ˜¯å¦æœ‰åŒæ ·çš„åœ°å€çš„å¯¹ç«¯ä¿¡æ¯
+	 * å—å·²æ·»åŠ åˆ°AVLæ ‘ï¼Œå› ä¸ºåœ¨åˆ†é…å¯¹ç«¯
+	 * ä¿¡æ¯å—æ—¶ï¼Œå…¶ä»–æ¨¡å—æœ‰å¯èƒ½å·²åˆ›å»ºäº†
+	 * ç›¸åŒåœ°å€çš„å¯¹ç«¯ä¿¡æ¯å—ã€‚å¦‚æœæœ‰ï¼Œåˆ™
+	 * ä¸é€‚ç”¨åˆšåˆ›å»ºçš„å¯¹ç«¯ä¿¡æ¯å—å¹¶å°†å…¶é‡Šæ”¾ã€‚
+	 * å¦‚æœæ²¡æœ‰ï¼Œåˆ™å°†æ–°åˆ›å»ºçš„å¯¹ç«¯ä¿¡æ¯å—
+	 * æ·»åŠ åˆ°AVLæ ‘å¹¶æ›´æ–°å½“å‰çš„å¯¹ç«¯ä¿¡æ¯å—æ•°ã€‚
 	 */
 	write_lock_bh(&peer_pool_lock);
 	/* Check if an entry has suddenly appeared. */
@@ -467,25 +467,25 @@ struct inet_peer *inet_getpeer(__be32 daddr, int create)//¶Ô¶ËĞÅÏ¢¿éµÄ´´½¨ºÍ²éÕÒ
 	write_unlock_bh(&peer_pool_lock);
 
 	/*
-	 * Èç¹ûµ±Ç°¶Ô¶ËĞÅÏ¢¿éÊıÁ¿³¬¹ıÁËinet_peer_threshold£¬
-	 * Ôòµ÷ÓÃcleanup_once()ÊÍ·Åinet_peer_unused_head¶ÓÊ×µÄ¶Ô¶Ë
-	 * ĞÅÏ¢¿é¡£
+	 * å¦‚æœå½“å‰å¯¹ç«¯ä¿¡æ¯å—æ•°é‡è¶…è¿‡äº†inet_peer_thresholdï¼Œ
+	 * åˆ™è°ƒç”¨cleanup_once()é‡Šæ”¾inet_peer_unused_headé˜Ÿé¦–çš„å¯¹ç«¯
+	 * ä¿¡æ¯å—ã€‚
 	 */
 	if (peer_total >= inet_peer_threshold)
 		/* Remove one less-recently-used entry. */
 		cleanup_once(0);
 
 	/*
-	 * ·µ»Ø´´½¨µÄ¶Ô¶ËĞÅÏ¢¿é¡£
+	 * è¿”å›åˆ›å»ºçš„å¯¹ç«¯ä¿¡æ¯å—ã€‚
 	 */
 	return n;
 
 out_free:
 	/*
-	 * ÔÚ´´½¨ÁË¶Ô¶ËĞÅÏ¢¿éÖ®ºóÌí¼Óµ½AVLÊ÷Ê±£¬ÓĞ
-	 * ÆäËûÄ£¿é´´½¨ÁËÏàÍ¬µØÖ·µÄ¶Ô¶ËĞÅÏ¢¿é£¬
-	 * ´ËÊ±ĞèÒªÊÍ·Å¸Õ·ÖÅäµÄ¶Ô¶ËĞÅÏ¢¿é£¬¶øÊ¹ÓÃ
-	 * ÆäËûÄ£¿éÒÑ´´½¨µÄ¶Ô¶ËĞÅÏ¢¿é¡£
+	 * åœ¨åˆ›å»ºäº†å¯¹ç«¯ä¿¡æ¯å—ä¹‹åæ·»åŠ åˆ°AVLæ ‘æ—¶ï¼Œæœ‰
+	 * å…¶ä»–æ¨¡å—åˆ›å»ºäº†ç›¸åŒåœ°å€çš„å¯¹ç«¯ä¿¡æ¯å—ï¼Œ
+	 * æ­¤æ—¶éœ€è¦é‡Šæ”¾åˆšåˆ†é…çš„å¯¹ç«¯ä¿¡æ¯å—ï¼Œè€Œä½¿ç”¨
+	 * å…¶ä»–æ¨¡å—å·²åˆ›å»ºçš„å¯¹ç«¯ä¿¡æ¯å—ã€‚
 	 */
 	/* The appropriate node is already in the pool. */
 	atomic_inc(&p->refcnt);
@@ -500,11 +500,11 @@ out_free:
 
 /* Called with local BH disabled. */
 /*
- * peer_check_expire¶¨Ê±Æ÷µÄ³õÊ¼¼ä¸ôÊ±¼äÔÚinet_initpeers()ÖĞ
- * ÉèÖÃ£¬¶øÔÚÔËĞĞÖĞ£¬Ôò»á¸ù¾İµ±Ç°¶Ô¶ËĞÅÏ¢¿é
- * µÄÊıÁ¿ÊÇ·ñ´ïµ½inet_peer_threshold£¬½øĞĞ¶¯Ì¬¼ÆËã¡£
- * Òò´Ë£¬¼ä¸ôÊ±¼äÓëinet_peer_maxttl¡¢inet_peer_minttlºÍ
- * inet_peer_thresholdÓĞ×ÅÃÜÇĞµÄ¹ØÏµ¡£
+ * peer_check_expireå®šæ—¶å™¨çš„åˆå§‹é—´éš”æ—¶é—´åœ¨inet_initpeers()ä¸­
+ * è®¾ç½®ï¼Œè€Œåœ¨è¿è¡Œä¸­ï¼Œåˆ™ä¼šæ ¹æ®å½“å‰å¯¹ç«¯ä¿¡æ¯å—
+ * çš„æ•°é‡æ˜¯å¦è¾¾åˆ°inet_peer_thresholdï¼Œè¿›è¡ŒåŠ¨æ€è®¡ç®—ã€‚
+ * å› æ­¤ï¼Œé—´éš”æ—¶é—´ä¸inet_peer_maxttlã€inet_peer_minttlå’Œ
+ * inet_peer_thresholdæœ‰ç€å¯†åˆ‡çš„å…³ç³»ã€‚
  */
 static void peer_check_expire(unsigned long dummy)
 {
@@ -512,12 +512,12 @@ static void peer_check_expire(unsigned long dummy)
 	int ttl;
 
 	/*
-	 * ¸ù¾İµ±Ç°¶Ô¶ËĞÅÏ¢¿éÊı¼ÆËã±¾´ÎÀ¬»ø»ØÊÕ
-	 * µÄ¶Ô¶ËĞÅÏ¢¿éÉú´æÆÚãĞÖµ¡£µ±Ç°¶Ô¶ËĞÅÏ¢
-	 * ¿éÊı´óÓÚinet_peer_thresholdÊ±£¬Ê¹ÓÃinet_peer_minttl
-	 * ×÷Îª±¾´ÎÀ¬»ø»ØÊÕµÄ¶Ô¶ËĞÅÏ¢¿éÉú´æÆÚ
-	 * ãĞÖµ£¬·ñÔò¸ù¾İinet_peer_maxttlÀ´¼ÆËã±¾´ÎÀ¬»ø
-	 * »ØÊÕµÄ¶Ô¶ËĞÅÏ¢¿éÉú´æÆÚãĞÖµ¡£
+	 * æ ¹æ®å½“å‰å¯¹ç«¯ä¿¡æ¯å—æ•°è®¡ç®—æœ¬æ¬¡åƒåœ¾å›æ”¶
+	 * çš„å¯¹ç«¯ä¿¡æ¯å—ç”Ÿå­˜æœŸé˜ˆå€¼ã€‚å½“å‰å¯¹ç«¯ä¿¡æ¯
+	 * å—æ•°å¤§äºinet_peer_thresholdæ—¶ï¼Œä½¿ç”¨inet_peer_minttl
+	 * ä½œä¸ºæœ¬æ¬¡åƒåœ¾å›æ”¶çš„å¯¹ç«¯ä¿¡æ¯å—ç”Ÿå­˜æœŸ
+	 * é˜ˆå€¼ï¼Œå¦åˆ™æ ¹æ®inet_peer_maxttlæ¥è®¡ç®—æœ¬æ¬¡åƒåœ¾
+	 * å›æ”¶çš„å¯¹ç«¯ä¿¡æ¯å—ç”Ÿå­˜æœŸé˜ˆå€¼ã€‚
 	 */
 	if (peer_total >= inet_peer_threshold)
 		ttl = inet_peer_minttl;
@@ -526,8 +526,8 @@ static void peer_check_expire(unsigned long dummy)
 				- (inet_peer_maxttl - inet_peer_minttl) / HZ *
 					peer_total / inet_peer_threshold * HZ;
 	/*
-	 * Ñ­»·¼ì²â²¢É¾³ıÏĞÖÃÊ±¼ä´ïµ½ãĞÖµ
-	 * µÄ¶Ô¶ËĞÅÏ¢¿é¡£
+	 * å¾ªç¯æ£€æµ‹å¹¶åˆ é™¤é—²ç½®æ—¶é—´è¾¾åˆ°é˜ˆå€¼
+	 * çš„å¯¹ç«¯ä¿¡æ¯å—ã€‚
 	 */
 	while (!cleanup_once(ttl)) {
 		if (jiffies != now)
@@ -538,12 +538,12 @@ static void peer_check_expire(unsigned long dummy)
 	 * interval depending on the total number of entries (more entries,
 	 * less interval). */
 	/*
-	 * ¸ù¾İµ±Ç°¶Ô¶ËĞÅÏ¢¿éÊı¼ÆËãpeer_check_expire¶¨Ê±Æ÷
-	 * ÏÂ´Î¼¤»îÊ±¼ä£¬²¢ÖØĞÂÉèÖÃ¸Ã¶¨Ê±Æ÷¡£µ±Ç°
-	 * ¶Ô¶ËĞÅÏ¢¿éÊı´óÓÚinet_peer_thresholdÊ±£¬Ê¹ÓÃ
-	 * inet_peer_gc_mintime×÷Îª±¾´ÎÀ¬»ø»ØÊÕµÄÊ±¼ä¼ä¸ô£¬
-	 * ·ñÔò¸ù¾İinet_peer_gc_maxtimeÀ´¼ÆËã±¾´ÎÀ¬»ø»ØÊÕ
-	 * µÄÊ±¼ä¼ä¸ô¡£
+	 * æ ¹æ®å½“å‰å¯¹ç«¯ä¿¡æ¯å—æ•°è®¡ç®—peer_check_expireå®šæ—¶å™¨
+	 * ä¸‹æ¬¡æ¿€æ´»æ—¶é—´ï¼Œå¹¶é‡æ–°è®¾ç½®è¯¥å®šæ—¶å™¨ã€‚å½“å‰
+	 * å¯¹ç«¯ä¿¡æ¯å—æ•°å¤§äºinet_peer_thresholdæ—¶ï¼Œä½¿ç”¨
+	 * inet_peer_gc_mintimeä½œä¸ºæœ¬æ¬¡åƒåœ¾å›æ”¶çš„æ—¶é—´é—´éš”ï¼Œ
+	 * å¦åˆ™æ ¹æ®inet_peer_gc_maxtimeæ¥è®¡ç®—æœ¬æ¬¡åƒåœ¾å›æ”¶
+	 * çš„æ—¶é—´é—´éš”ã€‚
 	 */
 	if (peer_total >= inet_peer_threshold)
 		peer_periodic_timer.expires = jiffies + inet_peer_gc_mintime;
@@ -556,20 +556,20 @@ static void peer_check_expire(unsigned long dummy)
 }
 
 /*
- * µ±Ê¹ÓÃÍê¶Ô¶ËĞÅÏ¢¿éÖ®ºó£¬ĞèÒª½«ÆäÉ¾³ı²¢ÊÍ·Å¡£
- * Êµ¼ÊÉÏ£¬inet_putpeer()Ö»ÊÇ½«¸Ã¶Ô¶ËĞÅÏ¢¿éÌí¼Óµ½
- * unused_peers¶ÓÁĞÉÏ£¬±íÊ¾¸Ã¶Ô¶ËĞÅÏ¢¿éµ±Ç°
- * Ã»ÓĞ±»Ê¹ÓÃ¡£¶øÕæÕıµÄÉ¾³ıºÍÊÍ·Å£¬ÓÉÀ¬»ø
- * »ØÊÕ»úÖÆÀ´´¦Àí.
+ * å½“ä½¿ç”¨å®Œå¯¹ç«¯ä¿¡æ¯å—ä¹‹åï¼Œéœ€è¦å°†å…¶åˆ é™¤å¹¶é‡Šæ”¾ã€‚
+ * å®é™…ä¸Šï¼Œinet_putpeer()åªæ˜¯å°†è¯¥å¯¹ç«¯ä¿¡æ¯å—æ·»åŠ åˆ°
+ * unused_peersé˜Ÿåˆ—ä¸Šï¼Œè¡¨ç¤ºè¯¥å¯¹ç«¯ä¿¡æ¯å—å½“å‰
+ * æ²¡æœ‰è¢«ä½¿ç”¨ã€‚è€ŒçœŸæ­£çš„åˆ é™¤å’Œé‡Šæ”¾ï¼Œç”±åƒåœ¾
+ * å›æ”¶æœºåˆ¶æ¥å¤„ç†.
  */
 void inet_putpeer(struct inet_peer *p)
 {
 	spin_lock_bh(&inet_peer_unused_lock);
 	/*
-	 * µ±´ıÉ¾³ıµÄ¶Ô¶ËĞÅÏ¢¿éµÄÒıÓÃ¼ÆÊıÎª0Ê±,
-	 * ±íÊ¾Ã»ÓĞ±»Ê¹ÓÃ,´ËÊ±½«ËüÌí¼Óµ½
-	 * inet_peer_unused_head¶ÓÁĞÉÏ,µÈ´ıÀ¬»ø»ØÊÕ»ò
-	 * ÔÙ´Î±»Ê¹ÓÃ.
+	 * å½“å¾…åˆ é™¤çš„å¯¹ç«¯ä¿¡æ¯å—çš„å¼•ç”¨è®¡æ•°ä¸º0æ—¶,
+	 * è¡¨ç¤ºæ²¡æœ‰è¢«ä½¿ç”¨,æ­¤æ—¶å°†å®ƒæ·»åŠ åˆ°
+	 * inet_peer_unused_headé˜Ÿåˆ—ä¸Š,ç­‰å¾…åƒåœ¾å›æ”¶æˆ–
+	 * å†æ¬¡è¢«ä½¿ç”¨.
 	 */
 	if (atomic_dec_and_test(&p->refcnt)) {
 		list_add_tail(&p->unused, &unused_peers);

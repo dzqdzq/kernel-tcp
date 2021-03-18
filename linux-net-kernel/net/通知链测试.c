@@ -1,4 +1,4 @@
-/* test_chain_0.c £º0. ÉêÃ÷Ò»¸öÍ¨ÖªÁ´£»1. ÏòÄÚºË×¢²áÍ¨ÖªÁ´£»2. ¶¨ÒåÊÂ¼ş£» 3. µ¼³ö·ûºÅ£¬Òò¶ø±ØĞè×îºóÍË³ö*/  
+/* test_chain_0.c ï¼š0. ç”³æ˜ä¸€ä¸ªé€šçŸ¥é“¾ï¼›1. å‘å†…æ ¸æ³¨å†Œé€šçŸ¥é“¾ï¼›2. å®šä¹‰äº‹ä»¶ï¼› 3. å¯¼å‡ºç¬¦å·ï¼Œå› è€Œå¿…éœ€æœ€åé€€å‡º*/  
   
 #include <linux/notifier.h>  
 #include <linux/module.h>  
@@ -56,7 +56,7 @@ module_exit(test_chain_0_exit);
 
 
   
-/* test_chain_1.c £º1. ¶¨Òå»Øµ÷º¯Êı£»2. ¶¨Òånotifier_block£»3. Ïòchain_0×¢²ánotifier_block£»*/  
+/* test_chain_1.c ï¼š1. å®šä¹‰å›è°ƒå‡½æ•°ï¼›2. å®šä¹‰notifier_blockï¼›3. å‘chain_0æ³¨å†Œnotifier_blockï¼›*/  
 #include <linux/notifier.h>  
 #include <linux/module.h>  
 #include <linux/init.h>  
@@ -89,7 +89,7 @@ static struct notifier_block test_init_notifier = {
 static int __init test_chain_1_init(void)  
 {  
     printk(KERN_DEBUG "I'm in test_chain_1\n");  
-    register_test_notifier(&test_init_notifier);//<span style="white-space:pre">  </span>// ÓÉchain_0Ìá¹©µÄÉèÊ©  
+    register_test_notifier(&test_init_notifier);//<span style="white-space:pre">  </span>// ç”±chain_0æä¾›çš„è®¾æ–½  
     return 0;  
 }  
   
@@ -118,7 +118,7 @@ module_exit(test_chain_1_exit);
 
 
   
-/* test_chain_2.c£º·¢³öÍ¨ÖªÁ´ÊÂ¼ş*/  
+/* test_chain_2.cï¼šå‘å‡ºé€šçŸ¥é“¾äº‹ä»¶*/  
   
 #include <linux/notifier.h>  
 #include <linux/module.h>  

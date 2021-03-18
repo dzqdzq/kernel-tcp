@@ -29,8 +29,8 @@ typedef struct {
 	unsigned char pad[3];
 	unsigned int gw;
 	unsigned int nf_result;
-	struct timer_list timeout; /* »á»°É¾³ı³¬Ê± */
-	u64 tmsp; /* ²»¿É´ï·´À¡Ê±¼ä´Á */
+	struct timer_list timeout; /* ä¼šè¯åˆ é™¤è¶…æ—¶ */
+	u64 tmsp; /* ä¸å¯è¾¾åé¦ˆæ—¶é—´æˆ³ */
 } sfc_ct;
 
 typedef struct {
@@ -39,7 +39,7 @@ typedef struct {
 	sfc_fwd_data data;
 } sfc_fwd_item;
 
-/* È«¾ÖÊı¾İ */
+/* å…¨å±€æ•°æ® */
 typedef struct {
 	unsigned int is_inside;
 	unsigned int id;
@@ -62,10 +62,10 @@ typedef struct {
 	unsigned int ct_bkt_numb;
 	unsigned int ct_rand;
 
-	unsigned int mode; /* ¹¤×÷Ä£Ê½ */
-	unsigned int prefix; /* ×ÓÍø */
+	unsigned int mode; /* å·¥ä½œæ¨¡å¼ */
+	unsigned int prefix; /* å­ç½‘ */
 	unsigned int mask;
-	mtrie_root_t *w_root; /* °×Ãûµ¥ */
+	mtrie_root_t *w_root; /* ç™½åå• */
 	struct kmem_cache *w_leaf_cache;
 	struct kmem_cache *w_node_cache;
 

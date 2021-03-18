@@ -7,9 +7,9 @@
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
- ´¦ÀíÒ»¸öÁ¬½ÓµÄ×ÓÁ¬½ÓĞ­Òé£¬ÀûÓÃnf_conntrack_helper.cÎÄ¼şÖĞµÄnf_conntrack_helper_register(struct nf_conntrack_helper *me)À´×¢²ánf_conntrack_helper½á¹¹
-²Î¿¼:http://blog.csdn.net/ye_shizhe/article/details/17331947
-Á¬½Ó¸ú×ÙÎªÃ¿¸öÓ¦ÓÃ³ÉµÄĞ­ÒéÍ¨¹ıÒ»¸öhelper½á¹¹£¬Í¬¹ıÕâ¸ö½á¹¹µÄ³ÉÔ±º¯ÊıÓ¦ÓÃ²ãµÄĞ­Òé¿ÉÒÔ×öÒ»Ğ©Óë×Ô¼ºĞ­ÒéÏà¹ØµÄ¹¤×÷
+ å¤„ç†ä¸€ä¸ªè¿æ¥çš„å­è¿æ¥åè®®ï¼Œåˆ©ç”¨nf_conntrack_helper.cæ–‡ä»¶ä¸­çš„nf_conntrack_helper_register(struct nf_conntrack_helper *me)æ¥æ³¨å†Œnf_conntrack_helperç»“æ„
+å‚è€ƒ:http://blog.csdn.net/ye_shizhe/article/details/17331947
+è¿æ¥è·Ÿè¸ªä¸ºæ¯ä¸ªåº”ç”¨æˆçš„åè®®é€šè¿‡ä¸€ä¸ªhelperç»“æ„ï¼ŒåŒè¿‡è¿™ä¸ªç»“æ„çš„æˆå‘˜å‡½æ•°åº”ç”¨å±‚çš„åè®®å¯ä»¥åšä¸€äº›ä¸è‡ªå·±åè®®ç›¸å…³çš„å·¥ä½œ
  */
 
 #include <linux/types.h>
@@ -34,16 +34,16 @@
 
 
 /*
-²Î¿¼:http://blog.csdn.net/ye_shizhe/article/details/17331947
-Á¬½Ó¸ú×ÙÎªÃ¿¸öÓ¦ÓÃ³ÉµÄĞ­ÒéÍ¨¹ıÒ»¸öhelper½á¹¹£¬Í¬¹ıÕâ¸ö½á¹¹µÄ³ÉÔ±º¯ÊıÓ¦ÓÃ²ãµÄĞ­Òé¿ÉÒÔ×öÒ»Ğ©Óë×Ô¼ºĞ­ÒéÏà¹ØµÄ¹¤×÷
+å‚è€ƒ:http://blog.csdn.net/ye_shizhe/article/details/17331947
+è¿æ¥è·Ÿè¸ªä¸ºæ¯ä¸ªåº”ç”¨æˆçš„åè®®é€šè¿‡ä¸€ä¸ªhelperç»“æ„ï¼ŒåŒè¿‡è¿™ä¸ªç»“æ„çš„æˆå‘˜å‡½æ•°åº”ç”¨å±‚çš„åè®®å¯ä»¥åšä¸€äº›ä¸è‡ªå·±åè®®ç›¸å…³çš„å·¥ä½œ
 */
 static DEFINE_MUTEX(nf_ct_helper_mutex);
 //static struct hlist_head *nf_ct_helper_hash __read_mostly;//
 //static unsigned int nf_ct_helper_hsize __read_mostly;
 //static unsigned int nf_ct_helper_count __read_mostly;
 
-//²Î¿¼:http://blog.csdn.net/ye_shizhe/article/details/17331947
-static struct hlist_head *nf_ct_helper_hash;// ½ÚµãÎªstruct nf_conntrack_helper   ¼ûnf_conntrack_helper_register
+//å‚è€ƒ:http://blog.csdn.net/ye_shizhe/article/details/17331947
+static struct hlist_head *nf_ct_helper_hash;// èŠ‚ç‚¹ä¸ºstruct nf_conntrack_helper   è§nf_conntrack_helper_register
 static unsigned int nf_ct_helper_hsize;//nf_ct_helper_hash[nf_ct_helper_hsize]
 static unsigned int nf_ct_helper_count;
 
@@ -179,7 +179,7 @@ static inline int unhelp(struct nf_conntrack_tuple_hash *i,
 	return 0;
 }
 
-//ÊÍ·ÅhelpÏà¹Ø×ÊÔ´
+//é‡Šæ”¾helpç›¸å…³èµ„æº
 void nf_ct_helper_destroy(struct nf_conn *ct)
 {
 	struct nf_conn_help *help = nfct_help(ct);

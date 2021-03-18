@@ -35,7 +35,7 @@ static DEFINE_SPINLOCK(inet_proto_lock);
  *	Add a protocol handler to the hash tables
  */
 
-//familyĞ­Òé×åÍ¨¹ısock_register×¢²á  ´«Êä²ã½Ó¿Útcp_prot udp_prot netlink_protµÈÍ¨¹ıproto_register×¢²á   IP²ã½Ó¿ÚÍ¨¹ıinet_add_protocol(&icmp_protocolµÈ×¢²á £¬ÕâĞ©×é³É¹ı³Ì²Î¿¼inet_initº¯Êı
+//familyåè®®æ—é€šè¿‡sock_registeræ³¨å†Œ  ä¼ è¾“å±‚æ¥å£tcp_prot udp_prot netlink_protç­‰é€šè¿‡proto_registeræ³¨å†Œ   IPå±‚æ¥å£é€šè¿‡inet_add_protocol(&icmp_protocolç­‰æ³¨å†Œ ï¼Œè¿™äº›ç»„æˆè¿‡ç¨‹å‚è€ƒinet_initå‡½æ•°
 int inet_add_protocol(const struct net_protocol *prot, unsigned char protocol)
 {
 	int hash, ret;

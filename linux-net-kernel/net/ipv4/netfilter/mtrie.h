@@ -12,7 +12,7 @@
  *------------------------------------------------------------------
  * $Log: not supported by cvs2svn $
  * Revision 1.12  2010/01/14 09:20:19  chenshijian
- * µ÷ÕûÍ·ÎÄ¼ş
+ * è°ƒæ•´å¤´æ–‡ä»¶
  *
  * Revision 1.11  2010/01/14 07:00:35  chenshijian
  * compile problem
@@ -21,7 +21,7 @@
  * *** empty log message ***
  *
  * Revision 1.9  2010/01/14 02:44:05  qinjun
- * ±àÒë
+ * ç¼–è¯‘
  *
  * Revision 1.8  2010/01/13 08:51:15  zhouzhiyuan
  * *** empty log message ***
@@ -30,25 +30,25 @@
  * no message
  *
  * Revision 1.6  2010/01/12 02:01:19  zhengjiangyong
- * mtrieµÄmaskºÍprefix±ØĞëÎªºÏ·¨Öµ£¬·ñÔò¹ÒÆğ¡£
+ * mtrieçš„maskå’Œprefixå¿…é¡»ä¸ºåˆæ³•å€¼ï¼Œå¦åˆ™æŒ‚èµ·ã€‚
  *
  * Revision 1.5  2010/01/11 02:48:56  zhengjiangyong
- * mtrieÌí¼ÓÊÍ·ÅÒ¶º¯Êı
+ * mtrieæ·»åŠ é‡Šæ”¾å¶å‡½æ•°
  *
  * Revision 1.4  2010/01/09 06:19:48  zhouzhiyuan
  * *** empty log message ***
  *
  * Revision 1.3  2010/01/09 03:46:28  zhengjiangyong
- * ÄÚ´æ¹ÜÀí£¬ipv4µ×²ã½Ó¿Ú Ìí¼Ó
+ * å†…å­˜ç®¡ç†ï¼Œipv4åº•å±‚æ¥å£ æ·»åŠ 
  *
  * Revision 1.2  2010/01/08 06:58:44  zhouzhiyuan
- * Ôö¼Ó<netinet/in.h>ÒıÓÃ
+ * å¢åŠ <netinet/in.h>å¼•ç”¨
  *
  * Revision 1.1  2010/01/08 02:45:07  zhengjiangyong
- * ³õÊ¼Ìá½»
+ * åˆå§‹æäº¤
  *
  * Revision 1.1  2008/10/13 01:58:22  chenshijian
- * NRSISS-213: (R3804×ª·¢Æ½Ãæ) Ôö¼ÓR3804¿ìËÙ×ª·¢Æ½Ãæ´úÂë
+ * NRSISS-213: (R3804è½¬å‘å¹³é¢) å¢åŠ R3804å¿«é€Ÿè½¬å‘å¹³é¢ä»£ç 
  *
  * Revision 3.2  1996/03/04  15:31:17  dkerr
  * CSCdi50623:  IP flow cache needs better accounting granularity
@@ -112,10 +112,10 @@ struct mtrie_node
 struct mtrie_root
 {
     mtrie_node_t node;
-    void *route_defaul;/*È±Ê¡Â·ÓÉ£¬Ö¸Ïòufib_entry_t »òufib6_entry_t */
-	void *node_cache;//Ö¸Ïòfwd_node_cache
+    void *route_defaul;/*ç¼ºçœè·¯ç”±ï¼ŒæŒ‡å‘ufib_entry_t æˆ–ufib6_entry_t */
+	void *node_cache;//æŒ‡å‘fwd_node_cache
     void *(*malloc_rtn)(void *cache, size_t size);//mtrie_malloc
-    void (*free_rtn)(void *cache, void *);//Ö¸Ïòmtrie_free
+    void (*free_rtn)(void *cache, void *);//æŒ‡å‘mtrie_free
 
     u32 nodes_alloced;
     u32 memory_in_use;
@@ -155,7 +155,7 @@ struct _charlong_s
  * node is a 256 entry wide array of links.  With only four octets in an
  * IPv4 destination address, the trie is a maximum of 4 layers deep.
  */
- //²éÕÒdstÊÇ·ñÔÚrootÖĞ£¬ÕâÀïµÄrootÒ»°ãÊÇ°×Ãûµ¥»òÕßºÚÃûµ¥
+ //æŸ¥æ‰¾dstæ˜¯å¦åœ¨rootä¸­ï¼Œè¿™é‡Œçš„rootä¸€èˆ¬æ˜¯ç™½åå•æˆ–è€…é»‘åå•
 static  __inline__ mtrie_leaf_t *
 mtrie_longest_match(mtrie_root_t *root, u32 dst)
 {

@@ -43,20 +43,20 @@ struct compat_delta {
 	int delta;
 };
 /*
-NetfilterÔÚÄÚºËÖÐÎª·À»ðÇ½ÏµÍ³Î¬»¤ÁËÒ»¸ö½á¹¹Ìå£¬¸Ã½á¹¹ÌåÖÐ´æ´¢µÄÊÇÄÚºËÖÐµ±Ç°¿ÉÓÃµÄËùÓÐmatch£¬targetºÍtable
+Netfilteråœ¨å†…æ ¸ä¸­ä¸ºé˜²ç«å¢™ç³»ç»Ÿç»´æŠ¤äº†ä¸€ä¸ªç»“æž„ä½“ï¼Œè¯¥ç»“æž„ä½“ä¸­å­˜å‚¨çš„æ˜¯å†…æ ¸ä¸­å½“å‰å¯ç”¨çš„æ‰€æœ‰matchï¼Œtargetå’Œtable
 */
-struct xt_af {//¸Ã½á¹¹ÖÐÊµ¼ÊÉÏÖµÓÃÁËmutexËøÓÃÓÚnetfilterµÄÊý¾Ý°ü¹ýÂË
+struct xt_af {//è¯¥ç»“æž„ä¸­å®žé™…ä¸Šå€¼ç”¨äº†mutexé”ç”¨äºŽnetfilterçš„æ•°æ®åŒ…è¿‡æ»¤
 	struct mutex mutex;
-	struct list_head match;////Ã¿¸ömatchÄ£¿é¶¼»á±»×¢²áµ½ÕâÀï   Êµ¼ÊÉÏÊÇÌí¼Óµ½&net->xt.tablesÖÐµÄ
-	struct list_head target;///Ã¿¸ötargetÄ£¿é¶¼»á±»×¢²áµ½ÕâÀï
+	struct list_head match;////æ¯ä¸ªmatchæ¨¡å—éƒ½ä¼šè¢«æ³¨å†Œåˆ°è¿™é‡Œ   å®žé™…ä¸Šæ˜¯æ·»åŠ åˆ°&net->xt.tablesä¸­çš„
+	struct list_head target;///æ¯ä¸ªtargetæ¨¡å—éƒ½ä¼šè¢«æ³¨å†Œåˆ°è¿™é‡Œ
 #ifdef CONFIG_COMPAT
 	struct mutex compat_mutex;
 	struct compat_delta *compat_offsets;
 #endif
 };
 
-//²Î¿¼http://blog.chinaunix.net/uid-23069658-id-3166140.html
-//ÆäÖÐxt±äÁ¿ÊÇÔÚnet/netfilter/x_tables.cÎÄ¼þÖÐµÄxt_init()º¯ÊýÖÐ±»·ÖÅä´æ´¢¿Õ¼ä²¢Íê³É³õÊ¼»¯µÄ£¬xt·ÖÅäµÄ´óÐ¡ÒÔµ±Ç°ÄÚºËËùÄÜÖ§³ÖµÄÐ­Òé´ØµÄÊýÁ¿ÓÐ¹Ø
+//å‚è€ƒhttp://blog.chinaunix.net/uid-23069658-id-3166140.html
+//å…¶ä¸­xtå˜é‡æ˜¯åœ¨net/netfilter/x_tables.cæ–‡ä»¶ä¸­çš„xt_init()å‡½æ•°ä¸­è¢«åˆ†é…å­˜å‚¨ç©ºé—´å¹¶å®Œæˆåˆå§‹åŒ–çš„ï¼Œxtåˆ†é…çš„å¤§å°ä»¥å½“å‰å†…æ ¸æ‰€èƒ½æ”¯æŒçš„åè®®ç°‡çš„æ•°é‡æœ‰å…³
 static struct xt_af *xt;
 
 static const char *const xt_prefix[NFPROTO_NUMPROTO] = {
@@ -832,8 +832,8 @@ xt_replace_table(struct xt_table *table,
 }
 EXPORT_SYMBOL_GPL(xt_replace_table);
 
-////iptable netfilter±í×¢²áÌí¼Óµ½¸ÃÁ´±íÖÐ   iptable_filter.koÀïÃæÓÃ½á¹¹xt_table,¸Ã±íÏÖÔ´´Ópacket_filterÀ´µÄ           ¼ûxt_register_table
-//tableÍ·²¿:net->xt.tables[table->af],ËùÓÐtableµÄÍ·²¿Á´±í
+////iptable netfilterè¡¨æ³¨å†Œæ·»åŠ åˆ°è¯¥é“¾è¡¨ä¸­   iptable_filter.koé‡Œé¢ç”¨ç»“æž„xt_table,è¯¥è¡¨çŽ°æºä»Žpacket_filteræ¥çš„           è§xt_register_table
+//tableå¤´éƒ¨:net->xt.tables[table->af],æ‰€æœ‰tableçš„å¤´éƒ¨é“¾è¡¨
 struct xt_table *xt_register_table(struct net *net,
 				   const struct xt_table *input_table,
 				   struct xt_table_info *bootstrap,
@@ -865,7 +865,7 @@ struct xt_table *xt_register_table(struct net *net,
 	/* Simplifies replace_table code. */
 	table->private = bootstrap;
 
-	if (!xt_replace_table(table, 0, newinfo, &ret))//ÔÚ¸Ãº¯ÊýÀïÃæ table->private = newinfo;
+	if (!xt_replace_table(table, 0, newinfo, &ret))//åœ¨è¯¥å‡½æ•°é‡Œé¢ table->private = newinfo;
 		goto unlock;
 
 	private = table->private;
@@ -1198,7 +1198,7 @@ static const struct file_operations xt_target_ops = {
  * Netfilter hooks for XT tables.
  */
 
- //×¢²átable±íµ½netfilter
+ //æ³¨å†Œtableè¡¨åˆ°netfilter
 struct nf_hook_ops *xt_hook_link(const struct xt_table *table, nf_hookfn *fn)
 {
 	unsigned int hook_mask = table->valid_hooks;

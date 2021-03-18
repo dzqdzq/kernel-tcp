@@ -275,7 +275,7 @@ nla_put_failure:
 	return -1;
 }
 
-//Ö÷ÒªÓĞcls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
+//Ã–Ã·Ã’ÂªÃ“Ãcls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
 static struct tcf_proto_ops cls_basic_ops {//__read_mostly = {
 	.kind		=	"basic",
 	.classify	=	basic_classify,

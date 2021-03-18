@@ -71,7 +71,7 @@
  * 		J Hadi Salim	:	- Backlog queue sampling
  *				        - netif_rx() feedback
  */
-//�����豸ע�ᡢ���롢����Ƚӿ��ڸ�.c����
+//ÍøÂçÉè±¸×¢²á¡¢ÊäÈë¡¢Êä³öµÈ½Ó¿ÚÔÚ¸Ã.cÀïÃæ
 #include <asm/uaccess.h>
 #include <asm/system.h>
 #include <linux/bitops.h>
@@ -174,7 +174,7 @@
 static DEFINE_SPINLOCK(ptype_lock);
 
 /*
-��һ���ں�Դ���룬����Э�黹���Ƕࡣ����
+ËÑÒ»ÏÂÄÚºËÔ´´úÂë£¬¶ş²ãĞ­Òé»¹ÕæÊÇ¶à¡£¡£¡£
 drivers/net/wan/hdlc.c: dev_add_pack(&hdlc_packet_type);  //ETH_P_HDLC    hdlc_rcv
 drivers/net/wan/lapbether.c:
             dev_add_pack(&lapbeth_packet_type);         //ETH_P_DEC       lapbeth_rcv
@@ -196,28 +196,28 @@ net/llc/llc_core.c: dev_add_pack(&llc_tr_packet_type);  //ETH_P_TR_802_2  llc_rc
 net/x25/af_x25.c:  dev_add_pack(&x25_packet_type);    //ETH_P_X25      x25_lapb_receive_frame
 net/8021q/vlan.c:  dev_add_pack(&vlan_packet_type);     //ETH_P_8021Q     vlan_skb_recv
 
-��Щ��ͬЭ���packet_type����Щ��linuxϵͳ����ʱ����ȥ��
-���紦��ipЭ���pakcet_type�������� inet_init()ʱ����ȥ��
-����Щ����ģ����ص�ʱ��ż���ȥ��
-*///��������������netif_receive_skb���Ӷ�ִ��func���� 
-//����ץ��tcpdumpҲ�ڶ���ʵ�֣��ο�http://blog.csdn.net/jw212/article/details/6738497
+ÕâĞ©²»Í¬Ğ­ÒéµÄpacket_type£¬ÓĞĞ©ÊÇlinuxÏµÍ³Æô¶¯Ê±¹ÒÉÏÈ¥µÄ
+±ÈÈç´¦ÀíipĞ­ÒéµÄpakcet_type£¬¾ÍÊÇÔÚ inet_init()Ê±¹ÒÉÏÈ¥µÄ
+»¹ÓĞĞ©Çı¶¯Ä£¿é¼ÓÔØµÄÊ±ºò²Å¼ÓÉÏÈ¥µÄ
+*///Íø¿¨Çı¶¯×îºóµ÷ÓÃnetif_receive_skb£¬´Ó¶øÖ´ĞĞfuncº¯Êı 
+//ÍøÂç×¥°ütcpdumpÒ²ÔÚ¶ş²ãÊµÏÖ£¬²Î¿¼http://blog.csdn.net/jw212/article/details/6738497
 
-//��ֵ�ĵط���dev_add_pack
-static struct list_head ptype_base[PTYPE_HASH_SIZE];//__read_mostly;//��Щ�������������������յ��Ĳ�ͬЭ����ı���  
+//¸³ÖµµÄµØ·½ÔÚdev_add_pack
+static struct list_head ptype_base[PTYPE_HASH_SIZE];//__read_mostly;//ÕâĞ©´¦Àíº¯ÊıÓÃÀ´´¦Àí½ÓÊÕµ½µÄ²»Í¬Ğ­Òé×åµÄ±¨ÎÄ  
 
 /*
-����ģʽ��Promiscuous Mode����ָһ̨�����ܹ��������о�����������������������Ŀ�ĵ�ַ�Ƿ��������������ͨ��ģʽ���ֳơ��ǻ���ģʽ�������Եġ�
-�ⱻ�������Աʹ��������������⣬����Ҳ������֤����͵������ͨ�ţ�����ܰ���������������е���Ϣ���������á�һ����·��ѡ��ڵ��ڻ���ģʽ��
-һ����ܹ�����ͬ�ĳ�ͻ�򣨶���̫�������߾��������ڼ��ͨ�ŵ������������ڵ�򻷣������ƻ���FDDI��������Ϊʲô���罻�������ڶԿ�����Ļ���ģʽ����������ģʽ���ǽ������о������������ݰ����������Ƿ��������İ���Ĭ�����������ֻ�ѷ��������İ��������㲥�������ݸ��ϲ���������İ�һ�ɶ�����
-�򵥵Ľ�,����ģʽ����ָ�����ܽ�������ͨ��������������������ʲô��ʽ��ʲô��ַ�ġ���ʵ�ϣ�������յ����ݰ��������������жϣ�ȷ���ǵݽ��ϲ㣨����㣩�����Ƕ��������ǵݽ��²㣨������·�㡢MAC�Ӳ㣩ת��������ͨ������Ҫ�õ�ץ�����ߣ�����ethereal��snifferʱ����Ҫ���������ڻ���ģʽ����Ҫ�õ�����Winpcap��winpcap��windowsƽ̨��һ����ѣ��������������ϵͳ������winpcap�����Ŀ��Ŀ������Ϊwin32Ӧ�ó����ṩ��������ײ��������
+»ìÔÓÄ£Ê½£¨Promiscuous Mode£©ÊÇÖ¸Ò»Ì¨»úÆ÷ÄÜ¹»½ÓÊÕËùÓĞ¾­¹ıËüµÄÊı¾İÁ÷£¬¶ø²»ÂÛÆäÄ¿µÄµØÖ·ÊÇ·ñÊÇËû¡£ÊÇÏà¶ÔÓÚÍ¨³£Ä£Ê½£¨ÓÖ³Æ¡°·Ç»ìÔÓÄ£Ê½¡±£©¶øÑÔµÄ¡£
+Õâ±»ÍøÂç¹ÜÀíÔ±Ê¹ÓÃÀ´Õï¶ÏÍøÂçÎÊÌâ£¬µ«ÊÇÒ²±»ÎŞÈÏÖ¤µÄÏëÍµÌıÍøÂçÍ¨ĞÅ£¨Æä¿ÉÄÜ°üÀ¨ÃÜÂëºÍÆäËüÃô¸ĞµÄĞÅÏ¢£©µÄÈËÀûÓÃ¡£Ò»¸ö·ÇÂ·ÓÉÑ¡Ôñ½ÚµãÔÚ»ìÔÓÄ£Ê½ÏÂ
+Ò»°ã½öÄÜ¹»ÔÚÏàÍ¬µÄ³åÍ»Óò£¨¶ÔÒÔÌ«ÍøºÍÎŞÏß¾ÖÓòÍø£©ÄÚ¼à¿ØÍ¨ĞÅµ½ºÍÀ´×ÔÆäËü½Úµã»ò»·£¨¶ÔÁîÅÆ»·»òFDDI£©£¬ÆäÊÇÎªÊ²Ã´ÍøÂç½»»»±»ÓÃÓÚ¶Ô¿¹¶ñÒâµÄ»ìÔÓÄ£Ê½¡£¡¡¡¡»ìÔÓÄ£Ê½¾ÍÊÇ½ÓÊÕËùÓĞ¾­¹ıÍø¿¨µÄÊı¾İ°ü£¬°üÀ¨²»ÊÇ·¢¸ø±¾»úµÄ°ü¡£Ä¬ÈÏÇé¿öÏÂÍø¿¨Ö»°Ñ·¢¸ø±¾»úµÄ°ü£¨°üÀ¨¹ã²¥°ü£©´«µİ¸øÉÏ²ã³ÌĞò£¬ÆäËüµÄ°üÒ»ÂÉ¶ªÆú¡£
+¼òµ¥µÄ½²,»ìÔÓÄ£Ê½¾ÍÊÇÖ¸Íø¿¨ÄÜ½ÓÊÜËùÓĞÍ¨¹ıËüµÄÊı¾İÁ÷£¬²»¹ÜÊÇÊ²Ã´¸ñÊ½£¬Ê²Ã´µØÖ·µÄ¡£ÊÂÊµÉÏ£¬¼ÆËã»úÊÕµ½Êı¾İ°üºó£¬ÓÉÍøÂç²ã½øĞĞÅĞ¶Ï£¬È·¶¨ÊÇµİ½»ÉÏ²ã£¨´«Êä²ã£©£¬»¹ÊÇ¶ªÆú£¬»¹ÊÇµİ½»ÏÂ²ã£¨Êı¾İÁ´Â·²ã¡¢MAC×Ó²ã£©×ª·¢¡£¡¡¡¡Í¨³£ÔÚĞèÒªÓÃµ½×¥°ü¹¤¾ß£¬ÀıÈçethereal¡¢snifferÊ±£¬ĞèÒª°ÑÍø¿¨ÖÃÓÚ»ìÔÓÄ£Ê½£¬ĞèÒªÓÃµ½Èí¼şWinpcap¡£winpcapÊÇwindowsÆ½Ì¨ÏÂÒ»¸öÃâ·Ñ£¬¹«¹²µÄÍøÂç·ÃÎÊÏµÍ³¡£¿ª·¢winpcapÕâ¸öÏîÄ¿µÄÄ¿µÄÔÚÓÚÎªwin32Ó¦ÓÃ³ÌĞòÌá¹©·ÃÎÊÍøÂçµ×²ãµÄÄÜÁ¦¡£
 po->prot_hook.func = packet_rcv;
 
 if (sock->type == SOCK_PACKET)
 	po->prot_hook.func = packet_rcv_spkt;
 
-ETH_P_ALL��ע����packet_create�У��ú�����ͨ��Ӧ�ò�ĺ���nSock == socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))ϵͳ���õġ�ptype_all ������ЩΪע�ᵽ�ں˵�һЩ sniffer�����ϴ�����Щsniffer����һ�����Ǳ��� ptype_base��������Ǿ����Э������
-*/ //���ռ�__netif_receive_skb�����ͼ�dev_queue_xmit_nit
-static struct list_head ptype_all;// __read_mostly;	/* Taps */ //��net_dev_init�г�ʼ��
+ETH_P_ALLµÄ×¢²áÔÚpacket_createÖĞ£¬¸Ãº¯ÊıÊÇÍ¨¹ıÓ¦ÓÃ²ãµÄº¯ÊınSock == socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))ÏµÍ³µ÷ÓÃµÄ¡£ptype_all Á´£¬ÕâĞ©Îª×¢²áµ½ÄÚºËµÄÒ»Ğ© sniffer£¬½«ÉÏ´«¸øÕâĞ©sniffer£¬ÁíÒ»¸ö¾ÍÊÇ±éÀú ptype_base£¬Õâ¸ö¾ÍÊÇ¾ßÌåµÄĞ­ÒéÀàĞÍ
+*/ //½ÓÊÕ¼û__netif_receive_skb£¬·¢ËÍ¼ûdev_queue_xmit_nit
+static struct list_head ptype_all;// __read_mostly;	/* Taps */ //ÔÚnet_dev_initÖĞ³õÊ¼»¯
 
 /*
  * The @dev_base_head list is protected by @dev_base_lock and the rtnl
@@ -287,13 +287,13 @@ static int list_netdevice(struct net_device *dev)
  */
 
 /*
-  * ����ע���������豸ʵ����ȫ��struct net��
-  * ����dev_base_head��dev_name_head��dev_index_head
-  * ɢ�б����Ƴ����Ƴ�������ֹ
-  * �ں���ϵͳʹ�ø��豸��������Ȼ
-  * ӵ��ָ���net_device�ṹʵ����ָ�룬
-  * ֻ�е����ü���Ϊ0ʱ�Ż������ͷ�
-  * ʵ����
+  * ½«´ı×¢ÏúµÄÍøÂçÉè±¸ÊµÀı´ÓÈ«¾Östruct netµÄ
+  * Á´±ídev_base_head¼°dev_name_head¡¢dev_index_head
+  * É¢ÁĞ±íÖĞÒÆ³ı¡£ÒÆ³ıºó²»ÄÜ×èÖ¹
+  * ÄÚºË×ÓÏµÍ³Ê¹ÓÃ¸ÃÉè±¸£¬ËûÃÇÈÔÈ»
+  * ÓµÓĞÖ¸Ïò¸Ãnet_device½á¹¹ÊµÀıµÄÖ¸Õë£¬
+  * Ö»ÓĞµ±ÒıÓÃ¼ÆÊıÎª0Ê±²Å»áÕæÕıÊÍ·Å
+  * ÊµÀı¡£
   */
 static void unlist_netdevice(struct net_device *dev)
 {
@@ -310,26 +310,26 @@ static void unlist_netdevice(struct net_device *dev)
 /*
  *	Our notifier list
  */
- //��ͼ 1����ʾ��Linux��������ϵͳһ����3��֪ͨ������ʾipv4��ַ�����仯ʱ��inetaddr_chain����ʾipv6��ַ�����仯��inet6addr_chain�����б�ʾ�豸ע�ᡢ״̬�仯��netdev_chain��
-//RAW_NOTIFIER_HEAD(netdev_chain);ԭʼ֪ͨ���� Raw notifierchains ������֪ͨ��Ԫ�صĻص�����û���κ����ƣ��������ͱ������ƶ��ɵ�����ά������Ӧ������ͷ��
-//������ϵͳ���Ǹ����ͣ�ͨ�����º�ʵ��head�ĳ�ʼ��
-//netdev_chainΪԭʼraw֪ͨ����֪ͨ�¼�����Ϊ__raw_notifier_call_chain
+ //ÈçÍ¼ 1ÖĞËùÊ¾£¬LinuxµÄÍøÂç×ÓÏµÍ³Ò»¹²ÓĞ3¸öÍ¨ÖªÁ´£º±íÊ¾ipv4µØÖ··¢Éú±ä»¯Ê±µÄinetaddr_chain£»±íÊ¾ipv6µØÖ··¢Éú±ä»¯µÄinet6addr_chain£»»¹ÓĞ±íÊ¾Éè±¸×¢²á¡¢×´Ì¬±ä»¯µÄnetdev_chain¡£
+//RAW_NOTIFIER_HEAD(netdev_chain);Ô­Ê¼Í¨ÖªÁ´£¨ Raw notifierchains £©£º¶ÔÍ¨ÖªÁ´ÔªËØµÄ»Øµ÷º¯ÊıÃ»ÓĞÈÎºÎÏŞÖÆ£¬ËùÓĞËøºÍ±£»¤»úÖÆ¶¼ÓÉµ÷ÓÃÕßÎ¬»¤¡£¶ÔÓ¦µÄÁ´±íÍ·£º
+//ÍøÂç×ÓÏµÍ³¾ÍÊÇ¸ÃÀàĞÍ£¬Í¨¹ıÒÔÏÂºêÊµÏÖheadµÄ³õÊ¼»¯
+//netdev_chainÎªÔ­Ê¼rawÍ¨ÖªÁ¬£¬Í¨ÖªÊÂ¼şº¯ÊıÎª__raw_notifier_call_chain
 //static RAW_NOTIFIER_HEAD(netdev_chain);
 /*
-Linux�ں��и�����ϵͳ�໥������������ĳ����ϵͳ״̬�����ı�ʱ���ͱ���ʹ��һ���Ļ��Ƹ�֪ʹ��������������ϵͳ���Ա�������ϵͳ��ȡ��Ӧ�Ĵ�ʩ��
-Ϊ���������������ں�ʵ�����¼�֪ͨ�����ƣ�notificationchain����
+LinuxÄÚºËÖĞ¸÷¸ö×ÓÏµÍ³Ïà»¥ÒÀÀµ£¬µ±ÆäÖĞÄ³¸ö×ÓÏµÍ³×´Ì¬·¢Éú¸Ä±äÊ±£¬¾Í±ØĞëÊ¹ÓÃÒ»¶¨µÄ»úÖÆ¸æÖªÊ¹ÓÃÆä·şÎñµÄÆäËû×ÓÏµÍ³£¬ÒÔ±ãÆäËû×ÓÏµÍ³²ÉÈ¡ÏàÓ¦µÄ´ëÊ©¡£
+ÎªÂú×ãÕâÑùµÄĞèÇó£¬ÄÚºËÊµÏÖÁËÊÂ¼şÍ¨ÖªÁ´»úÖÆ£¨notificationchain£©¡£
 */
 /*
-ԭ��֪ͨ���� Atomic notifier chains ����֪ͨ��Ԫ�صĻص����������¼�����ʱҪִ�еĺ��������жϻ�ԭ�Ӳ��������������У���������������Ӧ������ͷ�ṹ��
-������֪ͨ���� Blocking notifier chains ����֪ͨ��Ԫ�صĻص������ڽ��������������У�������������Ӧ������ͷ��
-ԭʼ֪ͨ���� Raw notifierchains ������֪ͨ��Ԫ�صĻص�����û���κ����ƣ��������ͱ������ƶ��ɵ�����ά������Ӧ������ͷ��
-SRCU ֪ͨ���� SRCU notifier chains ����������֪ͨ����һ�ֱ��塣��Ӧ������ͷ��
+Ô­×ÓÍ¨ÖªÁ´£¨ Atomic notifier chains £©£ºÍ¨ÖªÁ´ÔªËØµÄ»Øµ÷º¯Êı£¨µ±ÊÂ¼ş·¢ÉúÊ±ÒªÖ´ĞĞµÄº¯Êı£©ÔÚÖĞ¶Ï»òÔ­×Ó²Ù×÷ÉÏÏÂÎÄÖĞÔËĞĞ£¬²»ÔÊĞí×èÈû¡£¶ÔÓ¦µÄÁ´±íÍ·½á¹¹£º
+¿É×èÈûÍ¨ÖªÁ´£¨ Blocking notifier chains £©£ºÍ¨ÖªÁ´ÔªËØµÄ»Øµ÷º¯ÊıÔÚ½ø³ÌÉÏÏÂÎÄÖĞÔËĞĞ£¬ÔÊĞí×èÈû¡£¶ÔÓ¦µÄÁ´±íÍ·£º
+Ô­Ê¼Í¨ÖªÁ´£¨ Raw notifierchains £©£º¶ÔÍ¨ÖªÁ´ÔªËØµÄ»Øµ÷º¯ÊıÃ»ÓĞÈÎºÎÏŞÖÆ£¬ËùÓĞËøºÍ±£»¤»úÖÆ¶¼ÓÉµ÷ÓÃÕßÎ¬»¤¡£¶ÔÓ¦µÄÁ´±íÍ·£º
+SRCU Í¨ÖªÁ´£¨ SRCU notifier chains £©£º¿É×èÈûÍ¨ÖªÁ´µÄÒ»ÖÖ±äÌå¡£¶ÔÓ¦µÄÁ´±íÍ·£º
 
-Linux��������ϵͳһ����3��֪ͨ������ʾipv4��ַ�����仯ʱ��inetaddr_chain����ʾipv6��ַ�����仯��inet6addr_chain�����б�ʾ�豸ע�ᡢ
-״̬�仯��netdev_chain��
+LinuxµÄÍøÂç×ÓÏµÍ³Ò»¹²ÓĞ3¸öÍ¨ÖªÁ´£º±íÊ¾ipv4µØÖ··¢Éú±ä»¯Ê±µÄinetaddr_chain£»±íÊ¾ipv6µØÖ··¢Éú±ä»¯µÄinet6addr_chain£»»¹ÓĞ±íÊ¾Éè±¸×¢²á¡¢
+×´Ì¬±ä»¯µÄnetdev_chain¡£
 */
 
-struct raw_notifier_head netdev_chain =	RAW_NOTIFIER_INIT(netdev_chain) //��register_netdevice_notifier��
+struct raw_notifier_head netdev_chain =	RAW_NOTIFIER_INIT(netdev_chain) //ÔÚregister_netdevice_notifierÖĞ
 
 /*
  *	Device drivers call our routines to queue packets here. We empty the
@@ -458,7 +458,7 @@ static inline void netdev_set_addr_lockdep_class(struct net_device *dev)
  *	will see the new packet type (until the next received packet).
  */
 /*
-��һ���ں�Դ���룬����Э�黹���Ƕࡣ����
+ËÑÒ»ÏÂÄÚºËÔ´´úÂë£¬¶ş²ãĞ­Òé»¹ÕæÊÇ¶à¡£¡£¡£
 drivers/net/wan/hdlc.c: dev_add_pack(&hdlc_packet_type);  //ETH_P_HDLC    hdlc_rcv
 drivers/net/wan/lapbether.c:
             dev_add_pack(&lapbeth_packet_type);         //ETH_P_DEC       lapbeth_rcv
@@ -480,17 +480,17 @@ net/llc/llc_core.c: dev_add_pack(&llc_tr_packet_type);  //ETH_P_TR_802_2  llc_rc
 net/x25/af_x25.c:  dev_add_pack(&x25_packet_type);    //ETH_P_X25      x25_lapb_receive_frame
 net/8021q/vlan.c:  dev_add_pack(&vlan_packet_type);     //ETH_P_8021Q     vlan_skb_recv
 
-��Щ��ͬЭ���packet_type����Щ��linuxϵͳ����ʱ����ȥ��
-���紦��ipЭ���pakcet_type�������� inet_init()ʱ����ȥ��
-����Щ����ģ����ص�ʱ��ż���ȥ��
-*///��������������netif_receive_skb���Ӷ�ִ��func���� 
-//����ץ��tcpdumpҲ�ڶ���ʵ�֣��ο�http://blog.csdn.net/jw212/article/details/6738497
+ÕâĞ©²»Í¬Ğ­ÒéµÄpacket_type£¬ÓĞĞ©ÊÇlinuxÏµÍ³Æô¶¯Ê±¹ÒÉÏÈ¥µÄ
+±ÈÈç´¦ÀíipĞ­ÒéµÄpakcet_type£¬¾ÍÊÇÔÚ inet_init()Ê±¹ÒÉÏÈ¥µÄ
+»¹ÓĞĞ©Çı¶¯Ä£¿é¼ÓÔØµÄÊ±ºò²Å¼ÓÉÏÈ¥µÄ
+*///Íø¿¨Çı¶¯×îºóµ÷ÓÃnetif_receive_skb£¬´Ó¶øÖ´ĞĞfuncº¯Êı 
+//ÍøÂç×¥°ütcpdumpÒ²ÔÚ¶ş²ãÊµÏÖ£¬²Î¿¼http://blog.csdn.net/jw212/article/details/6738497
 /*
-����ģʽ��Promiscuous Mode����ָһ̨�����ܹ��������о�����������������������Ŀ�ĵ�ַ�Ƿ��������������ͨ��ģʽ���ֳơ��ǻ���ģʽ�������Եġ�
-�ⱻ�������Աʹ��������������⣬����Ҳ������֤����͵������ͨ�ţ�����ܰ���������������е���Ϣ���������á�һ����·��ѡ��ڵ��ڻ���ģʽ��
-һ����ܹ�����ͬ�ĳ�ͻ�򣨶���̫�������߾��������ڼ��ͨ�ŵ������������ڵ�򻷣������ƻ���FDDI��������Ϊʲô���罻�������ڶԿ�����Ļ���ģʽ����������ģʽ���ǽ������о������������ݰ����������Ƿ��������İ���Ĭ�����������ֻ�ѷ��������İ��������㲥�������ݸ��ϲ���������İ�һ�ɶ������򵥵Ľ�,����ģʽ����ָ�����ܽ�������ͨ��������������������ʲô��ʽ��ʲô��ַ�ġ���ʵ�ϣ�������յ����ݰ��������������жϣ�ȷ���ǵݽ��ϲ㣨����㣩�����Ƕ��������ǵݽ��²㣨������·�㡢MAC�Ӳ㣩ת��������ͨ������Ҫ�õ�ץ�����ߣ�����ethereal��snifferʱ����Ҫ���������ڻ���ģʽ����Ҫ�õ�����Winpcap��winpcap��windowsƽ̨��һ����ѣ��������������ϵͳ������winpcap�����Ŀ��Ŀ������Ϊwin32Ӧ�ó����ṩ��������ײ��������
+»ìÔÓÄ£Ê½£¨Promiscuous Mode£©ÊÇÖ¸Ò»Ì¨»úÆ÷ÄÜ¹»½ÓÊÕËùÓĞ¾­¹ıËüµÄÊı¾İÁ÷£¬¶ø²»ÂÛÆäÄ¿µÄµØÖ·ÊÇ·ñÊÇËû¡£ÊÇÏà¶ÔÓÚÍ¨³£Ä£Ê½£¨ÓÖ³Æ¡°·Ç»ìÔÓÄ£Ê½¡±£©¶øÑÔµÄ¡£
+Õâ±»ÍøÂç¹ÜÀíÔ±Ê¹ÓÃÀ´Õï¶ÏÍøÂçÎÊÌâ£¬µ«ÊÇÒ²±»ÎŞÈÏÖ¤µÄÏëÍµÌıÍøÂçÍ¨ĞÅ£¨Æä¿ÉÄÜ°üÀ¨ÃÜÂëºÍÆäËüÃô¸ĞµÄĞÅÏ¢£©µÄÈËÀûÓÃ¡£Ò»¸ö·ÇÂ·ÓÉÑ¡Ôñ½ÚµãÔÚ»ìÔÓÄ£Ê½ÏÂ
+Ò»°ã½öÄÜ¹»ÔÚÏàÍ¬µÄ³åÍ»Óò£¨¶ÔÒÔÌ«ÍøºÍÎŞÏß¾ÖÓòÍø£©ÄÚ¼à¿ØÍ¨ĞÅµ½ºÍÀ´×ÔÆäËü½Úµã»ò»·£¨¶ÔÁîÅÆ»·»òFDDI£©£¬ÆäÊÇÎªÊ²Ã´ÍøÂç½»»»±»ÓÃÓÚ¶Ô¿¹¶ñÒâµÄ»ìÔÓÄ£Ê½¡£¡¡¡¡»ìÔÓÄ£Ê½¾ÍÊÇ½ÓÊÕËùÓĞ¾­¹ıÍø¿¨µÄÊı¾İ°ü£¬°üÀ¨²»ÊÇ·¢¸ø±¾»úµÄ°ü¡£Ä¬ÈÏÇé¿öÏÂÍø¿¨Ö»°Ñ·¢¸ø±¾»úµÄ°ü£¨°üÀ¨¹ã²¥°ü£©´«µİ¸øÉÏ²ã³ÌĞò£¬ÆäËüµÄ°üÒ»ÂÉ¶ªÆú¡£¼òµ¥µÄ½²,»ìÔÓÄ£Ê½¾ÍÊÇÖ¸Íø¿¨ÄÜ½ÓÊÜËùÓĞÍ¨¹ıËüµÄÊı¾İÁ÷£¬²»¹ÜÊÇÊ²Ã´¸ñÊ½£¬Ê²Ã´µØÖ·µÄ¡£ÊÂÊµÉÏ£¬¼ÆËã»úÊÕµ½Êı¾İ°üºó£¬ÓÉÍøÂç²ã½øĞĞÅĞ¶Ï£¬È·¶¨ÊÇµİ½»ÉÏ²ã£¨´«Êä²ã£©£¬»¹ÊÇ¶ªÆú£¬»¹ÊÇµİ½»ÏÂ²ã£¨Êı¾İÁ´Â·²ã¡¢MAC×Ó²ã£©×ª·¢¡£¡¡¡¡Í¨³£ÔÚĞèÒªÓÃµ½×¥°ü¹¤¾ß£¬ÀıÈçethereal¡¢snifferÊ±£¬ĞèÒª°ÑÍø¿¨ÖÃÓÚ»ìÔÓÄ£Ê½£¬ĞèÒªÓÃµ½Èí¼şWinpcap¡£winpcapÊÇwindowsÆ½Ì¨ÏÂÒ»¸öÃâ·Ñ£¬¹«¹²µÄÍøÂç·ÃÎÊÏµÍ³¡£¿ª·¢winpcapÕâ¸öÏîÄ¿µÄÄ¿µÄÔÚÓÚÎªwin32Ó¦ÓÃ³ÌĞòÌá¹©·ÃÎÊÍøÂçµ×²ãµÄÄÜÁ¦¡£
 
-ETH_P_ALL��ע����packet_create�У��ú�����ͨ��Ӧ�ò�ĺ���nSock == socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))ϵͳ���õġ�ptype_all ������ЩΪע�ᵽ�ں˵�һЩ sniffer�����ϴ�����Щsniffer����һ�����Ǳ��� ptype_base��������Ǿ����Э������
+ETH_P_ALLµÄ×¢²áÔÚpacket_createÖĞ£¬¸Ãº¯ÊıÊÇÍ¨¹ıÓ¦ÓÃ²ãµÄº¯ÊınSock == socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))ÏµÍ³µ÷ÓÃµÄ¡£ptype_all Á´£¬ÕâĞ©Îª×¢²áµ½ÄÚºËµÄÒ»Ğ© sniffer£¬½«ÉÏ´«¸øÕâĞ©sniffer£¬ÁíÒ»¸ö¾ÍÊÇ±éÀú ptype_base£¬Õâ¸ö¾ÍÊÇ¾ßÌåµÄĞ­ÒéÀàĞÍ
 */
 void dev_add_pack(struct packet_type *pt)
 {
@@ -879,7 +879,7 @@ struct net_device *dev_getbyhwaddr(struct net *net, unsigned short type, char *h
 }
 EXPORT_SYMBOL(dev_getbyhwaddr);
 /*
-  * ��ȡ�����豸
+  * »ñÈ¡ÍøÂçÉè±¸
   */
 struct net_device *__dev_getfirstbyhwtype(struct net *net, unsigned short type)
 {
@@ -922,7 +922,7 @@ EXPORT_SYMBOL(dev_getfirstbyhwtype);
  *	dev_put to indicate they have finished with it.
  */
     /*
-      * ���ݱ�־��ȡ�����豸
+      * ¸ù¾İ±êÖ¾»ñÈ¡ÍøÂçÉè±¸
       */
 
 struct net_device *dev_get_by_flags(struct net *net, unsigned short if_flags,
@@ -951,7 +951,7 @@ EXPORT_SYMBOL(dev_get_by_flags);
  *	Network device names need to be valid file names to
  *	to allow sysfs to work.  We also disallow any kind of
  *	whitespace.
- *///��������豸���Ƿ���Ч
+ *///¼ì²éÍøÂçÉè±¸ÃûÊÇ·ñÓĞĞ§
 int dev_valid_name(const char *name)
 {
 	if (*name == '\0')
@@ -994,8 +994,8 @@ static int __dev_alloc_name(struct net *net, const char *name, char *buf)
 	struct net_device *d;
 
          /* 
-        * ��ע�������豸ʱ������ط��ĵ�����Щ�ظ���
-        * register_netdev���Ѽ����һ�� '%'��λ�á�
+        * ÔÚ×¢²áÍøÂçÉè±¸Ê±£¬Õâ¸öµØ·½µÄµ÷ÓÃÓĞĞ©ÖØ¸´¡£
+        * register_netdevÖĞÒÑ¼ÆËã¹ıÒ»´Î '%'µÄÎ»ÖÃ¡£
         *
         */
 	p = strnchr(name, IFNAMSIZ-1, '%');
@@ -1006,9 +1006,9 @@ static int __dev_alloc_name(struct net *net, const char *name, char *buf)
 		 * characters.
 		 */
 		 /*
-		 * ��ʽ�ַ���ֻ֧��"name%d"�ĸ�ʽ������
-		 * ����¸��ַ�����'d'���ߣ���֮����
-		 * '%'��ʽ������˵��name�ַ������Ϸ�
+		 * ¸ñÊ½×Ö·û´®Ö»Ö§³Ö"name%d"µÄ¸ñÊ½£¬ËùÒÔ
+		 * Èç¹ûÏÂ¸ö×Ö·û²»ÊÇ'd'»òÕß£¬ÔÚÖ®ºó»¹ÓĞ
+		 * '%'¸ñÊ½´®£¬ÔòËµÃ÷name×Ö·û´®²»ºÏ·¨
 		 *
 		 */
 		if (p[1] != 'd' || strchr(p + 2, '%'))
@@ -1021,27 +1021,27 @@ static int __dev_alloc_name(struct net *net, const char *name, char *buf)
 
 		for_each_netdev(net, d) {
                      /* 
-                      * ���d->name�е��ַ���ǰ׺(���������������)
-                      * ��name�е�ǰ׺(������"%d")����ͬ������d->name��
-                      * ǰ׺֮��û�����֣��򷵻�ֵΪ0�����򷵻ص�
-                      * �Ƕ��������ֵĸ���������Ӧ����1�����ǰ׺
-                      * ��ͬ����û�����֣���ע����豸�϶������d
-                      * ���Ƴ�ͻ��Ҳ�Ͳ���Ҫ������Ľ����ͻ�Ĳ�����
+                      * Èç¹ûd->nameÖĞµÄ×Ö·û´®Ç°×º(²»°üÀ¨ºóÃæµÄÊı×Ö)
+                      * ºÍnameÖĞµÄÇ°×º(²»°üÀ¨"%d")²»ÏàÍ¬£¬»òÕßd->nameÖĞ
+                      * Ç°×ºÖ®ºóÃ»ÓĞÊı×Ö£¬Ôò·µ»ØÖµÎª0£¬·ñÔò·µ»ØµÄ
+                      * ÊÇ¶Áµ½µÄÊı×ÖµÄ¸öÊı£¬ÕâÀïÓ¦¸ÃÊÇ1¡£Èç¹ûÇ°×º
+                      * ²»Í¬»òÕßÃ»ÓĞÊı×Ö£¬ĞÂ×¢²áµÄÉè±¸¿Ï¶¨²»»áºÍd
+                      * Ãû³Æ³åÍ»£¬Ò²¾Í²»ĞèÒª×öºóÃæµÄ½â¾ö³åÍ»µÄ²Ù×÷ÁË
                       */
 			if (!sscanf(d->name, name, &i))
 				continue;
-                     /* ����i�洢��d���豸id */
+                     /* ÕâÀïi´æ´¢ÊÇdµÄÉè±¸id */
 			if (i < 0 || i >= max_netdevices)
 				continue;
 
 			/*  avoid cases where sscanf is not exact inverse of printf */
 			snprintf(buf, IFNAMSIZ, name, i);
                     /* 
-                     * ͨ��ǰ���sscanf����֪����d->name��name��ǰ׺��ͬ,
-                     * ����d->name���������֣�������d->name�е��ַ�����
-                     * ���������ֺ��滹��Ӣ���ַ�������"eth1n",��������
-                     * Ҫ�ٽ���һ�αȶԣ�ֻ����d->name���ַ����������ֽ�β
-                     * ʱ����Ҫ�������г�ͻ����
+                     * Í¨¹ıÇ°ÃæµÄsscanfµ÷ÓÃÖªµÀ£¬d->nameºÍnameµÄÇ°×ºÏàÍ¬,
+                     * ²¢ÇÒd->nameºóÃæÊÇÊı×Ö£¬µ«ÊÇÔÚd->nameÖĞµÄ×Ö·û´®ÓĞ
+                     * ¿ÉÄÜÔÚÊı×ÖºóÃæ»¹ÓĞÓ¢ÎÄ×Ö·û£¬ÀıÈç"eth1n",ËùÒÔÕâÀï
+                     * ÒªÔÙ½øĞĞÒ»´Î±È¶Ô£¬Ö»ÓĞÔÚd->nameµÄ×Ö·û´®ÊÇÒÔÊı×Ö½áÎ²
+                     * Ê±²ÅĞèÒª¼ÌĞø½øĞĞ³åÍ»´¦Àí
                      */
 			if (!strncmp(buf, d->name, IFNAMSIZ))
 				set_bit(i, inuse);
@@ -1052,14 +1052,14 @@ static int __dev_alloc_name(struct net *net, const char *name, char *buf)
 	}
 
 	/*
-	  * ���ҵ��Ŀ����豸ID������ǰ׺���
-	  * ��buf�У�Ҳ�����ϲ㴫�ݹ���������
-	  * �洢�豸���Ƶ��ڴ档
+	  * ½«ÕÒµ½µÄ¿ÉÓÃÉè±¸IDºÍÃû³ÆÇ°×ºÊä³ö
+	  * µ½bufÖĞ£¬Ò²¾ÍÊÇÉÏ²ã´«µİ¹ıÀ´µÄÓÃÀ´
+	  * ´æ´¢Éè±¸Ãû³ÆµÄÄÚ´æ¡£
 	  */
 	snprintf(buf, IFNAMSIZ, name, i);
        /* 
-        * ͨ�����Ʋ����Ƿ��Ѵ���������ͬ���豸��
-        * ���û���ҵ�����˵���ҵ����豸id��Ψһ��
+        * Í¨¹ıÃû³Æ²éÕÒÊÇ·ñÒÑ´æÔÚÃû³ÆÏàÍ¬µÄÉè±¸£¬
+        * Èç¹ûÃ»ÓĞÕÒµ½£¬ÔòËµÃ÷ÕÒµ½µÄÉè±¸idÊÇÎ¨Ò»µÄ
         */
 	if (!__dev_get_by_name(net, buf))
 		return i;
@@ -1297,17 +1297,17 @@ EXPORT_SYMBOL(dev_load);
  *	a negative errno code is returned.
  */
 /*
-  * �豸һ��ע��󼴿�ʹ�ã����������û�
-  * ���û��ռ�Ӧ�ó���ʹ�ܺ�ſ����շ�����
-  * ��Ϊע�ᵽϵͳ�е������豸�����ʼ
-  * ״̬�ǹرյģ���ʱ�ǲ��ܴ������ݵģ�����
-  * ����������豸���ܽ������ݵĴ��䡣��
-  * Ӧ�ò㣬����ͨ��ifconfig up����(������ͨ��ioctl
-  * ��SIOCSIFFLAGS)�����������豸����SIOCIFFLAGS����
-  * ��ͨ��dev_change_flags()����dev_open()�����������豸��
-  * dev_open()�������豸�ӹر�״̬ת������״̬��
-  * ������һ��NETDEV_UP��Ϣ�������豸״̬�ı�
-  * ֪ͨ���ϡ�
+  * Éè±¸Ò»µ©×¢²áºó¼´¿ÉÊ¹ÓÃ£¬µ«±ØĞëÔÚÓÃ»§
+  * »òÓÃ»§¿Õ¼äÓ¦ÓÃ³ÌĞòÊ¹ÄÜºó²Å¿ÉÒÔÊÕ·¢Êı¾İ
+  * ÒòÎª×¢²áµ½ÏµÍ³ÖĞµÄÍøÂçÉè±¸£¬Æä³õÊ¼
+  * ×´Ì¬ÊÇ¹Ø±ÕµÄ£¬´ËÊ±ÊÇ²»ÄÜ´«ÊäÊı¾İµÄ£¬±ØĞë
+  * ¼¤»îºó£¬ÍøÂçÉè±¸²ÅÄÜ½øĞĞÊı¾İµÄ´«Êä¡£ÔÚ
+  * Ó¦ÓÃ²ã£¬¿ÉÒÔÍ¨¹ıifconfig upÃüÁî(×îÖÕÊÇÍ¨¹ıioctl
+  * µÄSIOCSIFFLAGS)À´¼¤»îÍøÂçÉè±¸¡£¶øSIOCIFFLAGSÃüÁî
+  * ÊÇÍ¨¹ıdev_change_flags()µ÷ÓÃdev_open()À´¼¤»îÍøÂçÉè±¸¡£
+  * dev_open()½«ÍøÂçÉè±¸´Ó¹Ø±Õ×´Ì¬×ªµ½¼¤»î×´Ì¬£¬
+  * ²¢·¢ËÍÒ»¸öNETDEV_UPÏûÏ¢µ½ÍøÂçÉè±¸×´Ì¬¸Ä±ä
+  * Í¨ÖªÁ´ÉÏ¡£
   *////ic_dev_ioctl->dev_ioctl->dev_ifsioc->dev_change_flags
 int __dev_open(struct net_device *dev)
 {
@@ -1320,7 +1320,7 @@ int __dev_open(struct net_device *dev)
 	 *	Is it already up?
 	 */
 	/*
-	  * ��������豸�Ѿ����ã��������ټ��Բ�����
+	  * Èç¹ûÍøÂçÉè±¸ÒÑ¾­ÆôÓÃ£¬ÔòÎŞĞèÔÙ¼ÇĞÔ²Ù×÷¡£
 	  */
 	if (dev->flags & IFF_UP)
 		return 0;
@@ -1329,13 +1329,13 @@ int __dev_open(struct net_device *dev)
 	 *	Is it even present?
 	 */
 	/*
-	  * ��������豸�Ѿ��������ܱ����
+	  * Èç¹ûÍøÂçÉè±¸ÒÑ¾­¹ÒÆğ£¬Ôò²»ÄÜ±»¼¤»î¡£
 	  */
 	if (!netif_device_present(dev))
 		return -ENODEV;
 
 	/*
-	  * ����NETDEV_PRE_UP�¼�֪ͨ
+	  * ·¢ËÍNETDEV_PRE_UPÊÂ¼şÍ¨Öª
 	  */
 	ret = call_netdevice_notifiers(NETDEV_PRE_UP, dev);
 	ret = notifier_to_errno(ret);
@@ -1346,10 +1346,10 @@ int __dev_open(struct net_device *dev)
 	 *	Call device private open method
 	 */
 	/*
-	  * �豸�����豸������״̬��־�����
-	  * ʵ��open����������ݾ���Ӳ��ע��
-	  * ϵͳ��Դ��ʹ��Ӳ���������豸��
-	  * ������һЩ���á�
+	  * Éè±¸ÍøÂçÉè±¸µÄÆôÓÃ×´Ì¬±êÖ¾¡£Èç¹û
+	  * ÊµÏÖopenº¯Êı£¬Ôò¸ù¾İ¾ßÌåÓ²¼ş×¢²á
+	  * ÏµÍ³×ÊÔ´£¬Ê¹ÄÜÓ²¼ş£¬²¢¶ÔÉè±¸×÷
+	  * ÆäËûµÄÒ»Ğ©ÉèÖÃ¡£
 	  */
 	set_bit(__LINK_STATE_START, &dev->state);
 
@@ -1364,15 +1364,15 @@ int __dev_open(struct net_device *dev)
 	 */
 
 	/*
-	  * ������������豸�ɹ�������������
-	  * �豸�������ñ�־���������鲥��ַ�б�
-	  * �������豸�У������豸����Ϊ����״̬��
-	  * ����dev_activate()��ʼ�������������Ƶ��Ŷ�
-	  * ���򣬲�������ʱ��������û�û��
-	  * �����������ܸ��Σ���ָ��ΪĬ�ϵ�
-	  * �Ƚ��ȳ�(FIFO)���С���󣬷���NETDEV_UP
-	  * ��Ϣ�������豸״̬�ı�֪ͨ���ϣ���
-	  * ֪ͨ�������豸����Ȥ�������ں������
+	  * Èç¹ûÆôÓÃÍøÂçÉè±¸³É¹¦£¬ÔòÉèÖÃÍøÂç
+	  * Éè±¸µÄÒÑÆôÓÃ±êÖ¾£¬²¢¸üĞÂ×é²¥µØÖ·ÁĞ±í
+	  * µ½ÍøÂçÉè±¸ÖĞ£¬ÍøÂçÉè±¸ÉèÖÃÎª´«µİ×´Ì¬¡£
+	  * µ÷ÓÃdev_activate()³õÊ¼»¯ÓÃÓÚÁ÷Á¿¿ØÖÆµÄÅÅ¶Ó
+	  * ¹æÔò£¬²¢Æô¶¯¶¨Ê±Æ÷¡£Èç¹ûÓÃ»§Ã»ÓĞ
+	  * ÅäÖÃÁ÷Á¿¿ÉÄÜ¸ùÖÎ£¬ÔòÖ¸¶¨ÎªÄ¬ÈÏµÄ
+	  * ÏÈ½øÏÈ³ö(FIFO)¶ÓÁĞ¡£×îºó£¬·¢ËÍNETDEV_UP
+	  * ÏûÏ¢µ½ÍøÂçÉè±¸×´Ì¬¸Ä±äÍ¨ÖªÁ´ÉÏ£¬ÒÔ
+	  * Í¨Öª¶ÔÍøÂçÉè±¸¸ĞĞËÈ¤µÄÆäËûÄÚºË×é¼ş¡£
 	  */
 	if (ret)
 		clear_bit(__LINK_STATE_START, &dev->state);
@@ -1504,17 +1504,17 @@ static int __dev_c333lose(struct net_device *dev)
  *	chain.
  */
 /*
-  * �����豸һ���رպ�Ͳ��ܴ��������ˡ�����
-  * �豸�ܱ��û�������ȷ�ػ�����¼�������
-  * ��ֹ����Ӧ�ò㣬����ͨ��ifconfig down����(����
-  * ��ͨ��ioctl()��SIOCSIFFLAGS)���ر������豸������
-  * �������豸ע��ʱ����ֹ��
-  * SIOCSIFFLAGS����ͨ��dev_change_flags()�����������豸
-  * ��ǰ��״̬��ȷ������dev_close()�ر������豸��
-  * dev_close()�������豸�Ӽ���״̬ת�����ر�״̬��
-  * ������NETDEV_GOING_DOWN��NETDEV_DOWN��Ϣ������
-  * �豸״̬�ı�֪ͨ���ϡ�
-  *///ж��ģ���ʱ��Ҳ����øú���
+  * ÍøÂçÉè±¸Ò»µ©¹Ø±Õºó¾Í²»ÄÜ´«ÊäÊı¾İÁË¡£ÍøÂç
+  * Éè±¸ÄÜ±»ÓÃ»§ÃüÁîÃ÷È·µØ»î±»ÆäËûÊÂ¼şÒşº¬µØ
+  * ½ûÖ¹¡£ÔÚÓ¦ÓÃ²ã£¬¿ÉÒÔÍ¨¹ıifconfig downÃüÁî(×îÖÕ
+  * ÊÇÍ¨¹ıioctl()µÄSIOCSIFFLAGS)À´¹Ø±ÕÍøÂçÉè±¸£¬»òÕß
+  * ÔÚÍøÂçÉè±¸×¢ÏúÊ±±»½ûÖ¹¡£
+  * SIOCSIFFLAGSÃüÁîÍ¨¹ıdev_change_flags()£¬¸ù¾İÍøÂçÉè±¸
+  * µ±Ç°µÄ×´Ì¬À´È·¶¨µ÷ÓÃdev_close()¹Ø±ÕÍøÂçÉè±¸¡£
+  * dev_close()½«ÍøÂçÉè±¸´Ó¼¤»î×´Ì¬×ª»»µ½¹Ø±Õ×´Ì¬£¬
+  * ²¢·¢ËÍNETDEV_GOING_DOWNºÍNETDEV_DOWNÏûÏ¢µ½ÍøÂç
+  * Éè±¸×´Ì¬¸Ä±äÍ¨ÖªÁ´ÉÏ¡£
+  *///Ğ¶ÔØÄ£¿éµÄÊ±ºòÒ²»áµ÷ÓÃ¸Ãº¯Êı
 int __dev_close(struct net_device *dev)///ic_dev_ioctl->dev_ioctl->dev_ifsioc->dev_change_flags
 {
 	const struct net_device_ops *ops = dev->netdev_ops;
@@ -1523,7 +1523,7 @@ int __dev_close(struct net_device *dev)///ic_dev_ioctl->dev_ioctl->dev_ifsioc->d
 	might_sleep();
 
 	/*
-	  * �������豸δ���ã��������ٽ��в�����
+	  * ÈôÍøÂçÉè±¸Î´ÆôÓÃ£¬ÔòÎŞĞèÔÙ½øĞĞ²Ù×÷¡£
 	  */
 	if (!(dev->flags & IFF_UP))
 		return 0;
@@ -1533,15 +1533,15 @@ int __dev_close(struct net_device *dev)///ic_dev_ioctl->dev_ioctl->dev_ifsioc->d
 	 *	prepare to death, when device is still operating.
 	 */
 	/*
-	  * �ڹر������豸֮ǰ������NETDEV_GOING_DOWN��Ϣ
-	  * �������豸״̬�ı�֪ͨ���ϣ��Ա�֪ͨ
-	  * ���豸��ֹ����Ȥ���ں����
+	  * ÔÚ¹Ø±ÕÍøÂçÉè±¸Ö®Ç°£¬·¢ËÍNETDEV_GOING_DOWNÏûÏ¢
+	  * µ½ÍøÂçÉè±¸×´Ì¬¸Ä±äÍ¨ÖªÁ´ÉÏ£¬ÒÔ±ãÍ¨Öª
+	  * ¶ÔÉè±¸½ûÖ¹¸ĞĞËÈ¤µÄÄÚºË×é¼ş
 	  */
 	call_netdevice_notifiers(NETDEV_GOING_DOWN, dev);
 
 	/*
-	  * �������豸����Ϊ��ֹ�������ݰ�
-	  * ״̬�����ö�Ӧ��־��
+	  * ½«ÍøÂçÉè±¸ÉèÖÃÎª½ûÖ¹´«µİÊı¾İ°ü
+	  * ×´Ì¬£¬ÉèÖÃ¶ÔÓ¦±êÖ¾¡£
 	  */
 	clear_bit(__LINK_STATE_START, &dev->state);
 
@@ -1554,9 +1554,9 @@ int __dev_close(struct net_device *dev)///ic_dev_ioctl->dev_ioctl->dev_ifsioc->d
 	smp_mb__after_clear_bit(); /* Commit netif_running(). */
 
 	/*
-	  * ����dev_deactivate()��ֹ���ڶ��й���ȷ��
-	  * ���豸�������ڴ��䣬��ֹͣ������Ҫ
-	  * �ļ�ض�ʱ����
+	  * µ÷ÓÃdev_deactivate()½ûÖ¹³ö¿Ú¶ÓÁĞ¹æÔò£¬È·±£
+	  * ¸ÃÉè±¸²»ÔÙÓÃÓÚ´«Êä£¬²¢Í£Ö¹²»ÔÙĞèÒª
+	  * µÄ¼à¿Ø¶¨Ê±Æ÷¡£
 	  */
 	dev_deactivate(dev);
 
@@ -1574,7 +1574,7 @@ int __dev_close(struct net_device *dev)///ic_dev_ioctl->dev_ioctl->dev_ifsioc->d
 	 *	Device is now down.
 	 */
 	/*
-	  * �ɹ��ر������豸��ȥ�������ñ�־
+	  * ³É¹¦¹Ø±ÕÍøÂçÉè±¸ºóÈ¥µôÒÑÆôÓÃ±êÖ¾
 	  */
 	dev->flags &= ~IFF_UP;
 
@@ -1582,9 +1582,9 @@ int __dev_close(struct net_device *dev)///ic_dev_ioctl->dev_ioctl->dev_ifsioc->d
 	 * Tell people we are down
 	 */
 	/*
-	  * ��ɹر��豸�󣬷���NETDEV_DOWN��Ϣ��
-	  * �����豸״̬�ı�֪ͨ���ϣ�֪ͨ
-	  * ���豸��ֹ����Ȥ���ں������
+	  * Íê³É¹Ø±ÕÉè±¸ºó£¬·¢ËÍNETDEV_DOWNÏûÏ¢µ½
+	  * ÍøÂçÉè±¸×´Ì¬¸Ä±äÍ¨ÖªÁ´ÉÏ£¬Í¨Öª
+	  * ¶ÔÉè±¸½ûÖ¹¸ĞĞËÈ¤µÄÄÚºË×é¼ş¡£
 	  */
 	call_netdevice_notifiers(NETDEV_DOWN, dev);
 
@@ -1615,7 +1615,7 @@ int dev_c22lose(struct net_device *dev)
 	/*
 	 * Tell people we are down
 	 */
-	rtmsg_ifinfo(RTM_NEWLINK, dev, IFF_UP|IFF_RUNNING); //ͨ��dev�¼�֪ͨ��RTM_NEWLINK֪ͨ��Ӧ�ó��򣬸�devע����
+	rtmsg_ifinfo(RTM_NEWLINK, dev, IFF_UP|IFF_RUNNING); //Í¨¹ıdevÊÂ¼şÍ¨ÖªÁ´RTM_NEWLINKÍ¨Öª¸øÓ¦ÓÃ³ÌĞò£¬¸Ãdev×¢ÏúÁË
 	call_netdevice_notifiers(NETDEV_DOWN, dev);
 
 	return 0;
@@ -1646,7 +1646,7 @@ void dev_disable_lro(struct net_device *dev)
 EXPORT_SYMBOL(dev_disable_lro);
 
 
-static int dev_boot_phase = 1;//0��ʶ�����豸��ʼ�������
+static int dev_boot_phase = 1;//0±êÊ¶ÍøÂçÉè±¸³õÊ¼»¯ÒÑÍê³É
 
 /*
  *	Device change register/unregister. These are not inline or static
@@ -1665,22 +1665,22 @@ static int dev_boot_phase = 1;//0��ʶ�����豸��ʼ�������
  * 	When registered all registration and up events are replayed
  *	to the new notifier to allow device to have a race free
  *	view of the network device list.
- */ //�ں��������register_netdevice_notifier �� unregister_netdevice_notifier�ֱ�ע�ᡢע����֪ͨ���е��¼�����Ȥ��
-//yang �����������豸�¼��ĺ���ע�ᵽnetdev_chain֪ͨ����  �¼�֪ͨ��(notifier chain)
-�//ע��ʱ��֪ͨ��ʵ���Ͼ��ǰ�nb���ӵ�netdev_chain�����У�Ȼ�������е�dev�豸ִ��nb->notifier_call()�е��¼����������Բο�pppoe_init
+ */ //ÄÚºË×é¼ş¶ÔÓÉregister_netdevice_notifier ºÍ unregister_netdevice_notifier·Ö±ğ×¢²á¡¢×¢ÏúµÄÍ¨ÖªÁ´ÖĞµÄÊÂ¼ş¸ĞĞËÈ¤¡£
+//yang ½«´¦ÀíÍøÂçÉè±¸ÊÂ¼şµÄº¯Êı×¢²áµ½netdev_chainÍ¨ÖªÁ´ÖĞ  ÊÂ¼şÍ¨ÖªÁ´(notifier chain)
+¡//×¢²áÊ±¼äÍ¨ÖªÁ¬Êµ¼ÊÉÏ¾ÍÊÇ°ÑnbÌí¼Óµ½netdev_chainÁ´±íÖĞ£¬È»ºóÈÃËùÓĞµÄdevÉè±¸Ö´ĞĞnb->notifier_call()ÖĞµÄÊÂ¼şº¯Êı¡£¿ÉÒÔ²Î¿¼pppoe_init
 
 /*
-Linux�ں��и�����ϵͳ�໥������������ĳ����ϵͳ״̬�����ı�ʱ���ͱ���ʹ��һ���Ļ��Ƹ�֪ʹ��������������ϵͳ���Ա�������ϵͳ��ȡ��Ӧ�Ĵ�ʩ��
-Ϊ���������������ں�ʵ�����¼�֪ͨ�����ƣ�notificationchain����
+LinuxÄÚºËÖĞ¸÷¸ö×ÓÏµÍ³Ïà»¥ÒÀÀµ£¬µ±ÆäÖĞÄ³¸ö×ÓÏµÍ³×´Ì¬·¢Éú¸Ä±äÊ±£¬¾Í±ØĞëÊ¹ÓÃÒ»¶¨µÄ»úÖÆ¸æÖªÊ¹ÓÃÆä·şÎñµÄÆäËû×ÓÏµÍ³£¬ÒÔ±ãÆäËû×ÓÏµÍ³²ÉÈ¡ÏàÓ¦µÄ´ëÊ©¡£
+ÎªÂú×ãÕâÑùµÄĞèÇó£¬ÄÚºËÊµÏÖÁËÊÂ¼şÍ¨ÖªÁ´»úÖÆ£¨notificationchain£©¡£
 */
 /*
-Linux��������ϵͳһ����3��֪ͨ������ʾipv4��ַ�����仯ʱ��inetaddr_chain����ʾipv6��ַ�����仯��inet6addr_chain�����б�ʾ�豸ע�ᡢ
-״̬�仯��netdev_chain��
+LinuxµÄÍøÂç×ÓÏµÍ³Ò»¹²ÓĞ3¸öÍ¨ÖªÁ´£º±íÊ¾ipv4µØÖ··¢Éú±ä»¯Ê±µÄinetaddr_chain£»±íÊ¾ipv6µØÖ··¢Éú±ä»¯µÄinet6addr_chain£»»¹ÓĞ±íÊ¾Éè±¸×¢²á¡¢
+×´Ì¬±ä»¯µÄnetdev_chain¡£
 
-֪ͨ���������Ը���Ϊ���¼��ı�֪ͨ�߽��¼�����ʱӦ��ִ�еĲ���ͨ������ָ�뷽ʽ������������֪ͨ�����У�
-Ȼ���¼�����ʱ֪ͨ������ִ��������ÿһ��Ԫ�صĻص��������֪ͨ
+Í¨ÖªÁ´¼¼Êõ¿ÉÒÔ¸ÅÀ¨Îª£ºÊÂ¼şµÄ±»Í¨ÖªÕß½«ÊÂ¼ş·¢ÉúÊ±Ó¦¸ÃÖ´ĞĞµÄ²Ù×÷Í¨¹ıº¯ÊıÖ¸Õë·½Ê½±£´æÔÚÁ´±í£¨Í¨ÖªÁ´£©ÖĞ£¬
+È»ºóµ±ÊÂ¼ş·¢ÉúÊ±Í¨ÖªÕßÒÀ´ÎÖ´ĞĞÁ´±íÖĞÃ¿Ò»¸öÔªËØµÄ»Øµ÷º¯ÊıÍê³ÉÍ¨Öª
 */
-int register_netdevice_notifier(struct notifier_block *nb)//��call_netdevice_notifiers���ʹ��
+int register_netdevice_notifier(struct notifier_block *nb)//ºÍcall_netdevice_notifiersÅäºÏÊ¹ÓÃ
 {
 	struct net_device *dev;
 	struct net_device *last;
@@ -1688,12 +1688,12 @@ int register_netdevice_notifier(struct notifier_block *nb)//��call_netdevice_not
 	int err;
 
 	rtnl_lock();
-	err = raw_notifier_chain_register(&netdev_chain, nb);//����nb->priority���ȼ���nb���뵽netdev_chain������
+	err = raw_notifier_chain_register(&netdev_chain, nb);//°´ÕÕnb->priorityÓÅÏÈ¼¶°Ñnb¼ÓÈëµ½netdev_chainÁ´±íÖĞ
 	if (err)
 		goto unlock;
 	if (dev_boot_phase)
 		goto unlock;
-	for_each_net(net) { /* ע�����������е�dev�豸��ִ����һ��nb->notifier_call�� ��call_netdevice_notifiers����netdev_chain�е����нڵ�notifer_callִ��һ��*/
+	for_each_net(net) { /* ×¢ÒâÕâÀïÈÃËùÓĞµÄdevÉè±¸¶¼Ö´ĞĞÁËÒ»±énb->notifier_call£¬ ¶øcall_netdevice_notifiersÊÇÈÃnetdev_chainÖĞµÄËùÓĞ½Úµãnotifer_callÖ´ĞĞÒ»±é*/
 		for_each_netdev(net, dev) {
 			err = nb->notifier_call(nb, NETDEV_REGISTER, dev);
 			err = notifier_to_errno(err);
@@ -1760,10 +1760,10 @@ EXPORT_SYMBOL(unregister_netdevice_notifier);
  *
  *	Call all network notifier blocks.  Parameters and return value
  *	are as for raw_notifier_call_chain().
- ֪ͨ���������Ը���Ϊ���¼��ı�֪ͨ�߽��¼�����ʱӦ��ִ�еĲ���ͨ������ָ�뷽ʽ������������֪ͨ�����У�
- Ȼ���¼�����ʱ֪ͨ������ִ��������ÿһ��Ԫ�صĻص��������֪ͨ
+ Í¨ÖªÁ´¼¼Êõ¿ÉÒÔ¸ÅÀ¨Îª£ºÊÂ¼şµÄ±»Í¨ÖªÕß½«ÊÂ¼ş·¢ÉúÊ±Ó¦¸ÃÖ´ĞĞµÄ²Ù×÷Í¨¹ıº¯ÊıÖ¸Õë·½Ê½±£´æÔÚÁ´±í£¨Í¨ÖªÁ´£©ÖĞ£¬
+ È»ºóµ±ÊÂ¼ş·¢ÉúÊ±Í¨ÖªÕßÒÀ´ÎÖ´ĞĞÁ´±íÖĞÃ¿Ò»¸öÔªËØµÄ»Øµ÷º¯ÊıÍê³ÉÍ¨Öª
  */
-int call_netdevice_notifiers(unsigned long val, struct net_device *dev)//��register_netdevice_notifier���ʹ��
+int call_netdevice_notifiers(unsigned long val, struct net_device *dev)//ºÍregister_netdevice_notifierÅäºÏÊ¹ÓÃ
 {
 	ASSERT_RTNL();
 	return raw_notifier_call_chain(&netdev_chain, val, dev);
@@ -1839,16 +1839,16 @@ EXPORT_SYMBOL_GPL(dev_forward_skb);
  *	taps currently in use.
  */
 /*
-  * ����ͨ��socket(AF_PACKET�� SOCK_RAW��htons(ETH_P_ALL))����
-  * ��ԭʼ�׽��֣��������Խ��մ��ⲿ��������ݰ���
-  * ���Ҷ����ɱ�����������ݰ����������������Ҳͬ��
-  * ���Խ��ա�
-  * dev_queue_xmit_nit()�������������ɱ�����������ݰ�������·��
-  * ����������У�����ô˺��������������������ݰ�����
-  * ��RAW�׽��֡�
-  * @skb:����������ݰ���������������������뵽ԭʼ�׽���
-  * @dev:������ݰ��������豸�����������������Ӹ�����
-  *          �豸���뵽ԭʼ�׽���
+  * ¶ÔÓÚÍ¨¹ısocket(AF_PACKET£¬ SOCK_RAW£¬htons(ETH_P_ALL))´´½¨
+  * µÄÔ­Ê¼Ì×½Ó×Ö£¬²»µ«¿ÉÒÔ½ÓÊÕ´ÓÍâ²¿ÊäÈëµÄÊı¾İ°ü£¬
+  * ¶øÇÒ¶ÔÓÚÓÉ±¾µØÊä³öµÄÊı¾İ°ü£¬Èç¹ûÂú×ãÌõ¼ş£¬Ò²Í¬Ñù
+  * ¿ÉÒÔ½ÓÊÕ¡£
+  * dev_queue_xmit_nit()¾ÍÊÇÓÃÀ´½ÓÊÕÓÉ±¾µØÊä³öµÄÊı¾İ°ü£¬ÔÚÁ´Â·²ã
+  * µÄÊä³ö¹ı³ÌÖĞ£¬»áµ÷ÓÃ´Ëº¯Êı£¬½«Âú×ãÌõ¼şµÄÊı¾İ°üÊäÈë
+  * µ½RAWÌ×½Ó×Ö¡£
+  * @skb:´ıÊä³öµÄÊı¾İ°ü£¬Èç¹ûÂú×ãÌõ¼ş£¬ÔòÊäÈëµ½Ô­Ê¼Ì×½Ó×Ö
+  * @dev:Êä³öÊı¾İ°üµÄÍøÂçÉè±¸£¬Èç¹ûÂú×ãÌõ¼ş£¬Ôò´Ó¸ÃÍøÂç
+  *          Éè±¸ÊäÈëµ½Ô­Ê¼Ì×½Ó×Ö
   */
 static void dev_queue_xmit_nit(struct sk_buff *skb, struct net_device *dev)
 {
@@ -1856,7 +1856,7 @@ static void dev_queue_xmit_nit(struct sk_buff *skb, struct net_device *dev)
 
 #ifdef CONFIG_NET_CLS_ACT
 	/*
-	  * ��¼���ݰ������ʱ���
+	  * ¼ÇÂ¼Êı¾İ°üÊäÈëµÄÊ±¼ä´Á
 	  */
 	if (!(skb->tstamp.tv64 && (G_TC_FROM(skb->tc_verd) & AT_INGRESS)))
 		net_timestamp(skb);
@@ -1866,27 +1866,27 @@ static void dev_queue_xmit_nit(struct sk_buff *skb, struct net_device *dev)
 
 	rcu_read_lock();
 	/*
-	  * ����ptype_all�������������з�������������
-	  * ԭʼ�׽��֣���ѭ�������ݰ����뵽��������
-	  * ���׽���
+	  * ±éÀúptype_allÁ´±í£¬²éÕÒËùÓĞ·ûºÏÊäÈëÌõ¼şµÄ
+	  * Ô­Ê¼Ì×½Ó×Ö£¬²¢Ñ­»·½«Êı¾İ°üÊäÈëµ½Âú×ãÌõ¼ş
+	  * µÄÌ×½Ó×Ö
 	  */
 	list_for_each_entry_rcu(ptype, &ptype_all, list) {
 		/* Never send packets back to the socket
 		 * they originated from - MvS (miquels@drinkel.ow.org)
 		 */
 		/*
-		  * ���ݰ�������豸���׽��ֵ������豸���
-		  * �����׽��ֲ�ָ�������豸�����Ҹ����ݰ�
-		  * �����ɵ�ǰ���ڱȽϵ��׽��������(��
-		  * ԭʼ�׽�����������ݰ������ٴ�������Լ�)��
-		  * ��ʱ��ԭʼ�׽����������������ݰ���������
-		  */ /*ע�����ﲢû��Ҫ��ptype->type == type�����Խ��յ��İ�ֻҪ��ע��ETH_P_ALLЭ�飬���еİ������ߵ�deliver_skb*/
+		  * Êı¾İ°üµÄÊä³öÉè±¸ÓëÌ×½Ó×ÖµÄÊäÈëÉè±¸Ïà·û
+		  * »òÕßÌ×½Ó×Ö²»Ö¸¶¨ÊäÈëÉè±¸£¬²¢ÇÒ¸ÃÊı¾İ°ü
+		  * ²»ÊÇÓÉµ±Ç°ÓÃÓÚ±È½ÏµÄÌ×½Ó×ÖÊä³öµÄ(ÓÉ
+		  * Ô­Ê¼Ì×½Ó×ÖÊä³öµÄÊı¾İ°ü²»»áÔÙ´ÎÊäÈë¸ø×Ô¼º)£¬
+		  * ´ËÊ±¸ÃÔ­Ê¼Ì×½Ó×ÖÂú×ãÌõ¼ş£¬Êı¾İ°ü¿ÉÒÔÊäÈë
+		  */ /*×¢ÒâÕâÀï²¢Ã»ÓĞÒªÇóptype->type == type£¬ËùÒÔ½ÓÊÕµ½µÄ°üÖ»ÒªÓĞ×¢²áETH_P_ALLĞ­Òé£¬ËùÓĞµÄ°ü¶¼»á×ßµ½deliver_skb*/
 		if ((ptype->dev == dev || !ptype->dev) &&
 		    (ptype->af_packet_priv == NULL ||
 		     (struct sock *)ptype->af_packet_priv != skb->sk)) {
 			/*
-			  * ���ڸ����ݰ�ʱ�������뵽���ԭʼ�׽��ֵģ�
-			  * �����Ҫ��¡һ�����ݰ���
+			  * ÓÉÓÚ¸ÃÊı¾İ°üÊ±¶îÍâÊäÈëµ½Õâ¸öÔ­Ê¼Ì×½Ó×ÖµÄ£¬
+			  * Òò´ËĞèÒª¿ËÂ¡Ò»¸öÊı¾İ°ü¡£
 			  */
 			struct sk_buff *skb2 = skb_clone(skb, GFP_ATOMIC);
 			if (!skb2)
@@ -1897,7 +1897,7 @@ static void dev_queue_xmit_nit(struct sk_buff *skb, struct net_device *dev)
 			   just protection against buggy protocols.
 			 */
 			/*
-			  * У�����ݰ��Ƿ���Ч
+			  * Ğ£ÑéÊı¾İ°üÊÇ·ñÓĞĞ§
 			  */
 			skb_reset_mac_header(skb2);
 
@@ -1911,7 +1911,7 @@ static void dev_queue_xmit_nit(struct sk_buff *skb, struct net_device *dev)
 			}
 
 			/*
-			  * �����ݰ����뵽ԭʼ�׽���
+			  * ½«Êı¾İ°üÊäÈëµ½Ô­Ê¼Ì×½Ó×Ö
 			  */
 			skb2->transport_header = skb2->network_header;
 			skb2->pkt_type = PACKET_OUTGOING;
@@ -1940,41 +1940,41 @@ void netif_set_real_num_tx_queues(struct net_device *dev, unsigned int txq)
 }
 EXPORT_SYMBOL(netif_set_real_num_tx_queues);
 
-//��Qdisc�е����ݷ���cpu sd��output_queue_tailp������У������м��뷢�����ж�NET_TX_SOFTIRQ�Ĵ������У������жϱ�ִ��ʱ�������ֻ�����������ݰ���__netif_reschedule
+//°ÑQdiscÖĞµÄÊı¾İ·ÅÈëcpu sdµÄoutput_queue_tailpÊä³ö¶ÓÁĞ£¬½«¶ÓÁĞ¼ÓÈë·¢ËÍÈíÖĞ¶ÏNET_TX_SOFTIRQµÄ´¦Àí¶ÓÁĞ£¬µ±ÈíÖĞ¶Ï±»Ö´ĞĞÊ±£¬¶ÓÁĞÓÖ»á¼ÌĞø·¢ËÍÊı¾İ°ü¡£__netif_reschedule
 /*
-�������жϱ�������жϵ����ȼ�������Ӳ�жϣ������ͱ�֤�˶��лᱻ��ʱ�����У�����֤�����ݰ��ᱻ��ʱ�ķ��͡�
-*///����������еģ����յ���net_tx_action
-//dev_queue_xmit -> __dev_xmit_skb -> __qdisc_run���յ��õ��ú����������ض���Qdisc���ӵ�CPU���жϵ�output_queue
+ÓÉÓÚÈíÖĞ¶Ï±»¼¤»î£¬ÈíÖĞ¶ÏµÄÓÅÏÈ¼¶½ö´ÎÓÚÓ²ÖĞ¶Ï£¬ÕâÑù¾Í±£Ö¤ÁË¶ÓÁĞ»á±»¼°Ê±µÄÔËĞĞ£¬¼´±£Ö¤ÁËÊı¾İ°ü»á±»¼°Ê±µÄ·¢ËÍ¡£
+*///¼¤»î·¢ËÍÈí¼şÖĞµÄ£¬×îÖÕµ÷ÓÃnet_tx_action
+//dev_queue_xmit -> __dev_xmit_skb -> __qdisc_run×îÖÕµ÷ÓÃµ½¸Ãº¯Êı£¬°ÑÁ÷¿Ø¶ÔÏóQdiscÌí¼Óµ½CPUÈíÖĞ¶ÏµÄoutput_queue
 static inline void __netif_reschedule(struct Qdisc *q)
 {
 	struct softnet_data *sd;
 	unsigned long flags;
 
     /*
-      * �������豸���ӵ�softnet_data�е�output_queu
-      * �����ϣ�Ȼ�󼤻�����������ж϶Ը�
-      * ���н��д�����
+      * ½«ÍøÂçÉè±¸Á´½Óµ½softnet_dataÖĞµÄoutput_queu
+      * ¶ÓÁĞÉÏ£¬È»ºó¼¤»îÍøÂçÊä³öÈíÖĞ¶Ï¶Ô¸Ã
+      * ¶ÓÁĞ½øĞĞ´¦Àí¡£
       */
 	local_irq_save(flags);
 	sd = &__get_cpu_var(softnet_data);
 	q->next_sched = NULL;
-	////��net_dev_init�У�sd->output_queue_tailp = &sd->output_queue;�����൱�ڰ�q���ӵ���output_queue������
+	////ÔÚnet_dev_initÖĞ£¬sd->output_queue_tailp = &sd->output_queue;ËùÒÔÏàµ±ÓÚ°ÑqÌí¼Óµ½ÁËoutput_queue¶ÓÁĞÖĞ
 	*sd->output_queue_tailp = q;
 	sd->output_queue_tailp = &q->next_sched;
-	raise_softirq_irqoff(NET_TX_SOFTIRQ); //����������еģ����յ���net_tx_action
+	raise_softirq_irqoff(NET_TX_SOFTIRQ); //¼¤»î·¢ËÍÈí¼şÖĞµÄ£¬×îÖÕµ÷ÓÃnet_tx_action
 	local_irq_restore(flags);
 }
 
 /*
-  * �������ݰ�������ж��ж���ӿڣ���
-  * __netif_schedule()����õġ�
-  *///����������еģ����յ���net_tx_action
+  * ¼¤»îÊı¾İ°üÊä³öÈíÖĞ¶ÏÓĞ¶à¸ö½Ó¿Ú£¬¶ø
+  * __netif_schedule()ÊÇ×î³£ÓÃµÄ¡£
+  *///¼¤»î·¢ËÍÈí¼şÖĞµÄ£¬×îÖÕµ÷ÓÃnet_tx_action
 void __netif_schedule(struct Qdisc *q)
 {
 	/*
-	  * �����������豸û�д�������
-	  * ���Ƶĵ����У������__netif_reschedule()
-	  * ����������ж�
+	  * Èç¹ûÊä³öÍøÂçÉè±¸Ã»ÓĞ´¦ÓÚÁ÷Á¿
+	  * ¿ØÖÆµÄµ÷¶ÈÖĞ£¬Ôòµ÷ÓÃ__netif_reschedule()
+	  * ¼¤»îÊä³öÈíÖĞ¶Ï
 	  */
 	if (!test_and_set_bit(__QDISC_STATE_SCHED, &q->state))
 		__netif_reschedule(q);
@@ -2150,10 +2150,10 @@ EXPORT_SYMBOL(skb_checksum_help);
  *	only possible when GSO is used for verifying header integrity.
  */
 /*
- * skb_gso_segment()�������Ƿֶ�GSO�Σ�����ͨ��skb->next������һ��
- * �ĶΣ��������NULL�����ʾGSO��û�н��зֶΣ�����˵�����£�
- * @skb�����ָ��GSO���ݰ�
- * @features����������豸֧�ֵ�GSO����
+ * skb_gso_segment()µÄ×÷ÓÃÊÇ·Ö¶ÎGSO¶Î£¬·µ»ØÍ¨¹ıskb->nextÁ´½ÓÔÚÒ»Æğ
+ * µÄ¶Î£¬Èç¹û·µ»ØNULL£¬Ôò±íÊ¾GSO¶ÎÃ»ÓĞ½øĞĞ·Ö¶Î£¬²ÎÊıËµÃ÷ÈçÏÂ£º
+ * @skb£¬´ı·Ö¸îµÄGSOÊı¾İ°ü
+ * @features£¬Êä³öÍøÂçÉè±¸Ö§³ÖµÄGSOÌØĞÔ
  */
 struct sk_buff *skb_gso_segment(struct sk_buff *skb, int features)
 {
@@ -2163,15 +2163,15 @@ struct sk_buff *skb_gso_segment(struct sk_buff *skb, int features)
 	int err;
 
     /*
-     * ��GSO���ֶ�֮ǰ����ȥ����̫��֡�ײ�
+     * ÔÚGSOÈí·Ö¶ÎÖ®Ç°£¬ÏÈÈ¥µôÒÔÌ«ÍøÖ¡Ê×²¿
      */
 	skb_reset_mac_header(skb);
 	skb->mac_len = skb->network_header - skb->mac_header;
 	__skb_pull(skb, skb->mac_len);
 
     /*
-     * ������ָ��SKB���ǿ�¡�ģ��������·���SKB��
-     * ����������
+     * Èç¹û´ı·Ö¸îµÄSKB°üÊÇ¿ËÂ¡µÄ£¬ÔòĞèÖØĞÂ·ÖÅäSKBµÄ
+     * ÏßĞÔÊı¾İÇø
      */
 	if (unlikely(skb->ip_summed != CHECKSUM_PARTIAL)) {
 		struct net_device *dev = skb->dev;
@@ -2192,13 +2192,13 @@ struct sk_buff *skb_gso_segment(struct sk_buff *skb, int features)
 	}
 
     /*
-     * ����������ĵ�Э�����Ͳ�����֮��Ӧ��GSO�ӿڡ����֧��
-     * GSO�ӿڣ���ȥ��IP�ײ���Ȼ���ٵ���gso_segment�ӿڶ�
-     * ��ν��зָ������Ӧ������
+     * ¸ù¾İÊä³ö±¨ÎÄµÄĞ­ÒéÀàĞÍ²éÕÒÓëÖ®¶ÔÓ¦µÄGSO½Ó¿Ú¡£Èç¹ûÖ§³Ö
+     * GSO½Ó¿Ú£¬ÔòÈ¥µôIPÊ×²¿£¬È»ºóÔÙµ÷ÓÃgso_segment½Ó¿Ú¶Ô
+     * ´ó¶Î½øĞĞ·Ö¸î£¬·µ»ØÏàÓ¦´íÎóÂë
      */
 	rcu_read_lock();
 	list_for_each_entry_rcu(ptype,
-			&ptype_base[ntohs(type) & PTYPE_HASH_MASK], list) { //�����IPV4��������Ϊ�ο�ip_packet_type
+			&ptype_base[ntohs(type) & PTYPE_HASH_MASK], list) { //Èç¹ûÊÇIPV4°ü£¬ÕâÀïÎª²Î¿¼ip_packet_type
 		if (ptype->type == type && !ptype->dev && ptype->gso_segment) {
 			if (unlikely(skb->ip_summed != CHECKSUM_PARTIAL)) {
 				err = ptype->gso_send_check(skb);
@@ -2215,12 +2215,12 @@ struct sk_buff *skb_gso_segment(struct sk_buff *skb, int features)
 	rcu_read_unlock();
 
     /*
-     * �����Ƿ����GSO�ֶΣ����ն�������������̫��֡�ײ�
+     * ÎŞÂÛÊÇ·ñÍê³ÉGSO·Ö¶Î£¬×îÖÕ¶¼ĞèÖØĞÂÌí¼ÓÒÔÌ«ÍøÖ¡Ê×²¿
      */
 	__skb_push(skb, skb->data - skb_mac_header(skb));
 
     /*
-     * ������Ӧ������
+     * ·µ»ØÏàÓ¦´íÎóÂë
      */
 	return segs;
 }
@@ -2270,11 +2270,11 @@ static int illegal_highdma(struct net_device *dev, struct sk_buff *skb)
 }
 
 /*
- * GSO�ξ��ֶκ����õ��Ķ�ͨ��skb->next������һ�𡣵��ͷ�
- * GSO�ε�ʱ����Ҫ����Щ������һ��Ķ�ͬʱ�ͷţ�Ϊ����Ҫ
- * һ���ض��ķֶ�GSO����������---dev_gso_skb_destructor()
- * ��ԭ�ȵ����������轫�䱣����SKB����ΪGSO���ƿ��
- * dev_gso_cb�ṹ�С�
+ * GSO¶Î¾­·Ö¶ÎºóËùµÃµ½µÄ¶ÎÍ¨¹ıskb->nextÁ´½ÓÔÚÒ»Æğ¡£µ±ÊÍ·Å
+ * GSO¶ÎµÄÊ±ºò£¬ĞèÒª½«ÕâĞ©Á´½ÓÔÚÒ»ÆğµÄ¶ÎÍ¬Ê±ÊÍ·Å£¬Îª´ËĞèÒª
+ * Ò»¸öÌØ¶¨µÄ·Ö¶ÎGSO¶ÎÎö¹¹º¯Êı---dev_gso_skb_destructor()
+ * ¶øÔ­ÏÈµÄÎö¹¹º¯ÊıĞè½«Æä±£´æÔÚSKBÖĞ×÷ÎªGSO¿ØÖÆ¿éµÄ
+ * dev_gso_cb½á¹¹ÖĞ¡£
  */
 struct dev_gso_cb {
 	void (*destructor)(struct sk_buff *skb);
@@ -2282,13 +2282,13 @@ struct dev_gso_cb {
 
 #define DEV_GSO_CB(skb) ((struct dev_gso_cb *)(skb)->cb)
 
-//gso�ֶμ�dev_queue_xmit->dev_gso_segment
+//gso·Ö¶Î¼ûdev_queue_xmit->dev_gso_segment
 static void dev_gso_skb_destructor(struct sk_buff *skb)
 {
 	struct dev_gso_cb *cb;
 
     /*
-     * ɾ�����ͷų���һ��֮���SKB
+     * É¾³ı²¢ÊÍ·Å³ıµÚÒ»¸öÖ®ÍâµÄSKB
      */
 	do {
 		struct sk_buff *nskb = skb->next;
@@ -2299,7 +2299,7 @@ static void dev_gso_skb_destructor(struct sk_buff *skb)
 	} while (skb->next);
 
     /*
-     * ������ԭ�ȵ����������ͷŵ�һ��SKB
+     * ×îºóµ÷ÓÃÔ­ÏÈµÄÎö¹¹º¯ÊıÊÍ·ÅµÚÒ»¸öSKB
      */
 	cb = DEV_GSO_CB(skb);
 	if (cb->destructor)
@@ -2315,21 +2315,21 @@ static void dev_gso_skb_destructor(struct sk_buff *skb)
  *	in skb->next.
  */
 /*
- * dev_gso_segment()ͨ������skb_gso_segment()���ָ�GSO��
- *///���������ʱ����__skb_linearize��ֱ������
+ * dev_gso_segment()Í¨¹ıµ÷ÓÃskb_gso_segment()À´·Ö¸îGSO¶Î
+ *///ÕâÀïµÄÊı¾İÊ±¾­¹ı__skb_linearizeÀ­Ö±µÄÊı¾İ
 static int dev_gso_segment(struct sk_buff *skb)
 {
 	struct net_device *dev = skb->dev;
 	struct sk_buff *segs;
     /*
-     * ��ȡ��������豸�ľۺϷ�ɢI/O����
+     * »ñÈ¡Êä³öÍøÂçÉè±¸µÄ¾ÛºÏ·ÖÉ¢I/OÌØĞÔ
      */
 	int features = dev->features & ~(illegal_highdma(dev, skb) ?
 					 NETIF_F_SG : 0);
 
     /*
-     * ������������豸�ľۺϷ�ɢI/O���ԣ��Զν�����GSO�ֶΣ�
-     * �ָ��õ��Ķ�ͨ��skb->next������һ��
+     * ¸ù¾İÊä³öÍøÂçÉè±¸µÄ¾ÛºÏ·ÖÉ¢I/OÌØĞÔ£¬¶Ô¶Î½øĞĞÈíGSO·Ö¶Î£¬
+     * ·Ö¸îºóµÃµ½µÄ¶ÎÍ¨¹ıskb->nextÁ´½ÓÔÚÒ»Æğ¡£
      */
 	segs = skb_gso_segment(skb, features);
 
@@ -2341,8 +2341,8 @@ static int dev_gso_segment(struct sk_buff *skb)
 		return PTR_ERR(segs);
 
     /*
-     * �ֶγɹ����豣��SKBԭ��������������Ȼ����������
-     * Ϊ�ض��ķֶ�GSO����������dev_gso_skb_destrutor().
+     * ·Ö¶Î³É¹¦ºó£¬Ğè±£´æSKBÔ­À´µÄÎö¹¹º¯Êı£¬È»ºóÖØĞÂÉèÖÃ
+     * ÎªÌØ¶¨µÄ·Ö¶ÎGSO¶ÎÎö¹¹º¯Êıdev_gso_skb_destrutor().
      */
 	skb->next = segs;
 	DEV_GSO_CB(skb)->destructor = skb->destructor;
@@ -2371,9 +2371,9 @@ static inline void skb_orphan_try(struct sk_buff *skb)
 }
 
 /*
-  * dev_hard_start_xmit()������������ݰ��ύ�������豸��
-  * ����ӿڣ�������ݰ��������
-  */ //�ߵ������SKB,ͨ��ip_local_out�ߵ�����,�ߵ������SKB��ip_local_out���Ѿ���IP�㼰�����ϸ����Ѿ���װ��ϡ��ú�����ʼ�߶����װ
+  * dev_hard_start_xmit()½«´ıÊä³öµÄÊı¾İ°üÌá½»¸øÍøÂçÉè±¸µÄ
+  * Êä³ö½Ó¿Ú£¬Íê³ÉÊı¾İ°üµÄÊä³ö¡£
+  */ //×ßµ½ÕâÀïµÄSKB,Í¨¹ıip_local_out×ßµ½ÕâÀï,×ßµ½ÕâÀïµÄSKBÔÚip_local_outÖĞÒÑ¾­°ÑIP²ã¼°ÆäÒÔÉÏ¸÷²ãÒÑ¾­·â×°Íê±Ï¡£¸Ãº¯Êıºó¿ªÊ¼×ß¶ş²ã·â×°
 int dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev,
 			struct netdev_queue *txq)
 {
@@ -2381,28 +2381,28 @@ int dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev,
 	int rc;
 
 	/*
-	  * �������ǵ������ݰ���ͨ������¶���
-	  * ����������ݰ���
+	  * Èç¹ûÊä³öÊÇµ¥¸öÊı¾İ°ü£¬Í¨³£Çé¿öÏÂ¶¼ÊÇ
+	  * Êä³öµ¥¶ÀÊı¾İ°ü¡£
 	  */
 	if (likely(!skb->next)) {
 		/*
-		  * ���Ӧ�ò�ͨ��socket(AF_PACKET��SOCK_RAW��htons(ETH_P_ALL))
-		  * ������ԭʼ�׽��֣����跢��һ�����ݰ�������
-		  * ���׽��֡�
+		  * Èç¹ûÓ¦ÓÃ²ãÍ¨¹ısocket(AF_PACKET£¬SOCK_RAW£¬htons(ETH_P_ALL))
+		  * ´´½¨µÄÔ­Ê¼Ì×½Ó×Ö£¬ÔòĞè·¢ËÍÒ»·İÊı¾İ°ü¸øÕâÑù
+		  * µÄÌ×½Ó×Ö¡£
 		  */
 		if (!list_empty(&ptype_all))
 			dev_queue_xmit_nit(skb, dev);
 
 		/*
-		  * �����������ݰ���GSO���ݰ����������豸
-		  * ��֧����Ӧ�����ԣ������dev_gso_segment()��
-		  * GSO���ݰ��������ָ������ָ������
-		  * һ�����ݰ�����ֱ�ӵ��������豸��hard_start_xmit
-		  * �ӿ�������ݰ���Ȼ����ͨ��һ��GSO���ݰ���
-		  * ���ָ�����ɶ���������������ݰ������
-		  * �������Ļ�������ת��gso��ǩ�����������
-		  * ���ݰ���
-		  */ //��dev_gso_segment
+		  * Èç¹û´ıÊä³öÊı¾İ°üÊÇGSOÊı¾İ°ü£¬µ«ÍøÂçÉè±¸
+		  * ²»Ö§³ÖÏàÓ¦µÄÌØĞÔ£¬Ôòµ÷ÓÃdev_gso_segment()¶Ô
+		  * GSOÊı¾İ°ü½øĞĞÈí·Ö¸î¡£Èç¹û¾­·Ö¸îºóÈÔÊÇ
+		  * Ò»¸öÊı¾İ°ü£¬ÔòÖ±½Óµ÷ÓÃÍøÂçÉè±¸µÄhard_start_xmit
+		  * ½Ó¿ÚÊä³öÊı¾İ°ü¡£È»¶ø£¬Í¨³£Ò»¸öGSOÊı¾İ°ü¾­
+		  * Èí·Ö¸î£¬»áÉú³É¶à¸öÁ´½ÓÆğÀ´µÄÊı¾İ°ü£¬Èç¹û
+		  * ÊÇÕâÑùµÄ»°¾ÍĞèÌø×ªµ½gso±êÇ©´¦£¬Öğ¸ö´¦Àí
+		  * Êı¾İ°ü¡£
+		  */ //¼ûdev_gso_segment
 		if (netif_needs_gso(dev, skb)) {
 			if (unlikely(dev_gso_segment(skb)))
 				goto out_kfree_skb;
@@ -2418,9 +2418,9 @@ int dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev,
 			skb_dst_drop(skb);
 
 		/*
-		 * e1000�����豸������Ϊe1000_xmit_frame()
+		 * e1000ÍøÂçÉè±¸Çı¶¯ÖĞÎªe1000_xmit_frame()
 		 */
-		rc = ops->ndo_start_xmit(skb, dev); //�ڸú����з�װMAC��
+		rc = ops->ndo_start_xmit(skb, dev); //ÔÚ¸Ãº¯ÊıÖĞ·â×°MAC²ã
 		if (rc == NETDEV_TX_OK)
 			txq_trans_update(txq);
 		/*
@@ -2442,12 +2442,12 @@ int dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev,
 
 gso:
 	/*
-	  * ��һ��GSO���ݰ��������ָ����
-	  * ����������������ݰ��������
-	  * �������ݰ������������豸��ndo_start_xmit
-	  * �ӿ�(e100�����豸������Ϊe100_xmit_frame())
-	  * ������ݰ���������������򷵻�
-	  * ��Ӧ�����롣
+	  * µ±Ò»¸öGSOÊı¾İ°ü¾­¹ıÈí·Ö¸î£¬Éú³É
+	  * ¶à¸öÁ´½ÓÆğÀ´µÄÊı¾İ°üºó£¬ĞèÖğ¸ö
+	  * ´¦ÀíÊı¾İ°ü¡£µ÷ÓÃÍøÂçÉè±¸µÄndo_start_xmit
+	  * ½Ó¿Ú(e100ÍøÂçÉè±¸Çı¶¯ÖĞÎªe100_xmit_frame())
+	  * Êä³öÊı¾İ°ü£¬Èç¹û·¢Éú´íÎó£¬Ôò·µ»Ø
+	  * ÏàÓ¦´íÎóÂë¡£
 	  */
 	do {
 		struct sk_buff *nskb = skb->next;
@@ -2466,14 +2466,14 @@ gso:
 	} while (skb->next);
 
 	/*
-	  * �ɹ����������е����ݰ�����ָ�
-	  * SKBԭ�ȵ�����������
+	  * ³É¹¦·¢ËÍÁËËùÓĞµÄÊı¾İ°ü£¬Ğè»Ö¸´
+	  * SKBÔ­ÏÈµÄÎö¹¹º¯Êı¡£
 	  */
 	skb->destructor = DEV_GSO_CB(skb)->destructor;
 
 /*
-  * �������dev_gso_segment()��GSO���ݰ�����
-  * ���ָ�ʧ�ܣ�����ת���˶������ݰ���
+  * Èç¹ûµ÷ÓÃdev_gso_segment()¶ÔGSOÊı¾İ°ü½øĞĞ
+  * Èí·Ö¸îÊ§°Ü£¬»áÌø×ªµ½´Ë¶ªÆúÊı¾İ°ü¡£
   */
 out_kfree_skb:
 	kfree_skb(skb);
@@ -2517,9 +2517,9 @@ static inline u16 dev_cap_txqueue(struct net_device *dev, u16 queue_index)
 }
 
 /*
-//ѡ��һ�����Ͷ��У�����豸�ṩ��select_queue�ص�������ʹ�������������ں�ѡ��һ������     
-//�󲿷��������������ö�����У������ڵ���alloc_etherdev����net_deviceʱ�����и�������Ϊ1     
-//Ҳ����ֻ��һ������ 
+//Ñ¡ÔñÒ»¸ö·¢ËÍ¶ÓÁĞ£¬Èç¹ûÉè±¸Ìá¹©ÁËselect_queue»Øµ÷º¯Êı¾ÍÊ¹ÓÃËü£¬·ñÔòÓÉÄÚºËÑ¡ÔñÒ»¸ö¶ÓÁĞ     
+//´ó²¿·ÖÇı¶¯¶¼²»»áÉèÖÃ¶à¸ö¶ÓÁĞ£¬¶øÊÇÔÚµ÷ÓÃalloc_etherdev·ÖÅänet_deviceÊ±½«¶ÓÁĞ¸öÊıÉèÖÃÎª1     
+//Ò²¾ÍÊÇÖ»ÓĞÒ»¸ö¶ÓÁĞ 
 */
 static struct netdev_queue *dev_pick_tx(struct net_device *dev,
 					struct sk_buff *skb)
@@ -2561,11 +2561,11 @@ static inline int __dev_xmit_skb(struct sk_buff *skb, struct Qdisc *q,
 
 	spin_lock(root_lock);
 	if (unlikely(test_bit(__QDISC_STATE_DEACTIVATED, &q->state))) {
-		kfree_skb(skb);//������������δ���еģ���ô�ͷ�������ݰ�
+		kfree_skb(skb);//Èç¹ûÕâ¸ö¶ÓÁĞÊÇÎ´ÔËĞĞµÄ£¬ÄÇÃ´ÊÍ·ÅÕâ¸öÊı¾İ°ü
 		rc = NET_XMIT_DROP;
 	} else if ((q->flags & TCQ_F_CAN_BYPASS) && !qdisc_qlen(q) &&
 		   !test_and_set_bit(__QDISC_STATE_RUNNING, &q->state)) {
-		/* //���һ��������λ���еģ�˵�������������û�����ݰ�����ʱ����ֱ�ӷ��������
+		/* //Èç¹ûÒ»¸ö¶ÓÁĞÊÇÎ»ÔËĞĞµÄ£¬ËµÃ÷Õâ¸ö¶ÓÁĞÀïÃæÃ»ÓĞÊı¾İ°ü£¬´ËÊ±¿ÉÒÔÖ±½Ó·¢ËÍÕâ¸ö°ü
 		 * This is a work-conserving queue; there are no old skbs
 		 * waiting to be sent out; and the qdisc is not running -
 		 * xmit the skb directly.
@@ -2574,14 +2574,14 @@ static inline int __dev_xmit_skb(struct sk_buff *skb, struct Qdisc *q,
 			skb_dst_force(skb);
 		__qdisc_update_bstats(q, skb->len);
 		if (sch_direct_xmit(skb, q, dev, txq, root_lock))
-			__qdisc_run(q);//��ͼֱ�ӷ������ݰ������û�з��ͳɹ������߶����л��д������ݰ�������ֵ�����0����ô����ʱ��Ҫ����������С�
+			__qdisc_run(q);//ÊÔÍ¼Ö±½Ó·¢ËÍÊı¾İ°ü£¬Èç¹ûÃ»ÓĞ·¢ËÍ³É¹¦£¬»òÕß¶ÓÁĞÖĞ»¹ÓĞ´ı·¢Êı¾İ°ü£¬·µ»ØÖµ»á´óÓÚ0£¬ÄÇÃ´£¬´ËÊ±ĞèÒª¼¤»îÕâ¸ö¶ÓÁĞ¡£
 		else
 			clear_bit(__QDISC_STATE_RUNNING, &q->state);
 
 		rc = NET_XMIT_SUCCESS;
-	} else {//����Ѿ���CPU������������У���ô�ֽڷ��أ���Ϊһ������ֻ����һ��CPU���С���ֱ�Ӱ�SKB���
+	} else {//Èç¹ûÒÑ¾­ÓĞCPUÔÚÔËĞĞÕâ¸ö¶ÓÁĞ£¬ÄÇÃ´×Ö½Ú·µ»Ø£¬ÒòÎªÒ»¸ö¶ÓÁĞÖ»ÄÜÓÉÒ»¸öCPUÔËĞĞ¡£ÔòÖ±½Ó°ÑSKBÈë¶Ó
 		skb_dst_force(skb);
-		rc = qdisc_enqueue_root(skb, q);//��ֱ�Ӱ�SKB���,�ο�pfifo_qdisc_ops
+		rc = qdisc_enqueue_root(skb, q);//ÔòÖ±½Ó°ÑSKBÈë¶Ó,²Î¿¼pfifo_qdisc_ops
 		qdisc_run(q);
 	}
 	spin_unlock(root_lock);
@@ -2631,7 +2631,7 @@ static DEFINE_PER_CPU(int, xmit_recursion);
  *      When calling this method, interrupts MUST be enabled.  This is because
  *      the BH enable code must have IRQs enabled so that it will not deadlock.
  *          --BLG
- Э��ջ���豸�������ݰ�ʱ������øú������ú�����SKB�����Ŷӣ������ɵײ��豸����������д���
+ Ğ­ÒéÕ»ÏòÉè±¸·¢ËÍÊı¾İ°üÊ±¶¼Ğèµ÷ÓÃ¸Ãº¯Êı£¬¸Ãº¯Êı¶ÔSKB½øĞĞÅÅ¶Ó£¬×îÖÕÓÉµ×²ãÉè±¸Çı¶¯³ÌĞò½øĞĞ´«Êä
  */
     
     /**
@@ -2660,24 +2660,24 @@ static DEFINE_PER_CPU(int, xmit_recursion);
      *          --BLG
      */
  /*
-  * ����ӿڿں��Ĳ�������Э����ṩ��ͳһ
-  * �ķ��ͽӿڣ�����IP������ARPЭ�飬�Լ�����
-  * ���ֵײ�Э�飬ͨ�����������Ҫ���͵�����
-  * ���ݸ�����ӿں��Ĳ�
+  * ÍøÂç½Ó¿Ú¿ÚºËĞÄ²ãÏòÍøÂçĞ­Òé²ãÌá¹©µÄÍ³Ò»
+  * µÄ·¢ËÍ½Ó¿Ú£¬ÎŞÂÛIP£¬»¹ÊÇARPĞ­Òé£¬ÒÔ¼°ÆäËü
+  * ¸÷ÖÖµ×²ãĞ­Òé£¬Í¨¹ıÕâ¸öº¯Êı°ÑÒª·¢ËÍµÄÊı¾İ
+  * ´«µİ¸øÍøÂç½Ó¿ÚºËĞÄ²ã
   * 
   * update:
-  *   ��֧���������ƣ��򽫴���������ݰ����ݹ���
-  * ���뵽�������������Ŷӣ����ں��ʵ�ʱ������
-  * �����豸������жϣ����ν����ĴӶ�����ȡ��ͨ��
-  * �����豸���������֧���������ƣ���ֱ�ӽ����ݰ�
-  * �������豸�����
-  *   ����ύʧ�ܣ��򷵻���Ӧ�Ĵ����룬Ȼ������
-  * �ɹ�Ҳ������ȷ�����ݰ����ɹ����ͣ���Ϊ�п���
-  * ����ӵ���������������ƻ��ƽ����ݰ�������
-  *   ����dev_queue_xmit()����������ݰ���ǰ���Ǳ�������
-  * �жϣ�ֻ�������ж�֮����ܼ����°벿��
-  */ //�������skb��������������:֧��GSO(FRAGLIST���͵ľۺϷ�ɢI/O���ݰ�, ����SG���͵ľۺϷ�ɢI/O���ݰ�), �����Ƿ�GSO��SKB���������skb����ip_finish_output�з�Ƭ���skb
-int dev_queue_xmit(struct sk_buff *skb) //ͨ��ip_local_out�ߵ�����,�ߵ������SKB��IP�㼰�����ϸ����Ѿ���װ��ϡ�
+  *   ÈôÖ§³ÖÁ÷Á¿¿ØÖÆ£¬Ôò½«´ıÊä³öµÄÊı¾İ°ü¸ù¾İ¹æÔò
+  * ¼ÓÈëµ½Êä³öÍøÂç¶ÓÁĞÖĞÅÅ¶Ó£¬²¢ÔÚºÏÊÊµÄÊ±»ú¼¤»î
+  * ÍøÂçÉè±¸Êä³öÈíÖĞ¶Ï£¬ÒÀ´Î½«±¨ÎÄ´Ó¶ÓÁĞÖĞÈ¡³öÍ¨¹ı
+  * ÍøÂçÉè±¸Êä³ö¡£Èô²»Ö§³ÖÁ÷Á¿¿ØÖÆ£¬ÔòÖ±½Ó½«Êı¾İ°ü
+  * ´ÓÍøÂçÉè±¸Êä³ö¡£
+  *   Èç¹ûÌá½»Ê§°Ü£¬Ôò·µ»ØÏàÓ¦µÄ´íÎóÂë£¬È»¶ø·µ»Ø
+  * ³É¹¦Ò²²¢²»ÄÜÈ·±£Êı¾İ°ü±»³É¹¦·¢ËÍ£¬ÒòÎªÓĞ¿ÉÄÜ
+  * ÓÉÓÚÓµÈû¶øµ¼ÖÂÁ÷Á¿¿ØÖÆ»úÖÆ½«Êı¾İ°ü¶ªÆú¡£
+  *   µ÷ÓÃdev_queue_xmit()º¯ÊıÊä³öÊı¾İ°ü£¬Ç°ÌáÊÇ±ØĞëÆôÓÃ
+  * ÖĞ¶Ï£¬Ö»ÓĞÆôÓÃÖĞ¶ÏÖ®ºó²ÅÄÜ¼¤»îÏÂ°ë²¿¡£
+  */ //µ½ÕâÀïµÄskb¿ÉÄÜÓĞÒÔÏÂÈıÖÖ:Ö§³ÖGSO(FRAGLISTÀàĞÍµÄ¾ÛºÏ·ÖÉ¢I/OÊı¾İ°ü, ¶ÔÓÚSGÀàĞÍµÄ¾ÛºÏ·ÖÉ¢I/OÊı¾İ°ü), »òÕßÊÇ·ÇGSOµÄSKB£¬µ«ÕâÀïµÄskbÊÇÔÚip_finish_outputÖĞ·ÖÆ¬ºóµÄskb
+int dev_queue_xmit(struct sk_buff *skb) //Í¨¹ıip_local_out×ßµ½ÕâÀï,×ßµ½ÕâÀïµÄSKBÆğIP²ã¼°ÆäÒÔÉÏ¸÷²ãÒÑ¾­·â×°Íê±Ï¡£
 {
     struct net_device *dev = skb->dev;
     struct netdev_queue *txq;
@@ -2686,20 +2686,20 @@ int dev_queue_xmit(struct sk_buff *skb) //ͨ��ip_local_out�ߵ�����,�ߵ������SKB
 
     /* GSO will handle the following emulations directly. */
     /*
-      * �����GSO���ݰ����������豸֧��
-      * GSO���ݰ��Ĵ���������ת��
-      * gso��ǩ����GSO���ݰ�ֱ�Ӵ�����
+      * Èç¹ûÊÇGSOÊı¾İ°ü£¬ÇÒÍøÂçÉè±¸Ö§³Ö
+      * GSOÊı¾İ°üµÄ´¦Àí£¬ÔòÌø×ªµ½
+      * gso±êÇ©´¦¶ÔGSOÊı¾İ°üÖ±½Ó´¦Àí¡£
       */
     if (netif_needs_gso(dev, skb))
         goto gso;
 
     /*
-      * ����FRAGLIST���͵ľۺϷ�ɢI/O���ݰ���
-      * �����������豸��֧��FRAGLIST���͵�
-      * �ۺϷ�ɢI/O(Ŀǰֻ�лػ��豸֧��)��
-      * ���轫�����Ի��������Ի�ʧ�ܣ���
-      * �������ݰ�������ʧ�ܡ�
-      //������͵����ݰ��Ƿ�Ƭ ��������֧��skb����Ƭ�б�,����Ҫ���ú���__skb_linearize����Щ��Ƭ���鵽һ��������skb��
+      * ¶ÔÓÚFRAGLISTÀàĞÍµÄ¾ÛºÏ·ÖÉ¢I/OÊı¾İ°ü£¬
+      * Èç¹ûÊä³öÍøÂçÉè±¸²»Ö§³ÖFRAGLISTÀàĞÍµÄ
+      * ¾ÛºÏ·ÖÉ¢I/O(Ä¿Ç°Ö»ÓĞ»Ø»·Éè±¸Ö§³Ö)£¬
+      * ÔòĞè½«ÆäÏßĞÔ»¯¡£ÈôÏßĞÔ»¯Ê§°Ü£¬Ôò
+      * ¶ªÆúÊı¾İ°ü£¬·¢ËÍÊ§°Ü¡£
+      //Èç¹û·¢ËÍµÄÊı¾İ°üÊÇ·ÖÆ¬ µ«Íø¿¨²»Ö§³ÖskbµÄËéÆ¬ÁĞ±í,ÔòĞèÒªµ÷ÓÃº¯Êı__skb_linearize°ÑÕâĞ©ËéÆ¬ÖØ×éµ½Ò»¸öÍêÕûµÄskbÖĞ
       */
     if (skb_has_frags(skb) &&
         !(dev->features & NETIF_F_FRAGLIST) &&
@@ -2711,14 +2711,14 @@ int dev_queue_xmit(struct sk_buff *skb) //ͨ��ip_local_out�ߵ�����,�ߵ������SKB
      * does not support DMA from it.
      */
     /*
-      * ����SG���͵ľۺϷ�ɢI/O���ݰ������
-      * ��������豸��֧��SG���͵ľۺϷ�ɢI/O��
-      * ���轫�����Ի�����������豸��֧��
-      * �ڸ߶��ڴ�ʹ��DMA�����߶��ڴ����з�Ƭ��
-      * ��ʱҲ��Ҫ�����ݰ����Ի��������Ի�ʧ�ܣ�
-      * ���������ݰ�������ʧ�ܡ�
-       //���Ҫ���͵����ݰ�ʹ���˷�ɢ/�ۺ�i/o ��������֧�ֻ��Ƭ��������һ���ڸ߶��ڴ���,����������֧��dma,��ͬ����Ҫ���ú���__skb_linearize
-       �������Ի����� 
+      * ¶ÔÓÚSGÀàĞÍµÄ¾ÛºÏ·ÖÉ¢I/OÊı¾İ°ü£¬Èç¹û
+      * Êä³öÍøÂçÉè±¸²»Ö§³ÖSGÀàĞÍµÄ¾ÛºÏ·ÖÉ¢I/O£¬
+      * ÔòĞè½«ÆäÏßĞÔ»¯¡£Èç¹ûÍøÂçÉè±¸²»Ö§³Ö
+      * ÔÚ¸ß¶ËÄÚ´æÊ¹ÓÃDMA£¬µ«¸ß¶ËÄÚ´æÖĞÓĞ·ÖÆ¬£¬
+      * ´ËÊ±Ò²ĞèÒª½«Êı¾İ°üÏßĞÔ»¯¡£ÈôÏßĞÔ»¯Ê§°Ü£¬
+      * Ôò¶ªÆú¸ÃÊı¾İ°ü£¬·¢ËÍÊ§°Ü¡£
+       //Èç¹ûÒª·¢ËÍµÄÊı¾İ°üÊ¹ÓÃÁË·ÖÉ¢/¾ÛºÏi/o µ«Íø¿¨²»Ö§³Ö»ò·ÖÆ¬ÖĞÖÁÉÙÓĞÒ»¸öÔÚ¸ß¶ËÄÚ´æÖĞ,²¢ÇÒÍø¿¨²»Ö§³Ödma,ÔòÍ¬ÑùĞèÒªµ÷ÓÃº¯Êı__skb_linearize
+       ½øĞĞÏßĞÔ»¯´¦Àí 
       */
     if (skb_shinfo(skb)->nr_frags &&
         (!(dev->features & NETIF_F_SG) || illegal_highdma(dev, skb)) &&
@@ -2729,11 +2729,11 @@ int dev_queue_xmit(struct sk_buff *skb) //ͨ��ip_local_out�ߵ�����,�ߵ������SKB
      * checksumming for this protocol, complete checksumming here.
      */
     /*
-      * �������������ݰ���Ӳ����ִ��У���
-      * (��δִ��У���)���������豸��֧��
-      * Ӳ��ִ��У��ͣ���֧�ֶ�IP����ִ��
-      * У��ͣ����ڴ˴�����У��͡���
-      * У���ʧ�ܣ��������ݰ�������ʧ�ܡ�
+      * Èç¹û´ıÊä³öµÄÊı¾İ°üÓÉÓ²¼şÀ´Ö´ĞĞĞ£ÑéºÍ
+      * (ÉĞÎ´Ö´ĞĞĞ£ÑéºÍ)£¬µ«ÍøÂçÉè±¸²»Ö§³Ö
+      * Ó²¼şÖ´ĞĞĞ£ÑéºÍ£¬²»Ö§³Ö¶ÔIP±¨ÎÄÖ´ĞĞ
+      * Ğ£ÑéºÍ£¬ÔòÔÚ´Ë´¦¼ÆËãĞ£ÑéºÍ¡£Èô
+      * Ğ£ÑéºÍÊ§°Ü£¬Ôò¶ªÆúÊı¾İ°ü£¬·¢ËÍÊ§°Ü¡£
       */
     if (skb->ip_summed == CHECKSUM_PARTIAL) {
         skb_set_transport_header(skb, skb->csum_start -
@@ -2748,36 +2748,36 @@ gso:
      */
     rcu_read_lock_bh();
 
-    /* ��ȡdev�豸�ϵ��Ŷӹ�̣����ִ����tc qdisc add dev eth0 �ͻ��ҵ���Ӧ��Qdisc */
+    /* »ñÈ¡devÉè±¸ÉÏµÄÅÅ¶Ó¹æ³Ì£¬Èç¹ûÖ´ĞĞÁËtc qdisc add dev eth0 ¾Í»áÕÒµ½¶ÔÓ¦µÄQdisc */
     txq = dev_pick_tx(dev, skb);
     /*
-      * ��ȡ��������豸���Ŷӹ�̡�rcu_dereference()��
-      * RCU���ٽ粿����ȡ��һ��RCU������ָ�롣��
-      * ��Ҫ�ڴ����ϵ���ϵ�н����ڴ����ϣ�Ŀǰ
-      * ֻ��Alpha��ϵ��Ҫ��
+      * »ñÈ¡Êä³öÍøÂçÉè±¸µÄÅÅ¶Ó¹æ³Ì¡£rcu_dereference()ÔÚ
+      * RCU¶ÁÁÙ½ç²¿·ÖÖĞÈ¡³öÒ»¸öRCU±£»¤µÄÖ¸Õë¡£ÔÚ
+      * ĞèÒªÄÚ´æÆÁÕÏµÄÌåÏµÖĞ½øĞĞÄÚ´æÆÁÕÏ£¬Ä¿Ç°
+      * Ö»ÓĞAlphaÌåÏµĞèÒª¡£
       */
-    q = rcu_dereference(txq->qdisc); //ʵ���Ͼ��ǻ�ȡnet_device -> netdev_queue  Ҳ���Ǹ�dev�豸�ĸ�qdisc
+    q = rcu_dereference(txq->qdisc); //Êµ¼ÊÉÏ¾ÍÊÇ»ñÈ¡net_device -> netdev_queue  Ò²¾ÍÊÇ¸ÃdevÉè±¸µÄ¸úqdisc
 
 #ifdef CONFIG_NET_CLS_ACT
     /*
-      * ������������
+      * Óë°ü·ÖÀàÆ÷Ïà¹Ø
       */
     skb->tc_verd = SET_TC_AT(skb->tc_verd, AT_EGRESS);
 #endif
     /*
-      * �����ȡ���Ŷӹ�̶�����"���"������
-      * ˵��������QoS��
-      */ /*�������豸������TC,��ô�����ݰ�ѹ�����  ��tc_modify_qdisc�е�qdisc_graft*/ 
-    if (q->enqueue) {//���������ݰ�����QoS������ /* qosԴ������ο�<TC�����������Ʒ���> */  //alloc_netdev_mq���Կ������ٵ�q�Ŀռ�Ϊ�յģ��������ֵ�Ļ�
-    //����������صĺ���Ϊdev_queue_xmit(); ������������, ����ֻ�Ǹմ������豸���յ�, ��δ���������ϲ㴦��, 
-    //����������������ز��Ǳ����, ȱʡ����²����������أ�����������غ���Ϊing_filter()�������ú�����skb_receive_skb()���á�
+      * Èç¹û»ñÈ¡µÄÅÅ¶Ó¹æ³Ì¶¨ÒåÁË"Èë¶Ó"²Ù×÷£¬
+      * ËµÃ÷ÆôÓÃÁËQoS¡£
+      */ /*Èç¹ûÕâ¸öÉè±¸Æô¶¯ÁËTC,ÄÇÃ´°ÑÊı¾İ°üÑ¹Èë¶ÓÁĞ  ¼ûtc_modify_qdiscÖĞµÄqdisc_graft*/ 
+    if (q->enqueue) {//Ôò¶ÔÕâ¸öÊı¾İ°ü½øĞĞQoS´¦Àí¡£ /* qosÔ´Âë·ÖÎö²Î¿¼<TCÁ÷ËÙÁ÷Á¿¿ØÖÆ·ÖÎö> */  //alloc_netdev_mq¿ÉÒÔ¿´³ö¿ª±ÙµÄqµÄ¿Õ¼äÎª¿ÕµÄ£¬Èç¹û²»¸³ÖµµÄ»°
+    //½øÈë³ö¿ÚÁ÷¿ØµÄº¯ÊıÎªdev_queue_xmit(); Èç¹ûÊÇÈë¿ÚÁ÷¿Ø, Êı¾İÖ»ÊÇ¸Õ´ÓÍø¿¨Éè±¸ÖĞÊÕµ½, »¹Î´½»µ½ÍøÂçÉÏ²ã´¦Àí, 
+    //²»¹ıÍø¿¨µÄÈë¿ÚÁ÷¿Ø²»ÊÇ±ØĞëµÄ, È±Ê¡Çé¿öÏÂ²¢²»½øĞĞÁ÷¿Ø£¬½øÈëÈë¿ÚÁ÷¿Øº¯ÊıÎªing_filter()º¯Êı£¬¸Ãº¯Êı±»skb_receive_skb()µ÷ÓÃ¡£
         /*
-          * �������͵����ݰ����Ŷӹ�����뵽
-          * ���У�Ȼ������������ƣ����ȶ���
-          * ������ݰ�����ɺ󷵻ء�
+          * ½«´ı·¢ËÍµÄÊı¾İ°ü°´ÅÅ¶Ó¹æÔò²åÈëµ½
+          * ¶ÓÁĞ£¬È»ºó½øĞĞÁ÷Á¿¿ØÖÆ£¬µ÷¶È¶ÓÁĞ
+          * Êä³öÊı¾İ°ü£¬Íê³Éºó·µ»Ø¡£
           */
         rc = __dev_xmit_skb(skb, q, dev, txq);
-        goto out;//���ݰ���Ӻ�����������̾ͽ�����
+        goto out;//Êı¾İ°üÈë¶Óºó£¬Õû¸öÈë¶ÓÁ÷³Ì¾Í½áÊøÁË
     }
 
     /* The device has no queue. Common case for software devices:
@@ -2793,23 +2793,23 @@ gso:
        Either shot noqueue qdisc, it is even simpler 8)
      */
     /*
-      * ����豸�Ѵ򿪵�δ����QoS����ֱ�����
-      * ���ݰ���
+      * Èç¹ûÉè±¸ÒÑ´ò¿ªµ«Î´ÆôÓÃQoS£¬ÔòÖ±½ÓÊä³ö
+      * Êı¾İ°ü¡£
       */
     if (dev->flags & IFF_UP) {
         int cpu = smp_processor_id(); /* ok because BHs are off */
 
         /*
-          * HARD_TX_LOCK/HARD_TX_UNLOCK��һ�Բ�����
-          * ������������֮�䲻���ٴε���
-          * dev_queue_xmit�ӿڡ�������������
-          * �������豸�������ݰ���CPU��
-          * ����dev_queue_xmit()������ݰ�����
-          * ˵��������bug�������������Ϣ��
-          *   ����������������Է�ֹ����CPU
-          * �Ĳ���������Ȼ���������豸���ڿ���
-          * ״̬ʱ������dev_hard_start_xmit()������ݰ�
-          * �������豸��
+          * HARD_TX_LOCK/HARD_TX_UNLOCKÊÇÒ»¶Ô²Ù×÷£¬
+          * ÔÚÕâÁ½¸ö²Ù×÷Ö®¼ä²»ÄÜÔÙ´Îµ÷ÓÃ
+          * dev_queue_xmit½Ó¿Ú¡£Òò´ËÈç¹ûÕıÔÚÓÃ
+          * ¸ÃÍøÂçÉè±¸·¢ËÍÊı¾İ°üµÄCPUÓÖ
+          * µ÷ÓÃdev_queue_xmit()Êä³öÊı¾İ°ü£¬Ôò
+          * ËµÃ÷´úÂëÓĞbug£¬ĞèÊä³ö¾¯¸æĞÅÏ¢¡£
+          *   ·ñÔò£¬Ê×ÏÈĞè¼ÓËø£¬ÒÔ·ÀÖ¹ÆäËûCPU
+          * µÄ²¢·¢²Ù×÷£¬È»ºóÔÚÍøÂçÉè±¸´¦ÓÚ¿ªÆô
+          * ×´Ì¬Ê±£¬µ÷ÓÃdev_hard_start_xmit()Êä³öÊı¾İ°ü
+          * µ½ÍøÂçÉè±¸¡£
           */
         if (txq->xmit_lock_owner != cpu) {
 
@@ -2836,22 +2836,22 @@ gso:
     }
 
     /*
-      * ��������豸���ڹر�״̬���򷵻�
-      * ��Ӧ�Ĵ����롣
+      * Èç¹ûÍøÂçÉè±¸´¦ÓÚ¹Ø±Õ×´Ì¬£¬Ôò·µ»Ø
+      * ÏàÓ¦µÄ´íÎóÂë¡£
       */
     rc = -ENETDOWN;
     rcu_read_unlock_bh();
 
 /*
-  * ����ת���˴��Ķ���������ݰ�ʱ���ִ���ģ�
-  * ��ۺϷ�ɢI/O���ݰ����Ի�ʧ�ܣ��������ݰ���
+  * ·²Ìø×ªµ½´Ë´¦µÄ¶¼ÊÇÊä³öÊı¾İ°üÊ±³öÏÖ´íÎóµÄ£¬
+  * Èç¾ÛºÏ·ÖÉ¢I/OÊı¾İ°üÏßĞÔ»¯Ê§°Ü£¬¶ªÆúÊı¾İ°ü¡£
   */
 out_kfree_skb:
     kfree_skb(skb);
     return rc;
 out:
     /*
-      * ������ݰ�����󣬷�����Ӧ�����
+      * Íê³ÉÊı¾İ°üÊä³öºó£¬·µ»ØÏàÓ¦½á¹û¡£
       */
     rcu_read_unlock_bh();
     return rc;
@@ -2968,13 +2968,13 @@ int netdev_budget __read_mostly = 300;
 int weight_p __read_mostly = 64;            /* old backlog weight */
 
 /* Called with irq disabled */
-//�������þ��������������������ӵ�poll_list�Ȼ�������ж�, ����__raise_softirq_irqoff���ջ����wakeup_softirqd(void)��
-/*����NAPI��ʽ����dev�豸���ӵ���poll_list�����С�
-ÿ�������豸��MAC�㣩�����Լ���net_device���ݽṹ������ṹ����napi_struct��ÿ���յ����ݰ�ʱ�������豸��������Լ���napi_struct�ҵ�CPU˽�б����ϡ�
-���������ж�ʱ��net_rx_action�����cpu˽�б�����poll_list��ִ���������ҵ�napi_struct�ṹ��poll���Ӻ���,�����ݰ���������������Э��ջ��
+//ËüµÄ×÷ÓÃ¾ÍÊÇÍø¿¨µÄÊı¾İÁ´±íÌí¼Óµ½poll_listÀï£¬È»ºó¿ªÆôÈíÖĞ¶Ï, º¯Êı__raise_softirq_irqoff×îÖÕ»áµ÷ÓÃwakeup_softirqd(void)¡£
+/*ÕâÊÇNAPI·½Ê½£¬°ÑdevÉè±¸Ìí¼Óµ½ÁËpoll_listÁ´±íÖĞ¡£
+Ã¿¸öÍøÂçÉè±¸£¨MAC²ã£©¶¼ÓĞ×Ô¼ºµÄnet_deviceÊı¾İ½á¹¹£¬Õâ¸ö½á¹¹ÉÏÓĞnapi_struct¡£Ã¿µ±ÊÕµ½Êı¾İ°üÊ±£¬ÍøÂçÉè±¸Çı¶¯»á°Ñ×Ô¼ºµÄnapi_struct¹Òµ½CPUË½ÓĞ±äÁ¿ÉÏ¡£
+ÕâÑùÔÚÈíÖĞ¶ÏÊ±£¬net_rx_action»á±éÀúcpuË½ÓĞ±äÁ¿µÄpoll_list£¬Ö´ĞĞÉÏÃæËù¹ÒµÄnapi_struct½á¹¹µÄpoll¹³×Óº¯Êı,½«Êı¾İ°ü´ÓÇı¶¯´«µ½ÍøÂçĞ­ÒéÕ»¡£
 
-NAPI��napi_struct���Լ�����ģ��ýṹ�ϵ�poll���Ӻ���Ҳ���Լ�����ġ�
-��NAPI��napi_struct�ṹ��Ĭ�ϵģ�Ҳ����per cpu��softnet_data>backlog����poll���Ӻ���Ϊprocess_backlog
+NAPIµÄnapi_structÊÇ×Ô¼º¹¹ÔìµÄ£¬¸Ã½á¹¹ÉÏµÄpoll¹³×Óº¯ÊıÒ²ÊÇ×Ô¼º¶¨ÒåµÄ¡£
+·ÇNAPIµÄnapi_struct½á¹¹ÊÇÄ¬ÈÏµÄ£¬Ò²¾ÍÊÇper cpuµÄsoftnet_data>backlog£¬Æğpoll¹³×Óº¯ÊıÎªprocess_backlog
 */
 static inline void ____napi_schedule(struct softnet_data *sd,
 				     struct napi_struct *napi)
@@ -3171,33 +3171,33 @@ static int rps_ipi_queued(struct softnet_data *sd)
  * queue (may be a remote CPU queue).
  */
 
-/* ������.���ж���ѯ��ʱ��,���ж��ܺ���do_softirq()ֱ�ӵ��������Ľ������жϺ���net_rx_action()��
-   �ڴ˺����е���queue->backlog_dev.poll=process_backlog;��process_backlog()����������queue->input_pkt_queue
-   �����е��������ϲ�Э�鴫�䣬����������ipЭ��ȡ�
+/* ¶ÓÁĞÖĞ.ÔÚÖĞ¶ÏÂÖÑ¯µÄÊ±ºò,ÈíÖĞ¶Ï×Üº¯Êıdo_softirq()Ö±½Óµ½´ïÍø¿¨µÄ½ÓÊÕÈíÖĞ¶Ïº¯Êınet_rx_action()£¬
+   ÔÚ´Ëº¯ÊıÖĞµ÷ÓÃqueue->backlog_dev.poll=process_backlog;¼´process_backlog()º¯Êı£¬Ëü½«queue->input_pkt_queue
+   ¶ÓÁĞÖĞµÄÊı¾İÏòÉÏ²ãĞ­Òé´«Êä£¬±ÈÈçÍøÂç²ãµÄipĞ­ÒéµÈ¡£
 */
 /*
-            ��NAPI��ʽ                                              NAPI��ʽNAPI��ʽ(NAPI��napi_struct���Լ�����ģ��ýṹ�ϵ�poll���Ӻ���Ҳ���Լ�����ġ�ʹ�òο�:�����շ����Լ�NAPI_huwei_10_���˲���.htm)
+            ·ÇNAPI·½Ê½                                              NAPI·½Ê½NAPI·½Ê½(NAPIµÄnapi_structÊÇ×Ô¼º¹¹ÔìµÄ£¬¸Ã½á¹¹ÉÏµÄpoll¹³×Óº¯ÊıÒ²ÊÇ×Ô¼º¶¨ÒåµÄ¡£Ê¹ÓÃ²Î¿¼:Íø¿ÚÊÕ·¢°üÒÔ¼°NAPI_huwei_10_ĞÂÀË²©¿Í.htm)
 
                                         IRQ
                                          |
                   _______________________|_____________________________
                   |                                                     |
              netif_rx                                            napi_schedule
- �ϰ벿           |                                                     | 
+ ÉÏ°ë²¿           |                                                     | 
              enqueue_to_backlog                                  __napi_schedule
                   |                                                     |           
-            skb����input_pkt_queuem��                           napi_struct����poll_list��
-            softnet_data->backlog����poll_list��                                      | 
+            skb¼ÓÈëinput_pkt_queuemÖĞ                           napi_struct¼ÓÈëpoll_listÖĞ
+            softnet_data->backlog¼ÓÈëpoll_listÖĞ                                      | 
                    |____________________________________________________| 
                                              |
                                         net_rx_action
-�°벿                                       |
+ÏÂ°ë²¿                                       |
                       _______________________|_____________________________
                       |                                                     |
-            porcess_backlog->__netif_receive_skb                ����poll����->napi_gro_receive->netif_receive_skb->__netif_receive_skb
+            porcess_backlog->__netif_receive_skb                Çı¶¯poll·½·¨->napi_gro_receive->netif_receive_skb->__netif_receive_skb
 
 */
-//ͨ��Ӳ���жϽ���SKB��Ȼ����Ӳ���ж��м���ִ������ĺ�����
+//Í¨¹ıÓ²¼şÖĞ¶Ï½ÓÊÕSKB£¬È»ºóÔÚÓ²¼şÖĞ¶ÏÖĞ¼ÌĞøÖ´ĞĞÏÂÃæµÄº¯Êı¡£
 static int enqueue_to_backlog(struct sk_buff *skb, int cpu,
 			      unsigned int *qtail)
 {
@@ -3206,22 +3206,22 @@ static int enqueue_to_backlog(struct sk_buff *skb, int cpu,
 
 	sd = &per_cpu(softnet_data, cpu);
 
-	local_irq_save(flags);//���жϣ�����SKB���ӵ��������input_pkt_queue����жϣ�������Ӳ���ж��н�������Ȼ�����ý��ն�����
+	local_irq_save(flags);//¹ØÖĞ¶Ï£¬µ±¸ÃSKBÌí¼Óµ½ÊäÈë¶ÓÁĞinput_pkt_queueºó´ò¿ªÖĞ¶Ï£¬¼ÌĞø´ÓÓ²¼şÖĞ¶ÏÖĞ½ÓÊÕÊäÈëÈ»ºó·ÅÈë¸Ã½ÓÊÕ¶ÓÁĞÖĞ
 
 	rps_lock(sd);
-	if (skb_queue_len(&sd->input_pkt_queue) <= netdev_max_backlog) {  /* �ռ����д洢������֡ */
+	if (skb_queue_len(&sd->input_pkt_queue) <= netdev_max_backlog) {  /* ¿Õ¼äÒÑÓĞ´æ´¢µÄÊı¾İÖ¡ */
         
 		if (skb_queue_len(&sd->input_pkt_queue)) {
 enqueue:
-        /* ������.���ж���ѯ��ʱ��,���ж��ܺ���do_softirq()ֱ�ӵ��������Ľ������жϺ���net_rx_action()��
-           �ڴ˺����е���queue->backlog_dev.poll=process_backlog;��process_backlog()����������queue->input_pkt_queue
-           �����е��������ϲ�Э�鴫�䣬����������ipЭ��ȡ�
+        /* ¶ÓÁĞÖĞ.ÔÚÖĞ¶ÏÂÖÑ¯µÄÊ±ºò,ÈíÖĞ¶Ï×Üº¯Êıdo_softirq()Ö±½Óµ½´ïÍø¿¨µÄ½ÓÊÕÈíÖĞ¶Ïº¯Êınet_rx_action()£¬
+           ÔÚ´Ëº¯ÊıÖĞµ÷ÓÃqueue->backlog_dev.poll=process_backlog;¼´process_backlog()º¯Êı£¬Ëü½«queue->input_pkt_queue
+           ¶ÓÁĞÖĞµÄÊı¾İÏòÉÏ²ãĞ­Òé´«Êä£¬±ÈÈçÍøÂç²ãµÄipĞ­ÒéµÈ¡£
         	*/
-			__skb_queue_tail(&sd->input_pkt_queue, skb);  /* ��softnet_data������� */ //net_rx_action�л�԰��ĸ������Լ����жϴ���ʱ���������
+			__skb_queue_tail(&sd->input_pkt_queue, skb);  /* ¹Òsoftnet_dataÊäÈë¶ÓÁĞ */ //net_rx_actionÖĞ»á¶Ô°üµÄ¸öÊı£¬ÒÔ¼°ÈíÖĞ¶Ï´¦ÀíÊ±¼ä½øĞĞÏŞÖÆ
             
 			input_queue_tail_incr_save(sd, qtail);
 			rps_unlock(sd);
-			local_irq_restore(flags);//���жϣ�����SKB���ӵ��������input_pkt_queue����жϣ�������Ӳ���ж��н�������Ȼ�����ý��ն�����
+			local_irq_restore(flags);//´ò¿ªÖĞ¶Ï£¬µ±¸ÃSKBÌí¼Óµ½ÊäÈë¶ÓÁĞinput_pkt_queueºó´ò¿ªÖĞ¶Ï£¬¼ÌĞø´ÓÓ²¼şÖĞ¶ÏÖĞ½ÓÊÕÊäÈëÈ»ºó·ÅÈë¸Ã½ÓÊÕ¶ÓÁĞÖĞ
 			return NET_RX_SUCCESS;
 		}
 
@@ -3231,8 +3231,8 @@ enqueue:
 		if (!__test_and_set_bit(NAPI_STATE_SCHED, &sd->backlog.state)) {
 			if (!rps_ipi_queued(sd))
 
-			    /* &sd->backlog����napi->poll_list��backlog������process_backlog */
-				____napi_schedule(sd, &sd->backlog); //����ͻ����net_dev_init�е�->backlog_dev.poll=process_backlog�Ӷ���process_backlog��ִ��
+			    /* &sd->backlog¼ÓÈënapi->poll_list£¬backlog¼´º¯Êıprocess_backlog */
+				____napi_schedule(sd, &sd->backlog); //ÕâÀï¾Í»áµ÷ÓÃnet_dev_initÖĞµÄ->backlog_dev.poll=process_backlog´Ó¶øµ½process_backlogÖĞÖ´ĞĞ
 		}
 		goto enqueue;
 	}
@@ -3260,35 +3260,35 @@ enqueue:
  *	NET_RX_DROP     (packet was dropped)
  *
  */
-//���ײ��豸�����������һ������ʱ���ͻ�ͨ������netif_rx�����ĵ�SKB�ϴ�������㡣
+//µ±µ×²ãÉè±¸Çı¶¯³ÌĞò½ÓÊÕÒ»¸ö±¨ÎÄÊ±£¬¾Í»áÍ¨¹ıµ÷ÓÃnetif_rx½«±¨ÎÄµÄSKBÉÏ´«ÖÁÍøÂç²ã¡£
 /*
-��netif_rx�����л����netif_rx_schedule, Ȼ��ú����ֻ�ȥ����__netif_rx_schedule
-�ں���__netif_rx_schedule�л�ȥ�������ж�NET_RX_SOFTIRQ, Ҳ����ȥ����net_rx_action.
-Ȼ����net_rx_action�����л�ȥ�����豸��poll����, �����豸�Լ�ע���.
-���豸��poll������, ��ȥ����netif_receive_skb����,  �ڸú�����������һ����� pt_prev->func, �˴���funcΪһ������ָ��, ��֮ǰ��ע��������Ϊip_rcv.
-���, ������˴���·���ϴ�����������һ��������.
-*/ //��NAPI��ʽ��������Ӳ���ж��е������netif_rx��������NAPI��ʽ��Ӳ���ж��е���napi_schedule�������ж�, �ο� ���ݰ�����ϵ�� �� NAPI��ԭ����ʵ�� http://blog.csdn.net/zhangskd/article/details/21627963
+ÔÚnetif_rxº¯ÊıÖĞ»áµ÷ÓÃnetif_rx_schedule, È»ºó¸Ãº¯ÊıÓÖ»áÈ¥µ÷ÓÃ__netif_rx_schedule
+ÔÚº¯Êı__netif_rx_scheduleÖĞ»áÈ¥´¥·¢ÈíÖĞ¶ÏNET_RX_SOFTIRQ, Ò²¼´ÊÇÈ¥µ÷ÓÃnet_rx_action.
+È»ºóÔÚnet_rx_actionº¯ÊıÖĞ»áÈ¥µ÷ÓÃÉè±¸µÄpollº¯Êı, ËüÊÇÉè±¸×Ô¼º×¢²áµÄ.
+ÔÚÉè±¸µÄpollº¯ÊıÖĞ, »áÈ¥µ÷ÓÃnetif_receive_skbº¯Êı,  ÔÚ¸Ãº¯ÊıÖĞÓĞÏÂÃæÒ»ÌõÓï¾ä pt_prev->func, ´Ë´¦µÄfuncÎªÒ»¸öº¯ÊıÖ¸Õë, ÔÚÖ®Ç°µÄ×¢²áÖĞÉèÖÃÎªip_rcv.
+Òò´Ë, ¾ÍÍê³ÉÁË´ÓÁ´Â·²ãÉÏ´«µ½ÍøÂç²ãµÄÕâÒ»¸ö¹ı³ÌÁË.
+*/ //·ÇNAPI·½Ê½£¬´ÓÇı¶¯Ó²¼şÖĞ¶ÏÖĞµ÷ÓÃÕâ¸önetif_rxº¯Êı£¬¶øNAPI·½Ê½´ÓÓ²¼şÖĞ¶ÏÖĞµ÷ÓÃnapi_schedule¼¤»îÈíÖĞ¶Ï, ²Î¿¼ Êı¾İ°ü½ÓÊÕÏµÁĞ ¡ª NAPIµÄÔ­ÀíºÍÊµÏÖ http://blog.csdn.net/zhangskd/article/details/21627963
 
 /*
-            ��NAPI��ʽ                                              NAPI��ʽNAPI��ʽ(NAPI��napi_struct���Լ�����ģ��ýṹ�ϵ�poll���Ӻ���Ҳ���Լ�����ġ�ʹ�òο�:�����շ����Լ�NAPI_huwei_10_���˲���.htm)
+            ·ÇNAPI·½Ê½                                              NAPI·½Ê½NAPI·½Ê½(NAPIµÄnapi_structÊÇ×Ô¼º¹¹ÔìµÄ£¬¸Ã½á¹¹ÉÏµÄpoll¹³×Óº¯ÊıÒ²ÊÇ×Ô¼º¶¨ÒåµÄ¡£Ê¹ÓÃ²Î¿¼:Íø¿ÚÊÕ·¢°üÒÔ¼°NAPI_huwei_10_ĞÂÀË²©¿Í.htm)
 
                                         IRQ
                                          |
                   _______________________|_____________________________
                   |                                                     |
              netif_rx                                            napi_schedule
- �ϰ벿           |                                                     | 
+ ÉÏ°ë²¿           |                                                     | 
              enqueue_to_backlog                                  __napi_schedule
                   |                                                     |           
-            skb����input_pkt_queuem��                           napi_struct����poll_list��
-            softnet_data->backlog����poll_list��                                      | 
+            skb¼ÓÈëinput_pkt_queuemÖĞ                           napi_struct¼ÓÈëpoll_listÖĞ
+            softnet_data->backlog¼ÓÈëpoll_listÖĞ                                      | 
                    |____________________________________________________| 
                                              |
                                         net_rx_action
-�°벿                                       |
+ÏÂ°ë²¿                                       |
                       _______________________|_____________________________
                       |                                                     |
-            process_backlog->__netif_receive_skb                ����poll����->napi_gro_receive->netif_receive_skb->__netif_receive_skb
+            process_backlog->__netif_receive_skb                Çı¶¯poll·½·¨->napi_gro_receive->netif_receive_skb->__netif_receive_skb
 
 */
 int netif_rx(struct sk_buff *skb)
@@ -3314,7 +3314,7 @@ int netif_rx(struct sk_buff *skb)
 		if (cpu < 0)
 			cpu = smp_processor_id();
 
-		ret = enqueue_to_backlog(skb, cpu, &rflow->last_qtail);//�������������process_backlog
+		ret = enqueue_to_backlog(skb, cpu, &rflow->last_qtail);//ÕâÀïÃæµÄÊı¾İÔÙprocess_backlog
 
 		rcu_read_unlock();
 		preempt_enable();
@@ -3345,21 +3345,21 @@ int netif_rx_ni(struct sk_buff *skb)
 EXPORT_SYMBOL(netif_rx_ni);
 
 /*
-  * net_tx_action()�����ݰ�������жϵ����̣�
-  * һ�����������output_queue������
-  * ����������������豸��Ȼ�����
-  * qdisc_run()�ں��ʵ�ʱ���������ݰ���
-  * ���ݰ�������ж�ͨ����netif_schedule()���
-  */ //qos tc �������Ƶ�ʱ����õ�
+  * net_tx_action()ÊÇÊı¾İ°üÊä³öÈíÖĞ¶ÏµÄÀı³Ì£¬
+  * Ò»µ©¼¤»î±ã»á±éÀúoutput_queue¶ÓÁĞÖĞ
+  * ´ı´¦ÀíµÄÊä³öÍøÂçÉè±¸£¬È»ºóµ÷ÓÃ
+  * qdisc_run()ÔÚºÏÊÊµÄÊ±»ú·¢ËÍÊı¾İ°ü¡£
+  * Êı¾İ°üÊä³öÈíÖĞ¶ÏÍ¨³£ÓĞnetif_schedule()¼¤»î¡£
+  */ //qos tc Á÷Á¿¿ØÖÆµÄÊ±ºò»áÓÃµ½
 static void net_tx_action(struct softirq_action *h)
 {
 	struct softnet_data *sd = &__get_cpu_var(softnet_data);
 
 	/*
-	  * �����ǰCPU��softnet_data�д��������
-	  * ������ͷŵ����ݰ��������
-	  * completion_queue���У��ͷŸö���������
-	  * ���ݰ�
+	  * Èç¹ûµ±Ç°CPUµÄsoftnet_dataÖĞ´æÔÚÒÑÍê³É
+	  * Êä³ö´ıÊÍ·ÅµÄÊı¾İ°ü£¬Ôò±éÀú
+	  * completion_queue¶ÓÁĞ£¬ÊÍ·Å¸Ã¶ÓÁĞÖĞËùÓĞ
+	  * Êı¾İ°ü
 	  */
 	if (sd->completion_queue) {
 		struct sk_buff *clist;
@@ -3379,10 +3379,10 @@ static void net_tx_action(struct softirq_action *h)
 	}
 
 	/*
-	  * �����ǰCPU��softnet_data�д��ڴ��������������
-	  * �豸�������output_queue���У�����qdisc_run()������
-	  * ���ݰ������ٴε������ݰ�������жϣ���
-	  * ���ʵ�ʱ���������ݰ���
+	  * Èç¹ûµ±Ç°CPUµÄsoftnet_dataÖĞ´æÔÚ´ı´¦ÀíµÄÊä³öÍøÂç
+	  * Éè±¸£¬Ôò±éÀúoutput_queue¶ÓÁĞ£¬µ÷ÓÃqdisc_run()À´·¢ËÍ
+	  * Êı¾İ°ü»òÕßÔÙ´Îµ÷¶ÈÊı¾İ°üÊä³öÈíÖĞ¶Ï£¬ÔÚ
+	  * ºÏÊÊµÄÊ±»ú·¢ËÍÊı¾İ°ü¡£
 	  */
 	if (sd->output_queue) {
 		struct Qdisc *head;
@@ -3439,7 +3439,7 @@ EXPORT_SYMBOL_GPL(br_fdb_test_addr_hook);
 /*
  * If bridge module is loaded call bridging hook.
  *  returns NULL if packet was consumed.
- */ //����һ������ָ��
+ */ //ÕâÊÇÒ»¸öº¯ÊıÖ¸Õë
 struct sk_buff *(*br_handle_frame_hook)(struct net_bridge_port *p, struct sk_buff *skb) ;//__read_mostly;
 EXPORT_SYMBOL_GPL(br_handle_frame_hook);
 
@@ -3531,9 +3531,9 @@ static int ing_filter(struct sk_buff *skb)
 }
 
 /*
-����������صĺ���Ϊdev_queue_xmit(); ������������, ����ֻ�Ǹմ������豸���յ�, ��δ���������ϲ㴦��, ����������������ز��Ǳ����, 
-ȱʡ����²����������أ�����������غ���Ϊing_filter()�������ú�����skb_receive_skb()���á�
-*///��Ҫ�����ں˵�ʱ�򣬱���CONFIG_NET_CLS_ACT
+½øÈë³ö¿ÚÁ÷¿ØµÄº¯ÊıÎªdev_queue_xmit(); Èç¹ûÊÇÈë¿ÚÁ÷¿Ø, Êı¾İÖ»ÊÇ¸Õ´ÓÍø¿¨Éè±¸ÖĞÊÕµ½, »¹Î´½»µ½ÍøÂçÉÏ²ã´¦Àí, ²»¹ıÍø¿¨µÄÈë¿ÚÁ÷¿Ø²»ÊÇ±ØĞëµÄ, 
+È±Ê¡Çé¿öÏÂ²¢²»½øĞĞÁ÷¿Ø£¬½øÈëÈë¿ÚÁ÷¿Øº¯ÊıÎªing_filter()º¯Êı£¬¸Ãº¯Êı±»skb_receive_skb()µ÷ÓÃ¡£
+*///ĞèÒª±àÒëÄÚºËµÄÊ±ºò£¬±àÒëCONFIG_NET_CLS_ACT
 static inline struct sk_buff *handle_ing(struct sk_buff *skb,
 					 struct packet_type **pt_prev,
 					 int *ret, struct net_device *orig_dev)
@@ -3639,25 +3639,25 @@ int __skb_bond_should_drop(struct sk_buff *skb, struct net_device *master)
 EXPORT_SYMBOL(__skb_bond_should_drop);
 
 /*
-            ��NAPI��ʽ                                              NAPI��ʽ(NAPI��napi_struct���Լ�����ģ��ýṹ�ϵ�poll���Ӻ���Ҳ���Լ�����ġ�ʹ�òο�:�����շ����Լ�NAPI_huwei_10_���˲���.htm)
+            ·ÇNAPI·½Ê½                                              NAPI·½Ê½(NAPIµÄnapi_structÊÇ×Ô¼º¹¹ÔìµÄ£¬¸Ã½á¹¹ÉÏµÄpoll¹³×Óº¯ÊıÒ²ÊÇ×Ô¼º¶¨ÒåµÄ¡£Ê¹ÓÃ²Î¿¼:Íø¿ÚÊÕ·¢°üÒÔ¼°NAPI_huwei_10_ĞÂÀË²©¿Í.htm)
 
                                         IRQ
                                          |
                   _______________________|_____________________________
                   |                                                     |
              netif_rx                                            napi_schedule
- �ϰ벿           |                                                     | 
+ ÉÏ°ë²¿           |                                                     | 
              enqueue_to_backlog                                  __napi_schedule
                   |                                                     |           
-            skb����input_pkt_queuem��                           napi_struct����poll_list��
-            softnet_data->softnet_data->backlog����poll_list��                                      | 
+            skb¼ÓÈëinput_pkt_queuemÖĞ                           napi_struct¼ÓÈëpoll_listÖĞ
+            softnet_data->softnet_data->backlog¼ÓÈëpoll_listÖĞ                                      | 
                    |____________________________________________________| 
                                              |
                                         net_rx_action
-�°벿                                       |
+ÏÂ°ë²¿                                       |
                       _______________________|_____________________________
                       |                                                     |
-            process_backlog->__netif_receive_skb                ����poll����->napi_gro_receive->netif_receive_skb->__netif_receive_skb
+            process_backlog->__netif_receive_skb                Çı¶¯poll·½·¨->napi_gro_receive->netif_receive_skb->__netif_receive_skb
 
 */
 static int __netif_receive_skb(struct sk_buff *skb)
@@ -3725,13 +3725,13 @@ static int __netif_receive_skb(struct sk_buff *skb)
     if (sock->type == SOCK_PACKET)
         po->prot_hook.func = packet_rcv_spkt;
     */
-	list_for_each_entry_rcu(ptype, &ptype_all, list) {  //��net_dev_init�г�ʼ��
-	    /*ע�����ﲢû��Ҫ��ptype->type == type�����Խ��յ��İ�ֻҪ��ע��ETH_P_ALLЭ�飬���еİ������ߵ�deliver_skb*/
+	list_for_each_entry_rcu(ptype, &ptype_all, list) {  //ÔÚnet_dev_initÖĞ³õÊ¼»¯
+	    /*×¢ÒâÕâÀï²¢Ã»ÓĞÒªÇóptype->type == type£¬ËùÒÔ½ÓÊÕµ½µÄ°üÖ»ÒªÓĞ×¢²áETH_P_ALLĞ­Òé£¬ËùÓĞµÄ°ü¶¼»á×ßµ½deliver_skb*/
 		if (ptype->dev == null_or_orig || ptype->dev == skb->dev ||
-		    ptype->dev == orig_dev) { //�����paket_type.type Ϊ ETH_P_ALL    
+		    ptype->dev == orig_dev) { //ÉÏÃæµÄpaket_type.type Îª ETH_P_ALL    
 		    if (pt_prev)
-		        /* ����ִ����һ�α����еģ��������ֻע��һ��ETH_P_ALL�Ļ���pt_prev->func�������ѭ�����deliver_skb��ִ�� */
-				ret = deliver_skb(skb, pt_prev, orig_dev);//�˺������յ���paket_type.func()   packet_rcv_spkt����packet_rcv
+		        /* ÕâÊÇÖ´ĞĞÉÏÒ»´Î±éÀúÖĞµÄ£¬ËùÒÔÈç¹ûÖ»×¢²áÒ»¸öETH_P_ALLµÄ»°Ôòpt_prev->func»áÔÚÕâ¸öÑ­»·ÍâµÄdeliver_skbÖĞÖ´ĞĞ */
+				ret = deliver_skb(skb, pt_prev, orig_dev);//´Ëº¯Êı×îÖÕµ÷ÓÃpaket_type.func()   packet_rcv_spkt»òÕßpacket_rcv
 			pt_prev = ptype;
 		}
 	}
@@ -3744,23 +3744,23 @@ ncls:
 #endif
 
     /* 
-    �������ں�ʱѡ��BRIDGE�������ִ������ģ��
-    //���ú���ָ�� br_handle_frame_hook(skb), �ڶ�̬ģ�� linux_2_6_24/net/bridge/br.c��
+    Èô±àÒëÄÚºËÊ±Ñ¡ÉÏBRIDGE£¬ÏÂÃæ»áÖ´ĞĞÍøÇÅÄ£¿é
+    //µ÷ÓÃº¯ÊıÖ¸Õë br_handle_frame_hook(skb), ÔÚ¶¯Ì¬Ä£¿é linux_2_6_24/net/bridge/br.cÖĞ
        //br_handle_frame_hook = br_handle_frame;
-       //����ʵ�ʺ��� br_handle_frame��
-       //ע�⣺�ڴ�����ģ�����ʼ�� skb->pkt_type Ϊ PACKET_HOST��PACKET_OTHERHOST
-       ������br_init
+       //ËùÒÔÊµ¼Êº¯Êı br_handle_frame¡£
+       //×¢Òâ£ºÔÚ´ËÍøÇÅÄ£¿éÀï³õÊ¼»¯ skb->pkt_type Îª PACKET_HOST¡¢PACKET_OTHERHOST
+       ¼ûº¯Êıbr_init
     */
 	skb = handle_bridge(skb, &pt_prev, &ret, orig_dev);
 	if (!skb)
 		goto out;
 
 	/*
-        �����ں�ʱѡ��MAC_VLANģ�飬����Ż�ִ��
-        //���� macvlan_handle_frame_hook(skb), �ڶ�̬ģ��linux_2_6_24/drivers/net/macvlan.c��
+        ±àÒëÄÚºËÊ±Ñ¡ÉÏMAC_VLANÄ£¿é£¬ÏÂÃæ²Å»áÖ´ĞĞ
+        //µ÷ÓÃ macvlan_handle_frame_hook(skb), ÔÚ¶¯Ì¬Ä£¿élinux_2_6_24/drivers/net/macvlan.cÖĞ
         //macvlan_handle_frame_hook = macvlan_handle_frame; 
-        //����ʵ�ʺ���Ϊ macvlan_handle_frame�� 
-        //ע�⣺�˺�������ʼ�� skb->pkt_type Ϊ PACKET_BROADCAST��PACKET_MULTICAST��PACKET_HOST
+        //ËùÒÔÊµ¼Êº¯ÊıÎª macvlan_handle_frame¡£ 
+        //×¢Òâ£º´Ëº¯ÊıÀï»á³õÊ¼»¯ skb->pkt_type Îª PACKET_BROADCAST¡¢PACKET_MULTICAST¡¢PACKET_HOST
 	*/
 	skb = handle_macvlan(skb, &pt_prev, &ret, orig_dev);
 	if (!skb)
@@ -3779,12 +3779,12 @@ ncls:
 	}
     
     /*
-    ��� type = skb->protocol; &ptype_base[ntohs(type)&15]
-        //����ptype_base[ntohs(type)&15]�ϵ����е� packet_type->func()
-        //���ݵڶ��㲻ͬЭ�������벻ͬ�Ĺ��Ӻ�������Ҫ���У�ip_rcv() arp_rcv()
-        ip_recv��inet_init�����dev_add_pack(&ip_packet_type);
+    ×îºó type = skb->protocol; &ptype_base[ntohs(type)&15]
+        //´¦Àíptype_base[ntohs(type)&15]ÉÏµÄËùÓĞµÄ packet_type->func()
+        //¸ù¾İµÚ¶ş²ã²»Í¬Ğ­ÒéÀ´½øÈë²»Í¬µÄ¹³×Óº¯Êı£¬ÖØÒªµÄÓĞ£ºip_rcv() arp_rcv()
+        ip_recv¼ûinet_initÀïÃæµÄdev_add_pack(&ip_packet_type);
     */
-	type = skb->protocol; //skb->protocol������ʾ��SKB������������֧�ֵ�L3��Э����ʲô. ��ox0800����IP��0x0806����ARP �������������Ѿ���ȡ�˸�ֵ
+	type = skb->protocol; //skb->protocolÓÃÀ´±íÊ¾´ËSKB°üº¬µÄÊı¾İËùÖ§³ÖµÄL3²ãĞ­ÒéÊÇÊ²Ã´. Èçox0800´ú±íIP£¬0x0806´ú±íARP ÔÚÇı¶¯³ÌĞòÖĞÒÑ¾­»ñÈ¡ÁË¸ÃÖµ
     
 	list_for_each_entry_rcu(ptype,
 			&ptype_base[ntohs(type) & PTYPE_HASH_MASK], list) {
@@ -3792,7 +3792,7 @@ ncls:
 		     ptype->dev == skb->dev || ptype->dev == orig_dev ||
 		     ptype->dev == orig_or_bond)) {
 			if (pt_prev)
-			    /*/* ����ִ����һ�α����еģ��������ֻע��һ��ETH_P_ALL�Ļ���pt_prev->func�������ѭ�����deliver_skb��ִ�� */*/
+			    /*/* ÕâÊÇÖ´ĞĞÉÏÒ»´Î±éÀúÖĞµÄ£¬ËùÒÔÈç¹ûÖ»×¢²áÒ»¸öETH_P_ALLµÄ»°Ôòpt_prev->func»áÔÚÕâ¸öÑ­»·ÍâµÄdeliver_skbÖĞÖ´ĞĞ */*/
 				ret = deliver_skb(skb, pt_prev, orig_dev);
 			pt_prev = ptype;
 		}
@@ -3826,42 +3826,42 @@ out:
  *
  *	Return values (usually ignored):
  *	NET_RX_SUCCESS: no congestion
- *	NET_RX_DROP: packet was dropped  �������Э�鴦������
- */ //    netif_receive_skb����·��������ݱ������һվ��������ע����ȫ������ptype_all��ptype_base�����������ݱ����ͣ������ݱ��ݽ�����ͬ�������Э��Ľ��պ���(INET������Ҫ��ip_rcv��arp_rcv)��
+ *	NET_RX_DROP: packet was dropped  ½øÈë¶ş²ãĞ­Òé´¦Àíº¯Êı
+ */ //    netif_receive_skbÊÇÁ´Â·²ã½ÓÊÕÊı¾İ±¨µÄ×îºóÒ»Õ¾¡£Ëü¸ù¾İ×¢²áÔÚÈ«¾ÖÊı×éptype_allºÍptype_baseÀïµÄÍøÂç²ãÊı¾İ±¨ÀàĞÍ£¬°ÑÊı¾İ±¨µİ½»¸ø²»Í¬µÄÍøÂç²ãĞ­ÒéµÄ½ÓÊÕº¯Êı(INETÓòÖĞÖ÷ÒªÊÇip_rcvºÍarp_rcv)¡£
 /*
-��netif_receive_skb()�����У����Կ�������������ARP��IP��Щ��·�����ϵ�Э�飬��ô����·�㱨ͷ��������ȥ�����أ��������������У�
-�ڵ���netif_receive_skb()ǰ��
-��ƪ������Դ�� Linux������վ(www.linuxidc.com)  ԭ�����ӣ�http://www.linuxidc.com/Linux/2011-05/36065.htm
+ÔÚnetif_receive_skb()º¯ÊıÖĞ£¬¿ÉÒÔ¿´³ö´¦ÀíµÄÊÇÏñARP¡¢IPÕâĞ©Á´Â·²ãÒÔÉÏµÄĞ­Òé£¬ÄÇÃ´£¬Á´Â·²ã±¨Í·ÊÇÔÚÄÄÀïÈ¥µôµÄÄØ£¿´ğ°¸ÊÇÍø¿¨Çı¶¯ÖĞ£¬
+ÔÚµ÷ÓÃnetif_receive_skb()Ç°£¬
+±¾ÆªÎÄÕÂÀ´Ô´ÓÚ Linux¹«ÉçÍøÕ¾(www.linuxidc.com)  Ô­ÎÄÁ´½Ó£ºhttp://www.linuxidc.com/Linux/2011-05/36065.htm
 */
 /*
-�������ݰ����°벿��������Ϊ��
-net_rx_action // ���ж�
-    |--> process_backlog() // Ĭ��poll
-               |--> __netif_receive_skb() // L2��������
-                            |--> ip_rcv() // L3���
+½ÓÊÕÊı¾İ°üµÄÏÂ°ë²¿´¦ÀíÁ÷³ÌÎª£º
+net_rx_action // ÈíÖĞ¶Ï
+    |--> process_backlog() // Ä¬ÈÏpoll
+               |--> __netif_receive_skb() // L2´¦Àíº¯Êı
+                            |--> ip_rcv() // L3Èë¿Ú
 
 */
 
 /*
-            ��NAPI��ʽ                                              NAPI��ʽ(NAPI��napi_struct���Լ�����ģ��ýṹ�ϵ�poll���Ӻ���Ҳ���Լ�����ġ�ʹ�òο�:�����շ����Լ�NAPI_huwei_10_���˲���.htm)
+            ·ÇNAPI·½Ê½                                              NAPI·½Ê½(NAPIµÄnapi_structÊÇ×Ô¼º¹¹ÔìµÄ£¬¸Ã½á¹¹ÉÏµÄpoll¹³×Óº¯ÊıÒ²ÊÇ×Ô¼º¶¨ÒåµÄ¡£Ê¹ÓÃ²Î¿¼:Íø¿ÚÊÕ·¢°üÒÔ¼°NAPI_huwei_10_ĞÂÀË²©¿Í.htm)
 
                                         IRQ
                                          |
                   _______________________|_____________________________
                   |                                                     |
              netif_rx                                            napi_schedule
- �ϰ벿           |                                                     | 
+ ÉÏ°ë²¿           |                                                     | 
              enqueue_to_backlog                                  __napi_schedule
                   |                                                     |           
-            skb����input_pkt_queuem��                           napi_struct����poll_list��
-            softnet_data->backlog����poll_list��                                      | 
+            skb¼ÓÈëinput_pkt_queuemÖĞ                           napi_struct¼ÓÈëpoll_listÖĞ
+            softnet_data->backlog¼ÓÈëpoll_listÖĞ                                      | 
                    |____________________________________________________| 
                                              |
                                         net_rx_action
-�°벿                                       |
+ÏÂ°ë²¿                                       |
                       _______________________|_____________________________
                       |                                                     |
-            porcess_backlog->__netif_receive_skb                ����poll����->napi_gro_receive->netif_receive_skb->__netif_receive_skb
+            porcess_backlog->__netif_receive_skb                Çı¶¯poll·½·¨->napi_gro_receive->netif_receive_skb->__netif_receive_skb
 
 */
 
@@ -4115,25 +4115,25 @@ void skb_gro_reset_offset(struct sk_buff *skb)
 }
 EXPORT_SYMBOL(skb_gro_reset_offset);
 /*
-            ��NAPI��ʽ                                              NAPI��ʽ
+            ·ÇNAPI·½Ê½                                              NAPI·½Ê½
 
                                         IRQ
                                          |
                   _______________________|_____________________________
                   |                                                     |
              netif_rx                                            napi_schedule
- �ϰ벿           |                                                     | 
+ ÉÏ°ë²¿           |                                                     | 
              enqueue_to_backlog                                  __napi_schedule
                   |                                                     |           
-            skb����input_pkt_queuem��                           napi_struct����poll_list��
-            backlog����poll_list��                                      | 
+            skb¼ÓÈëinput_pkt_queuemÖĞ                           napi_struct¼ÓÈëpoll_listÖĞ
+            backlog¼ÓÈëpoll_listÖĞ                                      | 
                    |____________________________________________________| 
                                              |
                                         net_rx_action
-�°벿                                       |
+ÏÂ°ë²¿                                       |
                       _______________________|_____________________________
                       |                                                     |
-            porcess_backlog->__netif_receive_skb                ����poll����->napi_gro_receive->netif_receive_skb->__netif_receive_skb
+            porcess_backlog->__netif_receive_skb                Çı¶¯poll·½·¨->napi_gro_receive->netif_receive_skb->__netif_receive_skb
 
 */
 gro_result_t napi_gro_receive(struct napi_struct *napi, struct sk_buff *skb)
@@ -4271,45 +4271,45 @@ static void net_rps_action_and_irq_enable(struct softnet_data *sd)
 		local_irq_enable();
 }
 /*
-  * process_backlog()�ڷ�NAPI��ʽ�£����������豸��
-  * ��ѯ�����������������豸backlog_dev���ӵ�
-  * �����豸��ѯ���к������ݰ��������ж�
-  * �л����process_backlog()�������ݰ������롣
-  * @napi:������ѯ������������豸��Ӧ�Ľṹ
-  * @budget:�����ݰ��������ж��У������豸��ȡ
-  *               ���ĵ���
+  * process_backlog()ÔÚ·ÇNAPI·½Ê½ÏÂ£¬ĞéÄâÍøÂçÉè±¸µÄ
+  * ÂÖÑ¯º¯Êı¡£µ±ĞéÄâÍøÂçÉè±¸backlog_devÌí¼Óµ½
+  * ÍøÂçÉè±¸ÂÖÑ¯¶ÓÁĞºó£¬ÔÚÊı¾İ°üÊäÈëÈíÖĞ¶Ï
+  * ÖĞ»áµ÷ÓÃprocess_backlog()½øĞĞÊı¾İ°üµÄÊäÈë¡£
+  * @napi:½øĞĞÂÖÑ¯µÄĞéÄâµÄÍøÂçÉè±¸¶ÔÓ¦µÄ½á¹¹
+  * @budget:ÔÚÊı¾İ°üÊäÈëÈíÖĞ¶ÏÖĞ£¬ÍøÂçÉè±¸¶ÁÈ¡
+  *               ±¨ÎÄµÄÅä¶î¡£
   */
 /*
-�������ݰ����°벿��������Ϊ��
-net_rx_action // ���ж�
-    |--> process_backlog() // Ĭ��poll
-               |--> __netif_receive_skb() // L2��������
-                            |--> ip_rcv() // L3���
+½ÓÊÕÊı¾İ°üµÄÏÂ°ë²¿´¦ÀíÁ÷³ÌÎª£º
+net_rx_action // ÈíÖĞ¶Ï
+    |--> process_backlog() // Ä¬ÈÏpoll
+               |--> __netif_receive_skb() // L2´¦Àíº¯Êı
+                            |--> ip_rcv() // L3Èë¿Ú
 
 */
 /*
-            ��NAPI��ʽ                                              NAPI��ʽ(NAPI��napi_struct���Լ�����ģ��ýṹ�ϵ�poll���Ӻ���Ҳ���Լ�����ġ�ʹ�òο�:�����շ����Լ�NAPI_huwei_10_���˲���.htm)
+            ·ÇNAPI·½Ê½                                              NAPI·½Ê½(NAPIµÄnapi_structÊÇ×Ô¼º¹¹ÔìµÄ£¬¸Ã½á¹¹ÉÏµÄpoll¹³×Óº¯ÊıÒ²ÊÇ×Ô¼º¶¨ÒåµÄ¡£Ê¹ÓÃ²Î¿¼:Íø¿ÚÊÕ·¢°üÒÔ¼°NAPI_huwei_10_ĞÂÀË²©¿Í.htm)
 
                                         IRQ
                                          |
                   _______________________|_____________________________
                   |                                                     |
              netif_rx                                            napi_schedule
- �ϰ벿           |                                                     | 
+ ÉÏ°ë²¿           |                                                     | 
              enqueue_to_backlog                                  __napi_schedule
                   |                                                     |           
-            skb����input_pkt_queuem��                           napi_struct����poll_list��
-            softnet_data->backlog����poll_list��                                      | 
+            skb¼ÓÈëinput_pkt_queuemÖĞ                           napi_struct¼ÓÈëpoll_listÖĞ
+            softnet_data->backlog¼ÓÈëpoll_listÖĞ                                      | 
                    |____________________________________________________| 
                                              |
                                         net_rx_action
-�°벿                                       |
+ÏÂ°ë²¿                                       |
                       _______________________|_____________________________
                       |                                                     |
-            process_backlog->__netif_receive_skb                ����poll����->napi_gro_receive->netif_receive_skb->__netif_receive_skb
+            process_backlog->__netif_receive_skb                Çı¶¯poll·½·¨->napi_gro_receive->netif_receive_skb->__netif_receive_skb
 
 */
-//��ֵ�ĵط���net_dev_init, sd->backlog.poll = process_backlog;  ִ�иú����ĵط���net_rx_action(struct softirq_action *h)
+//¸³ÖµµÄµØ·½¼ûnet_dev_init, sd->backlog.poll = process_backlog;  Ö´ĞĞ¸Ãº¯ÊıµÄµØ·½ÔÚnet_rx_action(struct softirq_action *h)
 static int process_backlog(struct napi_struct *napi, int quota)
 {
 	int work = 0;
@@ -4330,17 +4330,17 @@ static int process_backlog(struct napi_struct *napi, int quota)
 		struct sk_buff *skb;
 		unsigned int qlen;
 
-		while ((skb = __skb_dequeue(&sd->process_queue))) { //�������skb_queue_splice_tail_init�У����ŵ���process_queue��
+		while ((skb = __skb_dequeue(&sd->process_queue))) { //ÔÚÏÂÃæµÄskb_queue_splice_tail_initÖĞ£¬±»·Åµ½ÁËprocess_queueÖĞ
 			local_irq_enable();
 			  /* 
-               * �����������ͣ��Ա���ݷ���
-               * ���ͽ����鴫�ݸ������Ľ��պ�����
-               * �����ݵ�����ϵͳ�ĸ���һ��.Ϊ�ˣ�
-               * �ú��������п��ܸ���ǰ�������͵�����
-               * ����㺯����һһ����deliver_skb
+               * ·ÖÎö·Ö×éÀàĞÍ£¬ÒÔ±ã¸ù¾İ·Ö×é
+               * ÀàĞÍ½«·Ö×é´«µİ¸øÍøÂç²ãµÄ½ÓÊÕº¯Êı£¬
+               * ¼´´«µİµ½ÍøÂçÏµÍ³µÄ¸ü¸ßÒ»²ã.Îª´Ë£¬
+               * ¸Ãº¯Êı±éÀúÓĞ¿ÉÄÜ¸ºÔğµ±Ç°·Ö×éÀàĞÍµÄËùÓĞ
+               * ÍøÂç²ãº¯Êı£¬Ò»Ò»µ÷ÓÃdeliver_skb
                * 
                * update:
-               *   ����ǰ���Ĵ��ݵ��ϲ�Э��ջ
+               *   ½«µ±Ç°±¨ÎÄ´«µİµ½ÉÏ²ãĞ­ÒéÕ»
                */
 			__netif_receive_skb(skb);
 			local_irq_disable();
@@ -4353,9 +4353,9 @@ static int process_backlog(struct napi_struct *napi, int quota)
 
 		rps_lock(sd);
 		qlen = skb_queue_len(&sd->input_pkt_queue);
-		if (qlen) //�Ѵ�input_pkt_queue�����е�ȡ��������skb��Ϣ���ӵ�process_queue�У�Ȼ����³�ʼ��input_pkt_queue����process_backlog
+		if (qlen) //°Ñ´Óinput_pkt_queueÁ´±íÖĞµÄÈ¡³öµÄËùÓĞskbĞÅÏ¢Ìí¼Óµ½process_queueÖĞ£¬È»ºó´ÓĞÂ³õÊ¼»¯input_pkt_queue£¬¼ûprocess_backlog
 			skb_queue_splice_tail_init(&sd->input_pkt_queue,
-				&sd->process_queue);/* ��sd->input_pkt_queue�����еĽڵ����ӵ�sd->process_queue��β���� Ȼ���ʼ��sd->input_pkt_queue���� */
+				&sd->process_queue);/* °Ñsd->input_pkt_queueÁ´±íÖĞµÄ½ÚµãÌí¼Óµ½sd->process_queueµÄÎ²²¿¡£ È»ºó³õÊ¼»¯sd->input_pkt_queueÁ´±í */
 
 		if (qlen < quota - work) {
 			/*
@@ -4459,56 +4459,56 @@ void netif_napi_del(struct napi_struct *napi)
 }
 EXPORT_SYMBOL(netif_napi_del);
 
-//���Ľ������жϵĴ�������net_rx_action��⣺
+//±¨ÎÄ½ÓÊÕÈíÖĞ¶ÏµÄ´¦Àíº¯Êınet_rx_actionÏê½â£º
 /*
-�������ݰ����°벿��������Ϊ��
-net_rx_action // ���ж� //net_rx_action�л�԰��ĸ������Լ����жϴ���ʱ���������
-    |--> process_backlog() // Ĭ��poll
-               |--> __netif_receive_skb() // L2��������
-                            |--> ip_rcv() // L3���
+½ÓÊÕÊı¾İ°üµÄÏÂ°ë²¿´¦ÀíÁ÷³ÌÎª£º
+net_rx_action // ÈíÖĞ¶Ï //net_rx_actionÖĞ»á¶Ô°üµÄ¸öÊı£¬ÒÔ¼°ÈíÖĞ¶Ï´¦ÀíÊ±¼ä½øĞĞÏŞÖÆ
+    |--> process_backlog() // Ä¬ÈÏpoll
+               |--> __netif_receive_skb() // L2´¦Àíº¯Êı
+                            |--> ip_rcv() // L3Èë¿Ú
 
-*///open_softirq(NET_RX_SOFTIRQ, net_rx_action);,��net_dev_init��ע��������ж�
+*///open_softirq(NET_RX_SOFTIRQ, net_rx_action);,ÔÚnet_dev_initÖĞ×¢²á¸ÃÈí¼şÖĞ¶Ï
 /*
-//��NAPI��ʽ��������Ӳ���ж��е������netif_rx��������NAPI��ʽ��Ӳ���ж��е���napi_schedule, 
- //�ο� ���ݰ�����ϵ�� �� NAPI��ԭ����ʵ�� http://blog.csdn.net/zhangskd/article/details/21627963
- //����NAPI���Ƿ�NAPI���ն�����net_rx_action
+//·ÇNAPI·½Ê½£¬´ÓÇı¶¯Ó²¼şÖĞ¶ÏÖĞµ÷ÓÃÕâ¸önetif_rxº¯Êı£¬¶øNAPI·½Ê½´ÓÓ²¼şÖĞ¶ÏÖĞµ÷ÓÃnapi_schedule, 
+ //²Î¿¼ Êı¾İ°ü½ÓÊÕÏµÁĞ ¡ª NAPIµÄÔ­ÀíºÍÊµÏÖ http://blog.csdn.net/zhangskd/article/details/21627963
+ //²»¹ÜNAPI»¹ÊÇ·ÇNAPI×îÖÕ¶¼µ÷ÓÃnet_rx_action
 */
 
 /*
-            ��NAPI��ʽ                                              NAPI��ʽ(NAPI��napi_struct���Լ�����ģ��ýṹ�ϵ�poll���Ӻ���Ҳ���Լ�����ġ�ʹ�òο�:�����շ����Լ�NAPI_huwei_10_���˲���.htm)
+            ·ÇNAPI·½Ê½                                              NAPI·½Ê½(NAPIµÄnapi_structÊÇ×Ô¼º¹¹ÔìµÄ£¬¸Ã½á¹¹ÉÏµÄpoll¹³×Óº¯ÊıÒ²ÊÇ×Ô¼º¶¨ÒåµÄ¡£Ê¹ÓÃ²Î¿¼:Íø¿ÚÊÕ·¢°üÒÔ¼°NAPI_huwei_10_ĞÂÀË²©¿Í.htm)
 
                                         IRQ
                                          |
                   _______________________|_____________________________
                   |                                                     |
              netif_rx                                            napi_schedule
- �ϰ벿           |                                                     | 
+ ÉÏ°ë²¿           |                                                     | 
              enqueue_to_backlog                                  __napi_schedule
                   |                                                     |           
-            skb����input_pkt_queuem��                           napi_struct����poll_list��
-            softnet_data->backlog����poll_list��                                      | 
+            skb¼ÓÈëinput_pkt_queuemÖĞ                           napi_struct¼ÓÈëpoll_listÖĞ
+            softnet_data->backlog¼ÓÈëpoll_listÖĞ                                      | 
                    |____________________________________________________| 
                                              |
                                         net_rx_action
-�°벿                                       |
+ÏÂ°ë²¿                                       |
                       _______________________|_____________________________
                       |                                                     |
-            process_backlog->__netif_receive_skb                ����poll����->napi_gro_receive->netif_receive_skb->__netif_receive_skb
+            process_backlog->__netif_receive_skb                Çı¶¯poll·½·¨->napi_gro_receive->netif_receive_skb->__netif_receive_skb
 
 */
 
-static void net_rx_action(struct softirq_action *h) //���չ�����Щ���������ϰ벿����Щ���������°벿���ο� ���ݰ�����ϵ�� �� NAPI��ԭ����ʵ�� http://blog.csdn.net/zhangskd/article/details/21627963
+static void net_rx_action(struct softirq_action *h) //½ÓÊÕ¹ı³ÌÄÄĞ©º¯Êı´¦ÓÚÉÏ°ë²¿£¬ÄÄĞ©º¯Êı´¦ÓÚÏÂ°ë²¿£¬²Î¿¼ Êı¾İ°ü½ÓÊÕÏµÁĞ ¡ª NAPIµÄÔ­ÀíºÍÊµÏÖ http://blog.csdn.net/zhangskd/article/details/21627963
 {
 	struct softnet_data *sd = &__get_cpu_var(softnet_data);
-	unsigned long time_limit = jiffies + 2;  /*�������жϴ�������һ�����������ִ��ʱ��Ϊ2��jiffies*/
-	int budget = netdev_budget; /*�������жϽ��պ���һ����ദ���ı��ĸ���Ϊ 300 */
+	unsigned long time_limit = jiffies + 2;  /*ÉèÖÃÈíÖĞ¶Ï´¦Àí³ÌĞòÒ»´ÎÔÊĞíµÄ×î´óÖ´ĞĞÊ±¼äÎª2¸öjiffies*/
+	int budget = netdev_budget; /*ÉèÖÃÈíÖĞ¶Ï½ÓÊÕº¯ÊıÒ»´Î×î¶à´¦ÀíµÄ±¨ÎÄ¸öÊıÎª 300 */
 	void *have;
 
 	local_irq_disable();
 
     /*  
-    NAPI��napi_struct���Լ�����ģ��ýṹ�ϵ�poll���Ӻ���Ҳ���Լ�����ġ�
-    ��NAPI��napi_struct�ṹ��Ĭ�ϵģ�Ҳ����per cpu��softnet_data>backlog����poll���Ӻ���Ϊprocess_backlog
+    NAPIµÄnapi_structÊÇ×Ô¼º¹¹ÔìµÄ£¬¸Ã½á¹¹ÉÏµÄpoll¹³×Óº¯ÊıÒ²ÊÇ×Ô¼º¶¨ÒåµÄ¡£
+    ·ÇNAPIµÄnapi_struct½á¹¹ÊÇÄ¬ÈÏµÄ£¬Ò²¾ÍÊÇper cpuµÄsoftnet_data>backlog£¬Æğpoll¹³×Óº¯ÊıÎªprocess_backlog
     */
 	while (!list_empty(&sd->poll_list)) {
 		struct napi_struct *n;
@@ -4520,8 +4520,8 @@ static void net_rx_action(struct softirq_action *h) //���չ�����Щ���������ϰ벿
 		 */
 
 		 /*
-         /*����������ĳ���һ�δ������ĸ��� ������ʱ�䳬�����ʱ���ִֹͣ�У�           
-         ����softnet_break ��*/
+         /*Èç¹û´¦Àí±¨ÎÄ³¬³öÒ»´Î´¦Àí×î´óµÄ¸öÊı »òÔÊĞíÊ±¼ä³¬¹ı×î´óÊ±¼ä¾ÍÍ£Ö¹Ö´ĞĞ£¬           
+         Ìøµ½softnet_break ´¦*/
 		 */
 		if (unlikely(budget <= 0 || time_after(jiffies, time_limit)))
 			goto softnet_break;
@@ -4529,7 +4529,7 @@ static void net_rx_action(struct softirq_action *h) //���չ�����Щ���������ϰ벿
 
         /*
         
-        /*ʹ�ܱ����жϣ������ж�listΪ������ɣ��������NAPI����ѯ��������Ӳ�жϿ����������ִ��*/
+        /*Ê¹ÄÜ±¾µØÖĞ¶Ï£¬ÉÏÃæÅĞ¶ÏlistÎª¿ÕÒÑÍê³É£¬ÏÂÃæµ÷ÓÃNAPIµÄÂÖÑ¯º¯ÊıÊÇÔÚÓ²ÖĞ¶Ï¿ªÆôµÄÇé¿öÏÂÖ´ĞĞ*/
 		local_irq_enable();
 
 		/* Even though interrupts have been re-enabled, this
@@ -4540,14 +4540,14 @@ static void net_rx_action(struct softirq_action *h) //���չ�����Щ���������ϰ벿
 
 		/*
     
-        /* ȡ��softnet_data pool_list �����ϵ�һ��napi,        
-        ��ʹ����Ӳ�ж���ռ���жϣ����һ��napi�ҵ�pool_list��β��            
-        ���ж�ֻ���pool_list ͷ���Ƴ�һ��pool_list�������������ٽ���*/
+        /* È¡µÃsoftnet_data pool_list Á´±íÉÏµÄÒ»¸önapi,        
+        ¼´Ê¹ÏÖÔÚÓ²ÖĞ¶ÏÇÀÕ¼ÈíÖĞ¶Ï£¬»á°ÑÒ»¸önapi¹Òµ½pool_listµÄÎ²¶Ë            
+        ÈíÖĞ¶ÏÖ»»á´Ópool_list Í·²¿ÒÆ³ıÒ»¸öpool_list£¬ÕâÑù²»´æÔÚÁÙ½çÇø*/
 		n = list_first_entry(&sd->poll_list, struct napi_struct, poll_list);
 
 		have = netpoll_poll_lock(n);
 
-		weight = n->weight;  /*��weighe ��¼napi һ����ѯ�����������������*/
+		weight = n->weight;  /*ÓÃweighe ¼ÇÂ¼napi Ò»´ÎÂÖÑ¯ÔÊĞí´¦ÀíµÄ×î´ó±¨ÎÄÊı*/
 
 		/* This NAPI_STATE_SCHED test is for avoiding a race
 		 * with netpoll's poll_napi().  Only the entity which
@@ -4555,12 +4555,12 @@ static void net_rx_action(struct softirq_action *h) //���չ�����Щ���������ϰ벿
 		 * actually make the ->poll() call.  Therefore we avoid
 		 * accidently calling ->poll() when NAPI is not scheduled.
 		 */
-		work = 0;  /* work ��¼һ��napi�ܹ������ı�����*/
+		work = 0;  /* work ¼ÇÂ¼Ò»¸önapi×Ü¹²´¦ÀíµÄ±¨ÎÄÊı*/
 		
-		if (test_bit(NAPI_STATE_SCHED, &n->state)) {/*���ȡ�õ�napi״̬�Ǳ����ȵģ���ִ��napi����ѯ��������*/
+		if (test_bit(NAPI_STATE_SCHED, &n->state)) {/*Èç¹ûÈ¡µÃµÄnapi×´Ì¬ÊÇ±»µ÷¶ÈµÄ£¬¾ÍÖ´ĞĞnapiµÄÂÖÑ¯´¦Àíº¯Êı*/
             /*  
-                    NAPI��napi_struct���Լ�����ģ��ýṹ�ϵ�poll���Ӻ���Ҳ���Լ�����ġ�
-                    ��NAPI��napi_struct�ṹ��Ĭ�ϵģ�Ҳ����per cpu��softnet_data>backlog����poll���Ӻ���Ϊprocess_backlog
+                    NAPIµÄnapi_structÊÇ×Ô¼º¹¹ÔìµÄ£¬¸Ã½á¹¹ÉÏµÄpoll¹³×Óº¯ÊıÒ²ÊÇ×Ô¼º¶¨ÒåµÄ¡£
+                    ·ÇNAPIµÄnapi_struct½á¹¹ÊÇÄ¬ÈÏµÄ£¬Ò²¾ÍÊÇper cpuµÄsoftnet_data>backlog£¬Æğpoll¹³×Óº¯ÊıÎªprocess_backlog
                 */
 			work = n->poll(n, weight);
 			trace_napi_poll(n);
@@ -4568,13 +4568,13 @@ static void net_rx_action(struct softirq_action *h) //���չ�����Щ���������ϰ벿
 
 		WARN_ON_ONCE(work > weight);
 
-		budget -= work;  /*Ԥ���ȥ�Ѿ������ı�����*/
+		budget -= work;  /*Ô¤Ëã¼õÈ¥ÒÑ¾­´¦ÀíµÄ±¨ÎÄÊı*/
 
 
         /*
             
-        /*��ֹ����CPU ���жϣ�������а�ûִ�����NAPI�ҵ�softnet_data      
-        β���Ĳ�������Ӳ�жϴ����ٽ�����ͬʱwhileѭ��ʱ�ж�list�Ƿ�Ϊ��ʱҲҪ��ֹӲ�ж���ռ*/
+        /*½ûÖ¹±¾µØCPU µÄÖĞ¶Ï£¬ÏÂÃæ»áÓĞ°ÑÃ»Ö´ĞĞÍêµÄNAPI¹Òµ½softnet_data      
+        Î²²¿µÄ²Ù×÷£¬ºÍÓ²ÖĞ¶Ï´æÔÚÁÙ½çÇø¡£Í¬Ê±whileÑ­»·Ê±ÅĞ¶ÏlistÊÇ·ñÎª¿ÕÊ±Ò²Òª½ûÖ¹Ó²ÖĞ¶ÏÇÀÕ¼*/
 		local_irq_disable();
 
 		/* Drivers must not modify the NAPI state if they
@@ -4585,13 +4585,13 @@ static void net_rx_action(struct softirq_action *h) //���չ�����Щ���������ϰ벿
 
 		/*
             
-        /*���napi һ����ѯ�����ı��������õ������������������,˵��һ����ѯû������ȫ����Ҫ�����ı���*/
+        /*Èç¹ûnapi Ò»´ÎÂÖÑ¯´¦ÀíµÄ±¨ÎÄÊıÕıºÃµÈÓÚÔÊĞí´¦ÀíµÄ×î´óÊı,ËµÃ÷Ò»´ÎÂÖÑ¯Ã»´¦ÀíÍêÈ«²¿ĞèÒª´¦ÀíµÄ±¨ÎÄ*/
 		if (unlikely(work == weight)) {
-			if (unlikely(napi_disable_pending(n))) { /*���napi�Ѿ������ã��Ͱ�napi �� softnet_data ��pool_list ���Ƴ�*/
+			if (unlikely(napi_disable_pending(n))) { /*Èç¹ûnapiÒÑ¾­±»½ûÓÃ£¬¾Í°Ñnapi ´Ó softnet_data µÄpool_list ÉÏÒÆ³ı*/
 				local_irq_enable();
 				napi_complete(n);
 				local_irq_disable();
-			} else  /*���򣬰�napi �Ƶ� pool_list ��β��*/
+			} else  /*·ñÔò£¬°Ñnapi ÒÆµ½ pool_list µÄÎ²¶Ë*/
 				list_move_tail(&n->poll_list, &sd->poll_list);
 		}
 
@@ -4599,8 +4599,8 @@ static void net_rx_action(struct softirq_action *h) //���չ�����Щ���������ϰ벿
 	}
 
 
-/*�������ʱ�䳬ʱ�������ı���������������������ĸ�����˵������napi ���б�����Ҫ�������������жϡ�����
-˵��������жϴ�����ȫ����napi�ϵ���Ҫ�����ı��ģ�������Ҫ�������ж���*/
+/*Èç¹û´¦ÀíÊ±¼ä³¬Ê±£¬»ò´¦ÀíµÄ±¨ÎÄÊıµ½ÁË×î¶àÔÊĞí´¦ÀíµÄ¸öÊı£¬ËµÃ÷»¹ÓĞnapi ÉÏÓĞ±¨ÎÄĞèÒª´¦Àí£¬µ÷¶ÈÈíÖĞ¶Ï¡£·ñÔò£¬
+ËµÃ÷Õâ´ÎÈíÖĞ¶Ï´¦ÀíÍêÈ«²¿µÄnapiÉÏµÄĞèÒª´¦ÀíµÄ±¨ÎÄ£¬²»ÔÙĞèÒªµ÷¶ÈÈíÖĞ¶ÏÁË*/
 
 out:
 	net_rps_action_and_irq_enable(sd);
@@ -4615,7 +4615,7 @@ out:
 
 	return;
 
-softnet_break: //��ȡʱ�䵽���ߴ�һ��napi�ж�ȡ�ı������ﵽ���ֵ
+softnet_break: //¶ÁÈ¡Ê±¼äµ½»òÕß´ÓÒ»¸önapiÖĞ¶ÁÈ¡µÄ±¨ÎÄÊı´ïµ½×î´óÖµ
 	sd->time_squeeze++;
 	__raise_softirq_irqoff(NET_RX_SOFTIRQ);
 	goto out;
@@ -5809,7 +5809,7 @@ int dev_ioctl(struct net *net, unsigned int cmd, void __user *arg)
  *	Returns a suitable unique value for a new device interface
  *	number.  The caller must hold the rtnl semaphore or the
  *	dev_base_lock to be sure it remains unique.
- *///Ϊ�豸����һ��Ψһ�����ź�һ���������������豸��Ψһ��ʾ��
+ *///ÎªÉè±¸·ÖÅäÒ»¸öÎ¨Ò»Ë÷ÒıºÅºÍÒ»¸öÓÃÓÚĞéÄâËíµÀÉè±¸µÄÎ¨Ò»±êÊ¾ºÅ
 static int dev_new_index(struct net *net)
 {
 	static int ifindex;
@@ -5823,9 +5823,9 @@ static int dev_new_index(struct net *net)
 
 /* Delayed registration/unregisteration */
 //static LIST_HEAD(net_todo_list);
-struct list_head net_todo_list = LIST_HEAD_INIT(net_todo_list);//������netdev_run_todoִ�и������е�dev�����������ж�dev�����ü���refcnt�Ƿ�Ϊ0
+struct list_head net_todo_list = LIST_HEAD_INIT(net_todo_list);//×îÖÕÓÉnetdev_run_todoÖ´ĞĞ¸ÃÁ´±íÖĞµÄdev¡£¸ÃÁ´±íÊÇÅĞ¶ÏdevµÄÒıÓÃ¼ÆÊırefcntÊÇ·ñÎª0
 
-//���Ϊ0��ֱ�ӵ���netdev_run_todo����ĺ������ͷ������Դ
+//Èç¹ûÎª0ÔòÖ±½Óµ÷ÓÃnetdev_run_todoÀïÃæµÄº¯ÊıÀ´ÊÍ·ÅÏà¹Ø×ÊÔ´
 static void net_set_todo(struct net_device *dev)
 {
 	list_add_tail(&dev->todo_list, &net_todo_list);
@@ -5912,7 +5912,7 @@ static void rollback_reg111istered(struct net_device *dev)
 	list_add(&dev->unreg_list, &single);
 	rollback_registered_many(&single);
 }
-//unregister_netdevice����Ҳ�ǵ��øú���
+//unregister_netdevice×îÖÕÒ²ÊÇµ÷ÓÃ¸Ãº¯Êı
 static void rollback_registered(struct net_device *dev)
 {
 	BUG_ON(dev_boot_phase);
@@ -5920,8 +5920,8 @@ static void rollback_registered(struct net_device *dev)
 
 	/* Some devices call without registering for initialization unwind. */
 	/*
-	  * ����豸����NETREG_UNINITIALIZED״̬����δ
-	  * ��ʼ��״̬���������Ϣ�󷵻ء�
+	  * Èç¹ûÉè±¸´¦ÓÚNETREG_UNINITIALIZED×´Ì¬£¬¼´Î´
+	  * ³õÊ¼»¯×´Ì¬£¬ÔòÊä³öĞÅÏ¢ºó·µ»Ø¡£
 	  */
 	if (dev->reg_state == NETREG_UNINITIALIZED) {
 		printk(KERN_DEBUG "unregister_netdevice: device %s/%p never "
@@ -5935,36 +5935,36 @@ static void rollback_registered(struct net_device *dev)
 
 	/* If device is running, close it first. */
 	/*
-	  * ����豸û�йرգ������
-	  * dev_close()���йر�
+	  * Èç¹ûÉè±¸Ã»ÓĞ¹Ø±Õ£¬Ôòµ÷ÓÃ
+	  * dev_close()½øĞĞ¹Ø±Õ
 	  */
 	dev_close(dev);
 
 	/* And unlink it from device chain. */
 	/*
-	  * ����ע���������豸ʵ����ȫ��
-	  * ����dev_base��dev_name_head��dev_index_head
-	  * ɢ�б����Ƴ����Ƴ�������ֹ
-	  * �ں���ϵͳʹ�ø��豸��������Ȼ
-	  * ӵ��ָ���net_device�ṹʵ����ָ�룬
-	  * ֻ�е����ü���Ϊ0ʱ�Ż������ͷ�
-	  * ʵ����
+	  * ½«´ı×¢ÏúµÄÍøÂçÉè±¸ÊµÀı´ÓÈ«¾Ö
+	  * Á´±ídev_base¼°dev_name_head¡¢dev_index_head
+	  * É¢ÁĞ±íÖĞÒÆ³ı¡£ÒÆ³ıºó²»ÄÜ×èÖ¹
+	  * ÄÚºË×ÓÏµÍ³Ê¹ÓÃ¸ÃÉè±¸£¬ËûÃÇÈÔÈ»
+	  * ÓµÓĞÖ¸Ïò¸Ãnet_device½á¹¹ÊµÀıµÄÖ¸Õë£¬
+	  * Ö»ÓĞµ±ÒıÓÃ¼ÆÊıÎª0Ê±²Å»áÕæÕıÊÍ·Å
+	  * ÊµÀı¡£
 	  */
 	unlist_netdevice(dev);
 
 	/*
-	  * �������豸ʵ������ΪNETREG_UNREGISTERING
-	  * ��δע��״̬
+	  * ½«ÍøÂçÉè±¸ÊµÀıÉèÖÃÎªNETREG_UNREGISTERING
+	  * ¼´Î´×¢²á×´Ì¬
 	  */
 	dev->reg_state = NETREG_UNREGISTERING;
 	/*
-	  * ͬ�����ݰ��Ľ��մ���
+	  * Í¬²½Êı¾İ°üµÄ½ÓÊÕ´¦Àí
 	  */
 	synchronize_net();
 
 	/* Shutdown queueing discipline. */
 	/*
-	  * �ͷ��������豸��صĶ��й���ʵ��
+	  * ÊÍ·ÅËùÓĞÓëÉè±¸Ïà¹ØµÄ¶ÓÁĞ¹æÔòÊµÀı
 	  */
 	dev_shutdown(dev);
 
@@ -5972,9 +5972,9 @@ static void rollback_registered(struct net_device *dev)
 	   this device. They should clean all the things.
 	*/
 	/*
-	  * ����NETDEV_UNREGISTER��Ϣ��netdev_chain֪ͨ���ϣ�
-	  * �Ա�֪ͨ���豸״̬�ı�����Ȥ�������ں�
-	  * ���
+	  * ·¢ËÍNETDEV_UNREGISTERÏûÏ¢µ½netdev_chainÍ¨ÖªÁ´ÉÏ£¬
+	  * ÒÔ±ãÍ¨Öª¶ÔÉè±¸×´Ì¬¸Ä±äÓĞĞËÈ¤µÄÆäËûÄÚºË
+	  * ×é¼ş
 	  */
 	call_netdevice_notifiers(NETDEV_UNREGISTER, dev);
 
@@ -5983,13 +5983,13 @@ static void rollback_registered(struct net_device *dev)
 	 */
 	dev_unicast_flush(dev);
 	/*
-	  * �ͷ����õ������豸�ϵ��鲥MAC��ַ����Ϣ��
+	  * ÊÍ·ÅÉèÖÃµ½ÍøÂçÉè±¸ÉÏµÄ×é²¥MACµØÖ·µÈĞÅÏ¢¡£
 	  */
 	dev_addr_discard(dev);
 
 	/*
-	  * ��������������ص����ٲ�����ͨ��
-	  * ��������Щ��init�г�ʼ��������
+	  * ½øĞĞÇı¶¯³ÌĞòÏà¹ØµÄÏú»Ù²Ù×÷£¬Í¨³£
+	  * ÊÇÏú»ÙÄÇĞ©ÔÚinitÖĞ³õÊ¼»¯µÄÊı¾İ
 	  */
 	if (dev->netdev_ops->ndo_uninit)
 		dev->netdev_ops->ndo_uninit(dev);
@@ -6032,7 +6032,7 @@ unsigned long netdev_fix_features(unsigned long features, const char *name)
 	}
 
 	/* TSO requires that SG is present as well. */
-	if ((features & NETIF_F_TSO) && !(features & NETIF_F_SG)) {//ֻ��NETIF_F_SG��Ч��ʱ��TSO�Ż���Ч
+	if ((features & NETIF_F_TSO) && !(features & NETIF_F_SG)) {//Ö»ÓĞNETIF_F_SGÓĞĞ§µÄÊ±ºò£¬TSO²Å»áÓĞĞ§
 		if (name)
 			printk(KERN_NOTICE "%s: Dropping NETIF_F_TSO since no "
 			       "SG feature.\n", name);
@@ -6104,15 +6104,15 @@ EXPORT_SYMBOL(netif_stacked_transfer_operstate);
  *	will not get the same name.
  */
  /*
- * ����ע��������豸��ȷ��֮�󣬱����register_netdevice()ע�������豸������
- * �����豸������ע�ᵽϵͳ�С����ע��󣬻ᷢ��NETDEV_REGISTER��Ϣ��netdev_chain
- * ֪ͨ���У�ʹ�����ж��豸ע�����Ȥ��ģ�鶼�ܽ�����Ϣ��
+ * µ±´ı×¢²áµÄÍøÂçÉè±¸ÃûÈ·¶¨Ö®ºó£¬±ãµ÷ÓÃregister_netdevice()×¢²áÍøÂçÉè±¸£¬²¢½«
+ * ÍøÂçÉè±¸ÃèÊö·û×¢²áµ½ÏµÍ³ÖĞ¡£Íê³É×¢²áºó£¬»á·¢ËÍNETDEV_REGISTERÏûÏ¢µ½netdev_chain
+ * Í¨ÖªÁ´ÖĞ£¬Ê¹µÃËùÓĞ¶ÔÉè±¸×¢²á¸ĞĞËÈ¤µÄÄ£¿é¶¼ÄÜ½ÓÊÕÏûÏ¢¡£
  */
-//�����豸ע���ʱ��:���������豸���������� ��  ������Ȳ�ε������豸
-//������������Ƶ������豸�����ᱻע��  
-////alloc_netdev����ÿռ�󣬵���alloc_netdev���ע��
+//ÍøÂçÉè±¸×¢²áµÄÊ±»ú:¼ÓÔØÍøÂçÉè±¸µÄÇı¶¯³ÌĞò ¡¢  ²ÁÈë¿ÉÈÈ²å°ÎµÄÍøÂçÉè±¸
+//ÓÉÇı¶¯³ÌĞò¿ØÖÆµÄÍøÂçÉè±¸¶¼½«»á±»×¢²á  
+////alloc_netdev·ÖÅäºÃ¿Õ¼äºó£¬µ÷ÓÃalloc_netdevÍê³É×¢²á
 /*
-  * �ڵ��øú���ǰ�������rtnl_lock()����ȡrtnl������
+  * ÔÚµ÷ÓÃ¸Ãº¯ÊıÇ°±ØĞëµ÷ÓÃrtnl_lock()À´»ñÈ¡rtnl»¥³âËø
   */
 int register_netdevice(struct net_device *dev)
 {
@@ -6122,18 +6122,18 @@ int register_netdevice(struct net_device *dev)
 	struct net *net = dev_net(dev);
 
 	/*
-	  * ���Ϊ�棬���ʾ�豸��ĳ�ʼ��(net_dev_init())
-	  * ��δ��ɣ���ʱע�������豸��
-	  * ΪBUG��
+	  * Èç¹ûÎªÕæ£¬Ôò±íÊ¾Éè±¸²ãµÄ³õÊ¼»¯(net_dev_init())
+	  * ÉĞÎ´Íê³É£¬´ËÊ±×¢²áÍøÂçÉè±¸¼´
+	  * ÎªBUG¡£
 	  */
 	BUG_ON(dev_boot_phase);
 	ASSERT_RTNL();
 
 	/*
-	  * 2.6�汾�ں�֧���ں���ռ��might_sleep()����
-	  * �Ƿ���Ҫ���µ��ȣ�����ǣ������µ��ȣ�
-	  * ���۴�ʱ����ִ�����ں˿ռ仹��
-	  * �û��ռ䡣
+	  * 2.6°æ±¾ÄÚºËÖ§³ÖÄÚºËÇÀÕ¼£¬might_sleep()ºê¼ì²é
+	  * ÊÇ·ñĞèÒªÖØĞÂµ÷¶È£¬Èç¹ûÊÇ£¬ÔòÖØĞÂµ÷¶È£¬
+	  * ÎŞÂÛ´ËÊ±½ø³ÌÖ´ĞĞÔÚÄÚºË¿Õ¼ä»¹ÊÇ
+	  * ÓÃ»§¿Õ¼ä¡£
 	  */
 	might_sleep();
 
@@ -6143,22 +6143,22 @@ int register_netdevice(struct net_device *dev)
 
 	spin_lock_init(&dev->addr_list_lock);
 	netdev_set_addr_lockdep_class(dev);
-	netdev_init_queue_locks(dev);//�Զ����еķ��Ͷ���_tx[]���ͽ��ն���rx_queue���г�ʼ��
+	netdev_init_queue_locks(dev);//¶Ô¶ÓÁĞÖĞµÄ·¢ËÍ¶ÓÁĞ_tx[]ËøºÍ½ÓÊÕ¶ÓÁĞrx_queue½øĞĞ³õÊ¼»¯
 
 	dev->iflink = -1;
 
 	/* Init, if this function is available */
        /* 
-        * ����г�ʼ�����������ȳ�ʼ��.
-        * netdev_ops�ɲ�ͬ�������豸��������
-        * ����ʼ�������Բο�3c501.c��el1_probe����
-        * ��ע��3c501�����Ĺ���
+        * Èç¹ûÓĞ³õÊ¼»¯º¯Êı£¬ÔòÏÈ³õÊ¼»¯.
+        * netdev_opsÓÉ²»Í¬µÄÍøÂçÉè±¸Çı¶¯³ÌĞò
+        * À´³õÊ¼»¯£¬¿ÉÒÔ²Î¿¼3c501.cÖĞel1_probeº¯Êı
+        * À´×¢²á3c501Íø¿¨µÄ¹ı³Ì
         */
 	/*
-	 * ����豸���������ṩ�˳�ʼ���������������س�ʼ����
+	 * Èç¹ûÉè±¸Çı¶¯³ÌĞòÌá¹©ÁË³õÊ¼»¯º¯Êı£¬Ôò½øĞĞÏà¹Ø³õÊ¼»¯¡£
 	 */
 	if (dev->netdev_ops->ndo_init) {
-		ret = dev->netdev_ops->ndo_init(dev);//һ����alloc_netdev��setup����xxx_probe(����e100_probe)�г�ʼ��
+		ret = dev->netdev_ops->ndo_init(dev);//Ò»°ãÔÚalloc_netdevµÄsetup»òÕßxxx_probe(ÀıÈçe100_probe)ÖĞ³õÊ¼»¯
 		if (ret) {
 			if (ret > 0)
 				ret = -EIO;
@@ -6167,16 +6167,16 @@ int register_netdevice(struct net_device *dev)
 	}
 
 	/*
-	 * ����dev_valid_name()����ע��������豸���Ƿ���Ч��
+	 * µ÷ÓÃdev_valid_name()¼ì²â´ı×¢²áµÄÍøÂçÉè±¸ÃûÊÇ·ñÓĞĞ§¡£
 	 */
 	if (!dev_valid_name(dev->name)) {
 		ret = -EINVAL;
 		goto err_uninit;
 	}
 	/*
-	 * ����dev_new_index()Ϊ�豸����һ��Ψһ�����ź�һ���������������豸
-	 * ��Ψһ��ʶ����������һ��32λ������������ÿ��һ�����豸�ӵ�ϵͳ��
-	 * �������ͻ������
+	 * µ÷ÓÃdev_new_index()ÎªÉè±¸·ÖÅäÒ»¸öÎ¨Ò»Ë÷ÒıºÅºÍÒ»¸öÓÃÓÚĞéÄâËíµÀÉè±¸
+	 * µÄÎ¨Ò»±êÊ¶¡£Ë÷ÒıºÅÓÉÒ»¸ö32Î»¼ÆÊıÆ÷²úÉú£¬Ã¿µ±Ò»¸öĞÂÉè±¸¼Óµ½ÏµÍ³ÖĞ
+	 * ¼ÆÊıÆ÷¾Í»áµİÔö¡£
 	 */
 	dev->ifindex = dev_new_index(net);
 	if (dev->iflink == -1)
@@ -6184,8 +6184,8 @@ int register_netdevice(struct net_device *dev)
 
 	/* Check for existence of name */
 	/*
-	 * �������豸���ӵ�dev_name_headɢ�б��У�������Ƿ����ͬ��
-	 * �������豸��
+	 * ½«ÍøÂçÉè±¸Ìí¼Óµ½dev_name_headÉ¢ÁĞ±íÖĞ£¬²¢¼ì²âÊÇ·ñ´æÔÚÍ¬Ãû
+	 * µÄÍøÂçÉè±¸¡£
 	 */
 	head = dev_name_hash(net, dev->name);
 	hlist_for_each(p, head) {
@@ -6199,32 +6199,32 @@ int register_netdevice(struct net_device *dev)
 
 	/* Fix illegal checksum combinations */
 	/* 
-        * �������,��Щ���Եĺ궨����net_device����ʱ
-        * �Ժ����ʽ�г�������include\linux\netdevice.h
-        * NETIF_F_HW_CSUM: ���Զ����а�����У��
-        * NETIF_F_IP_CSUM: ���Զ�ʹ��ipv4Э���TCP/UDP����У��
-        * NETIF_F_IPV6_CSUM: ���Զ�ʹ��ipv6Э���TCP/UDP����У��
+        * ¼ì²éÌØĞÔ,ÕâĞ©ÌØĞÔµÄºê¶¨ÒåÔÚnet_device¶¨ÒåÊ±
+        * ÒÔºêµÄĞÎÊ½ÁĞ³öÀ´£¬ÔÚinclude\linux\netdevice.h
+        * NETIF_F_HW_CSUM: ¿ÉÒÔ¶ÔËùÓĞ°ü½øĞĞĞ£Ñé
+        * NETIF_F_IP_CSUM: ¿ÉÒÔ¶ÔÊ¹ÓÃipv4Ğ­ÒéµÄTCP/UDP½øĞĞĞ£Ñé
+        * NETIF_F_IPV6_CSUM: ¿ÉÒÔ¶ÔÊ¹ÓÃipv6Ğ­ÒéµÄTCP/UDP½øĞĞĞ£Ñé
         */
 	if ((dev->features & NETIF_F_HW_CSUM) &&
 	    (dev->features & (NETIF_F_IP_CSUM|NETIF_F_IPV6_CSUM))) {
 		printk(KERN_NOTICE "%s: mixed HW and IP checksum settings.\n",
 		       dev->name);
              /* 
-              * ��������������Զ����ã���NETIF_F_IP_CSUM��NETIF_F_IPV6_CSUM
-              * ���������������������Ϊ�����а��ѽ���У���ˣ���
-              * ���������Ѿ���������,�����������ʵ���й�
+              * Èç¹ûÉÏÊöÈı¸öÌØĞÔ¶¼ÉèÖÃ£¬Ôò½«NETIF_F_IP_CSUM¡¢NETIF_F_IPV6_CSUM
+              * Á½¸öÌØĞÔÇå³ı¡£»òĞíÊÇÒòÎª¶ÔËùÓĞ°üÒÑ½øĞĞĞ£ÑéÁË£¬Õâ
+              * Á½¸öÌØĞÔÒÑ¾­±»º­¸ÇÁË,»òĞí¸úºóÃæµÄÊµÏÖÓĞ¹Ø
               */
 		dev->features &= ~(NETIF_F_IP_CSUM|NETIF_F_IPV6_CSUM);
 	}
 
        /*
-        * NETIF_F_NO_CSUM: ��Ҫ�����У���
+        * NETIF_F_NO_CSUM: ²»ÒªÇó¼ÆËãĞ£ÑéºÍ
         */
 	if ((dev->features & NETIF_F_NO_CSUM) &&
 	    (dev->features & (NETIF_F_HW_CSUM|NETIF_F_IP_CSUM|NETIF_F_IPV6_CSUM))) {
 		printk(KERN_NOTICE "%s: mixed no checksumming and other settings.\n",
 		       dev->name);
-              /*��������������λ��� */
+              /*½«ÏÂÁĞÈı¸öÌØĞÔÎ»Çå³ı */
 		dev->features &= ~(NETIF_F_IP_CSUM|NETIF_F_IPV6_CSUM|NETIF_F_HW_CSUM);
 	}
 
@@ -6234,9 +6234,9 @@ int register_netdevice(struct net_device *dev)
 	if (dev->features & NETIF_F_SG)
 		dev->features |= NETIF_F_GSO;
 
-       /* ��ʼ��dev��device���ͳ�Աdev*/
+       /* ³õÊ¼»¯devµÄdeviceÀàĞÍ³ÉÔ±dev*/
 	netdev_initialize_kobject(dev);
-       /* ��sysfs�д������豸��������*/
+       /* ÔÚsysfsÖĞ´´½¨¸úÉè±¸¹ØÁªµÄÏî*/
 	ret = netdev_register_kobject(dev);
 	if (ret)
 		goto err_uninit;
@@ -6251,7 +6251,7 @@ int register_netdevice(struct net_device *dev)
 
 	dev_init_scheduler(dev);
 	dev_hold(dev);
-       /* ���뵽�ض�����ռ��������ɢ�б���*/
+       /* ²åÈëµ½ÌØ¶¨ÃüÁî¿Õ¼äµÄÁ´±íºÍÉ¢ÁĞ±íÖĞ*/
 	list_netdevice(dev);
 
 	/* Notify protocols, that a new device appeared. */
@@ -6324,7 +6324,7 @@ EXPORT_SYMBOL_GPL(init_dummy_netdev);
  *	This is a wrapper around register_netdevice that takes the rtnl semaphore
  *	and expands the device name if you passed a format string to
  *	alloc_netdev.
- *///alloc_netdev����ÿռ�󣬵���register_netdev���ע�ᣬж�ص�ʱ��unregister_netdevice��free_netdev���ע�����ͷ��ڴ�
+ *///alloc_netdev·ÖÅäºÃ¿Õ¼äºó£¬µ÷ÓÃregister_netdevÍê³É×¢²á£¬Ğ¶ÔØµÄÊ±ºòunregister_netdeviceºÍfree_netdevÍê³É×¢Ïú²¢ÊÍ·ÅÄÚ´æ
 int register_netdev(struct net_device *dev)
 {
 	int err;
@@ -6360,32 +6360,32 @@ EXPORT_SYMBOL(register_netdev);
  * call dev_put.
  */
 /*
-  * netdev_wait_allrefs()��һ��ѭ����ɣ�ֱ��
-  * �����豸�����ü���ֵ����0������
-  * �ȴ�������ÿ�뷢��һ��NETDEV_UNREGISTER֪ͨ��
-  * ÿ10s�ڿ���̨��ӡһ�ξ��档�ڷ���֪ͨʱ��
-  * �������������״̬�ı��¼�����һ��Ҫ������
-  * �κγ��������豸���õ�Э����豸��Ҫע��
-  * �����豸֪ͨ�������ǽ��յ�NETDEV_UNREGISTER
-  * �¼�ʱ��Ҫ��ʼ�����������ͷŶ������豸������
-  *///��unregister_netdev��ʱ���ߵ����ÿ��1s��ʱ��֪ͨ������ͨ��һ�Σ��������ø�dev��ģ���յ���֪ͨ����Ҫʹ��dev_put��ȡ���Ը�dev������
+  * netdev_wait_allrefs()ÓÉÒ»¸öÑ­»·×é³É£¬Ö±µ½
+  * ÍøÂçÉè±¸µÄÒıÓÃ¼ÆÊıÖµ¼õµ½0½áÊø¡£
+  * µÈ´ı¹ı³ÌÖĞÃ¿Ãë·¢ËÍÒ»´ÎNETDEV_UNREGISTERÍ¨Öª£¬
+  * Ã¿10sÔÚ¿ØÖÆÌ¨´òÓ¡Ò»´Î¾¯¸æ¡£ÔÚ·¢ËÍÍ¨ÖªÊ±£¬
+  * Èç¹û·¢ÉúÁËÁ¬½Ó×´Ì¬¸Ä±äÊÂ¼ş£¬ÔòÒ»¶¨Òª´¦Àí¡£
+  * ÈÎºÎ³ÖÓĞÍøÂçÉè±¸ÒıÓÃµÄĞ­Òé»òÉè±¸¶¼Òª×¢²á
+  * ÍøÂçÉè±¸Í¨Öª£¬µ±ËüÃÇ½ÓÊÕµ½NETDEV_UNREGISTER
+  * ÊÂ¼şÊ±£¬Òª¿ªÊ¼½øĞĞÇåÀí²¢ÊÍ·Å¶ÔÍøÂçÉè±¸µÄÒıÓÃ
+  *///ÔÚunregister_netdevµÄÊ±ºò£¬×ßµ½ÕâÀï£¬Ã¿¹ı1sÏëÊ±¼äÍ¨ÖªÁ´ÉÏÃæÍ¨¸æÒ»´Î£¬ÆäËûÒıÓÃ¸ÃdevµÄÄ£¿éÊÕµ½¸ÃÍ¨Öªºó£¬ĞèÒªÊ¹ÓÃdev_putÀ´È¡Ïû¶Ô¸ÃdevµÄÒıÓÃ
 static void netdev_wait_allrefs(struct net_device *dev)
 {
 	unsigned long rebroadcast_time, warning_time;
 
 	rebroadcast_time = warning_time = jiffies;
 	/*
-	  * ѭ���ȴ���ֱ�����ü���Ϊ0
+	  * Ñ­»·µÈ´ı£¬Ö±µ½ÒıÓÃ¼ÆÊıÎª0
 	  */
-	while (atomic_read(&dev->refcnt) != 0) { //����0��ʱ���˳�ѭ��
+	while (atomic_read(&dev->refcnt) != 0) { //µÈÓÚ0µÄÊ±ºòÍË³öÑ­»·
 		if (time_after(jiffies, rebroadcast_time + 1 * HZ)) {
 			rtnl_lock();
 
 			/* Rebroadcast unregister notification */
 			/*
-			  * �ڵȴ�������ÿ��㲥һ��NETDEV_UNREGISTER
-			  * ��Ϣ�������豸��ע���ڼ䣬��������� 
-			  * ����״̬�ı��¼�����һ��Ҫ������
+			  * ÔÚµÈ´ı¹ı³ÌÖĞÃ¿Ãë¹ã²¥Ò»´ÎNETDEV_UNREGISTER
+			  * ÏûÏ¢¡£ÍøÂçÉè±¸ÔÚ×¢ÏúÆÚ¼ä£¬Èç¹û·¢ÉúÁË 
+			  * Á¬½Ó×´Ì¬¸Ä±äÊÂ¼ş£¬ÔòÒ»¶¨Òª´¦Àí¡£
 			  */
 			call_netdevice_notifiers(NETDEV_UNREGISTER, dev);
 
@@ -6408,8 +6408,8 @@ static void netdev_wait_allrefs(struct net_device *dev)
 		msleep(250);
 
 		/*
-		  * �ڵȴ������У�����ȴ�ʱ�䳬��10s��
-		  * ���ÿ10s��ӡһ�ξ�����Ϣ��
+		  * ÔÚµÈ´ı¹ı³ÌÖĞ£¬Èç¹ûµÈ´ıÊ±¼ä³¬¹ı10s£¬
+		  * Ôò»áÃ¿10s´òÓ¡Ò»´Î¾¯¸æĞÅÏ¢¡£
 		  */
 		if (time_after(jiffies, warning_time + 10 * HZ)) {
 			printk(KERN_EMERG "unregister_netdevice: "
@@ -6446,23 +6446,23 @@ static void netdev_wait_allrefs(struct net_device *dev)
  * the interval the lock was held have been completed.
  */
 /*
-  * netdev_run_todo()����������������net_todo_list��
-  * �������豸������������ص�ע������
-  * ��Ҫ��ע��sysfs�и��豸�Ľ�㡣ע��ʱ��
-  * �ȴ��豸�����ü���Ϊ0���ٵ����豸
-  * ������destruct()���������ע�����̡�
-  *///unregister_netdev��ʱ���dev���ӵ���net_todo_list�����У���net_set_todo
+  * netdev_run_todo()º¯ÊıÓÃÀ´´¦Àí¶ÓÁĞnet_todo_listÉÏ
+  * µÄÍøÂçÉè±¸£¬¼ÌĞø´¦ÀíÏà¹ØµÄ×¢ÏúÊÂÎñ¡£
+  * Ö÷ÒªÊÇ×¢ÏúsysfsÖĞ¸ÃÉè±¸µÄ½áµã¡£×¢ÏúÊ±£¬
+  * µÈ´ıÉè±¸µÄÒıÓÃ¼ÆÊıÎª0£¬ÔÙµ÷ÓÃÉè±¸
+  * ×ÔÉíµÄdestruct()º¯Êı£¬Íê³É×¢Ïú¹ı³Ì¡£
+  *///unregister_netdevµÄÊ±ºò°ÑdevÌí¼Óµ½ÁËnet_todo_listÁ´±íÖĞ£¬¼ûnet_set_todo
 void netdev_run_todo(void)
 {
 	struct list_head list;
 
 	/* Snapshot list, allow later requests */
 	/*
-	  * �ڳ������Ĺ����У���net_todo_list
-	  * �е����ж��󶼴洢��һ��ջ�ϵ�
-	  * ��ʱ�����У������Ϳ�����û����
-	  * ������°�ȫ�ش������д�����
-	  * ���豸���������Ƿǳ�������
+	  * ÔÚ³ÖÓĞËøµÄ¹ı³ÌÖĞ£¬½«net_todo_list
+	  * ÖĞµÄËùÓĞ¶ÔÏó¶¼´æ´¢µ½Ò»¸öÕ»ÉÏµÄ
+	  * ÁÙÊ±±äÁ¿ÖĞ£¬ÕâÑù¾Í¿ÉÒÔÔÚÃ»ÓĞËø
+	  * µÄÇé¿öÏÂ°²È«µØ´¦ÀíËùÓĞ´ıÏú»Ù
+	  * µÄÉè±¸¡£ÕâÀïÕæÊÇ·Ç³£µÄÇÉÃî
 	  */
 	list_replace_init(&net_todo_list, &list);
 
@@ -6483,13 +6483,13 @@ void netdev_run_todo(void)
 		dev->reg_state = NETREG_UNREGISTERED;
 
 		/*
-		  * ���ÿ��CPU���ն�����pending�����ݰ�
+		  * Çå³ıÃ¿¸öCPU½ÓÊÕ¶ÓÁĞÉÏpendingµÄÊı¾İ°ü
 		  */
 		on_each_cpu(flush_backlog, dev, 1);
 
 		/*
-		  * �ȴ�ֱ����ע���������豸û������Ϊֹ��
-		  * Ҳ���ǵȴ����ü���Ϊ0.
+		  * µÈ´ıÖ±µ½´ı×¢ÏúµÄÍøÂçÉè±¸Ã»ÓĞÒıÓÃÎªÖ¹£¬
+		  * Ò²¾ÍÊÇµÈ´ıÒıÓÃ¼ÆÊıÎª0.
 		  */
 		netdev_wait_allrefs(dev);
 
@@ -6500,22 +6500,22 @@ void netdev_run_todo(void)
 		WARN_ON(dev->dn_ptr);
 
 		/*
-		  * destructor����ͨ�������free_netdev()������
-		  * �ڸú����л����豸��״̬��
-		  * ֻ�����豸����NETREG_UNINITIALIZED
-		  * ״̬ʱ�ŻὫdevռ�õ��ڴ��ͷš�
+		  * destructorº¯ÊıÍ¨³£»áµ÷ÓÃfree_netdev()º¯Êı£¬
+		  * ÔÚ¸Ãº¯ÊıÖĞ»á¼ì²éÉè±¸µÄ×´Ì¬£¬
+		  * Ö»ÓĞÔÚÉè±¸´¦ÓÚNETREG_UNINITIALIZED
+		  * ×´Ì¬Ê±²Å»á½«devÕ¼ÓÃµÄÄÚ´æÊÍ·Å¡£
 		  */
 		if (dev->destructor)
 			dev->destructor(dev);
 
 		/* Free network device */
 		/*
-		  * ����������ĺ������ù�����
-		  * �����netdev_release()�������ͷ�
-		  * dev��ռ�õ��ڴ档netdev_release()��
-		  * net_class�е�release��Ա�У���
-		  * netdev_register_kobject()�����õ�device�ṹ(��dev->dev)
-		  * ��class��Ա�С�
+		  * ÔÚÕâ¸öº¯ÊıµÄºóĞøµ÷ÓÃ¹ı³ÌÖĞ
+		  * »áµ÷ÓÃnetdev_release()º¯ÊıÀ´ÊÍ·Å
+		  * devËùÕ¼ÓÃµÄÄÚ´æ¡£netdev_release()ÔÚ
+		  * net_classÖĞµÄrelease³ÉÔ±ÖĞ£¬ÔÚ
+		  * netdev_register_kobject()ÖĞÉèÖÃµ½device½á¹¹(¼´dev->dev)
+		  * µÄclass³ÉÔ±ÖĞ¡£
 		  */
 		kobject_put(&dev->dev.kobj);
 	}
@@ -6592,9 +6592,9 @@ static void netdev_init_queues(struct net_device *dev)
  *	and performs basic initialization.  Also allocates subquue structs
  *	for each queue on the device at the end of the netdevice.
  */
- //sizeof_priv�����洢��������˽�����ݵĴ�С��name�豸����setup���ú������ڳ�ʼ��net_device�ṹʵ���Ĳ�����,һ����ether_setup����  queue_countΪ���ն��и���
- //��alloc_netdev_mq����Ŀռ���ɣ�net_device���ݽṹ���ڴ�ռ�+˽�������ڴ�ռ�+�豸���Ͷ��е��ڴ�ռ䡣
- //��ͬ�豸��������᲻һ��
+ //sizeof_privÓÃÀ´´æ´¢Çı¶¯³ÌĞòË½ÓĞÊı¾İµÄ´óĞ¡£¬nameÉè±¸Ãû£¬setupÅäÖÃº¯ÊıÓÃÓÚ³õÊ¼»¯net_device½á¹¹ÊµÀıµÄ²¿·ÖÓò,Ò»°ãÓÃether_setupº¯Êı  queue_countÎª½ÓÊÕ¶ÓÁĞ¸öÊı
+ //ÓÉalloc_netdev_mq·ÖÅäµÄ¿Õ¼ä×é³É£ºnet_deviceÊı¾İ½á¹¹µÄÄÚ´æ¿Õ¼ä+Ë½ÓĞÊı¾İÄÚ´æ¿Õ¼ä+Éè±¸·¢ËÍ¶ÓÁĞµÄÄÚ´æ¿Õ¼ä¡£
+ //²»Í¬Éè±¸·ÖÅä²ÎÊı»á²»Ò»Ñù
 struct net_device *alloc_n33etdev_mq(int sizeof_priv, const char *name,
 		void (*setup)(struct net_device *), unsigned int queue_count)
 {
@@ -6707,34 +6707,34 @@ free_p:
  *	for each queue on the device at the end of the netdevice.
  */
 /*
- * �����豸��net_device�ṹ����,ÿ��net_device�ṹʵ������һ�������豸,��
- * �ṹ��ʵ����alloc_netdev()����ռ�,����˵������:
- * @sizeof_priv:ָ�����ڴ洢�������������˽�����ݿ��С,�μ�alloc_etherdrv()����.
- * @name:�豸��,ͨ���Ǹ�ǰ׺,��ͬǰ׺���豸�����ͳһ���,��ȷ���豸��Ψһ.
- * @setup:���ú���,���ڳ�ʼ��net_device�ṹʵ���Ĳ�����,�μ�ether_setup()����.
+ * ÍøÂçÉè±¸ÓÉnet_device½á¹¹¶¨Òå,Ã¿¸önet_device½á¹¹ÊµÀı´ú±íÒ»¸öÍøÂçÉè±¸,¸Ã
+ * ½á¹¹µÄÊµÀıÓÉalloc_netdev()·ÖÅä¿Õ¼ä,²ÎÊıËµÃ÷ÈçÏÂ:
+ * @sizeof_priv:Ö¸¶¨ÓÃÓÚ´æ´¢Çı¶¯³ÌĞò²ÎÊıµÄË½ÓĞÊı¾İ¿é´óĞ¡,²Î¼ûalloc_etherdrv()º¯Êı.
+ * @name:Éè±¸Ãû,Í¨³£ÊÇ¸öÇ°×º,ÏàÍ¬Ç°×ºµÄÉè±¸»á½øĞĞÍ³Ò»±àºÅ,ÒÔÈ·±£Éè±¸ÃûÎ¨Ò».
+ * @setup:ÅäÖÃº¯Êı,ÓÃÓÚ³õÊ¼»¯net_device½á¹¹ÊµÀıµÄ²¿·ÖÓò,²Î¼ûether_setup()º¯Êı.
  */
 
 /*
-                    ��8-1 alloc_netdev��������
-�����豸����            ��װ������
-��̫��                   alloc_etherdev                     return alloc_netdev(sizeof_priv,"eth%d",ether_setup);   ��̫���豸ȫ��ʹ�øú���
-���˷ֲ�ʽ���ݽӿ�       alloc_fddidev                      return alloc_netdev(sizeof_priv,"fddi%d",fddi_setup);
-�����ܲ��нӿ�          alloc_hippi_dev                     return alloc_netdev(sizeof_priv,"hip%d",hippi_setup);
-������                  alloc_trdev                         return alloc_netdev(sizeof_priv,"tr%d",tr_setup);
-����ͨ��                alloc_fcdev                         return alloc_netdev(sizeof_priv,"fc%d",fc_setup);
-������������            alloc_irdadev                       return alloc_netdev(sizeof_priv,"irda%d",irda_device_setup);
+                    ±í8-1 alloc_netdev°ü¹üº¯Êı
+ÍøÂçÉè±¸ÀàĞÍ            ·â×°º¯ÊıÃû
+ÒÔÌ«Íø                   alloc_etherdev                     return alloc_netdev(sizeof_priv,"eth%d",ether_setup);   ÒÔÌ«ÍøÉè±¸È«²¿Ê¹ÓÃ¸Ãº¯Êı
+¹âÏË·Ö²¼Ê½Êı¾İ½Ó¿Ú       alloc_fddidev                      return alloc_netdev(sizeof_priv,"fddi%d",fddi_setup);
+¸ßĞÔÄÜ²¢ĞĞ½Ó¿Ú          alloc_hippi_dev                     return alloc_netdev(sizeof_priv,"hip%d",hippi_setup);
+ÁîÅÆÍø                  alloc_trdev                         return alloc_netdev(sizeof_priv,"tr%d",tr_setup);
+¹âÏËÍ¨µÀ                alloc_fcdev                         return alloc_netdev(sizeof_priv,"fc%d",fc_setup);
+ºìÍâÊı¾İÁªÃË            alloc_irdadev                       return alloc_netdev(sizeof_priv,"irda%d",irda_device_setup);
 */
 struct net_device *alloc_netdev_mq(int sizeof_priv, const char *name,
-		void (*setup)(struct net_device *), unsigned int queue_count) //��e100����Ϊ������e100_probe�н��е���
-    //alloc_netdev����ÿռ�󣬵���register_netdev���ע�ᣬж�ص�ʱ��unregister_netdevice��free_netdev���ע�����ͷ��ڴ�,����ע����netdev_run_todo
-{//��unregister_netdev��ʱ���ߵ����ÿ��1s��ʱ��֪ͨ������ͨ��һ�Σ��������ø�dev��ģ���յ���֪ͨ����Ҫʹ��dev_put��ȡ���Ը�dev�����á���netdev_wait_allrefs
+		void (*setup)(struct net_device *), unsigned int queue_count) //ÒÔe100Íø¿¨ÎªÀı£¬ÔÚe100_probeÖĞ½øĞĞµ÷ÓÃ
+    //alloc_netdev·ÖÅäºÃ¿Õ¼äºó£¬µ÷ÓÃregister_netdevÍê³É×¢²á£¬Ğ¶ÔØµÄÊ±ºòunregister_netdeviceºÍfree_netdevÍê³É×¢Ïú²¢ÊÍ·ÅÄÚ´æ,ÕæÕı×¢ÏúÔÚnetdev_run_todo
+{//ÔÚunregister_netdevµÄÊ±ºò£¬×ßµ½ÕâÀï£¬Ã¿¹ı1sÏëÊ±¼äÍ¨ÖªÁ´ÉÏÃæÍ¨¸æÒ»´Î£¬ÆäËûÒıÓÃ¸ÃdevµÄÄ£¿éÊÕµ½¸ÃÍ¨Öªºó£¬ĞèÒªÊ¹ÓÃdev_putÀ´È¡Ïû¶Ô¸ÃdevµÄÒıÓÃ¡£¼ûnetdev_wait_allrefs
 	struct netdev_queue *tx;
 	struct net_device *dev;
 	size_t alloc_size;
 	struct net_device *p;
 
 	/*
-	  * ���name�ĳ����Ƿ񳬹�16���ֽ�
+	  * ¼ì²énameµÄ³¤¶ÈÊÇ·ñ³¬¹ı16¸ö×Ö½Ú
 	  */
 	BUG_ON(strlen(name) >= sizeof(dev->name));
 
@@ -6746,12 +6746,12 @@ struct net_device *alloc_netdev_mq(int sizeof_priv, const char *name,
 	}
 	/* ensure 32-byte alignment of whole construct */
       /* 
-       * �����net_deviceʵ�� + ˽�����ݵ�ָ�����ʱ�洢����ʱ����p�У�
-       * ���������ַ�п��ܲ���32λ����ģ������ں���
-       * �����PTR_ALIGN�������ַ�������������p����32λ
-       * ����ģ������ĵ�ַdev����p֮��������ǰ��
-       * ������һ�ο��еĵ�ַ����������Ҫ����31����
-       * ����һЩ�ڴ�
+       * ·ÖÅäµÄnet_deviceÊµÀı + Ë½ÓĞÊı¾İµÄÖ¸Õë»áÔİÊ±´æ´¢ÔÚÁÙÊ±±äÁ¿pÖĞ£¬
+       * µ«ÊÇÕâ¸öµØÖ·ÓĞ¿ÉÄÜ²»ÊÇ32Î»¶ÔÆëµÄ£¬ËùÒÔÔÚºóÃæ
+       * »áµ÷ÓÃPTR_ALIGN¶ÔÕâ¸öµØÖ·½øĞĞĞŞÕı¡£Èç¹ûp²»ÊÇ32Î»
+       * ¶ÔÆëµÄ£¬¶ÔÆëºóµÄµØÖ·dev»áÔÚpÖ®ºó£¬ÕâÑùÔÚÇ°±ß
+       * »áÁô³öÒ»¶Î¿ÕÏĞµÄµØÖ·¡£ËùÒÔÕâÀïÒª¼ÓÉÏ31£¬¶à
+       * ·ÖÅäÒ»Ğ©ÄÚ´æ
        */
 	alloc_size += NETDEV_ALIGN - 1;
 
@@ -6762,8 +6762,8 @@ struct net_device *alloc_netdev_mq(int sizeof_priv, const char *name,
 	}
 
 	/*
-	  * ���������豸�ķ��Ͷ���
-	  */ //���queue_count netdev_queue
+	  * ·ÖÅäÍøÂçÉè±¸µÄ·¢ËÍ¶ÓÁĞ
+	  */ //¶à¸öqueue_count netdev_queue
 	tx = kcalloc(queue_count, sizeof(struct netdev_queue), GFP_KERNEL);
 	if (!tx) {
 		printk(KERN_ERR "alloc_netdev: Unable to allocate "
@@ -6772,40 +6772,40 @@ struct net_device *alloc_netdev_mq(int sizeof_priv, const char *name,
 	}
 
 	dev = PTR_ALIGN(p, NETDEV_ALIGN);
-       /* �������ĵ�ַ��ʵ��ʹ�õĵ�ַ֮ǰ��ƫ��*/
+       /* ¼ÆËã·ÖÅäµÄµØÖ·ºÍÊµ¼ÊÊ¹ÓÃµÄµØÖ·Ö®Ç°µÄÆ«ÒÆ*/
 	dev->padded = (char *)dev - (char *)p;
 
-       /* ��dev->dev_addrs������һ����ҳ�ʼ��dev_add*/
+       /* ÔÚdev->dev_addrsÖĞÌí¼ÓÒ»Ïî£¬²¢ÇÒ³õÊ¼»¯dev_add*/
 	if (dev_addr_init(dev))
 		goto free_tx;
 
-       /* ��ʼ��������ַ*/
+       /* ³õÊ¼»¯µ¥²¥µØÖ·*/
 	//dev_unicast_init(dev);
     dev_mc_init(dev);
 	dev_uc_init(dev);
-       /* �����豸�����������ռ�*/
+       /* ÉèÖÃÉè±¸ËùÊôµÄÃüÃû¿Õ¼ä*/
 	dev_net_set(dev, &init_net);
 
-       /* ��ʼ�����Ͷ���*/
-	dev->_tx = tx; //_tx�ĵ�0����ַΪdev->_tx[0], ��N��һ������
+       /* ³õÊ¼»¯·¢ËÍ¶ÓÁĞ*/
+	dev->_tx = tx; //_txµÄµÚ0¸öµØÖ·Îªdev->_tx[0], µÍN¸öÒ»´ÎÀàÍÆ
 	dev->num_tx_queues = queue_count;
 	dev->real_num_tx_queues = queue_count;
 
 	dev->gso_max_size = GSO_MAX_SIZE;
 
 	/*
-	  * ��ʼ���豸�ķ��ͺͽ��ն���
+	  * ³õÊ¼»¯Éè±¸µÄ·¢ËÍºÍ½ÓÊÕ¶ÓÁĞ
 	  */
 	netdev_init_queues(dev);
 
 	INIT_LIST_HEAD(&dev->napi_list);
 	dev->priv_flags = IFF_XMIT_DST_RELEASE;
      /* 
-         * ����setup��������ʼ���豸��������̫
-         * ���豸��Ĭ�Ϻ���ʽether_setup()
+         * µ÷ÓÃsetupº¯ÊıÀ´³õÊ¼»¯Éè±¸£¬¶ÔÓÚÒÔÌ«
+         * ÍøÉè±¸£¬Ä¬ÈÏº¯ÊıÊ½ether_setup()
          */
-	setup(dev); //����ppp_setup
-	strcpy(dev->name, name); //name%d��%d��ֵ�ĵط���register_netdevice�е�dev_get_valid_name
+	setup(dev); //ÀıÈçppp_setup
+	strcpy(dev->name, name); //name%dÖĞ%d¸³ÖµµÄµØ·½ÔÚregister_netdeviceÖĞµÄdev_get_valid_name
 	return dev;
 
 free_tx:
@@ -6825,7 +6825,7 @@ EXPORT_SYMBOL(alloc_netdev_mq);
  *	This function does the last stage of destroying an allocated device
  * 	interface. The reference to the device object is released.
  *	If this is the last reference then it will be freed.
- *///alloc_netdev����ÿռ�󣬵���register_netdev���ע�ᣬж�ص�ʱ��unregister_netdevice��free_netdev���ע�����ͷ��ڴ�
+ *///alloc_netdev·ÖÅäºÃ¿Õ¼äºó£¬µ÷ÓÃregister_netdevÍê³É×¢²á£¬Ğ¶ÔØµÄÊ±ºòunregister_netdeviceºÍfree_netdevÍê³É×¢Ïú²¢ÊÍ·ÅÄÚ´æ
 void free_netdev(struct net_device *dev)
 {
 	struct napi_struct *p, *n;
@@ -6892,7 +6892,7 @@ void unregister_netdevice_queue(struct net_device *dev, struct list_head *head)
 	} else {
 		rollback_registered(dev);
 		/* Finish processing unregister after unlock */
-		net_set_todo(dev);//������netdev_run_todo���net_device�Ƿ�,free_netdev
+		net_set_todo(dev);//×îÖÕÓÉnetdev_run_todoÍê³Énet_deviceÊÇ·ñ,free_netdev
 	}
 }
 EXPORT_SYMBOL(unregister_netdevice_queue);
@@ -6923,14 +6923,14 @@ EXPORT_SYMBOL(unregister_netdevice_many);
  *	This is just a wrapper for unregister_netdevice that takes
  *	the rtnl semaphore.  In general you want to use this and not
  *	unregister_netdevice.
- */ //�Ƴ�dev�����豸�ں�ģ���ʱ��(��e100.ko)  ���߰ε��Ȳ������ ����
- //������netdev_run_todo���net_device�Ƿ�,free_netdev
- //��unregister_netdev��ʱ���ߵ����ÿ��1s��ʱ��֪ͨ������ͨ��һ�Σ��������ø�dev��ģ���յ���֪ͨ����Ҫʹ��dev_put��ȡ���Ը�dev�����á���rtnl_unlock->netdev_wait_allrefs
+ */ //ÒÆ³ıdevÍø¿¨Éè±¸ÄÚºËÄ£¿éµÄÊ±ºò(Èçe100.ko)  »òÕß°ÎµôÈÈ²å°ÎÍø¿¨ ´¥·¢
+ //×îÖÕÓÉnetdev_run_todoÍê³Énet_deviceÊÇ·ñ,free_netdev
+ //ÔÚunregister_netdevµÄÊ±ºò£¬×ßµ½ÕâÀï£¬Ã¿¹ı1sÏëÊ±¼äÍ¨ÖªÁ´ÉÏÃæÍ¨¸æÒ»´Î£¬ÆäËûÒıÓÃ¸ÃdevµÄÄ£¿éÊÕµ½¸ÃÍ¨Öªºó£¬ĞèÒªÊ¹ÓÃdev_putÀ´È¡Ïû¶Ô¸ÃdevµÄÒıÓÃ¡£¼ûrtnl_unlock->netdev_wait_allrefs
 void unregister_netdev(struct net_device *dev)
 {
 	rtnl_lock();
 	unregister_netdevice(dev);
-	rtnl_unlock();//����netdev_run_todo
+	rtnl_unlock();//µ÷ÓÃnetdev_run_todo
 }
 EXPORT_SYMBOL(unregister_netdev);
 
@@ -7044,18 +7044,18 @@ out:
 EXPORT_SYMBOL_GPL(dev_change_net_namespace);
 
 /*
-  * ÿ��CPU���и��Ե�softnet_data��ͨ�������
-  * CPU���ܴ���softnet_data�е�������к�����
-  * ���еȡ���CPU״̬�仯ʱ����һ��״̬
-  * ��Ҫ���⴦�����Ǿ���CPU_DEAD����ʱ
-  * CPU���޷������������Ҫ����CPU��
-  * softnet_data������������еı���ת����
-  * ����CPU������Ϊ������ӦCPU״̬�ı仯��
-  * �ڽӿڲ��ʼ��������ͨ��hotcpu_notifier()ע��
-  * ����ӦCPU״̬�仯�Ļص�����dev_cpu_callback()��
-  * ����˵������:
-  * @nfb:����������ӦCPU״̬�仯�ص���������Ϣ�顣
-  * @action:״̬�����仯��CPU�ĵ�ǰ״̬��
+  * Ã¿¸öCPU¶¼ÓĞ¸÷×ÔµÄsoftnet_data£¬Í¨³£Çé¿öÏÂ
+  * CPU¶¼ÄÜ´¦Àísoftnet_dataÖĞµÄÊä³ö¶ÓÁĞºÍÊäÈë
+  * ¶ÓÁĞµÈ¡£µ±CPU×´Ì¬±ä»¯Ê±£¬ÓĞÒ»¸ö×´Ì¬
+  * ĞèÒªÌØÊâ´¦Àí£¬ÄÇ¾ÍÊÇCPU_DEAD£¬´ËÊ±
+  * CPUÒÑÎŞ·¨¹¤×÷£¬Òò´ËĞèÒª½«¸ÃCPUµÄ
+  * softnet_dataÊäÈëÊä³ö¶ÓÁĞÖĞµÄ±¨ÎÄ×ª½»¸ø
+  * ÆäËûCPU´¦Àí¡£ÎªÁËÄÜÏìÓ¦CPU×´Ì¬µÄ±ä»¯£¬
+  * ÔÚ½Ó¿Ú²ã³õÊ¼»¯º¯ÊıÖĞÍ¨¹ıhotcpu_notifier()×¢²á
+  * ÁËÏìÓ¦CPU×´Ì¬±ä»¯µÄ»Øµ÷º¯Êıdev_cpu_callback()¡£
+  * ²ÎÊıËµÃ÷ÈçÏÂ:
+  * @nfb:°üÀ¨ÓÃÀ´ÏìÓ¦CPU×´Ì¬±ä»¯»Øµ÷º¯ÊıµÄĞÅÏ¢¿é¡£
+  * @action:×´Ì¬·¢Éú±ä»¯µÄCPUµÄµ±Ç°×´Ì¬¡£
   */
 static int dev_cpu_callback(struct notifier_block *nfb,
 			    unsigned long action,
@@ -7068,16 +7068,16 @@ static int dev_cpu_callback(struct notifier_block *nfb,
 	struct softnet_data *sd, *oldsd;
 
 	/*
-	  * ֻ����CPU_DEAD״̬��CPU_DEAD_FROZEN��Ϊ�����ڸ�״̬
-	  * ��CPU�Ѳ����ٴ�����softnet_data�ϵ���ض����ˣ����
-	  * ��Ҫ����Ӧ�Ĵ�����
+	  * Ö»´¦ÀíCPU_DEAD×´Ì¬»òCPU_DEAD_FROZENĞĞÎª£¬´¦ÓÚ¸Ã×´Ì¬
+	  * µÄCPUÒÑ²»ÄÜÔÙ´¦ÀíÆäsoftnet_dataÉÏµÄÏà¹Ø¶ÓÁĞÁË£¬Òò´Ë
+	  * ĞèÒª×÷ÏàÓ¦µÄ´¦Àí¡£
 	  */
 	if (action != CPU_DEAD && action != CPU_DEAD_FROZEN)
 		return NOTIFY_OK;
 
 	local_irq_disable();
 	/*
-	  * ��ȡ״̬�����仯CPU��softnet_data�Լ���ǰCPU��softnet_data��
+	  * »ñÈ¡×´Ì¬·¢Éú±ä»¯CPUµÄsoftnet_dataÒÔ¼°µ±Ç°CPUµÄsoftnet_data¡£
 	  */
 	cpu = smp_processor_id();
 	sd = &per_cpu(softnet_data, cpu);
@@ -7085,8 +7085,8 @@ static int dev_cpu_callback(struct notifier_block *nfb,
 
 	/* Find end of our completion_queue. */
 	/*
-	  * ��״̬�����仯CPU��completion_queue������
-	  * �ı���ת�Ƶ���ǰCPU��completion_queue���С�
+	  * ½«×´Ì¬·¢Éú±ä»¯CPUµÄcompletion_queue¶ÓÁĞÖĞ
+	  * µÄ±¨ÎÄ×ªÒÆµ½µ±Ç°CPUµÄcompletion_queue¶ÓÁĞ¡£
 	  */
 	list_skb = &sd->completion_queue;
 	while (*list_skb)
@@ -7097,8 +7097,8 @@ static int dev_cpu_callback(struct notifier_block *nfb,
 
 	/* Find end of our output_queue. */
 	/*
-	  * ��״̬�����仯CPU��output_queue������
-	  * �ı���ת�Ƶ���ǰCPU��output_queue���С�
+	  * ½«×´Ì¬·¢Éú±ä»¯CPUµÄoutput_queue¶ÓÁĞÖĞ
+	  * µÄ±¨ÎÄ×ªÒÆµ½µ±Ç°CPUµÄoutput_queue¶ÓÁĞ¡£
 	  */
 	list_net = &sd->output_queue;
 	while (*list_net)
@@ -7108,18 +7108,18 @@ static int dev_cpu_callback(struct notifier_block *nfb,
 	oldsd->output_queue = NULL;
 
 	/*
-	  * �������ϲ�������ǰCPU��softnet_data�п��ܴ���
-	  * �������͵ȴ�����ı��ģ�����ٴμ���
-	  * ���ݰ�������жϣ��Ա��ͷ��������ı��ģ�
-	  * ����ȴ����͵ı��ġ�
+	  * ¾­¹ıÒÔÉÏ²Ù×÷£¬µ±Ç°CPUµÄsoftnet_dataÖĞ¿ÉÄÜ´æÔÚ
+	  * Íê³ÉÊä³öºÍµÈ´ıÊä³öµÄ±¨ÎÄ£¬Òò´ËÔÙ´Î¼¤»î
+	  * Êı¾İ°üÊä³öÈíÖĞ¶Ï£¬ÒÔ±ãÊÍ·ÅÍê³ÉÊä³öµÄ±¨ÎÄ£¬
+	  * Êä³öµÈ´ı·¢ËÍµÄ±¨ÎÄ¡£
 	  */
 	raise_softirq_irqoff(NET_TX_SOFTIRQ);
 	local_irq_enable();
 
 	/* Process offline CPU's input_pkt_queue */
 	/*
-	  * �����״̬�����仯CPU��input_pkt_queue���У�
-	  * �������ϵı������뵽�ϲ�Э��
+	  * ×îºó´¦Àí×´Ì¬·¢Éú±ä»¯CPUµÄinput_pkt_queue¶ÓÁĞ£¬
+	  * ½«¶ÓÁĞÉÏµÄ±¨ÎÄÊäÈëµ½ÉÏ²ãĞ­Òé
 	  */
 	while ((skb = __skb_dequeue(&oldsd->input_pkt_queue)))
 		netif_rx(skb);
@@ -7310,46 +7310,46 @@ static struct pernet_operations __net_initdata default_device_ops = {
  *
  */
 /*
-  * �豸������ĳ�ʼ������.
-  * ��ϵͳ����ʱ��net_dev_init()�ĳ�ʼ�����ȼ�
-  * ��subsys_initcall��������ʼ�����
-  * �ӿڲ㣬��ע���¼���ͳ����Ϣ��proc
-  * �ļ�����ʼ��ÿ��CPU��softnet_data��ע������
-  * ��������/������ж��Լ��������̣�ע��
-  * ��ӦCPU״̬�仯�Ļص������ȡ�
+  * Éè±¸´¦Àí²ãµÄ³õÊ¼»¯º¯Êı.
+  * ÔÚÏµÍ³Æô¶¯Ê±£¬net_dev_init()µÄ³õÊ¼»¯ÓÅÏÈ¼¶
+  * ÊÇsubsys_initcall£¬ÓÃÀ´³õÊ¼»¯Ïà¹Ø
+  * ½Ó¿Ú²ã£¬Èç×¢²á¼ÇÂ¼Ïà¹ØÍ³¼ÆĞÅÏ¢µÄproc
+  * ÎÄ¼ş£¬³õÊ¼»¯Ã¿¸öCPUµÄsoftnet_data£¬×¢²áÍøÂç
+  * ±¨ÎÄÊäÈë/Êä³öÈíÖĞ¶ÏÒÔ¼°´¦ÀíÀı³Ì£¬×¢²á
+  * ÏìÓ¦CPU×´Ì¬±ä»¯µÄ»Øµ÷º¯ÊıµÈ¡£
   */
 /*
  *       This is called single threaded during boot, so no need
  *       to take the rtnl semaphore.
- *///�豸������ĳ�ʼ��net_dev_init
- //TCP/IPЭ��ջ��ʼ��inet_init  ��ʵ������Э���ʼ��Ҳ��������
- //������ʼ��proto_init
- //�׽ӿڲ��ʼ��sock_init   netfilter_init���׽ӿڲ��ʼ����ʱ��Ҳ��ʼ����
+ *///Éè±¸ÎïÀí²ãµÄ³õÊ¼»¯net_dev_init
+ //TCP/IPĞ­ÒéÕ»³õÊ¼»¯inet_init  ÆäÊµ´«Êä²ãµÄĞ­Òé³õÊ¼»¯Ò²ÔÚÕâÀïÃæ
+ //´«Êä²ã³õÊ¼»¯proto_init
+ //Ì×½Ó¿Ú²ã³õÊ¼»¯sock_init   netfilter_initÔÚÌ×½Ó¿Ú²ã³õÊ¼»¯µÄÊ±ºòÒ²³õÊ¼»¯ÁË
 static int __init net_dev_init(void)
 {
 	int i, rc = -ENOMEM;
 
 	BUG_ON(!dev_boot_phase);
 
-	if (dev_proc_init())//ע��/proc/net/dev��/proc/net/softnet_stat�ļ���ֻ���ļ������һЩ�����豸״̬��ͳ����Ϣ
+	if (dev_proc_init())//×¢²á/proc/net/devºÍ/proc/net/softnet_statÎÄ¼ş£¬Ö»¶ÁÎÄ¼ş£¬´æ·ÅÒ»Ğ©ÍøÂçÉè±¸×´Ì¬ºÍÍ³¼ÆĞÅÏ¢
 		goto out;
 
-	if (netdev_kobject_init()) //netdev_kobject_init�ᴴ��/sys/class/netĿ¼���ڴ�Ŀ¼�£�ÿ����ע��������豸������һ����Ŀ¼������ifconfig�����eth0��Ϣ��������������鿴
+	if (netdev_kobject_init()) //netdev_kobject_init»á´´½¨/sys/class/netÄ¿Â¼£¬ÔÚ´ËÄ¿Â¼ÏÂ£¬Ã¿¸öÒÑ×¢²áµÄÍøÂçÉè±¸¶¼»áÓĞÒ»¸ö×ÓÄ¿Â¼¡£ÀıÈçifconfigÀïÃæµÄeth0ĞÅÏ¢¶¼¿ÉÒÔÔÚÕâÀïÃæ²é¿´
         
 		goto out;
 
     /*
-	 * ��ʼ�����紦������ɢ�б�ptype_base����Щ��������
-	 * �����������յ��Ĳ�ͬЭ���屨�ġ�
+	 * ³õÊ¼»¯ÍøÂç´¦Àíº¯ÊıÉ¢ÁĞ±íptype_base¡£ÕâĞ©´¦Àíº¯Êı
+	 * ÓÃÀ´´¦Àí½ÓÊÕµ½µÄ²»Í¬Ğ­Òé×å±¨ÎÄ¡£
 	 */
 	INIT_LIST_HEAD(&ptype_all);
 	for (i = 0; i < PTYPE_HASH_SIZE; i++)
-		INIT_LIST_HEAD(&ptype_base[i]);//��ʼ�����紦������ɢ�б�����Щ�������������������յ��Ĳ�ͬЭ����ı���
+		INIT_LIST_HEAD(&ptype_base[i]);//³õÊ¼»¯ÍøÂç´¦Àíº¯ÊıÉ¢ÁĞ±í£¬ÕâĞ©´¦Àíº¯ÊıÓÃÀ´´¦Àí½ÓÊÕµ½µÄ²»Í¬Ğ­Òé×åµÄ±¨ÎÄ
 
     /*
-	  * ע����net�����ռ�ĳ�ʼ�����˳�������
-	  * netdev_net_ops�л�ֱ��ʼ�������ƺ�����
-	  * Ϊ���ҵ�����
+	  * ×¢²áÔÚnetÃüÃû¿Õ¼äµÄ³õÊ¼»¯ºÍÍË³ö²Ù×÷¡£
+	  * netdev_net_opsÖĞ»á·Ö±ğ³õÊ¼»¯ÒÔÃû³ÆºÍË÷Òı
+	  * Îª²éÕÒµÄÁ´±í
 	  */
 	if (register_pernet_subsys(&netdev_net_ops))
 		goto out;
@@ -7359,12 +7359,12 @@ static int __init net_dev_init(void)
 	 */
 
     /*
-	 * ��ʼ����CPU��صĽ��ն��С�
-	 * update:��ʼ��ÿ��CPU��softnet_data������
-	 * ��ɷ������ݰ��ĵȴ��ͷŶ��У��Լ�
-	 * ��NAPI������������С���ѯ����
+	 * ³õÊ¼»¯ÓëCPUÏà¹ØµÄ½ÓÊÕ¶ÓÁĞ¡£
+	 * update:³õÊ¼»¯Ã¿¸öCPUµÄsoftnet_data£¬°üÀ¨
+	 * Íê³É·¢ËÍÊı¾İ°üµÄµÈ´ıÊÍ·Å¶ÓÁĞ£¬ÒÔ¼°
+	 * ·ÇNAPIÇı¶¯µÄÊäÈë¶ÓÁĞ¡¢ÂÖÑ¯º¯Êı
 	 */
-	for_each_possible_cpu(i) {//��ʼ����CPU������صĶ���
+	for_each_possible_cpu(i) {//³õÊ¼»¯ÓëCPU½ÓÊÕÏà¹ØµÄ¶ÓÁĞ
 		struct softnet_data *sd = &per_cpu(softnet_data, i);
 
 		memset(sd, 0, sizeof(*sd));
@@ -7387,7 +7387,7 @@ static int __init net_dev_init(void)
 		sd->backlog.gro_count = 0;
 	}
 
-	dev_boot_phase = 0;//��ʶ�����豸��ʼ�������
+	dev_boot_phase = 0;//±êÊ¶ÍøÂçÉè±¸³õÊ¼»¯ÒÑÍê³É
 
 	/* The loopback device is special if any other network devices
 	 * is present in a network namespace the loopback device must
@@ -7398,7 +7398,7 @@ static int __init net_dev_init(void)
 	 * is the first device that appears and the last network device
 	 * that disappears.
 	 */
-	if (register_pernet_device(&loopback_net_ops)) //ע�������豸"lo"��ifconfig�����lo          ע����������ռ��豸��ȷ��loopback�豸�����������豸�����ȳ��ֺ������ʧ 
+	if (register_pernet_device(&loopback_net_ops)) //×¢²áÍøÂçÉè±¸"lo"£¬ifconfigÀïÃæµÄlo          ×¢²áÍøÂçÃüÁî¿Õ¼äÉè±¸£¬È·±£loopbackÉè±¸ÔÚËùÓĞÍøÂçÉè±¸ÖĞ×îÏÈ³öÏÖºÍ×îºóÏûÊ§ 
         
 		goto out;
 
@@ -7406,35 +7406,35 @@ static int __init net_dev_init(void)
 		goto out;
 
     /*
-	 * �����ж�ϵͳ��ע���������ж�NET_TX_SOFTIRQ��
-	 * NET_RX_SOFTIRQ�������������ݵķ��ͺͽ��ա���Ϊ
-	 * ���жϵ����ܱȽϺã����������ݵĽ��պͷ���
-	 * ������Ҫ��Ƚϸߣ���˽����ж���Ϊ�°벿��
-	 * ʹ�á�
-	 * update:ע�����籨������/������жϼ��䴦�����̡�
-	 *///�°벿���ϰ벿���Ĳ�ͬ���°벿�ǿ��жϵģ����ϰ벿�ǲ����жϵģ��°벿���������жϴ����������е����飬���ҿ��Ա��µ��жϴ�ϣ��°벿�������˵�����Ƿǳ������ģ�ͨ�����ǱȽϺ�ʱ�ģ������ϵͳ���а�������ʱ���������жϷ�����������ִ�С�
-	open_softirq(NET_TX_SOFTIRQ, net_tx_action);//ע���������жϣ������������ݵķ��ͺͽ���
+	 * ÔÚÈíÖĞ¶ÏÏµÍ³ÖĞ×¢²áÁ½¸öÈíÖĞ¶ÏNET_TX_SOFTIRQºÍ
+	 * NET_RX_SOFTIRQ£¬ÓÃÓÚÍøÂçÊı¾İµÄ·¢ËÍºÍ½ÓÊÕ¡£ÒòÎª
+	 * ÈíÖĞ¶ÏµÄĞÔÄÜ±È½ÏºÃ£¬¶øÍøÂçÊı¾İµÄ½ÓÊÕºÍ·¢ËÍ
+	 * ¶ÔĞÔÄÜÒªÇó±È½Ï¸ß£¬Òò´Ë½«ÈíÖĞ¶Ï×÷ÎªÏÂ°ë²¿À´
+	 * Ê¹ÓÃ¡£
+	 * update:×¢²áÍøÂç±¨ÎÄÊäÈë/Êä³öÈíÖĞ¶Ï¼°Æä´¦ÀíÀı³Ì¡£
+	 *///ÏÂ°ë²¿ºÍÉÏ°ë²¿×î´óµÄ²»Í¬ÊÇÏÂ°ë²¿ÊÇ¿ÉÖĞ¶ÏµÄ£¬¶øÉÏ°ë²¿ÊÇ²»¿ÉÖĞ¶ÏµÄ£¬ÏÂ°ë²¿¼¸ºõ×öÁËÖĞ¶Ï´¦Àí³ÌĞòËùÓĞµÄÊÂÇé£¬¶øÇÒ¿ÉÒÔ±»ĞÂµÄÖĞ¶Ï´ò¶Ï£¡ÏÂ°ë²¿ÔòÏà¶ÔÀ´Ëµ²¢²»ÊÇ·Ç³£½ô¼±µÄ£¬Í¨³£»¹ÊÇ±È½ÏºÄÊ±µÄ£¬Òò´ËÓÉÏµÍ³×ÔĞĞ°²ÅÅÔËĞĞÊ±»ú£¬²»ÔÚÖĞ¶Ï·şÎñÉÏÏÂÎÄÖĞÖ´ĞĞ¡£
+	open_softirq(NET_TX_SOFTIRQ, net_tx_action);//×¢²áÁ½¸öÈíÖĞ¶Ï£¬ÓÃÓÚÍøÂçÊı¾İµÄ·¢ËÍºÍ½ÓÊÕ
 	open_softirq(NET_RX_SOFTIRQ, net_rx_action);
 
     /*
-	 * ��֪ͨ������ע��һ���ص�������������Ӧ
-	 * CPU�Ȳ���¼���һ���ӵ�֪ͨ��CPU�������
-	 * �еİ���һ��netif_rx()������
-	 * update:ע����ӦCPU״̬�仯�Ļص���������CPU
-	 * ״̬�����仯ʱ�������dev_cpu_callback()��������
-	 * ״̬�����仯��CPU��softnet_data����ض���
+	 * ÔÚÍ¨ÖªÁ´±íÉÏ×¢²áÒ»¸ö»Øµ÷º¯Êı£¬ÓÃÀ´ÏìÓ¦
+	 * CPUÈÈ²å°ÎÊÂ¼ş¡£Ò»µ©½Óµ½Í¨Öª£¬CPUÊäÈë¶ÓÁĞ
+	 * ÖĞµÄ°üÖğÒ»ÓÉnetif_rx()´¦Àí¡£
+	 * update:×¢²áÏìÓ¦CPU×´Ì¬±ä»¯µÄ»Øµ÷º¯Êı¡£µ±CPU
+	 * ×´Ì¬·¢Éú±ä»¯Ê±£¬»áµ÷ÓÃdev_cpu_callback()£¬À´´¦Àí
+	 * ×´Ì¬·¢Éú±ä»¯µÄCPUµÄsoftnet_dataÖĞÏà¹Ø¶ÓÁĞ
 	 */
-	hotcpu_notifier(dev_cpu_callback, 0);//��֪ͨ������ע��һ���ص�������������ӦCPU�Ȳ���¼���һ���ӵ�֪ͨ��CPU��������еİ���һ����netif_rx����
+	hotcpu_notifier(dev_cpu_callback, 0);//ÔÚÍ¨ÖªÁ´±íÉÏ×¢²áÒ»¸ö»Øµ÷º¯Êı£¬ÓÃÀ´ÏàÓ¦CPUÈÈ²å°ÎÊÂ¼ş£¬Ò»µ©½Óµ½Í¨Öª£¬CPUÊäÈë¶ÓÁĞÖĞµÄ°üÖğÒ»½»¸ønetif_rx´¦Àí
 
     /*
-	 * ��ʼ��Ŀ��·�ɻ���
+	 * ³õÊ¼»¯Ä¿µÄÂ·ÓÉ»º´æ
 	 */
 	dst_init();
 
     /*
-	 * ��ʼ�������豸����鲥ģ�飬����proc�ļ�ϵͳ��
-	 * �����ļ�/proc/net/dev_mcast,��������ں��������豸��
-	 * IP�鲥��صĲ�����
+	 * ³õÊ¼»¯ÍøÂçÉè±¸²ãµÄ×é²¥Ä£¿é£¬²¢ÔÚprocÎÄ¼şÏµÍ³ÖĞ
+	 * Ôö¼ÓÎÄ¼ş/proc/net/dev_mcast,ÓÃÀ´´æ·ÅÄÚºËÖĞÍøÂçÉè±¸Óë
+	 * IP×é²¥Ïà¹ØµÄ²ÎÊı¡£
 	 */
 	dev_mcast_init();
 	rc = 0;
@@ -7442,7 +7442,7 @@ out:
 	return rc;
 }
 
-subsys_initcall(net_dev_init);//�豸������ĳ�ʼ��
+subsys_initcall(net_dev_init);//Éè±¸ÎïÀí²ãµÄ³õÊ¼»¯
 
 static int __init initialize_hashrnd(void)
 {

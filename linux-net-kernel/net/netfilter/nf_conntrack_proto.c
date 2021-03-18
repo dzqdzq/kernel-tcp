@@ -29,12 +29,12 @@
 #include <net/netfilter/nf_conntrack_core.h>
 
 //static struct nf_conntrack_l4proto **nf_ct_protos[PF_MAX] __read_mostly;
-static struct nf_conntrack_l4proto **nf_ct_protos[PF_MAX]; /* ËÄ²ãĞ­Òé¶¼±£´æÔÚnf_ct_protosÕâ¸ö£²Î¬Êı×éµÄÈ«¾Ö±äÁ¿ÖĞ ,
-    Í¨¹ınf_conntrack_l4proto_registerº¯ÊıÖĞµÄrcu_assign_pointerÌí¼Óµ½¸ÃÈ«¾Ö±äÁ¿ÖĞ */
-//IPV4-TCPÎªnf_conntrack_l4proto_tcp4   IPV4-UDPÎªnf_conntrack_l4proto_udp4    IPV4-ICMPÎªnf_conntrack_l4proto_icmp
+static struct nf_conntrack_l4proto **nf_ct_protos[PF_MAX]; /* å››å±‚åè®®éƒ½ä¿å­˜åœ¨nf_ct_protosè¿™ä¸ªï¼’ç»´æ•°ç»„çš„å…¨å±€å˜é‡ä¸­ ,
+    é€šè¿‡nf_conntrack_l4proto_registerå‡½æ•°ä¸­çš„rcu_assign_pointeræ·»åŠ åˆ°è¯¥å…¨å±€å˜é‡ä¸­ */
+//IPV4-TCPä¸ºnf_conntrack_l4proto_tcp4   IPV4-UDPä¸ºnf_conntrack_l4proto_udp4    IPV4-ICMPä¸ºnf_conntrack_l4proto_icmp
 
 
-///* Èı²ãĞ­Òé¶¼±£´æÔÚnf_ct_l3protosÈ«¾Ö±äÁ¿ÖĞ£¬Í¨¹ınf_conntrack_l3proto_registerº¯ÊıÀïÃæµÄrcu_assign_pointer°Ñl3Ìí¼Óµ½ÁË¸ÃÈ«¾ÖÊı×éÖĞ */
+///* ä¸‰å±‚åè®®éƒ½ä¿å­˜åœ¨nf_ct_l3protoså…¨å±€å˜é‡ä¸­ï¼Œé€šè¿‡nf_conntrack_l3proto_registerå‡½æ•°é‡Œé¢çš„rcu_assign_pointeræŠŠl3æ·»åŠ åˆ°äº†è¯¥å…¨å±€æ•°ç»„ä¸­ */
 struct nf_conntrack_l3proto *nf_ct_l3protos[AF_MAX] __read_mostly;
 EXPORT_SYMBOL_GPL(nf_ct_l3protos);
 
@@ -68,7 +68,7 @@ nf_ct_unregister_sysctl(struct ctl_table_header **header,
 #endif
 
 
-//»ñÈ¡¼ÓÈëµ½nf_ct_protosÖĞµÄL4Ğ­Òé½á¹¹
+//è·å–åŠ å…¥åˆ°nf_ct_protosä¸­çš„L4åè®®ç»“æ„
 struct nf_conntrack_l4proto *
 __nf_ct_l4proto_find(u_int16_t l3proto, u_int8_t l4proto)
 {
@@ -349,7 +349,7 @@ void nf_conntrack_l4proto_unregister(struct nf_conntrack_l4proto *l4proto)
 }
 EXPORT_SYMBOL_GPL(nf_conntrack_l4proto_unregister);
 
-//³õÊ¼»¯L3ºÍL4Ğ­Òé£¬Ä¬ÈÏÎªnf_conntrack_l4proto_generic      nf_conntrack_l3proto_generic
+//åˆå§‹åŒ–L3å’ŒL4åè®®ï¼Œé»˜è®¤ä¸ºnf_conntrack_l4proto_generic      nf_conntrack_l3proto_generic
 int nf_conntrack_proto_init(void)
 {
 	unsigned int i;

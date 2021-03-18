@@ -34,12 +34,12 @@
 struct sock;
 
 
-//ͨ��IPCB�������           ��Ϣ���ƿ�inet_skb_parm�ṹ�洢��������  IP����IPCB���ʸýṹ����Ҫ�洢һЩѡ���Լ�IP���������еı�־
-//�����struct tcp_skb_cb��һ���֣�Ҳ����˵tcp_skb_cb����IPѡ���Լ�TCPѡ��
-//TCP���չ����е�TCPѡ���ֶδӽ��յ�SKB�н�����������tcp_parse_options������TCPѡ���ֶδ����inet_request_sock��,IPѡ���ֶδ洢��skb->cb��
-struct inet_skb_parm { //��������P220       �ýṹ�д���ipͷ��ѡ���ֶ�
+//通过IPCB访问这个           信息控制块inet_skb_parm结构存储在这里面  IP层用IPCB访问该结构，主要存储一些选项以及IP处理过程中的标志
+//这个是struct tcp_skb_cb的一部分，也就是说tcp_skb_cb包含IP选项以及TCP选项
+//TCP接收过程中的TCP选项字段从接收的SKB中解析出来，见tcp_parse_options，最终TCP选项字段存放在inet_request_sock中,IP选项字段存储在skb->cb中
+struct inet_skb_parm { //见樊东东P220       该结构中存用ip头部选项字段
 	struct ip_options	opt;		/* Compiled IP options		*/
-	unsigned char		flags; //flagȡֵΪ�����⼸��
+	unsigned char		flags; //flag取值为下面这几种
 
 #define IPSKB_FORWARDED		1  
 #define IPSKB_XFRM_TUNNEL_SIZE	2
@@ -54,30 +54,30 @@ static inline unsigned int ip_hdrlen(const struct sk_buff *skb)
 }
 
 /*
- * IP������Ϣ����ipcm_cookie�ṹ������
- * �洢�й�����Ŀ�����Ϣ������
- * ����UDP���ݰ���Դ��ַ�����
- * �����豸�ӿ������Լ�IP�ײ���
- * ��ѡ������������������
- * ������Ϣ�����á�
- */ //UDP����raw���ݱ����
+ * IP控制信息块由ipcm_cookie结构描述，
+ * 存储有关输出的控制信息，包括
+ * 发送UDP数据包的源地址、输出
+ * 网络设备接口索引以及IP首部中
+ * 的选项，在整个输出过程中起
+ * 传递信息的作用。
+ */ //UDP或者raw数据报相关
 struct ipcm_cookie
 {
 	/*
-	 * UDP���ݰ���RAW���ݰ���Ŀ�ĵ�ַ��
-	 * ֻ�е�����IPѡ��ʱ�����ã�����
-	 * Դ·��ѡ������һ����ַ��
+	 * UDP数据包或RAW数据包的目的地址。
+	 * 只有当存在IP选项时才设置，用作
+	 * 源路由选项的最后一跳地址。
 	 */
 	__be32			addr;
 	/*
-	 * UDP���ݰ���RAW���ݰ�����������豸��
+	 * UDP数据包或RAW数据包的输出网络设备。
 	 */
 	int			oif;
 	/*
-	 * �����ΪNULL����ָ�������ݰ���
-	 * IPѡ����Ϣ��
+	 * 如果不为NULL，则指向发送数据包的
+	 * IP选项信息。
 	 */
-	struct ip_options	*opt;//���ݱ���IPѡ����Ϣ��Ҳ����IPͷ���е���չ������Ϣ��
+	struct ip_options	*opt;//数据报的IP选项信息，也就是IP头部中的扩展添加信息。
 	union skb_shared_tx	shtx;
 };
 
@@ -225,47 +225,47 @@ extern struct ctl_path net_ipv4_ctl_path[];
 /* From inetpeer.c */
 /* From inetpeer.c */
 /*
- * ���ڼ��������������ʱ�������Զ�
- * ��Ϣ����������ֵ��
- * ��ǰ�Զ���Ϣ���������ڴ���ֵʱ��ʹ��
- * inet_peer_gc_mintime��Ϊ�����������յ�ʱ������
- * �������inet_peer_gc_maxtime���㱾���������յ�
- * ʱ������
- * ��ǰ�Զ���Ϣ�������ڴ���ֵʱ��ʹ��
- * inet_peer_minttl��Ϊ�����������յĶԶ���Ϣ
- * �������ڵ���ֵ���������inet_peer_maxttl
- * ���㱾���������նԶ���Ϣ��������
- * ����ֵ���ò���Ĭ��ֵ�����ϵͳ�ڴ�
- * ��С��̬�������㷨��inet_initpeers
+ * 用于计算垃圾回收最大时间间隔及对端
+ * 信息块生存期阈值。
+ * 当前对端信息块数量大于此阈值时，使用
+ * inet_peer_gc_mintime作为本次垃圾回收的时间间隔，
+ * 否则根据inet_peer_gc_maxtime计算本次垃圾回收的
+ * 时间间隔。
+ * 当前对端信息块数大于此阈值时，使用
+ * inet_peer_minttl作为本次垃圾回收的对端信息
+ * 块生存期的阈值，否则根据inet_peer_maxttl
+ * 计算本次垃圾回收对端信息块生存期
+ * 的阈值。该参数默认值会根据系统内存
+ * 大小动态调整，算法间inet_initpeers
  */
 extern int inet_peer_threshold;
 /*
- * �Զ���Ϣ�����������ڡ����нϴ��ڴ�ѹ����
- * �����(��Զ���Ϣ�����������inet_peer_threshold��ʱ��)��
- * ��ʹ��inet_peer_minttl��Ϊ�˴ν����������յĶԶ���Ϣ
- * �������ڵ���ֵ��Ĭ��ֵΪ120.
+ * 对端信息块的最短生存期。在有较大内存压力的
+ * 情况下(如对端信息块的数量超过inet_peer_threshold的时候)，
+ * 则使用inet_peer_minttl作为此次进行垃圾回收的对端信息
+ * 块生存期的阈值。默认值为120.
  */
 extern int inet_peer_minttl;
 /*
- * �Զ���Ϣ���������ڡ���û���ڴ�ѹ����
- * �����(��Զ���Ϣ�����������ʱ)����ʹ��
- * �ϳ���ʱ����Ϊ�˴ν����������յĶԶ���Ϣ
- * �������ڵ���ֵ�����������inet_peer_maxttl��Ĭ��
- * ֵΪ600.
+ * 对端信息块的最长生存期。在没有内存压力的
+ * 情况下(如对端信息块的数量很少时)，会使用
+ * 较长的时间作为此次进行垃圾回收的对端信息
+ * 块生存期的阈值，但不会大于inet_peer_maxttl。默认
+ * 值为600.
  */
 extern int inet_peer_maxttl;
 /*
- * �����������յ���Сʱ���������нϴ��ڴ�ѹ����
- * �����(��Զ���Ϣ�����������inet_peer_thresholdʱ)����
- * ʹ��inet_peer_gc_mintime��Ϊ�˴ν����������յ�ʱ������
- * Ĭ��ֵΪ10.
+ * 进行垃圾回收的最小时间间隔。在有较大内存压力的
+ * 情况下(如对端信息块的数量超过inet_peer_threshold时)，则
+ * 使用inet_peer_gc_mintime作为此次进行垃圾回收的时间间隔。
+ * 默认值为10.
  */
 extern int inet_peer_gc_mintime;
 /*
- * �����������յ����ʱ��������û���ڴ�ѹ���������(��
- * �Զ���Ϣ����������ٵ�ʱ��)����ɹ�ýϳ���ʱ����Ϊ�˴�
- * �����������յ�ʱ���������������inet_peer_gc_maxtime��Ĭ��ֵ
- * Ϊ120.
+ * 进行垃圾回收的最大时间间隔。在没有内存压力的情况下(如
+ * 对端信息块的数量很少的时候)，会晒用较长的时间作为此次
+ * 进行垃圾回收的时间间隔，但不会大于inet_peer_gc_maxtime。默认值
+ * 为120.
  */
 extern int inet_peer_gc_maxtime;
 

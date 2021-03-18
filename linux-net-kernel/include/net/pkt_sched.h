@@ -59,7 +59,7 @@ psched_tdiff_bounded(psched_time_t tv1, psched_time_t tv2, psched_time_t bound)
 	return min(tv1 - tv2, bound);
 }
 
-//¼ûqdisc_watchdog_init
+//è§qdisc_watchdog_init
 struct qdisc_watchdog {
 	struct hrtimer	timer;
 	struct Qdisc	*qdisc;
@@ -95,12 +95,12 @@ extern int sch_direct_xmit(struct sk_buff *skb, struct Qdisc *q,
 extern void __qdisc_run(struct Qdisc *q);
 
 /*
-ÉÏÃæ¿´µ½ÁË£¬·¢ËÍ¶ÓÁÐ±»¼¤»îÁË£¬Ö»Òª¶ÓÁÐÖÐÓÐÊý¾Ý°ü´ý·¢ËÍ£¬¶ÓÁÐ×ÜÊÇ´¦ÓÚ¼¤»î×´Ì¬£¬ÄÇÃ´¼¤»î×´Ì¬µÄ¶ÓÁÐÊÇ·ñÄÜ±£Ö¤¶ÓÁÐÖÐµÄÊý¾Ý°ü±»¼°Ê±µÄ·¢ËÍÂð£¿
-½ÓÏÂÀ´¿´Ò»ÏÂ£¬¼¤»î×´Ì¬µÄ¶ÓÁÐµÄÌØµã¡£
+ä¸Šé¢çœ‹åˆ°äº†ï¼Œå‘é€é˜Ÿåˆ—è¢«æ¿€æ´»äº†ï¼Œåªè¦é˜Ÿåˆ—ä¸­æœ‰æ•°æ®åŒ…å¾…å‘é€ï¼Œé˜Ÿåˆ—æ€»æ˜¯å¤„äºŽæ¿€æ´»çŠ¶æ€ï¼Œé‚£ä¹ˆæ¿€æ´»çŠ¶æ€çš„é˜Ÿåˆ—æ˜¯å¦èƒ½ä¿è¯é˜Ÿåˆ—ä¸­çš„æ•°æ®åŒ…è¢«åŠæ—¶çš„å‘é€å—ï¼Ÿ
+æŽ¥ä¸‹æ¥çœ‹ä¸€ä¸‹ï¼Œæ¿€æ´»çŠ¶æ€çš„é˜Ÿåˆ—çš„ç‰¹ç‚¹ã€‚
 */
 static inline void qdisc_run(struct Qdisc *q)
 {
-    //²âÊÔÊÇ·ñÓÐÆäËûÀý³ÌÕýÔÚÔËÐÐ±¾¶ÔÏó
+    //æµ‹è¯•æ˜¯å¦æœ‰å…¶ä»–ä¾‹ç¨‹æ­£åœ¨è¿è¡Œæœ¬å¯¹è±¡
 	if (!test_and_set_bit(__QDISC_STATE_RUNNING, &q->state))
 		__qdisc_run(q);
 }

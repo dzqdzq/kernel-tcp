@@ -85,118 +85,118 @@ struct inet_timewait_death_row1 {
 };
 
 /*
-ÔÚTCPÁ¬½ÓµÄÖÕÖ¹¹ı³ÌÖĞ£¬ÎªÁË±ãÓÚ¹ÜÀíÏà¹ØµÄÊı¾İ£¬ËùÓĞµÄtimewait¿ØÖÆ¿éºÍ²ÎÊıµÈ¶¼´æ·ÅÔÚinet_timewait_death_row½á¹¹ÖĞ¼¯ÖĞ¹ÜÀí£¬TCPµÄÊµÀıÎªtcp_death_row£¬ÆäÖĞ°üÀ¨ÓÃÓÚ
-´æ´¢timewait¿ØÖÆ¿éµÄÉ¢ÁĞ±íºÍÏàÓ¦µÄ¶¨Ê±Æ÷µÈ¡£Í¼ĞÎ»¯Àí½â¿ÉÒÔ²Î¿¼·®¶«¶«ÏÂ²áP1002
-*/ //¶Ôtcp_timewait_sock½øĞĞ´¦Àí                      TCPÖĞ¸Ã±äÁ¿¸³ÖµµÄµØ·½ÔÚtcp_death_row
-struct inet_timewait_death_row { //tcp_timewait_sockµÄµ÷¶È¹ı³ÌÔÚinet_twsk_schedule
-    /* ÏÂÃæµÄÕâ¼¸¸ö2MSLÊÇ: 2MSLµÈ´ı³¬Ê±Ê±¼ä½Ï¶Ì³ÉÔ±±äÁ¿ */
+åœ¨TCPè¿æ¥çš„ç»ˆæ­¢è¿‡ç¨‹ä¸­ï¼Œä¸ºäº†ä¾¿äºç®¡ç†ç›¸å…³çš„æ•°æ®ï¼Œæ‰€æœ‰çš„timewaitæ§åˆ¶å—å’Œå‚æ•°ç­‰éƒ½å­˜æ”¾åœ¨inet_timewait_death_rowç»“æ„ä¸­é›†ä¸­ç®¡ç†ï¼ŒTCPçš„å®ä¾‹ä¸ºtcp_death_rowï¼Œå…¶ä¸­åŒ…æ‹¬ç”¨äº
+å­˜å‚¨timewaitæ§åˆ¶å—çš„æ•£åˆ—è¡¨å’Œç›¸åº”çš„å®šæ—¶å™¨ç­‰ã€‚å›¾å½¢åŒ–ç†è§£å¯ä»¥å‚è€ƒæ¨Šä¸œä¸œä¸‹å†ŒP1002
+*/ //å¯¹tcp_timewait_sockè¿›è¡Œå¤„ç†                      TCPä¸­è¯¥å˜é‡èµ‹å€¼çš„åœ°æ–¹åœ¨tcp_death_row
+struct inet_timewait_death_row { //tcp_timewait_sockçš„è°ƒåº¦è¿‡ç¨‹åœ¨inet_twsk_schedule
+    /* ä¸‹é¢çš„è¿™å‡ ä¸ª2MSLæ˜¯: 2MSLç­‰å¾…è¶…æ—¶æ—¶é—´è¾ƒçŸ­æˆå‘˜å˜é‡ */
 
     
 	/* Short-time timewait calendar */
 	/*
-	 * ³õÊ¼ÖµÎª-1£¬±íÊ¾twcal_timer¶¨Ê±Æ÷
-	 * Î´Ê¹ÓÃ¹ı£¬»òÕßÊ¹ÓÃºóÒÑÉ¾³ı¡£
-	 * µ±ÆäÖµ²»Îª-1Ê±£¬±íÊ¾µ±Ç°ÕıÊ¹ÓÃ
-	 * µÄslot£¬×÷ÎªÃ¿´Î±éÀútwcal_rowÉ¢ÁĞ±í
-	 * µÄÈë¿Ú¡£Òò´ËÔÚÉèÖÃ³¬Ê±Ê±¼ä£¬Æô¶¯
-	 * ¶¨Ê±Æ÷ºó£¬½«ÆäÉèÖÃÎª0£¬±íÊ¾ÒÑ¿ªÊ¼
-	 * Ê¹ÓÃ
+	 * åˆå§‹å€¼ä¸º-1ï¼Œè¡¨ç¤ºtwcal_timerå®šæ—¶å™¨
+	 * æœªä½¿ç”¨è¿‡ï¼Œæˆ–è€…ä½¿ç”¨åå·²åˆ é™¤ã€‚
+	 * å½“å…¶å€¼ä¸ä¸º-1æ—¶ï¼Œè¡¨ç¤ºå½“å‰æ­£ä½¿ç”¨
+	 * çš„slotï¼Œä½œä¸ºæ¯æ¬¡éå†twcal_rowæ•£åˆ—è¡¨
+	 * çš„å…¥å£ã€‚å› æ­¤åœ¨è®¾ç½®è¶…æ—¶æ—¶é—´ï¼Œå¯åŠ¨
+	 * å®šæ—¶å™¨åï¼Œå°†å…¶è®¾ç½®ä¸º0ï¼Œè¡¨ç¤ºå·²å¼€å§‹
+	 * ä½¿ç”¨
 	 */
 	int			twcal_hand;
 	/*
-	 * twcal_timer¶¨Ê±Æ÷³¬Ê±Ê±¼ä£¬ÊÇÇå³ı
-	 * timewait¿ØÖÆ¿éµÄ·§ÃÅ
+	 * twcal_timerå®šæ—¶å™¨è¶…æ—¶æ—¶é—´ï¼Œæ˜¯æ¸…é™¤
+	 * timewaitæ§åˆ¶å—çš„é˜€é—¨
 	 */
 	unsigned long		twcal_jiffie;
 	/*
-	 * twcal_timerµÄ³¬Ê±´¦Àíº¯ÊıÊÇinet_twdr_twcal_tick(),
-	 * ËüÉ¨ÃèÕû¸ötwcal_row£¬É¾³ıËùÓĞµÄ³¬Ê±twsk£¬
-	 * ¶ÔÊ£ÏÂµÄtwskÖØĞÂÉè¶¨³¬Ê±Ê±¼ä
+	 * twcal_timerçš„è¶…æ—¶å¤„ç†å‡½æ•°æ˜¯inet_twdr_twcal_tick(),
+	 * å®ƒæ‰«ææ•´ä¸ªtwcal_rowï¼Œåˆ é™¤æ‰€æœ‰çš„è¶…æ—¶twskï¼Œ
+	 * å¯¹å‰©ä¸‹çš„twské‡æ–°è®¾å®šè¶…æ—¶æ—¶é—´
 	 */
 	struct timer_list	twcal_timer;
 
 	/*
-	 * TIME_WAIT³¬Ê±Ê±¼ä³ıÒÔINET_TWDR_RECYCLE_TICKºó
-	 * ÏòÉÏÈ¡Õû£¬ÓÃÀ´ÅĞ¶Ï½«¸Ãtimewait¿ØÖÆ¿éÌí¼Ó
-	 * µ½cells»¹ÊÇtwcal_rowÉ¢ÁĞ±íÖĞ¡£
-	 * Èç¹ûµÃµ½Öµ´óÓÚ»òµÈÓÚINET_TWDR_RECYCLE_SLOTS£¬
-	 * Ôò½«ÆäÌí¼Óµ½cellsÉ¢ÁĞ±íÖĞ£¬·ñÔòÌí¼Óµ½
-	 * twcal_rowÉ¢ÁĞ±íÖĞ
+	 * TIME_WAITè¶…æ—¶æ—¶é—´é™¤ä»¥INET_TWDR_RECYCLE_TICKå
+	 * å‘ä¸Šå–æ•´ï¼Œç”¨æ¥åˆ¤æ–­å°†è¯¥timewaitæ§åˆ¶å—æ·»åŠ 
+	 * åˆ°cellsè¿˜æ˜¯twcal_rowæ•£åˆ—è¡¨ä¸­ã€‚
+	 * å¦‚æœå¾—åˆ°å€¼å¤§äºæˆ–ç­‰äºINET_TWDR_RECYCLE_SLOTSï¼Œ
+	 * åˆ™å°†å…¶æ·»åŠ åˆ°cellsæ•£åˆ—è¡¨ä¸­ï¼Œå¦åˆ™æ·»åŠ åˆ°
+	 * twcal_rowæ•£åˆ—è¡¨ä¸­
 	 */
 	/*
-	 * ÓÃÓÚ´æ´¢2MSLµÈ´ı³¬Ê±Ê±¼ä½Ï¶ÌµÄtimewait
-	 * ¿ØÖÆ¿éµÄÉ¢ÁĞ±í
+	 * ç”¨äºå­˜å‚¨2MSLç­‰å¾…è¶…æ—¶æ—¶é—´è¾ƒçŸ­çš„timewait
+	 * æ§åˆ¶å—çš„æ•£åˆ—è¡¨
 	 */
-	struct hlist_head	twcal_row[INET_TWDR_RECYCLE_SLOTS]; //ÀïÃæÁ¬½ÓµÄÊÇtcp_timewait_sock
+	struct hlist_head	twcal_row[INET_TWDR_RECYCLE_SLOTS]; //é‡Œé¢è¿æ¥çš„æ˜¯tcp_timewait_sock
 
 	/*
-	 * ÓÃÓÚÍ¬²½·ÃÎÊtwcal_rowºÍcellsÉ¢ÁĞ±íµÄ×ÔĞıËø
+	 * ç”¨äºåŒæ­¥è®¿é—®twcal_rowå’Œcellsæ•£åˆ—è¡¨çš„è‡ªæ—‹é”
 	 */
 	spinlock_t		death_lock;
 	/*
-	 * µ±Ç°ÏµÍ³ÖĞ´¦ÓÚTIME_WAIT×´Ì¬µÄÌ×½Ó×ÖÊı¡£¸ÃÖµ²»»á
-	 * ³¬¹ıÏµÍ³²ÎÊıtcp_max_tw_buckets£¬²Î¼û
-	 * NET_TCP_MAX_TW_BUCKETSÏµÍ³²ÎÊı
-	 */ //ÔÚtcp_time_waitÖĞ´´½¨inet_timewait_sockºó£¬ÔÚinet_twsk_schedule×ÔÔö¼Ó1
-	int			tw_count; //ÔÚº¯Êıinet_twsk_scheduleÖĞ×ÔÔö  ÊÇµ±Ç°TIME_WAIT×´Ì¬Ì×½Ó×ÖµÄÊıÁ¿
+	 * å½“å‰ç³»ç»Ÿä¸­å¤„äºTIME_WAITçŠ¶æ€çš„å¥—æ¥å­—æ•°ã€‚è¯¥å€¼ä¸ä¼š
+	 * è¶…è¿‡ç³»ç»Ÿå‚æ•°tcp_max_tw_bucketsï¼Œå‚è§
+	 * NET_TCP_MAX_TW_BUCKETSç³»ç»Ÿå‚æ•°
+	 */ //åœ¨tcp_time_waitä¸­åˆ›å»ºinet_timewait_sockåï¼Œåœ¨inet_twsk_scheduleè‡ªå¢åŠ 1
+	int			tw_count; //åœ¨å‡½æ•°inet_twsk_scheduleä¸­è‡ªå¢  æ˜¯å½“å‰TIME_WAITçŠ¶æ€å¥—æ¥å­—çš„æ•°é‡
 
 
 
 
 
-	/* ÏÂÃæµÄÕâ¼¸¸ö2MSLÊÇ: 2MSLµÈ´ı³¬Ê±Ê±¼ä½Ï¶Ì³ÉÔ±±äÁ¿ */
+	/* ä¸‹é¢çš„è¿™å‡ ä¸ª2MSLæ˜¯: 2MSLç­‰å¾…è¶…æ—¶æ—¶é—´è¾ƒçŸ­æˆå‘˜å˜é‡ */
 
 	
 	/*
-	 * tw_timer¶¨Ê±Æ÷µÄ³¬Ê±Ê±¼äÎª
-	 * TCP_TIMEWAIT_LEN / INET_TWDR_TWKILL_SLOTS£¬
-	 * ¼´½«60s·Ö³É8·İ
+	 * tw_timerå®šæ—¶å™¨çš„è¶…æ—¶æ—¶é—´ä¸º
+	 * TCP_TIMEWAIT_LEN / INET_TWDR_TWKILL_SLOTSï¼Œ
+	 * å³å°†60såˆ†æˆ8ä»½
 	 */
 	int			period;
 	/*
-	 * ÔÚ·ÖÅúÉ¾³ı²¢ÊÍ·ÅcellsÉ¢ÁĞ±íÖĞµÄtimewait¿ØÖÆ¿é
-	 * Ê±£¬ÓÃÓÚ±êÊ¶´ıÉ¾³ıslotµÄÎ»Í¼
+	 * åœ¨åˆ†æ‰¹åˆ é™¤å¹¶é‡Šæ”¾cellsæ•£åˆ—è¡¨ä¸­çš„timewaitæ§åˆ¶å—
+	 * æ—¶ï¼Œç”¨äºæ ‡è¯†å¾…åˆ é™¤slotçš„ä½å›¾
 	 */
 	u32			thread_slots;
 	/*
-	 * ½øĞĞ·ÖÅúÉ¾³ı²¢ÊÍ·ÅcellsÉ¢ÁĞ±íÖĞµÄtimewait
-	 * ¿ØÖÆ¿éµÄ¹¤×÷¶ÓÁĞ
+	 * è¿›è¡Œåˆ†æ‰¹åˆ é™¤å¹¶é‡Šæ”¾cellsæ•£åˆ—è¡¨ä¸­çš„timewait
+	 * æ§åˆ¶å—çš„å·¥ä½œé˜Ÿåˆ—
 	 */
 	struct work_struct	twkill_work;
 	/*
-	 * tw_timerµÄ³¬Ê±´¦Àíº¯ÊıÊÇinet_twdr_hangman()£¬Ã¿
-	 * ¾­¹ıÒ»¸öperiod³¬Ê±Ò»´Î£¬È¡cellsÖĞ¶ÔÓ¦µÄ¶ÓÁĞ£¬
-	 * É¾³ı¶ÓÁĞÖĞËùÓĞµÄtwsk£¬Í¬Ê±´ÓehashÉ¢ÁĞ±í
-	 * µÄºó°ë²¿·ÖºÍbashÉ¢ÁĞ±íÖĞÉ¾³ıÏàÓ¦µÄtwsk
-	 * ¼°Æä°ó¶¨µÄ±¾µØ¶Ë¿Ú¡£ÕâÅútwskµÄÊ¹Ãü¼´
-	 * ¸æ½áÊø
-	 */ //¸Ã¶¨Ê±Æ÷ÔÚÕâÀïinet_twsk_schedule´¥·¢£¬ÕæÕıµÄ¶¨Ê±Æ÷´¦Àíº¯ÊıÎªinet_twdr_hangman,¼ûtcp_death_row
+	 * tw_timerçš„è¶…æ—¶å¤„ç†å‡½æ•°æ˜¯inet_twdr_hangman()ï¼Œæ¯
+	 * ç»è¿‡ä¸€ä¸ªperiodè¶…æ—¶ä¸€æ¬¡ï¼Œå–cellsä¸­å¯¹åº”çš„é˜Ÿåˆ—ï¼Œ
+	 * åˆ é™¤é˜Ÿåˆ—ä¸­æ‰€æœ‰çš„twskï¼ŒåŒæ—¶ä»ehashæ•£åˆ—è¡¨
+	 * çš„ååŠéƒ¨åˆ†å’Œbashæ•£åˆ—è¡¨ä¸­åˆ é™¤ç›¸åº”çš„twsk
+	 * åŠå…¶ç»‘å®šçš„æœ¬åœ°ç«¯å£ã€‚è¿™æ‰¹twskçš„ä½¿å‘½å³
+	 * å‘Šç»“æŸ
+	 */ //è¯¥å®šæ—¶å™¨åœ¨è¿™é‡Œinet_twsk_scheduleè§¦å‘ï¼ŒçœŸæ­£çš„å®šæ—¶å™¨å¤„ç†å‡½æ•°ä¸ºinet_twdr_hangman,è§tcp_death_row
 	struct timer_list	tw_timer;
 	/*
-	 * tw_timer¶¨Ê±Æ÷³¬Ê±Ê±ÕıÊ¹ÓÃµÄslot£¬×÷Îªcells
-	 * É¢ÁĞ±íµÄ¹Ø¼ü×Ö 
-	 //µÚÒ»¸ötw_timer³¬Ê±µÄÊ±ºò£¬twdr->slot=0,µÍ¶ş¸ötw_timer³¬Ê±µÄÊ±ºò£¬¸ÃÖµ±ä1£¬µ±µ½7ºóÓÖ»Øµ½1¡£Ò²¾ÍÊÇÃ¿¸ô8¸öperiod(TCP_TIMEWAIT_LEN / INET_TWDR_TWKILL_SLOTS)
-	 Ñ­»·Ò»´Î£¬ÕâÑù¾Í¿ÉÒÔ±£Ö¤cells±íÖĞµÄËùÓĞtimewait±éÀúµ½(»ù±¾ÉÏ¶¼ÊÇINET_TWDR_TWKILL_SLOTSÊ±¼ä±éÀúµ½Ò»´Î±¾cells£¬ËùÒÔÊ±¼ä¶¼ÊÇINET_TWDR_TWKILL_SLOTS£¬³ı·ÇÌØÊâÇé¿ö
-	 Ä³¸öcellsÉÏµÄtimewait¸öÊı³¬¹ıINET_TWDR_TWKILL_QUOTA¼ûinet_twdr_do_twkill_work)  ¼ûinet_twdr_hangman
+	 * tw_timerå®šæ—¶å™¨è¶…æ—¶æ—¶æ­£ä½¿ç”¨çš„slotï¼Œä½œä¸ºcells
+	 * æ•£åˆ—è¡¨çš„å…³é”®å­— 
+	 //ç¬¬ä¸€ä¸ªtw_timerè¶…æ—¶çš„æ—¶å€™ï¼Œtwdr->slot=0,ä½äºŒä¸ªtw_timerè¶…æ—¶çš„æ—¶å€™ï¼Œè¯¥å€¼å˜1ï¼Œå½“åˆ°7ååˆå›åˆ°1ã€‚ä¹Ÿå°±æ˜¯æ¯éš”8ä¸ªperiod(TCP_TIMEWAIT_LEN / INET_TWDR_TWKILL_SLOTS)
+	 å¾ªç¯ä¸€æ¬¡ï¼Œè¿™æ ·å°±å¯ä»¥ä¿è¯cellsè¡¨ä¸­çš„æ‰€æœ‰timewaitéå†åˆ°(åŸºæœ¬ä¸Šéƒ½æ˜¯INET_TWDR_TWKILL_SLOTSæ—¶é—´éå†åˆ°ä¸€æ¬¡æœ¬cellsï¼Œæ‰€ä»¥æ—¶é—´éƒ½æ˜¯INET_TWDR_TWKILL_SLOTSï¼Œé™¤éç‰¹æ®Šæƒ…å†µ
+	 æŸä¸ªcellsä¸Šçš„timewaitä¸ªæ•°è¶…è¿‡INET_TWDR_TWKILL_QUOTAè§inet_twdr_do_twkill_work)  è§inet_twdr_hangman
 	 */
-	int			slot;//Ã¿¸ôperiod³¬Ê±Ò»´Î
+	int			slot;//æ¯éš”periodè¶…æ—¶ä¸€æ¬¡
 	/*
-	 * ÓÃÓÚ´æ´¢2MSLµÈ´ı³¬Ê±Ê±¼ä½Ï³¤µÄtimewait
-	 * ¿ØÖÆ¿éµÄÉ¢ÁĞ±í
+	 * ç”¨äºå­˜å‚¨2MSLç­‰å¾…è¶…æ—¶æ—¶é—´è¾ƒé•¿çš„timewait
+	 * æ§åˆ¶å—çš„æ•£åˆ—è¡¨
 	 */
 	struct hlist_head	cells[INET_TWDR_TWKILL_SLOTS];
 	/*
-	 * Ö¸Ïòinet_hashinfo½á¹¹ÀàĞÍÊµÀıtcp_hashinfo
+	 * æŒ‡å‘inet_hashinfoç»“æ„ç±»å‹å®ä¾‹tcp_hashinfo
 	 */
 	struct inet_hashinfo 	*hashinfo;
-	/*  tcp_timestamps²ÎÊıÓÃÀ´ÉèÖÃÊÇ·ñÆôÓÃÊ±¼ä´ÁÑ¡Ïî£¬tcp_tw_recycle²ÎÊıÓÃÀ´ÆôÓÃ¿ìËÙ»ØÊÕTIME_WAITÌ×½Ó×Ö¡£tcp_timestamps²ÎÊı»áÓ°Ïìµ½
-	tcp_tw_recycle²ÎÊıµÄĞ§¹û¡£Èç¹ûÃ»ÓĞÊ±¼ä´ÁÑ¡ÏîµÄ»°£¬tcp_tw_recycle²ÎÊıÎŞĞ§£¬¼ûtcp_time_wait
-	 * ÓÃÀ´´æ´¢ÏµÍ³²ÎÊıtcp_tw_recycleµÄÖµ, tcp_tw_recycle²ÎÊıÓÃÀ´ÆôÓÃ¿ìËÙ»ØÊÕTIME_WAITÌ×½Ó×Ö
-	 */ //Èç¹ûÆôÓÃÁËtcp_tw_resycle,Ôòtcp_time_waitÖĞ³¬Ê±Ê±¼äÓÃµÄtw->tw_timeout = rto£¬·ñÔòÊÇÄ¬ÈÏµÄTCP_TIMEWAIT_LEN£¬TCP_TIMEWAIT_LENÔÚÍøÂçÕı³£µÄÇé¿öÏÂ»á±Èrto´ó£¬ËùÒÔÆôÓÃ¸Ã²ÎÊı¿ÉÒÔ¿ìËÙ»ØÊÕtimewait
-    //¿ªÆôÕâ¸öµÄÊ±ºò£¬ÔÚtcp_v4_conn_requestÖĞµÄºóÃæ¿ÉÄÜ»á´æÔÚ Õë¶ÔTCPÊ±¼ä´ÁPAWSÂ©¶´£¬Ôì³É·şÎñÆ÷¶ËÊÕµ½SYNµÄÊ±ºò²»»ØÊÕSYN+ACK£¬½â¾ö°ì·¨ÊÇ¶Ô·½²»Òª·¢ËÍÊ±¼ä´ÁÑ¡Ïî£¬Í¬Ê±¹Ø±Õtcp_timestamps¼ûtcp_v4_conn_request
-	int			sysctl_tw_recycle;////ÔÚÓ¦ÓÃ²ãµÄ/proc/sys/netÖĞÉèÖÃµÄÊ±ºò£¬¶ÔÓ¦µÄÖµ»áĞ´Èëµ½dataÖĞ
+	/*  tcp_timestampså‚æ•°ç”¨æ¥è®¾ç½®æ˜¯å¦å¯ç”¨æ—¶é—´æˆ³é€‰é¡¹ï¼Œtcp_tw_recycleå‚æ•°ç”¨æ¥å¯ç”¨å¿«é€Ÿå›æ”¶TIME_WAITå¥—æ¥å­—ã€‚tcp_timestampså‚æ•°ä¼šå½±å“åˆ°
+	tcp_tw_recycleå‚æ•°çš„æ•ˆæœã€‚å¦‚æœæ²¡æœ‰æ—¶é—´æˆ³é€‰é¡¹çš„è¯ï¼Œtcp_tw_recycleå‚æ•°æ— æ•ˆï¼Œè§tcp_time_wait
+	 * ç”¨æ¥å­˜å‚¨ç³»ç»Ÿå‚æ•°tcp_tw_recycleçš„å€¼, tcp_tw_recycleå‚æ•°ç”¨æ¥å¯ç”¨å¿«é€Ÿå›æ”¶TIME_WAITå¥—æ¥å­—
+	 */ //å¦‚æœå¯ç”¨äº†tcp_tw_resycle,åˆ™tcp_time_waitä¸­è¶…æ—¶æ—¶é—´ç”¨çš„tw->tw_timeout = rtoï¼Œå¦åˆ™æ˜¯é»˜è®¤çš„TCP_TIMEWAIT_LENï¼ŒTCP_TIMEWAIT_LENåœ¨ç½‘ç»œæ­£å¸¸çš„æƒ…å†µä¸‹ä¼šæ¯”rtoå¤§ï¼Œæ‰€ä»¥å¯ç”¨è¯¥å‚æ•°å¯ä»¥å¿«é€Ÿå›æ”¶timewait
+    //å¼€å¯è¿™ä¸ªçš„æ—¶å€™ï¼Œåœ¨tcp_v4_conn_requestä¸­çš„åé¢å¯èƒ½ä¼šå­˜åœ¨ é’ˆå¯¹TCPæ—¶é—´æˆ³PAWSæ¼æ´ï¼Œé€ æˆæœåŠ¡å™¨ç«¯æ”¶åˆ°SYNçš„æ—¶å€™ä¸å›æ”¶SYN+ACKï¼Œè§£å†³åŠæ³•æ˜¯å¯¹æ–¹ä¸è¦å‘é€æ—¶é—´æˆ³é€‰é¡¹ï¼ŒåŒæ—¶å…³é—­tcp_timestampsè§tcp_v4_conn_request
+	int			sysctl_tw_recycle;////åœ¨åº”ç”¨å±‚çš„/proc/sys/netä¸­è®¾ç½®çš„æ—¶å€™ï¼Œå¯¹åº”çš„å€¼ä¼šå†™å…¥åˆ°dataä¸­
 	/*
-	 * ÓÃÀ´´æ´¢ÏµÍ³²ÎÊıtcp_max_tw_bucketsµÄÖµ£¬±íÊ¾×î¶à¿ÉÒÔÓÉ¶àÉÙ¸ötime_wait´æÔÚ
+	 * ç”¨æ¥å­˜å‚¨ç³»ç»Ÿå‚æ•°tcp_max_tw_bucketsçš„å€¼ï¼Œè¡¨ç¤ºæœ€å¤šå¯ä»¥ç”±å¤šå°‘ä¸ªtime_waitå­˜åœ¨
 	 */
 	int			sysctl_max_tw_buckets;
 };
@@ -217,13 +217,13 @@ struct inet_bind_bucket;
  * This is a TIME_WAIT sock. It works around the memory consumption
  * problems of sockets in such a state on heavily loaded servers, but
  * without violating the protocol specification.
- *///tcp_timewait_sock°üº¬inet_timewait_sock£¬inet_timewait_sock°üº¬sock_common  TCPÁ¬½ÓµÄÊ±ºòÓÃ TCP_TIME_WAIT×´Ì¬¹ı³ÌÖĞÓÃµ½
+ *///tcp_timewait_sockåŒ…å«inet_timewait_sockï¼Œinet_timewait_sockåŒ…å«sock_common  TCPè¿æ¥çš„æ—¶å€™ç”¨ TCP_TIME_WAITçŠ¶æ€è¿‡ç¨‹ä¸­ç”¨åˆ°
  /*
- * inet_timewait_sock½á¹¹ÊÇÖ§³ÖÃæÏòÁ¬½ÓÌØĞÔµÄ
- * TCP_TIME_WAIT×´Ì¬µÄÃèÊö£¬ÊÇ¹¹³Étcp_timewait_sockµÄ»ù´¡
-  tcp_timewait_sock°üº¬inet_timewait_sock£¬inet_timewait_sock°üº¬sock_common
- *///µ±½øÈëTCPÁ¬½Ó¶Ï¿ª½øÈëtimewait×´Ì¬µÄÊ±ºò£¬¸Ãinet_timewait_sockÔÚinet_twsk_scheduleÖĞ±»Ìí¼Óµ½ÁËtcp_death_rowÖĞµÄtw_death_nodeÖĞ
-struct inet_timewait_sock {//¸Ã½á¹¹ÔÚ__inet_twsk_killÖĞ×îºóÊÍ·Å¿Õ¼ä
+ * inet_timewait_sockç»“æ„æ˜¯æ”¯æŒé¢å‘è¿æ¥ç‰¹æ€§çš„
+ * TCP_TIME_WAITçŠ¶æ€çš„æè¿°ï¼Œæ˜¯æ„æˆtcp_timewait_sockçš„åŸºç¡€
+  tcp_timewait_sockåŒ…å«inet_timewait_sockï¼Œinet_timewait_sockåŒ…å«sock_common
+ *///å½“è¿›å…¥TCPè¿æ¥æ–­å¼€è¿›å…¥timewaitçŠ¶æ€çš„æ—¶å€™ï¼Œè¯¥inet_timewait_sockåœ¨inet_twsk_scheduleä¸­è¢«æ·»åŠ åˆ°äº†tcp_death_rowä¸­çš„tw_death_nodeä¸­
+struct inet_timewait_sock {//è¯¥ç»“æ„åœ¨__inet_twsk_killä¸­æœ€åé‡Šæ”¾ç©ºé—´
 	/*
 	 * Now struct sock also uses sock_common, so please just
 	 * don't add nothing before this first member (__tw_common) --acme
@@ -233,30 +233,30 @@ struct inet_timewait_sock {//¸Ã½á¹¹ÔÚ__inet_twsk_killÖĞ×îºóÊÍ·Å¿Õ¼ä
 #define tw_state		__tw_common.skc_state
 #define tw_reuse		__tw_common.skc_reuse
 #define tw_bound_dev_if		__tw_common.skc_bound_dev_if
-#define tw_node			__tw_common.skc_nulls_node //inet_twsk_add_node_rcu,¼ÓÈëµ½
-#define tw_bind_node		__tw_common.skc_bind_node////ÔÚ³¬Ê±×´Ì¬°Ñinet_bind_bucketÍ°Ö¸Ïòtw->tw_bind_node£¬±ÜÃâ¸Ãº¯ÊıÍâÃæÔÚÊÍ·ÅskµÄÊ±ºò£¬»áÊÍ·ÅµôbindÍ°ĞÅÏ¢
+#define tw_node			__tw_common.skc_nulls_node //inet_twsk_add_node_rcu,åŠ å…¥åˆ°
+#define tw_bind_node		__tw_common.skc_bind_node////åœ¨è¶…æ—¶çŠ¶æ€æŠŠinet_bind_bucketæ¡¶æŒ‡å‘tw->tw_bind_nodeï¼Œé¿å…è¯¥å‡½æ•°å¤–é¢åœ¨é‡Šæ”¾skçš„æ—¶å€™ï¼Œä¼šé‡Šæ”¾æ‰bindæ¡¶ä¿¡æ¯
 #define tw_refcnt		__tw_common.skc_refcnt
 #define tw_hash			__tw_common.skc_hash
 #define tw_prot			__tw_common.skc_prot
 #define tw_net			__tw_common.skc_net
 	/*
-	 * ÓÃÓÚ¼ÇÂ¼2MSL³¬Ê±Ê±¼ä
+	 * ç”¨äºè®°å½•2MSLè¶…æ—¶æ—¶é—´
 	 */
 	int			tw_timeout;
 	/*
-	 * ÓÉÓÚTCP×´Ì¬Ç¨ÒÆµ½FIN_WAIT2»òTIME_WAIT×´Ì¬Ê±£¬
-	 * ¶¼ĞèÒªÓÉ¶¨Ê±Æ÷À´´¦Àí£¬Ò»µ©³¬Ê±Ì×½Ó×Ö
-	 * Ëæ¼´¾Í±»ÊÍ·Å¡£Ò»µ©ÓÃtimewait¿ØÖÆ¿éÈ¡´ú
-	 * tcp_sock´«Êä¿ØÖÆ¿éºó£¬Æä¶ÔÍâµÄ×´Ì¬Ê±TIME_WAIT£¬
-	 * ¶øÄÚ²¿×´Ì¬»¹ÊÇÓĞÇø±ğµÄ£¬Òò´ËĞèÒªtw_substate
-	 * À´±êÊ¶FIN_WAIT2»òTIME_WAIT
+	 * ç”±äºTCPçŠ¶æ€è¿ç§»åˆ°FIN_WAIT2æˆ–TIME_WAITçŠ¶æ€æ—¶ï¼Œ
+	 * éƒ½éœ€è¦ç”±å®šæ—¶å™¨æ¥å¤„ç†ï¼Œä¸€æ—¦è¶…æ—¶å¥—æ¥å­—
+	 * éšå³å°±è¢«é‡Šæ”¾ã€‚ä¸€æ—¦ç”¨timewaitæ§åˆ¶å—å–ä»£
+	 * tcp_sockä¼ è¾“æ§åˆ¶å—åï¼Œå…¶å¯¹å¤–çš„çŠ¶æ€æ—¶TIME_WAITï¼Œ
+	 * è€Œå†…éƒ¨çŠ¶æ€è¿˜æ˜¯æœ‰åŒºåˆ«çš„ï¼Œå› æ­¤éœ€è¦tw_substate
+	 * æ¥æ ‡è¯†FIN_WAIT2æˆ–TIME_WAIT
 	 */
 	volatile unsigned char	tw_substate;
 	/* 3 bits hole, try to pack */
 	unsigned char		tw_rcv_wscale;
 	/* Socket demultiplex comparisons on incoming packets. */
 	/* these five are in inet_sock */
-	//ÏÂÃæÕâĞ©Öµ¶¼ÊÇ´Óinet_sockÖĞ»ñÈ¡
+	//ä¸‹é¢è¿™äº›å€¼éƒ½æ˜¯ä»inet_sockä¸­è·å–
 	__be16			tw_sport;
 	__be32			tw_daddr __attribute__((aligned(INET_TIMEWAIT_ADDRCMP_ALIGN_BYTES)));
 	__be32			tw_rcv_saddr;
@@ -270,17 +270,17 @@ struct inet_timewait_sock {//¸Ã½á¹¹ÔÚ__inet_twsk_killÖĞ×îºóÊÍ·Å¿Õ¼ä
 				tw_ipv6_offset  : 16;
 	kmemcheck_bitfield_end(flags);
 	/*
-	 * ±¾timewait¿ØÖÆ¿é³¬Ê±É¾³ıµÄÊ±¼ä(µ¥Î»ÎªHZ)£¬
-	 * ¹©procÎÄ¼şÏµÍ³µÈÊ¹ÓÃ
+	 * æœ¬timewaitæ§åˆ¶å—è¶…æ—¶åˆ é™¤çš„æ—¶é—´(å•ä½ä¸ºHZ)ï¼Œ
+	 * ä¾›procæ–‡ä»¶ç³»ç»Ÿç­‰ä½¿ç”¨
 	 */
 	unsigned long		tw_ttd;
 	/*
-	 * Ö¸Ïò°ó¶¨µÄ±¾µØ¶Ë¿ÚĞÅÏ¢£¬ÓÉ¶ÔÓ¦µÄTCP´«Êä¿ØÖÆ¿é
-	 * µÄicsk_bind_hash³ÉÔ±µÃµ½¡£¼û__inet_twsk_hashdance
+	 * æŒ‡å‘ç»‘å®šçš„æœ¬åœ°ç«¯å£ä¿¡æ¯ï¼Œç”±å¯¹åº”çš„TCPä¼ è¾“æ§åˆ¶å—
+	 * çš„icsk_bind_hashæˆå‘˜å¾—åˆ°ã€‚è§__inet_twsk_hashdance
 	 */
 	struct inet_bind_bucket	*tw_tb; //
 	/*
-	 * ÓÃÀ´ÔÚtwcal_rowºÍcellsÉ¢ÁĞ±íÖĞ¹¹³ÉÁ´±í, ¼ûinet_timewait_death_row
+	 * ç”¨æ¥åœ¨twcal_rowå’Œcellsæ•£åˆ—è¡¨ä¸­æ„æˆé“¾è¡¨, è§inet_timewait_death_row
 	 */
 	struct hlist_node	tw_death_node;
 };

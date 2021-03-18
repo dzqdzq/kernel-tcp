@@ -21,34 +21,34 @@
 #include <net/netlink.h>
 #include <net/pkt_sched.h>
 
-/* ÓÅÏÈ¼¶¶ÓÁĞ¹æ¶¨µÄbandÎª16¸ö,²Î¿¼TCÁ÷Á¿¿ØÖÆÊµÏÖ·ÖÎö(³õ²½)-Í¼3  ½¨Á¢¡±prio¡±ÀàĞÍµÄ¸ùÁ÷¿Ø¶ÔÏó_2 */   //ÏêÏ¸Àí½âÒ²¿ÉÒÔ²Î¿¼<<LINUX¸ß¼¶Â·ÓÉºÍÁ÷Á¿¿ØÖÆ>>
+/* ä¼˜å…ˆçº§é˜Ÿåˆ—è§„å®šçš„bandä¸º16ä¸ª,å‚è€ƒTCæµé‡æ§åˆ¶å®ç°åˆ†æ(åˆæ­¥)-å›¾3  å»ºç«‹â€prioâ€ç±»å‹çš„æ ¹æµæ§å¯¹è±¡_2 */   //è¯¦ç»†ç†è§£ä¹Ÿå¯ä»¥å‚è€ƒ<<LINUXé«˜çº§è·¯ç”±å’Œæµé‡æ§åˆ¶>>
 /*
-ÏÖÔÚ¼ÙÉèÒª·¢ËÍÒ»¸öskb->priorityÖµÊÇ8µÄÊı¾İ°ü£¬·¢ËÍÁ÷³ÌÈçÏÂ£º
-1.      Ê¹ÓÃÍø¿¨µÄ¸ùÁ÷¿Ø¶ÔÏóµÄÈë¶Óº¯Êı½«Êı¾İ°üÈë¶Ó
-2.      ÓÉÓÚÎ´ÉèÖÃ¹ıÂËÆ÷£¬ÔòÖ±½Ó¸ù¾İÊı¾İ°üµÄskb->priority=8ÕÒµ½¶ÔÓ¦µÄ´øÊÇ0£¬Ôò½«Êı¾İ°ü¼ÓÈëµÚÒ»¸öpfifoÁ÷¿Ø¶ÔÏó¡£
-3.      µ÷ÓÃpfifoÁ÷¿Ø¶ÔÏóµÄÈë¶Óº¯Êı£¬½«Êı¾İ°ü¼ÓÈë¶ÔÏóÖĞµÄÊı¾İ°ü¶ÓÁĞ¡£
-4.      µ÷ÓÃqdisc_run()Æô¶¯¸ùÁ÷¿Ø¶ÔÏó¡£
-5.      µ÷ÓÃ¸ùÁ÷¿Ø¶ÔÏóµÄ³ö¶Óº¯Êı£¬º¯ÊıÄÚÏÈÑ¡ÔñµÚÒ»¸öpfifoÁ÷¿Ø¶ÔÏó²¢µ÷ÓÃÆä³ö¶Óº¯ÊıÑ¡ÔñÒ»¸öÊı¾İ°ü£¬³ö¶Óº¯Êı·µ»Ø£¬Èç¹ûµÚÒ»¸öpfifoÁ÷¿Ø¶ÔÏóÎª¿Õ£¬Ñ¡ÔñµÚ¶ş¸öpfifoÁ÷¿Ø¶ÔÏó²¢µ÷ÓÃÆä³ö¶Óº¯ÊıÑ¡ÔñÒ»¸öÊı¾İ°ü£¬Ö±µ½ÕÒµ½Ò»¸öÊı¾İ°ü¡£
-6.      ·¢ËÍ5ÕÒµ½µÄÊı¾İ°ü¡£
-7.      Ö»ÒªÊ±¼äÔÊĞíÇÒÁ÷¿Ø¶ÔÏó²»Îª¿Õ£¬¾ÍÒ»Ö±Ñ­»·5£¬6µÄ¹ı³Ì¡£
+ç°åœ¨å‡è®¾è¦å‘é€ä¸€ä¸ªskb->priorityå€¼æ˜¯8çš„æ•°æ®åŒ…ï¼Œå‘é€æµç¨‹å¦‚ä¸‹ï¼š
+1.      ä½¿ç”¨ç½‘å¡çš„æ ¹æµæ§å¯¹è±¡çš„å…¥é˜Ÿå‡½æ•°å°†æ•°æ®åŒ…å…¥é˜Ÿ
+2.      ç”±äºæœªè®¾ç½®è¿‡æ»¤å™¨ï¼Œåˆ™ç›´æ¥æ ¹æ®æ•°æ®åŒ…çš„skb->priority=8æ‰¾åˆ°å¯¹åº”çš„å¸¦æ˜¯0ï¼Œåˆ™å°†æ•°æ®åŒ…åŠ å…¥ç¬¬ä¸€ä¸ªpfifoæµæ§å¯¹è±¡ã€‚
+3.      è°ƒç”¨pfifoæµæ§å¯¹è±¡çš„å…¥é˜Ÿå‡½æ•°ï¼Œå°†æ•°æ®åŒ…åŠ å…¥å¯¹è±¡ä¸­çš„æ•°æ®åŒ…é˜Ÿåˆ—ã€‚
+4.      è°ƒç”¨qdisc_run()å¯åŠ¨æ ¹æµæ§å¯¹è±¡ã€‚
+5.      è°ƒç”¨æ ¹æµæ§å¯¹è±¡çš„å‡ºé˜Ÿå‡½æ•°ï¼Œå‡½æ•°å†…å…ˆé€‰æ‹©ç¬¬ä¸€ä¸ªpfifoæµæ§å¯¹è±¡å¹¶è°ƒç”¨å…¶å‡ºé˜Ÿå‡½æ•°é€‰æ‹©ä¸€ä¸ªæ•°æ®åŒ…ï¼Œå‡ºé˜Ÿå‡½æ•°è¿”å›ï¼Œå¦‚æœç¬¬ä¸€ä¸ªpfifoæµæ§å¯¹è±¡ä¸ºç©ºï¼Œé€‰æ‹©ç¬¬äºŒä¸ªpfifoæµæ§å¯¹è±¡å¹¶è°ƒç”¨å…¶å‡ºé˜Ÿå‡½æ•°é€‰æ‹©ä¸€ä¸ªæ•°æ®åŒ…ï¼Œç›´åˆ°æ‰¾åˆ°ä¸€ä¸ªæ•°æ®åŒ…ã€‚
+6.      å‘é€5æ‰¾åˆ°çš„æ•°æ®åŒ…ã€‚
+7.      åªè¦æ—¶é—´å…è®¸ä¸”æµæ§å¯¹è±¡ä¸ä¸ºç©ºï¼Œå°±ä¸€ç›´å¾ªç¯5ï¼Œ6çš„è¿‡ç¨‹ã€‚
 */
-//    Ê¹ÓÃint register_qdisc(struct Qdisc_ops *qops)×¢²á¶ÔÏóÀàĞÍ¡£
-//    Ê¹ÓÃint register_tcf_proto_ops(struct tcf_proto_ops *ops)×¢²á¹ıÂËÆ÷ÀàĞÍ¡£
+//    ä½¿ç”¨int register_qdisc(struct Qdisc_ops *qops)æ³¨å†Œå¯¹è±¡ç±»å‹ã€‚
+//    ä½¿ç”¨int register_tcf_proto_ops(struct tcf_proto_ops *ops)æ³¨å†Œè¿‡æ»¤å™¨ç±»å‹ã€‚
 
 /*
-½øÈë³ö¿ÚÁ÷¿ØµÄº¯ÊıÎªdev_queue_xmit(); Èç¹ûÊÇÈë¿ÚÁ÷¿Ø, Êı¾İÖ»ÊÇ¸Õ´ÓÍø¿¨Éè±¸ÖĞÊÕµ½, »¹Î´½»µ½ÍøÂçÉÏ²ã´¦Àí, ²»¹ıÍø¿¨µÄÈë¿ÚÁ÷¿Ø²»ÊÇ±ØĞëµÄ,  Ôö¼ÓÒ»¸öÈë¿ÚÁ÷¿Ø¶ÓÁĞ# tc qdisc add dev eth0 ingress
-È±Ê¡Çé¿öÏÂ²¢²»½øĞĞÁ÷¿Ø£¬½øÈëÈë¿ÚÁ÷¿Øº¯ÊıÎªing_filter()º¯Êı£¬¸Ãº¯Êı±»skb_receive_skb()µ÷ÓÃ¡£
-*/ //»ñÈ¡ÒıÓÃ²ã²ÎÊıµÄµØ·½ÔÚprio_tune£¬¸Ã½á¹¹³õÊ¼»¯ÔÚprio_tune
-struct prio_sched_data //ÄÚºË¿Õ¼äºÍÓ¦ÓÃ²ãÍ¨¹ınetlink½»»¥½ÓÊÕÊı¾İ¹ı³Ì£¬¼ûº¯Êıpktsched_init£¬tc qdiscÃüÁî¾ÍÊÇÔÚÕâÀïÃæÈ·¶¨
+è¿›å…¥å‡ºå£æµæ§çš„å‡½æ•°ä¸ºdev_queue_xmit(); å¦‚æœæ˜¯å…¥å£æµæ§, æ•°æ®åªæ˜¯åˆšä»ç½‘å¡è®¾å¤‡ä¸­æ”¶åˆ°, è¿˜æœªäº¤åˆ°ç½‘ç»œä¸Šå±‚å¤„ç†, ä¸è¿‡ç½‘å¡çš„å…¥å£æµæ§ä¸æ˜¯å¿…é¡»çš„,  å¢åŠ ä¸€ä¸ªå…¥å£æµæ§é˜Ÿåˆ—# tc qdisc add dev eth0 ingress
+ç¼ºçœæƒ…å†µä¸‹å¹¶ä¸è¿›è¡Œæµæ§ï¼Œè¿›å…¥å…¥å£æµæ§å‡½æ•°ä¸ºing_filter()å‡½æ•°ï¼Œè¯¥å‡½æ•°è¢«skb_receive_skb()è°ƒç”¨ã€‚
+*/ //è·å–å¼•ç”¨å±‚å‚æ•°çš„åœ°æ–¹åœ¨prio_tuneï¼Œè¯¥ç»“æ„åˆå§‹åŒ–åœ¨prio_tune
+struct prio_sched_data //å†…æ ¸ç©ºé—´å’Œåº”ç”¨å±‚é€šè¿‡netlinkäº¤äº’æ¥æ”¶æ•°æ®è¿‡ç¨‹ï¼Œè§å‡½æ•°pktsched_initï¼Œtc qdiscå‘½ä»¤å°±æ˜¯åœ¨è¿™é‡Œé¢ç¡®å®š
 {//tc qdisc add dev eth0 root handle 22 prio band 4 priomap 3 3 2 2 1 2 0 0 1 1 1 1 1 1 1 1
-   //band±íÊ¾¸Ãqdisc×î¶àÓĞ¼¸¸öÆµµÀ£¬Æä×ÓqdiscµÄband²ÎÊı²»ÄÜ³¬¹ı¸ÄÖµ£¬³¬¹ıÁËÔò·µ»Ø´í(tc qdisc add dev eth0 parent 22:8 handle 33,8²»ÄÜ³¬¹ı¸¸QdiscµÄband)£¬¼ûprio_get
-	int bands;//¾ÍÊÇÉÏÃætcÃüÁîÖĞµÄ4£¬±íÊ¾ÓÃµÄÊÇprio2bandÖĞµÄÇ°Ãæ4¸öband(ÆµµÀ) //bands²ÎÊıÈ¡Öµ·¶Î§2-16£¬¼ûprio_tune Èç¹û²»ÉèÖÃ¸Ã²ÎÊı£¬Ä¬ÈÏÖµÎª3£¬¼ûÓ¦ÓÃ²ãprio_parse_opt
-	struct tcf_proto *filter_list; //tc filterÌí¼Ó¹ıÂËÆ÷µÄÊ±ºòÓÃµ½ Í¼ĞÎ»¯²Î¿¼TCÁ÷Á¿¿ØÖÆÊµÏÖ·ÖÎö(³õ²½) //ÀïÃæµÄÃ¿¸öÔªËØµÄ×î´óÖ¸ÎªÇ°ÃæµÄbands ¼ûprio_tune
-	u8  prio2band[TC_PRIO_MAX+1]; //priomapºóÃæµÄ²ÎÊı¡£prio2bandÓ³Éä£¬Ä¬ÈÏÓ³ÉäÖ»Ó³ÉäÇ°3¸ö´ø£¬Èç¹ûÊ¹ÓÃprio×Ó¶ÔÏóÔÚµÚ4¸ö´ø£¬ÔòĞèÒªÌí¼Ó¹ıÂËÆ÷£¬Èçtc filter add dev eth0 protocol ip parent 22: prio 2 u32 match ip dst 4.3.2.1/32 flowid 22:4
+   //bandè¡¨ç¤ºè¯¥qdiscæœ€å¤šæœ‰å‡ ä¸ªé¢‘é“ï¼Œå…¶å­qdiscçš„bandå‚æ•°ä¸èƒ½è¶…è¿‡æ”¹å€¼ï¼Œè¶…è¿‡äº†åˆ™è¿”å›é”™(tc qdisc add dev eth0 parent 22:8 handle 33,8ä¸èƒ½è¶…è¿‡çˆ¶Qdiscçš„band)ï¼Œè§prio_get
+	int bands;//å°±æ˜¯ä¸Šé¢tcå‘½ä»¤ä¸­çš„4ï¼Œè¡¨ç¤ºç”¨çš„æ˜¯prio2bandä¸­çš„å‰é¢4ä¸ªband(é¢‘é“) //bandså‚æ•°å–å€¼èŒƒå›´2-16ï¼Œè§prio_tune å¦‚æœä¸è®¾ç½®è¯¥å‚æ•°ï¼Œé»˜è®¤å€¼ä¸º3ï¼Œè§åº”ç”¨å±‚prio_parse_opt
+	struct tcf_proto *filter_list; //tc filteræ·»åŠ è¿‡æ»¤å™¨çš„æ—¶å€™ç”¨åˆ° å›¾å½¢åŒ–å‚è€ƒTCæµé‡æ§åˆ¶å®ç°åˆ†æ(åˆæ­¥) //é‡Œé¢çš„æ¯ä¸ªå…ƒç´ çš„æœ€å¤§æŒ‡ä¸ºå‰é¢çš„bands è§prio_tune
+	u8  prio2band[TC_PRIO_MAX+1]; //priomapåé¢çš„å‚æ•°ã€‚prio2bandæ˜ å°„ï¼Œé»˜è®¤æ˜ å°„åªæ˜ å°„å‰3ä¸ªå¸¦ï¼Œå¦‚æœä½¿ç”¨prioå­å¯¹è±¡åœ¨ç¬¬4ä¸ªå¸¦ï¼Œåˆ™éœ€è¦æ·»åŠ è¿‡æ»¤å™¨ï¼Œå¦‚tc filter add dev eth0 protocol ip parent 22: prio 2 u32 match ip dst 4.3.2.1/32 flowid 22:4
 
-    //Í¨¹ıtc qdisc add dev eth0 parent 22:8 handle 33ÖĞµÄ22:8À´½øĞĞ·ÖÀà£¬´Ó¶øÑ¡³öÓ¦¸Ã°ÑhandleÎª33µÄ×Ó¶ÓÁĞ¹æ³ÌÌí¼Óµ½¸¸¶ÓÁĞ¹æ³ÌµÄµÄ¼¸¸öqueue[i]ÖĞ
-    //Ä¬ÈÏÖ¸ÏòµÄÊÇpfifo_qdisc_ops,¼ûqdisc_create -> prio_init -> prio_tune -> qdisc_create_dflt£¬Ò²¾ÍÊÇËµÔÚ´´½¨·ÖÀà¶ÓÁĞ¹æ³ÌµÄÊ±ºò£¬ÏµÍ³»áÄ¬ÈÏ¸ø·ÖÀàĞÅÏ¢Êı×éÖ¸¶¨pfifoÎŞÀà¶ÓÁĞ¹æ³Ì£¬Ò²¾ÍÊÇqueue[]Ä¬ÈÏÖ¸ÏòµÄÊÇpfifo_fastÎŞÀà¶ÓÁĞ¹æ³Ì
-	struct Qdisc *queues[TCQ_PRIO_BANDS];//Èë¶Ó£¬³ö¶ÓÏà¹Ø£¬prio¶ÓÁĞ¹æÔòopsÎªpfifo_qdisc_ops£¬ÆäËû»¹ÓĞtbf_qdisc_ops sfq_qdisc_opsµÈ£¬ 
+    //é€šè¿‡tc qdisc add dev eth0 parent 22:8 handle 33ä¸­çš„22:8æ¥è¿›è¡Œåˆ†ç±»ï¼Œä»è€Œé€‰å‡ºåº”è¯¥æŠŠhandleä¸º33çš„å­é˜Ÿåˆ—è§„ç¨‹æ·»åŠ åˆ°çˆ¶é˜Ÿåˆ—è§„ç¨‹çš„çš„å‡ ä¸ªqueue[i]ä¸­
+    //é»˜è®¤æŒ‡å‘çš„æ˜¯pfifo_qdisc_ops,è§qdisc_create -> prio_init -> prio_tune -> qdisc_create_dfltï¼Œä¹Ÿå°±æ˜¯è¯´åœ¨åˆ›å»ºåˆ†ç±»é˜Ÿåˆ—è§„ç¨‹çš„æ—¶å€™ï¼Œç³»ç»Ÿä¼šé»˜è®¤ç»™åˆ†ç±»ä¿¡æ¯æ•°ç»„æŒ‡å®špfifoæ— ç±»é˜Ÿåˆ—è§„ç¨‹ï¼Œä¹Ÿå°±æ˜¯queue[]é»˜è®¤æŒ‡å‘çš„æ˜¯pfifo_fastæ— ç±»é˜Ÿåˆ—è§„ç¨‹
+	struct Qdisc *queues[TCQ_PRIO_BANDS];//å…¥é˜Ÿï¼Œå‡ºé˜Ÿç›¸å…³ï¼Œprioé˜Ÿåˆ—è§„åˆ™opsä¸ºpfifo_qdisc_opsï¼Œå…¶ä»–è¿˜æœ‰tbf_qdisc_ops sfq_qdisc_opsç­‰ï¼Œ 
 };
 
 static struct Qdisc *
@@ -61,7 +61,7 @@ prio_classify(struct sk_buff *skb, struct Qdisc *sch, int *qerr)
 
 	*qerr = NET_XMIT_SUCCESS | __NET_XMIT_BYPASS;
 	if (TC_H_MAJ(skb->priority) != sch->handle) {
-		err = tc_classify(skb, q->filter_list, &res); //Í¨¹ıskbºÍ¹ıÂËÆ÷ÅäºÏÆğÀ´£¬Ñ¡Ôñ³ö¶ÔÓ¦µÄ·ÖÀàÊı×équeues[]ÖĞµÄ¾ßÌåÄÄÒ»¸öqueues[i]
+		err = tc_classify(skb, q->filter_list, &res); //é€šè¿‡skbå’Œè¿‡æ»¤å™¨é…åˆèµ·æ¥ï¼Œé€‰æ‹©å‡ºå¯¹åº”çš„åˆ†ç±»æ•°ç»„queues[]ä¸­çš„å…·ä½“å“ªä¸€ä¸ªqueues[i]
 #ifdef CONFIG_NET_CLS_ACT
 		switch (err) {
 		case TC_ACT_STOLEN:
@@ -80,14 +80,14 @@ prio_classify(struct sk_buff *skb, struct Qdisc *sch, int *qerr)
 		band = res.classid;
 	}
 	band = TC_H_MIN(band) - 1;
-	if (band >= q->bands) //Èç¹ûSKBµÄpriority±È´´½¨qdiscµÄbandÆµµÀ´ó£¬ÔòÖ±½ÓÊ¹ÓÃµÚ0¸öÆµµÀµÄ
+	if (band >= q->bands) //å¦‚æœSKBçš„priorityæ¯”åˆ›å»ºqdiscçš„bandé¢‘é“å¤§ï¼Œåˆ™ç›´æ¥ä½¿ç”¨ç¬¬0ä¸ªé¢‘é“çš„
 		return q->queues[q->prio2band[0]];
 
-    //Èç¹û·ÖÀà¶ÓÁĞ¹æ¶¨Ã»ÓĞ·ÖÀà³öÎŞÀàµÄ×ÓÀà¶ÓÁĞ¹æ¶¨£¬Ôòqueues[]Ä¬ÈÏÖ¸ÏòµÄÊÇ&noop_qdisc;¼ûprio_init£¬Ò²¾ÍÊÇËµÈç¹û·ÖÀà¶ÓÁĞ¹æ¶¨Ã»ÓĞ°üº¬ÎŞÀà¶ÓÁĞ¹æ¶¨£¬ÔòSKB»áÍ¨¹ınoop_qdiscÖ±½Ó¶ªÆú
-	return q->queues[band];//Èç¹ûskb->priorityÔÚqdiscËùÔÚµÄbands·¶Î§ÄÚ£¬Ö±½ÓÊ¹ÓÃq->queues[band]£¬·ñÔòÊ¹ÓÃq->queues[q->prio2band[0]]
+    //å¦‚æœåˆ†ç±»é˜Ÿåˆ—è§„å®šæ²¡æœ‰åˆ†ç±»å‡ºæ— ç±»çš„å­ç±»é˜Ÿåˆ—è§„å®šï¼Œåˆ™queues[]é»˜è®¤æŒ‡å‘çš„æ˜¯&noop_qdisc;è§prio_initï¼Œä¹Ÿå°±æ˜¯è¯´å¦‚æœåˆ†ç±»é˜Ÿåˆ—è§„å®šæ²¡æœ‰åŒ…å«æ— ç±»é˜Ÿåˆ—è§„å®šï¼Œåˆ™SKBä¼šé€šè¿‡noop_qdiscç›´æ¥ä¸¢å¼ƒ
+	return q->queues[band];//å¦‚æœskb->priorityåœ¨qdiscæ‰€åœ¨çš„bandsèŒƒå›´å†…ï¼Œç›´æ¥ä½¿ç”¨q->queues[band]ï¼Œå¦åˆ™ä½¿ç”¨q->queues[q->prio2band[0]]
 }
 
-//³ö·½ÏòÈë¶ÓÔÚdev_queue_xmit  schÎª¸ú¶ÓÁĞ¹æ³Ì
+//å‡ºæ–¹å‘å…¥é˜Ÿåœ¨dev_queue_xmit  schä¸ºè·Ÿé˜Ÿåˆ—è§„ç¨‹
 //qdisc_enqueue -> prio_enqueue ->pfifo_enqueue
 static int
 prio_enqueue(struct sk_buff *skb, struct Qdisc *sch)
@@ -95,10 +95,10 @@ prio_enqueue(struct sk_buff *skb, struct Qdisc *sch)
 	struct Qdisc *qdisc;
 	int ret;
 
-    //Í¨¹ı¹ıÂËÆ÷À´Ñ¡ÔñÊ¹ÓÃÄÇ¸ö·ÖÖ§¶ÓÁĞ¹æ³ÌÈë¶Ó
-	qdisc = prio_classify(skb, sch, &ret);//°´ÕÕskb->priority¶Ô¸ú¶ÓÁĞ¹æ³Ì½øĞĞ·ÖÀà£¬Ñ¡ÔñÊ¹ÓÃ¸ú¶ÓÁĞ¹æ³ÌÖĞµÄÄÄÒ»¸öºóĞø×Óqdisc
+    //é€šè¿‡è¿‡æ»¤å™¨æ¥é€‰æ‹©ä½¿ç”¨é‚£ä¸ªåˆ†æ”¯é˜Ÿåˆ—è§„ç¨‹å…¥é˜Ÿ
+	qdisc = prio_classify(skb, sch, &ret);//æŒ‰ç…§skb->priorityå¯¹è·Ÿé˜Ÿåˆ—è§„ç¨‹è¿›è¡Œåˆ†ç±»ï¼Œé€‰æ‹©ä½¿ç”¨è·Ÿé˜Ÿåˆ—è§„ç¨‹ä¸­çš„å“ªä¸€ä¸ªåç»­å­qdisc
 #ifdef CONFIG_NET_CLS_ACT
-	if (qdisc == NULL) { //ÀıÈç´´½¨µÄÊÇ·ÖÀà¶ÓÁĞ¹æ³Ì£¬Ã»ÓĞÎªÆä´´½¨×Ó¶ÓÁĞ¹æ³Ì£¬²¢ÆôÓÃÁË·ÖÀàĞÅÏ¢CONFIG_NET_CLS_ACT£¬ÔòÖ±½Ó¶ªÆú
+	if (qdisc == NULL) { //ä¾‹å¦‚åˆ›å»ºçš„æ˜¯åˆ†ç±»é˜Ÿåˆ—è§„ç¨‹ï¼Œæ²¡æœ‰ä¸ºå…¶åˆ›å»ºå­é˜Ÿåˆ—è§„ç¨‹ï¼Œå¹¶å¯ç”¨äº†åˆ†ç±»ä¿¡æ¯CONFIG_NET_CLS_ACTï¼Œåˆ™ç›´æ¥ä¸¢å¼ƒ
 
 		if (ret & __NET_XMIT_BYPASS)
 			sch->qstats.drops++;
@@ -107,7 +107,7 @@ prio_enqueue(struct sk_buff *skb, struct Qdisc *sch)
 	}
 #endif
 
-	ret = qdisc_enqueue(skb, qdisc); //µİ¹éÈë¶Ó
+	ret = qdisc_enqueue(skb, qdisc); //é€’å½’å…¥é˜Ÿ
 	if (ret == NET_XMIT_SUCCESS) {
 		sch->bstats.bytes += qdisc_pkt_len(skb);
 		sch->bstats.packets++;
@@ -133,7 +133,7 @@ static struct sk_buff *prio_peek(struct Qdisc *sch)
 	return NULL;
 }
 
-//__qdisc_run -> qdisc_restart -> dequeue_skb -> prio_dequeue(ÕâÀïÃæÓĞ¸öµİ¹éµ÷ÓÃ¹ı³Ì) -> qdisc_dequeue_head
+//__qdisc_run -> qdisc_restart -> dequeue_skb -> prio_dequeue(è¿™é‡Œé¢æœ‰ä¸ªé€’å½’è°ƒç”¨è¿‡ç¨‹) -> qdisc_dequeue_head
 static struct sk_buff *prio_dequeue(struct Qdisc* sch)
 {
 	struct prio_sched_data *q = qdisc_priv(sch);
@@ -141,7 +141,7 @@ static struct sk_buff *prio_dequeue(struct Qdisc* sch)
 
 	for (prio = 0; prio < q->bands; prio++) {
 		struct Qdisc *qdisc = q->queues[prio];
-		struct sk_buff *skb = qdisc->dequeue(qdisc);//Ò»´Î±éÀúÕÒÒ¶×ÓÉÏµÄÎŞÀà¶ÓÁĞ¹æ³Ì£¬¾ÍÊÇÕÒÒ¶×Óqdisc,ÕâÊÇµØ¹ñµ÷ÓÃ£¬Êµ¼ÊÉÏÊÇÕÒÒ»¿ÅÊıµÄ×î×ó±ßÒ¶×Ó£¬È»ºóÕÒÓÒ±ßÒ¶×Ó
+		struct sk_buff *skb = qdisc->dequeue(qdisc);//ä¸€æ¬¡éå†æ‰¾å¶å­ä¸Šçš„æ— ç±»é˜Ÿåˆ—è§„ç¨‹ï¼Œå°±æ˜¯æ‰¾å¶å­qdisc,è¿™æ˜¯åœ°æŸœè°ƒç”¨ï¼Œå®é™…ä¸Šæ˜¯æ‰¾ä¸€é¢—æ•°çš„æœ€å·¦è¾¹å¶å­ï¼Œç„¶åæ‰¾å³è¾¹å¶å­
 		if (skb) {
 			sch->q.qlen--;
 			return skb;
@@ -225,10 +225,10 @@ static int prio_tune(struct Qdisc *sch, struct nlattr *opt)
 
 	for (i=0; i<q->bands; i++) {
 		if (q->queues[i] == &noop_qdisc) {
-			struct Qdisc *child, *old; // fifo·½Ê½ÊÇ¼òµ¥µÄÏŞËÙ·½Ê½£¬ÔÊĞíQdisc µÄskb¶ÓÁĞÖĞ×î¶àÈİÄÉµÄSKB°ü¸öÊı£¬Èç¹û°üÀ´µÄÊ±ºò¸ÃSKB¶ÓÁĞÖĞµÄ°ü¸öÊı´ïµ½ÉÏÏŞ£¬ÔòÖ±½Ó¶ªÆú
+			struct Qdisc *child, *old; // fifoæ–¹å¼æ˜¯ç®€å•çš„é™é€Ÿæ–¹å¼ï¼Œå…è®¸Qdisc çš„skbé˜Ÿåˆ—ä¸­æœ€å¤šå®¹çº³çš„SKBåŒ…ä¸ªæ•°ï¼Œå¦‚æœåŒ…æ¥çš„æ—¶å€™è¯¥SKBé˜Ÿåˆ—ä¸­çš„åŒ…ä¸ªæ•°è¾¾åˆ°ä¸Šé™ï¼Œåˆ™ç›´æ¥ä¸¢å¼ƒ
 			child = qdisc_create_dflt(qdisc_dev(sch), sch->dev_queue,
 						  &pfifo_qdisc_ops,
-						  TC_H_MAKE(sch->handle, i + 1));//Ä¬ÈÏÊÇ´´½¨pfifo Qdisc¶ÓÁĞ¹æ³Ì£¬//³õÊ¼»¯ÎªÕâ¸ö£¬È»ºóÔÚ´´½¨×Ó¶ÓÁĞ¹æ³ÌµÄÊ±ºò¸ÃÖµÖ¸Ïò¶ÔÓ¦µÄ×ÓQdiscÖĞ£¬¼ûtcÁ÷Á¿¿ØÖÆ/TCÁ÷Á¿¿ØÖÆÊµÏÖ·ÖÎö£¨³õ²½£©
+						  TC_H_MAKE(sch->handle, i + 1));//é»˜è®¤æ˜¯åˆ›å»ºpfifo Qdiscé˜Ÿåˆ—è§„ç¨‹ï¼Œ//åˆå§‹åŒ–ä¸ºè¿™ä¸ªï¼Œç„¶ååœ¨åˆ›å»ºå­é˜Ÿåˆ—è§„ç¨‹çš„æ—¶å€™è¯¥å€¼æŒ‡å‘å¯¹åº”çš„å­Qdiscä¸­ï¼Œè§tcæµé‡æ§åˆ¶/TCæµé‡æ§åˆ¶å®ç°åˆ†æï¼ˆåˆæ­¥ï¼‰
 			if (child) {
 				sch_tree_lock(sch);
 				old = q->queues[i];
@@ -246,8 +246,8 @@ static int prio_tune(struct Qdisc *sch, struct nlattr *opt)
 	return 0;
 }
 
-//Èç¹ûtc add qdiscµÄÊ±ºòÃ»ÓĞÖ¸¶¨Ê¹ÓÃÄÄÖÖ¶ÓÁĞ¹æ¶¨£¬Èçprio htb tbq cbfµÈ£¬ÔòÄ¬ÈÏ¸øqdiscµÄË½ÓĞ·ÖÀàĞÅÏ¢×é´´½¨pfifo_fastÎŞÀà¶ÓÁĞ¹æ¶¨£¬¼ûprio_tune
-static int prio_init(struct Qdisc *sch, struct nlattr *opt) //qdisc_createÖĞµ÷ÓÃ
+//å¦‚æœtc add qdiscçš„æ—¶å€™æ²¡æœ‰æŒ‡å®šä½¿ç”¨å“ªç§é˜Ÿåˆ—è§„å®šï¼Œå¦‚prio htb tbq cbfç­‰ï¼Œåˆ™é»˜è®¤ç»™qdiscçš„ç§æœ‰åˆ†ç±»ä¿¡æ¯ç»„åˆ›å»ºpfifo_fastæ— ç±»é˜Ÿåˆ—è§„å®šï¼Œè§prio_tune
+static int prio_init(struct Qdisc *sch, struct nlattr *opt) //qdisc_createä¸­è°ƒç”¨
 {
 	struct prio_sched_data *q = qdisc_priv(sch);
 	int i;
@@ -255,7 +255,7 @@ static int prio_init(struct Qdisc *sch, struct nlattr *opt) //qdisc_createÖĞµ÷ÓÃ
 	for (i=0; i<TCQ_PRIO_BANDS; i++)
 		q->queues[i] = &noop_qdisc;
 
-	if (opt == NULL) { //Èç¹ûÃ»ÓĞÖ¸¶¨prioµÄ²ÎÊıband£¬ÔòÖ±½Ó·µ»Ø´íÎó£¬²ÎÊı²»¶Ô
+	if (opt == NULL) { //å¦‚æœæ²¡æœ‰æŒ‡å®šprioçš„å‚æ•°bandï¼Œåˆ™ç›´æ¥è¿”å›é”™è¯¯ï¼Œå‚æ•°ä¸å¯¹
 		return -EINVAL;
 	} else {
 		int err;
@@ -285,10 +285,10 @@ nla_put_failure:
 }
 
 /*
-sch:¸¸Qdisc
-arg:tc qdisc add dev eth0 parent 22:8 handle 33ÖĞµÄ8£¬±íÊ¾Ê¹ÓÃ¸¸¶ÓÁĞ¹æ³ÌµÄµÚ8ÆµµÀ
-new:ĞÂµÄhandleÎª33µÄqdisc
-argÎªÍ¨¹ı22:8ÖĞµÄ8´Óprio_getÑ¡³öµÄ·ÖÀàĞÅÏ¢Êı×éÖĞµÄÄÇÒ»¸ö·ÖÀàĞÅÏ¢
+sch:çˆ¶Qdisc
+arg:tc qdisc add dev eth0 parent 22:8 handle 33ä¸­çš„8ï¼Œè¡¨ç¤ºä½¿ç”¨çˆ¶é˜Ÿåˆ—è§„ç¨‹çš„ç¬¬8é¢‘é“
+new:æ–°çš„handleä¸º33çš„qdisc
+argä¸ºé€šè¿‡22:8ä¸­çš„8ä»prio_geté€‰å‡ºçš„åˆ†ç±»ä¿¡æ¯æ•°ç»„ä¸­çš„é‚£ä¸€ä¸ªåˆ†ç±»ä¿¡æ¯
 */
 static int prio_graft(struct Qdisc *sch, unsigned long arg, struct Qdisc *new,
 		      struct Qdisc **old)
@@ -318,15 +318,15 @@ prio_leaf(struct Qdisc *sch, unsigned long arg)
 	return q->queues[band];
 }
 
-/* ¸¸Qdisc  ¸¸handle */
-//tc qdisc add dev eth0 parent 22:4 handle 33 prio bands 5  pÎª22¶ÔÓ¦µÄ¶ÓÁĞ¹æ³Ì qÎª33¶ÔÓ¦µÄ¶ÓÁĞ¹æ³Ì ,¼ûqdisc_graft
-static unsigned long prio_get(struct Qdisc *sch, u32 classid) //prio_class_ops    ×ßµ½ÕâÀïµÄÊ±ºòclassidÖĞµÄA:BÖĞµÄB¿Ï¶¨´óÓÚ0£¬·ñÔòÔÚÍâ²ã¾Í·µ»Ø´íÁË£¬ÒòÎªÊµ¼ÊÓÃµÄÊ±ºòB»á-1
+/* çˆ¶Qdisc  çˆ¶handle */
+//tc qdisc add dev eth0 parent 22:4 handle 33 prio bands 5  pä¸º22å¯¹åº”çš„é˜Ÿåˆ—è§„ç¨‹ qä¸º33å¯¹åº”çš„é˜Ÿåˆ—è§„ç¨‹ ,è§qdisc_graft
+static unsigned long prio_get(struct Qdisc *sch, u32 classid) //prio_class_ops    èµ°åˆ°è¿™é‡Œçš„æ—¶å€™classidä¸­çš„A:Bä¸­çš„Bè‚¯å®šå¤§äº0ï¼Œå¦åˆ™åœ¨å¤–å±‚å°±è¿”å›é”™äº†ï¼Œå› ä¸ºå®é™…ç”¨çš„æ—¶å€™Bä¼š-1
 {
 	struct prio_sched_data *q = qdisc_priv(sch);
-	unsigned long band = TC_H_MIN(classid); //¶ÔÓ¦parent 22:4ÖĞµÄ4
+	unsigned long band = TC_H_MIN(classid); //å¯¹åº”parent 22:4ä¸­çš„4
 
-//¼ÙÈç¸¸QdiscÉèÖÃµÄbandsÆµµÀÎª7£¬¶øtc qdisc add dev eth0 parent 22:8 handle 33£¬22:8±íÊ¾Ê¹ÓÃ¸¸QdiscµÄµÚ8¸öÆµµÀ£¬µ«¸¸QdiscÒ»¹²²Å7¸öÆµµÀ£¬ËùÒÔÔ½½çÁË£¬·µ»Ø0£¬ÓÚÊÇÔÚqdisc_graftÖĞ±¨´í·µ»Ø
-	if (band - 1 >= q->bands) //¼ûqdisc_graft£¬Èç¹û·µ»Ø0£¬ÔòÖ±½Ó´Óqdisc_graftÍË³ö£¬·´´í
+//å‡å¦‚çˆ¶Qdiscè®¾ç½®çš„bandsé¢‘é“ä¸º7ï¼Œè€Œtc qdisc add dev eth0 parent 22:8 handle 33ï¼Œ22:8è¡¨ç¤ºä½¿ç”¨çˆ¶Qdiscçš„ç¬¬8ä¸ªé¢‘é“ï¼Œä½†çˆ¶Qdiscä¸€å…±æ‰7ä¸ªé¢‘é“ï¼Œæ‰€ä»¥è¶Šç•Œäº†ï¼Œè¿”å›0ï¼Œäºæ˜¯åœ¨qdisc_graftä¸­æŠ¥é”™è¿”å›
+	if (band - 1 >= q->bands) //è§qdisc_graftï¼Œå¦‚æœè¿”å›0ï¼Œåˆ™ç›´æ¥ä»qdisc_grafté€€å‡ºï¼Œåé”™
 		return 0;
 	return band;
 }
@@ -396,13 +396,13 @@ static struct tcf_proto ** prio_find_tcf(struct Qdisc *sch, unsigned long cl)
 	return &q->filter_list;
 }
 
-//prio¶ÔÓ¦prio_class_ops htb¶ÔÓ¦htb_class_ops cbq¶ÔÓ¦cbq_class_opsµÈµÈ
-//qdisc_graftº¯ÊıÖĞ»áµ÷ÓÃÏÂÃæµÄÏà¹Øº¯Êı
-//skbÈë¶ÓµÄÊ±ºòÍ¨¹ıÏÂÃæµÄº¯ÊıÑ¡ÔñÊ¹ÓÃprio_sched_data -> queues[]ÖĞµÄÄÇ¸öqueuesÈë¶Ó£¬³ö¶ÓµÄÊ±ºòÒ»Ñù
+//prioå¯¹åº”prio_class_ops htbå¯¹åº”htb_class_ops cbqå¯¹åº”cbq_class_opsç­‰ç­‰
+//qdisc_graftå‡½æ•°ä¸­ä¼šè°ƒç”¨ä¸‹é¢çš„ç›¸å…³å‡½æ•°
+//skbå…¥é˜Ÿçš„æ—¶å€™é€šè¿‡ä¸‹é¢çš„å‡½æ•°é€‰æ‹©ä½¿ç”¨prio_sched_data -> queues[]ä¸­çš„é‚£ä¸ªqueueså…¥é˜Ÿï¼Œå‡ºé˜Ÿçš„æ—¶å€™ä¸€æ ·
 static const struct Qdisc_class_ops prio_class_ops = {
 	.graft		=	prio_graft,
 	.leaf		=	prio_leaf,
-	.get		=	prio_get, //²Î¿¼qdisc_graf£¬Ñ¡ÔñÊ¹ÓÃQdisc_class_ops·ÖÀàĞÅÏ¢Êı×éÖĞµÄÄÇ¸öĞÅÏ¢£¬Í¨¹ıÕâ¸ö»ñÈ¡Ñ¡Ôñ³öµÄ¹Ø¼üĞÅÏ¢£¬È»ºóÊ¹ÓÃ¸ÃĞÅÏ¢ÓògraftÅäºÏÊ¹ÓÃ
+	.get		=	prio_get, //å‚è€ƒqdisc_grafï¼Œé€‰æ‹©ä½¿ç”¨Qdisc_class_opsåˆ†ç±»ä¿¡æ¯æ•°ç»„ä¸­çš„é‚£ä¸ªä¿¡æ¯ï¼Œé€šè¿‡è¿™ä¸ªè·å–é€‰æ‹©å‡ºçš„å…³é”®ä¿¡æ¯ï¼Œç„¶åä½¿ç”¨è¯¥ä¿¡æ¯åŸŸgrafté…åˆä½¿ç”¨
 	.put		=	prio_put,
 	.walk		=	prio_walk,
 	.tcf_chain	=	prio_find_tcf,
@@ -416,17 +416,17 @@ static const struct Qdisc_class_ops prio_class_ops = {
                                     
 */
 
-/*pfifo_qdisc_ops tbf_qdisc_ops sfq_qdisc_ops prio_class_opsÕâ¼¸¸ö¶¼Îª³ö¿Ú£¬ingress_qdisc_opsÎªÈë¿Ú */
-static struct Qdisc_ops prio_qdisc_ops ;//__read_mostly = {          prioµÄ¸ú²»Ö§³ÖÔÚ¸úÏÂÃæ´´½¨class£¬¼ûtc_ctl_tclass
+/*pfifo_qdisc_ops tbf_qdisc_ops sfq_qdisc_ops prio_class_opsè¿™å‡ ä¸ªéƒ½ä¸ºå‡ºå£ï¼Œingress_qdisc_opsä¸ºå…¥å£ */
+static struct Qdisc_ops prio_qdisc_ops ;//__read_mostly = {          prioçš„è·Ÿä¸æ”¯æŒåœ¨è·Ÿä¸‹é¢åˆ›å»ºclassï¼Œè§tc_ctl_tclass
 	.next		=	NULL,
-	.cl_ops		=	&prio_class_ops,  //prio·ÖÀà¹æÔò²»ÄÜ´´½¨·ÖÀàĞÅÏ¢£¬²»ÄÜtc class add£¬ ÒòÎªË½ÓĞÊı¾İ²¿·ÖÒÑ¾­ÌáÇ°´´½¨ºÃÁË·ÖÀàÊı×é
+	.cl_ops		=	&prio_class_ops,  //prioåˆ†ç±»è§„åˆ™ä¸èƒ½åˆ›å»ºåˆ†ç±»ä¿¡æ¯ï¼Œä¸èƒ½tc class addï¼Œ å› ä¸ºç§æœ‰æ•°æ®éƒ¨åˆ†å·²ç»æå‰åˆ›å»ºå¥½äº†åˆ†ç±»æ•°ç»„
 	.id		=	"prio",
 	.priv_size	=	sizeof(struct prio_sched_data),
-	.enqueue	=	prio_enqueue, //dev_xmit_queueÒ»Ö±ÏÂÈ¥µ÷ÓÃ
-	.dequeue	=	prio_dequeue, //dequeue_skbÖĞµ÷ÓÃ
+	.enqueue	=	prio_enqueue, //dev_xmit_queueä¸€ç›´ä¸‹å»è°ƒç”¨
+	.dequeue	=	prio_dequeue, //dequeue_skbä¸­è°ƒç”¨
 	.peek		=	prio_peek,
 	.drop		=	prio_drop,
-	.init		=	prio_init, //·ÖÀàµÄ¶ÓÁĞ¹æÔòÔÚ³õÊ¼»¯µÄÊ±ºò»áÄ¬ÈÏÖ¸Ïònoop_qdisc   ÔÚqdisc_createÖĞµ÷ÓÃ£¬Èç¹û
+	.init		=	prio_init, //åˆ†ç±»çš„é˜Ÿåˆ—è§„åˆ™åœ¨åˆå§‹åŒ–çš„æ—¶å€™ä¼šé»˜è®¤æŒ‡å‘noop_qdisc   åœ¨qdisc_createä¸­è°ƒç”¨ï¼Œå¦‚æœ
 	.reset		=	prio_reset,
 	.destroy	=	prio_destroy,
 	.change		=	prio_tune,

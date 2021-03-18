@@ -14,7 +14,7 @@
 /*
  *	Our network namespace constructor/destructor lists
  */
-extern struct list_head pernet_list;//×Ô¼º¼ÓµÄ£¬ÎªÁËsource insightºÃÓÃ
+extern struct list_head pernet_list;//è‡ªå·±åŠ çš„ï¼Œä¸ºäº†source insightå¥½ç”¨
 static LIST_HEAD(pernet_list);
 static struct list_head *first_device = &pernet_list;
 static DEFINE_MUTEX(net_mutex);
@@ -23,10 +23,10 @@ LIST_HEAD(net_namespace_list);
 EXPORT_SYMBOL_GPL(net_namespace_list);
 
 /*
-init_net.ct½á¹¹ÌåÖÐµÄÖµ¿ÉÒÔÍ¨¹ýnf_ct_sysctl_table×¢²á
-struct netÊÇÒ»¸öÍøÂçÃû×Ö¿Õ¼änamespace£¬ÔÚ²»Í¬µÄÃû×Ö¿Õ¼äÀïÃæ¿ÉÒÔÓÐ×Ô¼ºµÄ×ª·¢ÐÅÏ¢¿â£¬ÓÐ×Ô¼ºµÄÒ»Ì×net_deviceµÈµÈ¡£Ä¬ÈÏÇé¿öÏÂ¶¼ÊÇÊ¹ÓÃ init_netÕâ¸öÈ«¾Ö±äÁ¿
+init_net.ctç»“æž„ä½“ä¸­çš„å€¼å¯ä»¥é€šè¿‡nf_ct_sysctl_tableæ³¨å†Œ
+struct netæ˜¯ä¸€ä¸ªç½‘ç»œåå­—ç©ºé—´namespaceï¼Œåœ¨ä¸åŒçš„åå­—ç©ºé—´é‡Œé¢å¯ä»¥æœ‰è‡ªå·±çš„è½¬å‘ä¿¡æ¯åº“ï¼Œæœ‰è‡ªå·±çš„ä¸€å¥—net_deviceç­‰ç­‰ã€‚é»˜è®¤æƒ…å†µä¸‹éƒ½æ˜¯ä½¿ç”¨ init_netè¿™ä¸ªå…¨å±€å˜é‡
 */
-struct net init_net; //ÃüÃû¿Õ¼ä
+struct net init_net; //å‘½åç©ºé—´
 EXPORT_SYMBOL(init_net);
 
 #define INITIAL_NET_GEN_PTRS	13 /* +1 for len +2 for rcu_head */
@@ -241,7 +241,7 @@ static struct net *net_create(void)
 	return net;
 }
 
-//¶¨ÒåÁËCONFIG_NET_NSµÄÊ±ºòÓÃÕâ¸ö
+//å®šä¹‰äº†CONFIG_NET_NSçš„æ—¶å€™ç”¨è¿™ä¸ª
 struct net *copy_net_ns(unsigned long flags, struct net *old_net)
 {
 	if (!(flags & CLONE_NEWNET))
@@ -305,7 +305,7 @@ static void cleanup_net(struct work_struct *work)
 }
 static DECLARE_WORK(net_cleanup_work, cleanup_net);
 
-//°ÑnetÌí¼Óµ½cleanup_list
+//æŠŠnetæ·»åŠ åˆ°cleanup_list
 void __put_net(struct net *net)
 {
 	/* Cleanup the network namespace in process context */
@@ -320,7 +320,7 @@ void __put_net(struct net *net)
 EXPORT_SYMBOL_GPL(__put_net);
 
 #else
-//Ã»ÓÐ¶¨ÒåCONFIG_NET_NSµÄÊ±ºòÓÃÕâ¸ö
+//æ²¡æœ‰å®šä¹‰CONFIG_NET_NSçš„æ—¶å€™ç”¨è¿™ä¸ª
 struct net *copy_net_ns(unsigned long flags, struct net *old_net)
 {
 	if (flags & CLONE_NEWNET)
@@ -503,8 +503,8 @@ static void unregister_pernet_operations(struct pernet_operations *ops)
  *	are called in the reverse of the order with which they were
  *	registered.
  */
- //register_pernet_subsys×¢²áµÄËùÓÐµÄÍøÂçÃüÃû¿Õ¼ä×ÓÏµÍ³¶¼¼ÓÈëµ½ static struct list_head *first_device = &pernet_list;Õâ¸öÁ´±íÀï
-int register_pernet_subsys(struct pernet_operations *ops) //opsÔÚsetup_netÖÐµÄops_initÖ´ÐÐops->init
+ //register_pernet_subsysæ³¨å†Œçš„æ‰€æœ‰çš„ç½‘ç»œå‘½åç©ºé—´å­ç³»ç»Ÿéƒ½åŠ å…¥åˆ° static struct list_head *first_device = &pernet_list;è¿™ä¸ªé“¾è¡¨é‡Œ
+int register_pernet_subsys(struct pernet_operations *ops) //opsåœ¨setup_netä¸­çš„ops_initæ‰§è¡Œops->init
 {
 	int error;
 	mutex_lock(&net_mutex);

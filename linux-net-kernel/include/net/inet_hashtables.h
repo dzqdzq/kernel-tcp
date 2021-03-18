@@ -41,21 +41,21 @@
  * I'll experiment with dynamic table growth later.
  */
  /*
- * ÓÃÀ´¹ÜÀíTCP×´Ì¬³ıLISTENÖ®ÍâµÄ´«Êä¿ØÖÆ¿éµÄÉ¢ÁĞ±í
- */ //inet_ehash_bucketµÄÍ¼Ïñ»¯Àí½â¿ÉÒÔ²Î¿¼£¬·®¶«¶«£¬ÏÂ²áP735
- //hash±íÍ·Îªinet_hashinfoµÄehash
+ * ç”¨æ¥ç®¡ç†TCPçŠ¶æ€é™¤LISTENä¹‹å¤–çš„ä¼ è¾“æ§åˆ¶å—çš„æ•£åˆ—è¡¨
+ */ //inet_ehash_bucketçš„å›¾åƒåŒ–ç†è§£å¯ä»¥å‚è€ƒï¼Œæ¨Šä¸œä¸œï¼Œä¸‹å†ŒP735
+ //hashè¡¨å¤´ä¸ºinet_hashinfoçš„ehash
 struct inet_ehash_bucket {
 	/*
-	 * ÓÃÓÚÁ´½Ó´«Êä¿ØÖÆ¿é
-//·şÎñÆ÷¶ËÈı´ÎÎÕÊÖ³É¹¦ºó¶ÔÓ¦µÄstruct tcp_sockÌí¼Óµ½Õâ¸öhash±íÍ·ÖĞ£¬¿Í»§¶ËÔÚ·¢ËÍsynÖ®Ç°Èç¹û¼ì²é¶Ë¿ÚµÈ¿ÉÓÃ£¬
-ÔòÔÚ__inet_check_establishedÖĞµÄ__sk_nulls_add_node_rcu°ÑskÌí¼Óµ½ehashÖĞ
+	 * ç”¨äºé“¾æ¥ä¼ è¾“æ§åˆ¶å—
+//æœåŠ¡å™¨ç«¯ä¸‰æ¬¡æ¡æ‰‹æˆåŠŸåå¯¹åº”çš„struct tcp_sockæ·»åŠ åˆ°è¿™ä¸ªhashè¡¨å¤´ä¸­ï¼Œå®¢æˆ·ç«¯åœ¨å‘é€synä¹‹å‰å¦‚æœæ£€æŸ¥ç«¯å£ç­‰å¯ç”¨ï¼Œ
+åˆ™åœ¨__inet_check_establishedä¸­çš„__sk_nulls_add_node_rcuæŠŠskæ·»åŠ åˆ°ehashä¸­
 
 	 */
 	struct hlist_nulls_head chain;
 	/*
-	 * ÓÃÓÚÁ´½ÓTIME_WAIT×´Ì¬µÄ´«Êä¿ØÖÆ¿é
+	 * ç”¨äºé“¾æ¥TIME_WAITçŠ¶æ€çš„ä¼ è¾“æ§åˆ¶å—
 	 */
-	struct hlist_nulls_head twchain;//Á´±íÖĞÁ¬½ÓµÄÊÇinet_timewait_sock½á¹¹£¬¼û__inet_twsk_hashdance
+	struct hlist_nulls_head twchain;//é“¾è¡¨ä¸­è¿æ¥çš„æ˜¯inet_timewait_sockç»“æ„ï¼Œè§__inet_twsk_hashdance
 };
 
 /* There are a few simple rules, which allow for local port reuse by
@@ -99,45 +99,45 @@ struct inet_bind_bucket1 {
 	struct hlist_node	node;
 	struct hlist_head	owners;
 };
-//¸³ÖµÔÚÕâ¸öº¯ÊıÖĞinet_bind_hash £¬
-//´æ·ÅµÄÊÇ¶Ë¿Ú°ó¶¨ĞÅÏ¢£¬ inet_bind_bucket_create´´½¨   __inet_put_portÊÍ·Å
-//¸Ã½á¹¹×îÖÕÌí¼Óµ½inet_bind_hashbucket½á¹¹µÄchainÖĞ
-//¸Ã½á¹¹ÊÇÔÚ¿Í»§¶Ëconnect·ÖÅä¿Í»§¶Ë¶Ë¿ÚµÄÊ±ºòÓĞÓÃµ½£¬ÔÚ×ö¿Í»§¶ËconnectµÄÊ±ºò´´½¨inet_bind_bucket¿Õ¼ä
-//¸Ã½á¹¹Ìå×îÖÕµÄ½á¹ûÊÇ£¬struct sock±»Ìí¼Óµ½inet_bind_bucket½á¹¹µÄownersÁ´±íÖĞ(inet_bind_hash)£¬È»ºó¸Ãinet_bind_bucketÍ¨¹ınode½Úµã¼ÓÈëµ½tcp_hashinfoµÄchainÖĞ£¬inet_bind_hashbucketÖĞµÄ(inet_bind_bucket_create)
-/*¸Ã½á¹¹ÔÚÈı´ÎÎÕÊÖ³É¹¦µÄÊ±ºòÊ×ÏÈÍ¨¹ıownersÁ¬½Óµ½inet_connection_sockÖĞµÄicsk_bind_hash£¬µ±ÔÚ¶Ë¿ÚÁ¬½Ó¹ı³ÌÖĞ½øÈëtimewaitµÄ¹ı³ÌÖĞ¸Ãinet_bind_bucket»á´ÓĞÂÁ¬½Óµ½
-tw->tw_bind_node,¼ûinet_timewait_sockÖĞ£¬ËùÒÔÈı´ÎÎÕÊÖ¶Ë¿ÚµÄtimewait ÊÍ·ÅskµÄÊ±ºò£¬²¢Ã»ÓĞÊÍ·Åµô¸ÃbindÍ°£¬¼û__inet_twsk_hashdance*/
-//Í¼ĞÎ»¯½á¹¹Àí½â²Î¿¼·®¶«¶«ÏÂP775            ÊÍ·ÅµÄµØ·½ÔÚ__inet_put_port
-struct inet_bind_bucket { //´æ´¢ÔÚinet_hashinfoÖĞµÄbhash±íÖĞ£¬¶ÔÓ¦µÄhashbucketÎªinet_bind_hashbucket        
-//ËùÓĞµÄinet_bind_bucketÊµÀıÍ¨¹ıËüÀïÃæµÄnode³ÉÔ±Á¬½ÓÔÚÒ»Æğ£¬È»ºóÌí¼Óµ½inet_bind_hashbucketµÄchainÖĞ£¬×îºóÔÚ°ÑchainÁ¬½Óµ½inet_hashinfoÖĞµÄbhashÖĞ
-//Í¬Ê±ÔÚÓ¦ÓÃ³ÌĞò¿Í»§¶Ëconnect»òÕß·şÎñÆ÷¶ËbindµÄÊ±ºò£¬Í¨¹ıowners°Ñ¸Ãinet_bind_bucketÌí¼Óµ½struct sockÖĞµÄsk_bind_nodeÖĞ,Í¬Ê±inet_csk(sk)->icsk_bind_hashÖ¸ÏòÕâ¸öinet_bind_bucket£¬
-//ÕâÑùinet_bind_bucket¾Í¿ÉÒÔºÍstruct sock¹ØÁªÆğÀ´¡£¼ûinet_bind_hash
+//èµ‹å€¼åœ¨è¿™ä¸ªå‡½æ•°ä¸­inet_bind_hash ï¼Œ
+//å­˜æ”¾çš„æ˜¯ç«¯å£ç»‘å®šä¿¡æ¯ï¼Œ inet_bind_bucket_createåˆ›å»º   __inet_put_porté‡Šæ”¾
+//è¯¥ç»“æ„æœ€ç»ˆæ·»åŠ åˆ°inet_bind_hashbucketç»“æ„çš„chainä¸­
+//è¯¥ç»“æ„æ˜¯åœ¨å®¢æˆ·ç«¯connectåˆ†é…å®¢æˆ·ç«¯ç«¯å£çš„æ—¶å€™æœ‰ç”¨åˆ°ï¼Œåœ¨åšå®¢æˆ·ç«¯connectçš„æ—¶å€™åˆ›å»ºinet_bind_bucketç©ºé—´
+//è¯¥ç»“æ„ä½“æœ€ç»ˆçš„ç»“æœæ˜¯ï¼Œstruct sockè¢«æ·»åŠ åˆ°inet_bind_bucketç»“æ„çš„ownersé“¾è¡¨ä¸­(inet_bind_hash)ï¼Œç„¶åè¯¥inet_bind_bucketé€šè¿‡nodeèŠ‚ç‚¹åŠ å…¥åˆ°tcp_hashinfoçš„chainä¸­ï¼Œinet_bind_hashbucketä¸­çš„(inet_bind_bucket_create)
+/*è¯¥ç»“æ„åœ¨ä¸‰æ¬¡æ¡æ‰‹æˆåŠŸçš„æ—¶å€™é¦–å…ˆé€šè¿‡ownersè¿æ¥åˆ°inet_connection_sockä¸­çš„icsk_bind_hashï¼Œå½“åœ¨ç«¯å£è¿æ¥è¿‡ç¨‹ä¸­è¿›å…¥timewaitçš„è¿‡ç¨‹ä¸­è¯¥inet_bind_bucketä¼šä»æ–°è¿æ¥åˆ°
+tw->tw_bind_node,è§inet_timewait_sockä¸­ï¼Œæ‰€ä»¥ä¸‰æ¬¡æ¡æ‰‹ç«¯å£çš„timewait é‡Šæ”¾skçš„æ—¶å€™ï¼Œå¹¶æ²¡æœ‰é‡Šæ”¾æ‰è¯¥bindæ¡¶ï¼Œè§__inet_twsk_hashdance*/
+//å›¾å½¢åŒ–ç»“æ„ç†è§£å‚è€ƒæ¨Šä¸œä¸œä¸‹P775            é‡Šæ”¾çš„åœ°æ–¹åœ¨__inet_put_port
+struct inet_bind_bucket { //å­˜å‚¨åœ¨inet_hashinfoä¸­çš„bhashè¡¨ä¸­ï¼Œå¯¹åº”çš„hashbucketä¸ºinet_bind_hashbucket        
+//æ‰€æœ‰çš„inet_bind_bucketå®ä¾‹é€šè¿‡å®ƒé‡Œé¢çš„nodeæˆå‘˜è¿æ¥åœ¨ä¸€èµ·ï¼Œç„¶åæ·»åŠ åˆ°inet_bind_hashbucketçš„chainä¸­ï¼Œæœ€ååœ¨æŠŠchainè¿æ¥åˆ°inet_hashinfoä¸­çš„bhashä¸­
+//åŒæ—¶åœ¨åº”ç”¨ç¨‹åºå®¢æˆ·ç«¯connectæˆ–è€…æœåŠ¡å™¨ç«¯bindçš„æ—¶å€™ï¼Œé€šè¿‡ownersæŠŠè¯¥inet_bind_bucketæ·»åŠ åˆ°struct sockä¸­çš„sk_bind_nodeä¸­,åŒæ—¶inet_csk(sk)->icsk_bind_hashæŒ‡å‘è¿™ä¸ªinet_bind_bucketï¼Œ
+//è¿™æ ·inet_bind_bucketå°±å¯ä»¥å’Œstruct sockå…³è”èµ·æ¥ã€‚è§inet_bind_hash
 #ifdef CONFIG_NET_NS
 	struct net		*ib_net;
 #endif
 	/*
-	 * ÒÑ°ó¶¨µÄ¶Ë¿ÚºÅ
+	 * å·²ç»‘å®šçš„ç«¯å£å·
 	 */
 	unsigned short		port;
 	/*
-	 * ±êÊ¶¶Ë¿ÚÊÇ·ñÄÜÖØÓÃ
-	 * 0: ´Ë¶Ë¿ÚÒÑÍ¨¹ıbindÏµÍ³µ÷ÓÃ°ó¶¨£¬µ«²»ÄÜÖØÓÃ
-	 * 1: ´Ë¶Ë¿ÚÒÑ¾­Í¨¹ıbindÏµÍ³µ÷ÓÃ°ó¶¨£¬ÇÒÄÜÖØÓÃ  sk->sk_reuse¿ÉÒÔÖØÓÃµÄ»°£¬Õâ¸öÖµ¾Í¿ÉÒÔÖØÓÃ
-	 * -1: ´Ë¶Ë¿Ú±»¿Í»§¶Ë¶¯Ì¬°ó¶¨(ÓÉinet_hash_connection()½øĞĞ°ó¶¨)
+	 * æ ‡è¯†ç«¯å£æ˜¯å¦èƒ½é‡ç”¨
+	 * 0: æ­¤ç«¯å£å·²é€šè¿‡bindç³»ç»Ÿè°ƒç”¨ç»‘å®šï¼Œä½†ä¸èƒ½é‡ç”¨
+	 * 1: æ­¤ç«¯å£å·²ç»é€šè¿‡bindç³»ç»Ÿè°ƒç”¨ç»‘å®šï¼Œä¸”èƒ½é‡ç”¨  sk->sk_reuseå¯ä»¥é‡ç”¨çš„è¯ï¼Œè¿™ä¸ªå€¼å°±å¯ä»¥é‡ç”¨
+	 * -1: æ­¤ç«¯å£è¢«å®¢æˆ·ç«¯åŠ¨æ€ç»‘å®š(ç”±inet_hash_connection()è¿›è¡Œç»‘å®š)
 	 */
-	signed short		fastreuse;//__inet_hash_connect¿Í»§¶ËÁ¬½ÓÔÚ¼ì²éfastreuseÊÇ·ñ¿É¸´ÓÃÊ±£¬»¹µÃ¼ÌĞø¼ì²é__inet_check_established£¬inet_csk_get_port
-	int			num_owners;//±»skÒıÓÃ´ÎÊı£¬inet_bind_hash
+	signed short		fastreuse;//__inet_hash_connectå®¢æˆ·ç«¯è¿æ¥åœ¨æ£€æŸ¥fastreuseæ˜¯å¦å¯å¤ç”¨æ—¶ï¼Œè¿˜å¾—ç»§ç»­æ£€æŸ¥__inet_check_establishedï¼Œinet_csk_get_port
+	int			num_owners;//è¢«skå¼•ç”¨æ¬¡æ•°ï¼Œinet_bind_hash
 	/*
-	 * ÓÃÀ´´æ´¢bhashÉ¢ÁĞ±íµÄ½Úµã£¬ ¸Ãinet_bind_bucketÍ¨¹ı¸ÃnodeÌí¼Óµ½inet_bind_hashbucketµÄchainÖĞ   inet_bind_hash  inet_bind_bucket_create
+	 * ç”¨æ¥å­˜å‚¨bhashæ•£åˆ—è¡¨çš„èŠ‚ç‚¹ï¼Œ è¯¥inet_bind_bucketé€šè¿‡è¯¥nodeæ·»åŠ åˆ°inet_bind_hashbucketçš„chainä¸­   inet_bind_hash  inet_bind_bucket_create
 	 */
 	struct hlist_node	node;
 	/*
-	 * Îª°ó¶¨¸Ã¶Ë¿ÚÉÏµÄ´«Êä¿ØÖÆ¿éÁ´±í 
-	 *///Í¨¹ıowners°Ñ¸Ãinet_bind_bucketÌí¼Óµ½struct sockÖĞµÄsk_bind_nodeÖĞ£¬ÕâÑùinet_bind_bucket¾Í¿ÉÒÔºÍstruct sock¹ØÁªÆğÀ´¡£
-	 //Õâ¸ö×î¿ªÊ¼Ö¸ÏòµÄÊÇsk->sk_bind_node£¬µ±½øÈëtimewaitµÄÊ±ºòÖ¸Ïòtw->tw_bind_node£¬ËùÒÔbindÍ°ÔÚwait1×´Ì¬ÇĞ»»µ½timewait×´Ì¬µÄÊ±ºò£¬ÔÚÊÍ·ÅskÊ±£¬²»»áÊÍ·ÅµôbindĞÅÏ¢¡£¼ûtcp_time_wait
-	struct hlist_head	owners; //¶ÔÓ¦µÄstruct sockÍ¨¹ısk_bind_node³ÉÔ±Ìí¼Óµ½¸ÃownersÖĞ  ¼ûinet_bind_hash
-	//¸Ã½á¹¹Í¨¹ıowners¼ÓÈëµ½struct sockÀïÃæµÄsk_bind_nodeÖĞ
-	/*ÔÚtime_wait¹ı³ÌÖĞ£¬¸Ãinet_hash_bucket»áÍ¨¹ıownersÖ¸Ïòsk,±äÎªÖ¸Ïòtw->tw_bind_node,¼ûinet_timewait_sock¡£ËùÒÔÔÚ½øÈëtime_wait×´Ì¬£¬
-	ÔÚtcp_time_waitÖĞÊÍ·ÅÁËsk,µ«ÆäÖ®Ç°bindÏà¹ØµÄinet_bind_bucketÍ°²¢Ã»ÓĞÊÍ·Å£¬ÊÇÔÚ×îºÃclose×´Ì¬µÄÊ±ºò²ÅÊÍ·Å£¬¼û__inet_twsk_hashdance*/
+	 * ä¸ºç»‘å®šè¯¥ç«¯å£ä¸Šçš„ä¼ è¾“æ§åˆ¶å—é“¾è¡¨ 
+	 *///é€šè¿‡ownersæŠŠè¯¥inet_bind_bucketæ·»åŠ åˆ°struct sockä¸­çš„sk_bind_nodeä¸­ï¼Œè¿™æ ·inet_bind_bucketå°±å¯ä»¥å’Œstruct sockå…³è”èµ·æ¥ã€‚
+	 //è¿™ä¸ªæœ€å¼€å§‹æŒ‡å‘çš„æ˜¯sk->sk_bind_nodeï¼Œå½“è¿›å…¥timewaitçš„æ—¶å€™æŒ‡å‘tw->tw_bind_nodeï¼Œæ‰€ä»¥bindæ¡¶åœ¨wait1çŠ¶æ€åˆ‡æ¢åˆ°timewaitçŠ¶æ€çš„æ—¶å€™ï¼Œåœ¨é‡Šæ”¾skæ—¶ï¼Œä¸ä¼šé‡Šæ”¾æ‰bindä¿¡æ¯ã€‚è§tcp_time_wait
+	struct hlist_head	owners; //å¯¹åº”çš„struct socké€šè¿‡sk_bind_nodeæˆå‘˜æ·»åŠ åˆ°è¯¥ownersä¸­  è§inet_bind_hash
+	//è¯¥ç»“æ„é€šè¿‡ownersåŠ å…¥åˆ°struct socké‡Œé¢çš„sk_bind_nodeä¸­
+	/*åœ¨time_waitè¿‡ç¨‹ä¸­ï¼Œè¯¥inet_hash_bucketä¼šé€šè¿‡ownersæŒ‡å‘sk,å˜ä¸ºæŒ‡å‘tw->tw_bind_node,è§inet_timewait_sockã€‚æ‰€ä»¥åœ¨è¿›å…¥time_waitçŠ¶æ€ï¼Œ
+	åœ¨tcp_time_waitä¸­é‡Šæ”¾äº†sk,ä½†å…¶ä¹‹å‰bindç›¸å…³çš„inet_bind_bucketæ¡¶å¹¶æ²¡æœ‰é‡Šæ”¾ï¼Œæ˜¯åœ¨æœ€å¥½closeçŠ¶æ€çš„æ—¶å€™æ‰é‡Šæ”¾ï¼Œè§__inet_twsk_hashdance*/
 };
 
 static inline struct net *ib_net(struct inet_bind_bucket *ib)
@@ -152,16 +152,16 @@ struct inet_bind_hashbucket1 {
 	spinlock_t		lock;
 	struct hlist_head	chain;
 };
-//¸Ã½á¹¹ÓÉinet_hashinfoÖĞµÄbhashÖ¸Ïò  ¸Ã½á¹¹ÊÇÔÚ¿Í»§¶Ëconnect·ÖÅä¿Í»§¶Ë¶Ë¿ÚµÄÊ±ºòÓĞÓÃµ½
-//TCPÖĞÊ¹ÓÃinet_bind_hashbucketÉ¢ÁĞ±íÀ´¹ÜÀíÒÑ°ó¶¨¶Ë¿Ú¡£inet_bind_bucketÊµÀıÍ¨¹ıËüÀïÃæµÄnode³ÉÔ±Á¬½Óµ½inet_hashinfoÖĞµÄbhashÖĞ
-//Í¼ĞÎ»¯Àí½â¿ÉÒÔ²Î¿¼·®¶«¶«ÏÂ P775£¬hashÍ°µÄÍ·Ö¸ÕëÎªÕâ¸ö£¬ÆäÖĞµÄinet_bind_bucketÍ¨¹ınodeÈ«²¿Ìí¼Óµ½chainÁ´±íÖĞ
-struct inet_bind_hashbucket {//ËùÓĞµÄinet_bind_bucketÊµÀıÍ¨¹ıËüÀïÃæµÄnode³ÉÔ±Á¬½ÓÔÚÒ»Æğ£¬È»ºóÌí¼Óµ½inet_bind_hashbucketµÄchainÖĞ£¬×îºóÔÚ°ÑchainÁ¬½Óµ½inet_hashinfoÖĞµÄbhashÖĞ
+//è¯¥ç»“æ„ç”±inet_hashinfoä¸­çš„bhashæŒ‡å‘  è¯¥ç»“æ„æ˜¯åœ¨å®¢æˆ·ç«¯connectåˆ†é…å®¢æˆ·ç«¯ç«¯å£çš„æ—¶å€™æœ‰ç”¨åˆ°
+//TCPä¸­ä½¿ç”¨inet_bind_hashbucketæ•£åˆ—è¡¨æ¥ç®¡ç†å·²ç»‘å®šç«¯å£ã€‚inet_bind_bucketå®ä¾‹é€šè¿‡å®ƒé‡Œé¢çš„nodeæˆå‘˜è¿æ¥åˆ°inet_hashinfoä¸­çš„bhashä¸­
+//å›¾å½¢åŒ–ç†è§£å¯ä»¥å‚è€ƒæ¨Šä¸œä¸œä¸‹ P775ï¼Œhashæ¡¶çš„å¤´æŒ‡é’ˆä¸ºè¿™ä¸ªï¼Œå…¶ä¸­çš„inet_bind_bucketé€šè¿‡nodeå…¨éƒ¨æ·»åŠ åˆ°chainé“¾è¡¨ä¸­
+struct inet_bind_hashbucket {//æ‰€æœ‰çš„inet_bind_bucketå®ä¾‹é€šè¿‡å®ƒé‡Œé¢çš„nodeæˆå‘˜è¿æ¥åœ¨ä¸€èµ·ï¼Œç„¶åæ·»åŠ åˆ°inet_bind_hashbucketçš„chainä¸­ï¼Œæœ€ååœ¨æŠŠchainè¿æ¥åˆ°inet_hashinfoä¸­çš„bhashä¸­
 	/*
-	 * ¿ØÖÆ¸ÃÁ´±íµÄ¶ÁĞ´Ëø
+	 * æ§åˆ¶è¯¥é“¾è¡¨çš„è¯»å†™é”
 	 */
 	spinlock_t		lock;
 	/*
-	 * ÓÃÓÚ½¨Á¢¶Ë¿Ú°ó¶¨ĞÅÏ¢¿é£¬½á¹¹ÌåÎªinet_bind_bucket£¬ ¼´inet_bind_bucket½á¹¹Á´±í inet_bind_bucket_create
+	 * ç”¨äºå»ºç«‹ç«¯å£ç»‘å®šä¿¡æ¯å—ï¼Œç»“æ„ä½“ä¸ºinet_bind_bucketï¼Œ å³inet_bind_bucketç»“æ„é“¾è¡¨ inet_bind_bucket_create
 	 */
 	struct hlist_head	chain;
 };
@@ -220,12 +220,12 @@ struct inet_hashinfo1 {
 	atomic_t			bsockets;
 };
 /*
- * TCP´«Êä²ãÖĞÓÃÒ»¸öinet_hashinfo½á¹¹ÀàĞÍµÄÈ«¾Ö±äÁ¿
- * tcp_hashinfo¶ÔËùÓĞµÄÉ¢ÁĞ±í½øĞĞ¼¯ÖĞ¹ÜÀí¡£
-  //tcp_death_rowÀïÃæµÄhashinfoÖ¸Ïò±äÁ¿tcp_hashinfo£¬Ò²¾ÍÊÇËùÓĞµÄinethash_infoµÄÍ·ÔÚÕâÀï
+ * TCPä¼ è¾“å±‚ä¸­ç”¨ä¸€ä¸ªinet_hashinfoç»“æ„ç±»å‹çš„å…¨å±€å˜é‡
+ * tcp_hashinfoå¯¹æ‰€æœ‰çš„æ•£åˆ—è¡¨è¿›è¡Œé›†ä¸­ç®¡ç†ã€‚
+  //tcp_death_rowé‡Œé¢çš„hashinfoæŒ‡å‘å˜é‡tcp_hashinfoï¼Œä¹Ÿå°±æ˜¯æ‰€æœ‰çš„inethash_infoçš„å¤´åœ¨è¿™é‡Œ
  */
 /*
-tcp udpºÍrawµÄhash
+tcp udpå’Œrawçš„hash
 union {
 		struct inet_hashinfo	*hashinfo; //tcp_hashinfo
 		struct udp_table	*udp_table; //udp_table
@@ -233,7 +233,7 @@ union {
 	} h;
 */
 
-//tcp_hashinfoµÄÍ¼Ïñ»¯Àí½â¿ÉÒÔ²Î¿¼£¬·®¶«¶«£¬ÏÂ²áP734
+//tcp_hashinfoçš„å›¾åƒåŒ–ç†è§£å¯ä»¥å‚è€ƒï¼Œæ¨Šä¸œä¸œï¼Œä¸‹å†ŒP734
 struct inet_hashinfo {
 	/* This is for sockets with full identity only.  Sockets here will
 	 * always be without wildcards and will have the following invariant:
@@ -243,16 +243,16 @@ struct inet_hashinfo {
 	 * TIME_WAIT sockets use a separate chain (twchain).
 	 */
 	/*
-	 * ehashÖ¸ÏòÒ»¸ö´óĞ¡Îªehash_sizeµÄinet_ehash_bucket½á¹¹ÀàĞÍµÄÉ¢ÁĞ
-	 * ±í£¬ÓÃÀ´¹ÜÀíTCP×´Ì¬³ıLISTENÖ®ÍâµÄ´«Êä¿ØÖÆ¿éµÄÉ¢ÁĞ±í
+	 * ehashæŒ‡å‘ä¸€ä¸ªå¤§å°ä¸ºehash_sizeçš„inet_ehash_bucketç»“æ„ç±»å‹çš„æ•£åˆ—
+	 * è¡¨ï¼Œç”¨æ¥ç®¡ç†TCPçŠ¶æ€é™¤LISTENä¹‹å¤–çš„ä¼ è¾“æ§åˆ¶å—çš„æ•£åˆ—è¡¨
 
-	 tcp±íÓÖ·Ö³ÉÁËÈıÕÅ±íehash, bhash, listening_hash£¬ÆäÖĞehash, listening_hash¶ÔÓ¦ÓÚsocket´¦ÔÚTCPµÄESTABLISHED, LISTEN×´Ì¬£¬bhash¶ÔÓ¦ÓÚsocket
-	 ÒÑ°ó¶¨ÁË±¾µØµØÖ·¡£ÈıÕß¼ä²¢²»»¥³â£¬ÈçÒ»¸ösocket¿ÉÍ¬Ê±ÔÚbhashºÍehashÖĞ£¬ÓÉÓÚTIME_WAITÊÇÒ»¸ö±È½ÏÌØÊâµÄ×´Ì¬£¬ËùÒÔehashÓÖ·Ö³ÉÁËchainºÍtwchain£¬
-	 ÎªTIME_WAITµÄsocketµ¥¶ÀĞÎ³ÉÒ»ÕÅ±í¡£
+	 tcpè¡¨åˆåˆ†æˆäº†ä¸‰å¼ è¡¨ehash, bhash, listening_hashï¼Œå…¶ä¸­ehash, listening_hashå¯¹åº”äºsocketå¤„åœ¨TCPçš„ESTABLISHED, LISTENçŠ¶æ€ï¼Œbhashå¯¹åº”äºsocket
+	 å·²ç»‘å®šäº†æœ¬åœ°åœ°å€ã€‚ä¸‰è€…é—´å¹¶ä¸äº’æ–¥ï¼Œå¦‚ä¸€ä¸ªsocketå¯åŒæ—¶åœ¨bhashå’Œehashä¸­ï¼Œç”±äºTIME_WAITæ˜¯ä¸€ä¸ªæ¯”è¾ƒç‰¹æ®Šçš„çŠ¶æ€ï¼Œæ‰€ä»¥ehashåˆåˆ†æˆäº†chainå’Œtwchainï¼Œ
+	 ä¸ºTIME_WAITçš„socketå•ç‹¬å½¢æˆä¸€å¼ è¡¨ã€‚
 	 */
-	 //inet_timewait_sockÍ¨¹ı__inet_twsk_hashdance¼ÓÈëµ½¸ÃehashÖĞµÄtwrefcnt += hash(sk, tw);¡£·şÎñÆ÷¶ËacceptµÄÊ±ºò£¬ÊÇÔÚ½¨Á¢Á¬½Ó³É¹¦µÄÊ±ºò²Å·Åµ½¸ÃehashÖĞµÄ¡£
-	 //¿Í»§¶ËconnectµÄÊ±ºò£¬Á¢Âí¼ÓÈëµ½¸ÃhashÖĞ£¬¼û__inet_hash_connect
-	struct inet_ehash_bucket	*ehash;//¼ûinet_ehash_bucketº¯Êı  Õâ¸öhashÍ°ÀïÃæµÄÊÇ¶à¸öÁ¬½Ó³É¹¦µÄsock,timewaitµÄsockÒ²ÔÚÕâÀïÃæ
+	 //inet_timewait_socké€šè¿‡__inet_twsk_hashdanceåŠ å…¥åˆ°è¯¥ehashä¸­çš„twrefcnt += hash(sk, tw);ã€‚æœåŠ¡å™¨ç«¯acceptçš„æ—¶å€™ï¼Œæ˜¯åœ¨å»ºç«‹è¿æ¥æˆåŠŸçš„æ—¶å€™æ‰æ”¾åˆ°è¯¥ehashä¸­çš„ã€‚
+	 //å®¢æˆ·ç«¯connectçš„æ—¶å€™ï¼Œç«‹é©¬åŠ å…¥åˆ°è¯¥hashä¸­ï¼Œè§__inet_hash_connect
+	struct inet_ehash_bucket	*ehash;//è§inet_ehash_bucketå‡½æ•°  è¿™ä¸ªhashæ¡¶é‡Œé¢çš„æ˜¯å¤šä¸ªè¿æ¥æˆåŠŸçš„sock,timewaitçš„sockä¹Ÿåœ¨è¿™é‡Œé¢
 	spinlock_t			*ehash_locks;
 	unsigned int			ehash_size;
 	unsigned int			ehash_locks_mask;
@@ -261,16 +261,16 @@ struct inet_hashinfo {
 	 * TCP hash as well as the others for fast bind/connect.
 	 */
 	/*
-	 * Ö÷ÒªÓÃÀ´´æ´¢ÒÑ°ó¶¨¶Ë¿ÚµÄĞÅÏ¢  inet_bind_bucket  ¸Ã½á¹¹ÊÇÔÚ¿Í»§¶Ëconnect·ÖÅä¿Í»§¶Ë¶Ë¿ÚµÄÊ±ºòÓĞÓÃµ½,ÔÚÁ¬½Ó½¨Á¢¹ı³ÌÖĞÖ»ÓÃehashºÍlistening_hash
-	 */////ËùÓĞµÄinet_bind_bucketÊµÀıÍ¨¹ıËüÀïÃæµÄnode³ÉÔ±Á¬½ÓÔÚÒ»Æğ£¬È»ºóÌí¼Óµ½inet_bind_hashbucketµÄchainÖĞ£¬×îºóÔÚ°ÑchainÁ¬½Óµ½inet_hashinfoÖĞµÄbhashÖĞ
-    //Èç¹ûÊÇ¿Í»§¶ËÁ¬½Ó£¬ÔòÔÚconnectµÄÊ±ºòµ÷ÓÃinet_bind_hash£¬È»ºóÌí¼Óµ½¸ÃhashÍ°ÖĞ£¬¼û__inet_hash_connect
-    //ÔÚÁ¬½Ó¶Ë¿Ú£¬½øÈëtimewait×´Ì¬µÄÊ±ºò£¬inet_timewait_sockÒ²»áÌí¼Óµ½¸ÃbhashÖĞ£¬¼û__inet_twsk_hashdance
-    //ÊÍ·Åº¯ÊıÔÚinet_bind_bucket
-	struct inet_bind_hashbucket	*bhash;//±»°ó¶¨µÄ¶Ë¿ÚĞÅÏ¢»áÒ»Ö±ÔÚ¸Ã¡£ÏÂ´Î°ó¶¨ÆäËû¶Ë¿Ú»òÕß·ÖÅä¶Ë¿ÚµÄÊ±ºòĞèÒªÓÃÕâ¸ö±éÀú¼ì²é¡£Í¼ĞÎ»¯½á¹¹Àí½â²Î¿¼·®¶«¶«ÏÂP775
+	 * ä¸»è¦ç”¨æ¥å­˜å‚¨å·²ç»‘å®šç«¯å£çš„ä¿¡æ¯  inet_bind_bucket  è¯¥ç»“æ„æ˜¯åœ¨å®¢æˆ·ç«¯connectåˆ†é…å®¢æˆ·ç«¯ç«¯å£çš„æ—¶å€™æœ‰ç”¨åˆ°,åœ¨è¿æ¥å»ºç«‹è¿‡ç¨‹ä¸­åªç”¨ehashå’Œlistening_hash
+	 */////æ‰€æœ‰çš„inet_bind_bucketå®ä¾‹é€šè¿‡å®ƒé‡Œé¢çš„nodeæˆå‘˜è¿æ¥åœ¨ä¸€èµ·ï¼Œç„¶åæ·»åŠ åˆ°inet_bind_hashbucketçš„chainä¸­ï¼Œæœ€ååœ¨æŠŠchainè¿æ¥åˆ°inet_hashinfoä¸­çš„bhashä¸­
+    //å¦‚æœæ˜¯å®¢æˆ·ç«¯è¿æ¥ï¼Œåˆ™åœ¨connectçš„æ—¶å€™è°ƒç”¨inet_bind_hashï¼Œç„¶åæ·»åŠ åˆ°è¯¥hashæ¡¶ä¸­ï¼Œè§__inet_hash_connect
+    //åœ¨è¿æ¥ç«¯å£ï¼Œè¿›å…¥timewaitçŠ¶æ€çš„æ—¶å€™ï¼Œinet_timewait_sockä¹Ÿä¼šæ·»åŠ åˆ°è¯¥bhashä¸­ï¼Œè§__inet_twsk_hashdance
+    //é‡Šæ”¾å‡½æ•°åœ¨inet_bind_bucket
+	struct inet_bind_hashbucket	*bhash;//è¢«ç»‘å®šçš„ç«¯å£ä¿¡æ¯ä¼šä¸€ç›´åœ¨è¯¥ã€‚ä¸‹æ¬¡ç»‘å®šå…¶ä»–ç«¯å£æˆ–è€…åˆ†é…ç«¯å£çš„æ—¶å€™éœ€è¦ç”¨è¿™ä¸ªéå†æ£€æŸ¥ã€‚å›¾å½¢åŒ–ç»“æ„ç†è§£å‚è€ƒæ¨Šä¸œä¸œä¸‹P775
 	unsigned int			bhash_size;
 	/* 4 bytes hole on 64 bit */
 	/*
-	 * ÓÃÀ´·ÖÅäinet_bind_hashbucket½á¹¹µÄºó±¸¸ßËÙ»º´æ
+	 * ç”¨æ¥åˆ†é…inet_bind_hashbucketç»“æ„çš„åå¤‡é«˜é€Ÿç¼“å­˜
 	 */
 	struct kmem_cache		*bind_bucket_cachep;
 
@@ -285,11 +285,11 @@ struct inet_hashinfo {
 	 * is just local port number.
 	 */
 	/*
-	 * ÓÃÀ´´æ´¢¹ÜÀíLISTEN×´Ì¬µÄ´«Êä¿ØÖÆ¿éµÄÉ¢ÁĞ±í¡£ÔÚlisten×´Ì¬µÄÊ±ºò½øÈë£¬¼ûinet_csk_listen_start
+	 * ç”¨æ¥å­˜å‚¨ç®¡ç†LISTENçŠ¶æ€çš„ä¼ è¾“æ§åˆ¶å—çš„æ•£åˆ—è¡¨ã€‚åœ¨listençŠ¶æ€çš„æ—¶å€™è¿›å…¥ï¼Œè§inet_csk_listen_start
 	 */
 	struct inet_listen_hashbucket	listening_hash[INET_LHTABLE_SIZE];// ____cacheline_aligned_in_smp;
 	/*
-	 * Ó¦¸ÃÊÇÒÑ°ó¶¨µÄÌ×½Ó×ÖµÄÊıÁ¿ inet_bind_hash
+	 * åº”è¯¥æ˜¯å·²ç»‘å®šçš„å¥—æ¥å­—çš„æ•°é‡ inet_bind_hash
 	 */
 	atomic_t			bsockets;
 };
@@ -379,7 +379,7 @@ static inline int inet_lhashfn(struct net *net, const unsigned short num)
 	return (num + net_hash_mix(net)) & (INET_LHTABLE_SIZE - 1);
 }
 
-//Í¨¹ıskÀ´½ÓÊÕÒ»¸öhash ¼üÖµ
+//é€šè¿‡skæ¥æ¥æ”¶ä¸€ä¸ªhash é”®å€¼
 static inline int inet_sk_listen_hashfn(const struct sock *sk)
 {
 	return inet_lhashfn(sock_net(sk), inet_sk(sk)->inet_num);

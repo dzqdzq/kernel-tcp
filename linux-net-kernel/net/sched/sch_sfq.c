@@ -574,7 +574,7 @@ static const struct Qdisc_class_ops sfq_class_ops = {
 	.walk		=	sfq_walk,
 };
 
-/*pfifo_qdisc_ops tbf_qdisc_ops sfq_qdisc_opsÕâ¼¸¸ö¶¼Îª³ö¿Ú£¬ingress_qdisc_opsÎªÈë¿Ú */
+/*pfifo_qdisc_ops tbf_qdisc_ops sfq_qdisc_opsè¿™å‡ ä¸ªéƒ½ä¸ºå‡ºå£ï¼Œingress_qdisc_opsä¸ºå…¥å£ */
 static struct Qdisc_ops sfq_qdisc_ops ;//__read_mostly = {
 	.cl_ops		=	&sfq_class_ops,
 	.id		=	"sfq",

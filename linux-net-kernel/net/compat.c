@@ -30,7 +30,7 @@
 #include <asm/uaccess.h>
 #include <net/compat.h>
 
-//´ÓÓÃ»§¿Õ¼äµÄmsghdrÖĞµÄiovec³ÉÔ±µØÖ·ÖĞ½âÎö³öiovecĞÅÏ¢£¬ uiov32ºÍniovÊÇ´Óget_compat_msghdrÖĞ»ñÈ¡µÄÓÃ»§¿Õ¼äsendmsgµÄÊ±ºòµÄÄ¿µÄmsg_iovµØÖ·ºÍmsg_iovlenÖµ
+//ä»ç”¨æˆ·ç©ºé—´çš„msghdrä¸­çš„iovecæˆå‘˜åœ°å€ä¸­è§£æå‡ºiovecä¿¡æ¯ï¼Œ uiov32å’Œniovæ˜¯ä»get_compat_msghdrä¸­è·å–çš„ç”¨æˆ·ç©ºé—´sendmsgçš„æ—¶å€™çš„ç›®çš„msg_iovåœ°å€å’Œmsg_iovlenå€¼
 static inline int iov_from_user_compat_to_kern(struct iovec *kiov,
 					  struct compat_iovec __user *uiov32,
 					  int niov)
@@ -58,7 +58,7 @@ static inline int iov_from_user_compat_to_kern(struct iovec *kiov,
 	return tot_len;
 }
 
-//°ÑÓ¦ÓÃ²ãµÄumsg½âÎöµ½ÄÚºË¿Õ¼äµÄmsghdr½á¹¹µÄkmsgÖĞ£¬ÕâÀïÓ¦¸ÃÊÇ»ñÈ¡µÄÓÃ»§¿Õ¼äµÄµØÖ·
+//æŠŠåº”ç”¨å±‚çš„umsgè§£æåˆ°å†…æ ¸ç©ºé—´çš„msghdrç»“æ„çš„kmsgä¸­ï¼Œè¿™é‡Œåº”è¯¥æ˜¯è·å–çš„ç”¨æˆ·ç©ºé—´çš„åœ°å€
 int get_compat_msghdr(struct msghdr *kmsg, struct compat_msghdr __user *umsg)
 {
 	compat_uptr_t tmp1, tmp2, tmp3;
@@ -79,8 +79,8 @@ int get_compat_msghdr(struct msghdr *kmsg, struct compat_msghdr __user *umsg)
 }
 
 /* I've named the args so it is easy to tell whose space the pointers are in. */
-//kern_msgÎª´ÓÓ¦ÓÃ²ãÖĞ½âÎö³öµÄmsghdr½á¹¹£¬Í¨¹ı¸Ã½á¹¹¿ÉÒÔ»ñÈ¡µ½iovecºÍÄ¿µÄsockaddr½á¹¹ĞÅÏ¢
-//ÕâÀïµÄkernmsgÀïÃæµÄ¸÷¸ö³ÉÔ±ĞÅÏ¢ÊÇÍ¨¹ı´Óget_compat_msghdrÖĞ»ñÈ¡µÄÓÃ»§¿Õ¼äsendmsgµÄÊ±ºòµÄmsghdrµÄ¸÷¸ö³ÉÔ±ĞÅÏ¢
+//kern_msgä¸ºä»åº”ç”¨å±‚ä¸­è§£æå‡ºçš„msghdrç»“æ„ï¼Œé€šè¿‡è¯¥ç»“æ„å¯ä»¥è·å–åˆ°iovecå’Œç›®çš„sockaddrç»“æ„ä¿¡æ¯
+//è¿™é‡Œçš„kernmsgé‡Œé¢çš„å„ä¸ªæˆå‘˜ä¿¡æ¯æ˜¯é€šè¿‡ä»get_compat_msghdrä¸­è·å–çš„ç”¨æˆ·ç©ºé—´sendmsgçš„æ—¶å€™çš„msghdrçš„å„ä¸ªæˆå‘˜ä¿¡æ¯
 int verify_compat_iovec(struct msghdr *kern_msg, struct iovec *kern_iov,
 		   struct sockaddr *kern_address, int mode)
 {
@@ -90,7 +90,7 @@ int verify_compat_iovec(struct msghdr *kern_msg, struct iovec *kern_iov,
 		if (mode==VERIFY_READ) {
 			int err = move_addr_to_kernel(kern_msg->msg_name,
 						      kern_msg->msg_namelen,
-						      kern_address); //»ñÈ¡¶Ô¶ËµØÖ·sockaddr
+						      kern_address); //è·å–å¯¹ç«¯åœ°å€sockaddr
 			if (err < 0)
 				return err;
 		}
@@ -100,9 +100,9 @@ int verify_compat_iovec(struct msghdr *kern_msg, struct iovec *kern_iov,
 
 	tot_len = iov_from_user_compat_to_kern(kern_iov,
 					  (struct compat_iovec __user *)kern_msg->msg_iov,
-					  kern_msg->msg_iovlen); //»ñÈ¡i/oÊ¸Á¿ĞÅÏ¢iovec
+					  kern_msg->msg_iovlen); //è·å–i/oçŸ¢é‡ä¿¡æ¯iovec
 	if (tot_len >= 0)
-		kern_msg->msg_iov = kern_iov;//ÕâÀïmsg_iov²ÅÖ¸Ïò½âÎö³öµÄmsg_iovĞÅÏ¢
+		kern_msg->msg_iov = kern_iov;//è¿™é‡Œmsg_iovæ‰æŒ‡å‘è§£æå‡ºçš„msg_iovä¿¡æ¯
 
 	return tot_len;
 }
@@ -110,7 +110,7 @@ int verify_compat_iovec(struct msghdr *kern_msg, struct iovec *kern_iov,
 /* Bleech... */
 #define CMSG_COMPAT_ALIGN(len)	ALIGN((len), sizeof(s32))
 
-//Õâ¸öÊÇ»ñÈ¡Ó¦ÓÃ²ãmsghdrÖĞ½ô¸úÔÚÍ·²¿ºóÃæµÄÊı¾İ²¿·Ö
+//è¿™ä¸ªæ˜¯è·å–åº”ç”¨å±‚msghdrä¸­ç´§è·Ÿåœ¨å¤´éƒ¨åé¢çš„æ•°æ®éƒ¨åˆ†
 #define CMSG_COMPAT_DATA(cmsg)				\
 	((void __user *)((char __user *)(cmsg) + CMSG_COMPAT_ALIGN(sizeof(struct compat_cmsghdr))))
 #define CMSG_COMPAT_SPACE(len)				\
@@ -118,7 +118,7 @@ int verify_compat_iovec(struct msghdr *kern_msg, struct iovec *kern_iov,
 #define CMSG_COMPAT_LEN(len)				\
 	(CMSG_COMPAT_ALIGN(sizeof(struct compat_cmsghdr)) + (len))
 
-//»ñÈ¡msghdr½á¹¹ÖĞµÄµÚÒ»¸ömsg_control
+//è·å–msghdrç»“æ„ä¸­çš„ç¬¬ä¸€ä¸ªmsg_control
 #define CMSG_COMPAT_FIRSTHDR(msg)			\
 	(((msg)->msg_controllen) >= sizeof(struct compat_cmsghdr) ?	\
 	 (struct compat_cmsghdr __user *)((msg)->msg_control) :		\
@@ -143,7 +143,7 @@ static inline struct compat_cmsghdr __user *cmsg_compat_nxthdr(struct msghdr *ms
 /* There is a lot of hair here because the alignment rules (and
  * thus placement) of cmsg headers and length are different for
  * 32-bit apps.  -DaveM
- *///kmsgÀïÃæ´æ´¢µÄÊÇÖ¸ÏòÓ¦ÓÃ²ãmsghdr¸÷¸ö³ÉÔ±µÄµØÖ·ĞÅÏ¢£¬ stackbufÓÃÀ´±£´æÄÚºË»ñÈ¡µ½µÄÓ¦ÓÃ²ãcmsghdrĞÅÏ¢
+ *///kmsgé‡Œé¢å­˜å‚¨çš„æ˜¯æŒ‡å‘åº”ç”¨å±‚msghdrå„ä¸ªæˆå‘˜çš„åœ°å€ä¿¡æ¯ï¼Œ stackbufç”¨æ¥ä¿å­˜å†…æ ¸è·å–åˆ°çš„åº”ç”¨å±‚cmsghdrä¿¡æ¯
 int cmsghdr_from_user_compat_to_kern(struct msghdr *kmsg, struct sock *sk,
 			       unsigned char *stackbuf, int stackbuf_size)
 {
@@ -155,8 +155,8 @@ int cmsghdr_from_user_compat_to_kern(struct msghdr *kmsg, struct sock *sk,
 
 	kcmlen = 0;
 	kcmsg_base = kcmsg = (struct cmsghdr *)stackbuf;
-	ucmsg = CMSG_COMPAT_FIRSTHDR(kmsg);//´ÓmsghdrÖĞµÄmsg_control»ñÈ¡µÚÒ»¸öcmsghdr
-	while (ucmsg != NULL) { //Õâ¸öwhileÑ­»·ÊÇÎªÁË»ñÈ¡Ó¦ÓÃ²ãÖĞmsg_controlĞÅÏ¢µÄ×Ü³¤¶È
+	ucmsg = CMSG_COMPAT_FIRSTHDR(kmsg);//ä»msghdrä¸­çš„msg_controlè·å–ç¬¬ä¸€ä¸ªcmsghdr
+	while (ucmsg != NULL) { //è¿™ä¸ªwhileå¾ªç¯æ˜¯ä¸ºäº†è·å–åº”ç”¨å±‚ä¸­msg_controlä¿¡æ¯çš„æ€»é•¿åº¦
 		if (get_user(ucmlen, &ucmsg->cmsg_len))
 			return -EFAULT;
 
@@ -168,7 +168,7 @@ int cmsghdr_from_user_compat_to_kern(struct msghdr *kmsg, struct sock *sk,
 		       CMSG_ALIGN(sizeof(struct cmsghdr)));
 		tmp = CMSG_ALIGN(tmp);
 		kcmlen += tmp;
-		ucmsg = cmsg_compat_nxthdr(kmsg, ucmsg, ucmlen); //»ñÈ¡ÏÂÒ»¸öcompat_cmsghdr½á¹¹µØÖ·
+		ucmsg = cmsg_compat_nxthdr(kmsg, ucmsg, ucmlen); //è·å–ä¸‹ä¸€ä¸ªcompat_cmsghdrç»“æ„åœ°å€
 	}
 	if (kcmlen == 0)
 		return -EINVAL;
@@ -187,8 +187,8 @@ int cmsghdr_from_user_compat_to_kern(struct msghdr *kmsg, struct sock *sk,
 	memset(kcmsg, 0, kcmlen);
 	ucmsg = CMSG_COMPAT_FIRSTHDR(kmsg);
 
-	//ÕâÀïÎªÊ²Ã´ÓĞ¸öwhile£¬ÒòÎªÓÃ»§¿ÉÒÔÍ¨¹ı¶à¸öcmsghdrĞ¯´ø¶à¸öÓÃ»§Êı¾İ±¨ÎÄ£¬Ò»¸öcmsghdrÍ·ºóÃæ½ô¸úÒ»¸öÓÃ»§Êı¾İ
-	while (ucmsg != NULL) {//½âÎömsghdr½á¹¹ÖĞµÄmsg_controlĞÅÏ¢£¬ÎªÁË·½±ãÀí½â¿ÉÒÔ²Î¿¼·®¶«¶«ÏÂP641
+	//è¿™é‡Œä¸ºä»€ä¹ˆæœ‰ä¸ªwhileï¼Œå› ä¸ºç”¨æˆ·å¯ä»¥é€šè¿‡å¤šä¸ªcmsghdræºå¸¦å¤šä¸ªç”¨æˆ·æ•°æ®æŠ¥æ–‡ï¼Œä¸€ä¸ªcmsghdrå¤´åé¢ç´§è·Ÿä¸€ä¸ªç”¨æˆ·æ•°æ®
+	while (ucmsg != NULL) {//è§£æmsghdrç»“æ„ä¸­çš„msg_controlä¿¡æ¯ï¼Œä¸ºäº†æ–¹ä¾¿ç†è§£å¯ä»¥å‚è€ƒæ¨Šä¸œä¸œä¸‹P641
 		if (__get_user(ucmlen, &ucmsg->cmsg_len))
 			goto Efault;
 		if (!CMSG_COMPAT_OK(ucmlen, ucmsg, kmsg))
@@ -203,7 +203,7 @@ int cmsghdr_from_user_compat_to_kern(struct msghdr *kmsg, struct sock *sk,
 		    __get_user(kcmsg->cmsg_type, &ucmsg->cmsg_type) ||
 		    copy_from_user(CMSG_DATA(kcmsg),
 				   CMSG_COMPAT_DATA(ucmsg),
-				   (ucmlen - CMSG_COMPAT_ALIGN(sizeof(*ucmsg)))))  //»ñÈ¡cmsghdrÖĞµÄcmsg_levelºÍcmsg_type×Ö¶Î¼°ÆäcmsghdrºóÃæ½ô¸úµÄÊµ¼ÊÓÃ»§Êı¾İ
+				   (ucmlen - CMSG_COMPAT_ALIGN(sizeof(*ucmsg)))))  //è·å–cmsghdrä¸­çš„cmsg_levelå’Œcmsg_typeå­—æ®µåŠå…¶cmsghdråé¢ç´§è·Ÿçš„å®é™…ç”¨æˆ·æ•°æ®
 			goto Efault;
 
 		/* Advance. */

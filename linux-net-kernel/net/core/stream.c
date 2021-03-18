@@ -26,17 +26,17 @@
  * FIXME: write proper description
  */
  /*
- * sock_def_write_space��sk_stream_write_space�����ʹ�õķ��ͻ�������
- * ��С������ﵽָ��ֵ���ỽ�Ѵ�����ƿ��sk_sleep������
- * ��˯�߽��̲�֪ͨ�׽��ֵ�fasync_list�����ϵĽ��̡�ǰ��Ϊ
- * Ĭ�ϵĻ��Ѻ�������������TCP�еĻ��Ѻ���������������
- * ������ڼ����ʹ�õķ��ͻ������ķ�ʽ��ͬ
+ * sock_def_write_space和sk_stream_write_space检测已使用的发送缓冲区的
+ * 大小，若其达到指定值，会唤醒传输控制块的sk_sleep队列上
+ * 的睡眠进程并通知套接字的fasync_list队列上的进程。前者为
+ * 默认的唤醒函数，而后者是TCP中的唤醒函数，两个函数的
+ * 差别在于检测已使用的发送缓存区的方式不同
  *
- * sock_def_write_space��ⷢ�Ͳ����������SKB���������ܴ�С�Ƿ�
- * �ﵽ�����ޣ���sk_stream_write_space��֤�ɷ���Ŀ������ٴﵽ
- * ���ͻ��������޵�����֮һ�����������������õ�����
- * ���ƿ��sk_write_space�ӿ��ϣ�ͨ����������ƿ�ķ��ͻ�����
- * ���ȵ����������޸Ļ����ͷ��˽��ն����ϵ�SKBʱ������
+ * sock_def_write_space检测发送并分配的所有SKB数据区的总大小是否
+ * 达到了上限，而sk_stream_write_space保证可分配的控制至少达到
+ * 发送缓冲区上限的三分之一。以上两个函数设置到传输
+ * 控制块的sk_write_space接口上，通常当传输控制块的发送缓冲区
+ * 长度的上限做了修改或者释放了接收队列上的SKB时被调用
  */
 void sk_stream_write_space(struct sock *sk)
 {
@@ -107,7 +107,7 @@ static inline int sk_stream_closing(struct sock *sk)
 	       (TCPF_FIN_WAIT1 | TCPF_CLOSING | TCPF_LAST_ACK);
 }
 
-//����FIN���Ƿ���Ҫ�ȴ���ͨ��SOCK_LINGER��Ӧ�ó���������
+//发送FIN后是否需要等待，通过SOCK_LINGER在应用程序中设置
 void sk_stream_wait_close(struct sock *sk, long timeout)
 {
 	if (timeout) {
@@ -132,9 +132,9 @@ EXPORT_SYMBOL(sk_stream_wait_close);
  * @timeo_p: for how long
  */
  /*
- * �ڷ�������ʱ��������仺����ʧ�ܣ�������
- * sk_stream_wait_memory()�ȴ����ú�������0����ʾ�ȴ���
- * �������ط�0��Ϊ��������Ĵ�����
+ * 在发送数据时，如果分配缓冲区失败，则会调用
+ * sk_stream_wait_memory()等待。该函数返回0，表示等待成
+ * 功；返回非0则为具体出错的错误码
  */
 int sk_stream_wait_memory(struct sock *sk, long *timeo_p)
 {

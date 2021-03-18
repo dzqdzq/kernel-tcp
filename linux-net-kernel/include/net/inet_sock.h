@@ -58,83 +58,83 @@ struct ip_options1 {
 };
 
 /*
- * IPÑ¡ÏîĞÅÏ¢¿é£¬ÔÚIPÑ¡Ïî´¦ÀíÖĞ£¬IPÑ¡ÏîĞÅÏ¢¿éip_optionsÊÇ
- * ×î³£ÓÃµÄ½á¹¹£¬ÓÃÀ´ÃèÊöÏà¹ØµÄIPÑ¡Ïî¡£¸Ã½á¹¹¿ÉÒÔÓÃÔÚSKBÖĞ£¬
- * ÃèÊöËùÔÚSKBµÄÊı¾İ±¨ÖĞ´æÔÚµÄÑ¡Ïî£¬²Î¼ûIP²ãÖĞĞÅÏ¢¿ØÖÆ¿é
- * inet_skb_parm½á¹¹£»Ò²¿ÉÒÔµ¥¶ÀÊ¹ÓÃ£¬ÈçÍ¨¹ıIP_OPTIONSÑ¡Ïî
- * ºÍ»ñÈ¡ËùÔÚÌ×½Ó×Ö·¢ËÍÊı¾İ±¨IPÊ×²¿ÖĞµÄIPÑ¡Ïî
- */ //setsockopt(sockfd, SOL_IP,IP_OPTIONS,(void*)opt,optlen);Ó¦ÓÃ³ÌĞò¿ÉÒÔÍ¨¹ıÕâ¸öÉèÖÃ
-//ip_options²Î¿¼ip_options.c
-struct ip_options { //Êı¾İ½ÓÊÕµÄÊ±ºò´ÓSKBÖĞ»ñÈ¡IPÑ¡Ïî×Ö¶Î£¬¼ûip_rcv_options
+ * IPé€‰é¡¹ä¿¡æ¯å—ï¼Œåœ¨IPé€‰é¡¹å¤„ç†ä¸­ï¼ŒIPé€‰é¡¹ä¿¡æ¯å—ip_optionsæ˜¯
+ * æœ€å¸¸ç”¨çš„ç»“æ„ï¼Œç”¨æ¥æè¿°ç›¸å…³çš„IPé€‰é¡¹ã€‚è¯¥ç»“æ„å¯ä»¥ç”¨åœ¨SKBä¸­ï¼Œ
+ * æè¿°æ‰€åœ¨SKBçš„æ•°æ®æŠ¥ä¸­å­˜åœ¨çš„é€‰é¡¹ï¼Œå‚è§IPå±‚ä¸­ä¿¡æ¯æ§åˆ¶å—
+ * inet_skb_parmç»“æ„ï¼›ä¹Ÿå¯ä»¥å•ç‹¬ä½¿ç”¨ï¼Œå¦‚é€šè¿‡IP_OPTIONSé€‰é¡¹
+ * å’Œè·å–æ‰€åœ¨å¥—æ¥å­—å‘é€æ•°æ®æŠ¥IPé¦–éƒ¨ä¸­çš„IPé€‰é¡¹
+ */ //setsockopt(sockfd, SOL_IP,IP_OPTIONS,(void*)opt,optlen);åº”ç”¨ç¨‹åºå¯ä»¥é€šè¿‡è¿™ä¸ªè®¾ç½®
+//ip_optionså‚è€ƒip_options.c
+struct ip_options { //æ•°æ®æ¥æ”¶çš„æ—¶å€™ä»SKBä¸­è·å–IPé€‰é¡¹å­—æ®µï¼Œè§ip_rcv_options
 	/*
-	 * ´æÔÚ¿íËÉÔ´Â·ÓÉ»òÑÏ¸ñÔ´Â·ÓÉÑ¡ÏîÊ±£¬ÓÃÀ´
-	 * ¼ÇÂ¼ÏÂÒ»ÌøµÄIPµØÖ·
+	 * å­˜åœ¨å®½æ¾æºè·¯ç”±æˆ–ä¸¥æ ¼æºè·¯ç”±é€‰é¡¹æ—¶ï¼Œç”¨æ¥
+	 * è®°å½•ä¸‹ä¸€è·³çš„IPåœ°å€
 	 */
 	__be32		faddr;
 	/*
-	 * ±êÊ¶IPÊ×²¿ÖĞÑ¡ÏîËùÕ¼µÄ×Ö½ÚÊı£¬°üÀ¨__dataÖ®ºóµÄÊı¾İ£¬
-	 * Èç¹ûÓĞµÄ»°
+	 * æ ‡è¯†IPé¦–éƒ¨ä¸­é€‰é¡¹æ‰€å çš„å­—èŠ‚æ•°ï¼ŒåŒ…æ‹¬__dataä¹‹åçš„æ•°æ®ï¼Œ
+	 * å¦‚æœæœ‰çš„è¯
 	 */
 	unsigned char	optlen;
 	/*
-	 * ¼ÇÂ¼¿íËÉÔ´Â·ÓÉ»òÑÏ¸ñÔ´Â·ÓÉÑ¡ÏîÔÚIPÊ×²¿ÖĞµÄÆ«ÒÆÁ¿£¬
-	 * ¼´Ñ¡ÏîµÄµÚÒ»¸ö×Ö½ÚµÄµØÖ·¼õÈ¥IPÊ×²¿µÄµÚÒ»¸ö×Ö½ÚµÄµØÖ·
+	 * è®°å½•å®½æ¾æºè·¯ç”±æˆ–ä¸¥æ ¼æºè·¯ç”±é€‰é¡¹åœ¨IPé¦–éƒ¨ä¸­çš„åç§»é‡ï¼Œ
+	 * å³é€‰é¡¹çš„ç¬¬ä¸€ä¸ªå­—èŠ‚çš„åœ°å€å‡å»IPé¦–éƒ¨çš„ç¬¬ä¸€ä¸ªå­—èŠ‚çš„åœ°å€
 	 */
 	unsigned char	srr;
 	/*
-	 * ÓÃÓÚ¼ÇÂ¼Â·¾¶Ñ¡ÏîÔÚIPÊ×²¿ÖĞµÄÆ«ÒÆÁ¿
+	 * ç”¨äºè®°å½•è·¯å¾„é€‰é¡¹åœ¨IPé¦–éƒ¨ä¸­çš„åç§»é‡
 	 */
 	unsigned char	rr;
 	/*
-	 * ÓÃÓÚ¼ÇÂ¼Ê±¼ä´ÁÑ¡ÏîÔÚIPÊ×²¿ÖĞµÄÆ«ÒÆÁ¿
+	 * ç”¨äºè®°å½•æ—¶é—´æˆ³é€‰é¡¹åœ¨IPé¦–éƒ¨ä¸­çš„åç§»é‡
 	 */
 	unsigned char	ts;
 	/*
-	 * ±êÊ¶¸ÃIPÑ¡ÏîÊÇ·ñÓĞÊı¾İ£¬ÈôÓĞÔò´æ·ÅÔÚ__data×Ö¶ÎÆğÊ¼µÄ
-	 * ´æ´¢¿Õ¼äÄÚ£¬¼´½ô¸úÔÚip_option½á¹¹ºóÃæ¡£ÕâÀïµÄÊı¾İ²»Ö»
-	 * ÊÇÑ¡ÏîÊı¾İ£¬¶øÊÇÕû¸öÑ¡ÏîÄÚÈİ
+	 * æ ‡è¯†è¯¥IPé€‰é¡¹æ˜¯å¦æœ‰æ•°æ®ï¼Œè‹¥æœ‰åˆ™å­˜æ”¾åœ¨__dataå­—æ®µèµ·å§‹çš„
+	 * å­˜å‚¨ç©ºé—´å†…ï¼Œå³ç´§è·Ÿåœ¨ip_optionç»“æ„åé¢ã€‚è¿™é‡Œçš„æ•°æ®ä¸åª
+	 * æ˜¯é€‰é¡¹æ•°æ®ï¼Œè€Œæ˜¯æ•´ä¸ªé€‰é¡¹å†…å®¹
 	 */
 	/*
-	 * ±êÊ¶¸ÃÑ¡ÏîÊÇIPOPT_SSRR£¬¶ø²»ÊÇIPOPT_LSRR
+	 * æ ‡è¯†è¯¥é€‰é¡¹æ˜¯IPOPT_SSRRï¼Œè€Œä¸æ˜¯IPOPT_LSRR
 	 */
 	unsigned char	is_strictroute:1,
 			/*
-			 * ±íÊ¾Ä¿µÄµØÖ·ÊÇ´ÓÔ´Â·ÓÉÑ¡ÏîÑ¡³öµÄ
+			 * è¡¨ç¤ºç›®çš„åœ°å€æ˜¯ä»æºè·¯ç”±é€‰é¡¹é€‰å‡ºçš„
 			 */
 			srr_is_hit:1,
 			/*
-			 * ±êÊ¶ÊÇ·ñĞŞ¸Ä¹ıIPÊ×²¿£¬Èç¹ûÊÇÔòĞèÒªÖØĞÂ
-			 * ¼ÆËãIPÊ×²¿Ğ£ÑéºÍ
+			 * æ ‡è¯†æ˜¯å¦ä¿®æ”¹è¿‡IPé¦–éƒ¨ï¼Œå¦‚æœæ˜¯åˆ™éœ€è¦é‡æ–°
+			 * è®¡ç®—IPé¦–éƒ¨æ ¡éªŒå’Œ
 			 */
 			is_changed:1,
 			/*
-			 * ±êÊ¶ÓĞIPOPT_RRÑ¡Ïî£¬ĞèÒª¼ÇÂ¼IPµØÖ·¡£
+			 * æ ‡è¯†æœ‰IPOPT_RRé€‰é¡¹ï¼Œéœ€è¦è®°å½•IPåœ°å€ã€‚
 			 */
 			rr_needaddr:1,
 			/*
-			 * ts_needtime±êÊ¶ÓĞIPOPT_TIMESTAMPÑ¡Ïî£¬ĞèÒª
-			 * ¼ÇÂ¼Ê±¼ä´Á
-			 * ts_needaddr±êÊ¶ÓĞIPOPT_TIMESTAMPÑ¡Ïî£¬ĞèÒª
-			 * ¼ÇÂ¼IPµØÖ·
+			 * ts_needtimeæ ‡è¯†æœ‰IPOPT_TIMESTAMPé€‰é¡¹ï¼Œéœ€è¦
+			 * è®°å½•æ—¶é—´æˆ³
+			 * ts_needaddræ ‡è¯†æœ‰IPOPT_TIMESTAMPé€‰é¡¹ï¼Œéœ€è¦
+			 * è®°å½•IPåœ°å€
 			 */
 			ts_needtime:1,
 			ts_needaddr:1;
 	/*
-	 * ±êÊ¶IPOPT_RAÑ¡Ïî¡£Â·ÓÉÆ÷¾¯¸æÑ¡Ïî£¬±íÊ¾Â·ÓÉÆ÷
-	 * Ó¦¸Ã¸ü×ĞÏ¸µØ¼ì²éÕâ¸öÊı¾İ°ü
+	 * æ ‡è¯†IPOPT_RAé€‰é¡¹ã€‚è·¯ç”±å™¨è­¦å‘Šé€‰é¡¹ï¼Œè¡¨ç¤ºè·¯ç”±å™¨
+	 * åº”è¯¥æ›´ä»”ç»†åœ°æ£€æŸ¥è¿™ä¸ªæ•°æ®åŒ…
 	 */
 	unsigned char	router_alert;
 	/*
-	 * ÓÃÓÚ¼ÇÂ¼ÉÌÒµIP°²È«Ñ¡ÏîÔÚIPÊ×²¿ÖĞµÄÆ«ÒÆÁ¿
+	 * ç”¨äºè®°å½•å•†ä¸šIPå®‰å…¨é€‰é¡¹åœ¨IPé¦–éƒ¨ä¸­çš„åç§»é‡
 	 */
 	unsigned char	cipso;
 	/*
-	 * Î´Ê¹ÓÃ
+	 * æœªä½¿ç”¨
 	 */
 	unsigned char	__pad2;
 	/*
-	 * ÈôÑ¡ÏîÓĞÊı¾İÔò´Ó¸Ã×Ö¶Î¿ªÊ¼£¬Ê¹Ö®½ô¸úÔÚip_option½á¹¹ºóÃæ£¬
-	 * ×î¶à²»³¬¹ı40B
+	 * è‹¥é€‰é¡¹æœ‰æ•°æ®åˆ™ä»è¯¥å­—æ®µå¼€å§‹ï¼Œä½¿ä¹‹ç´§è·Ÿåœ¨ip_optionç»“æ„åé¢ï¼Œ
+	 * æœ€å¤šä¸è¶…è¿‡40B
 	 */
 	unsigned char	__data[0];
 };
@@ -142,74 +142,74 @@ struct ip_options { //Êı¾İ½ÓÊÕµÄÊ±ºò´ÓSKBÖĞ»ñÈ¡IPÑ¡Ïî×Ö¶Î£¬¼ûip_rcv_options
 
 #define optlength(opt) (sizeof(struct ip_options) + opt->optlen)
 /*
- * ¸Ã½á¹¹Ö÷ÒªÃèÊöË«·½µÄµØÖ·¡¢ËùÖ§³ÖµÄTCPÑ¡ÏîµÈ
-  tcp_request_sock°üº¬inet_request_sock£¬inet_request_sock°üº¬request_sock
- *///request_sock_queueÖĞµÄlisten_sockÀïÃæµÄhash±ísyn_tableÖĞ´æ´¢µÄÕâ¸ö½á¹¹
+ * è¯¥ç»“æ„ä¸»è¦æè¿°åŒæ–¹çš„åœ°å€ã€æ‰€æ”¯æŒçš„TCPé€‰é¡¹ç­‰
+  tcp_request_sockåŒ…å«inet_request_sockï¼Œinet_request_sockåŒ…å«request_sock
+ *///request_sock_queueä¸­çš„listen_socké‡Œé¢çš„hashè¡¨syn_tableä¸­å­˜å‚¨çš„è¿™ä¸ªç»“æ„
 struct inet_request_sock {
 	struct request_sock	req;
 #if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
 	u16			inet6_rsk_offset;
 #endif
 	/*
-	 * ±¾µØ¶Ë¿ÚºÅ
+	 * æœ¬åœ°ç«¯å£å·
 	 */
 	__be16			loc_port;
 	/*
-	 * ±¾µØIPµØÖ·
+	 * æœ¬åœ°IPåœ°å€
 	 */
 	__be32			loc_addr;
 	/*
-	 * ¶Ô¶ËIPµØÖ·
+	 * å¯¹ç«¯IPåœ°å€
 	 */
 	__be32			rmt_addr;
 	/*
-	 * ¶Ô¶Ë¶Ë¿ÚºÅ
+	 * å¯¹ç«¯ç«¯å£å·
 	 */
 	__be16			rmt_port;
 	kmemcheck_bitfield_begin(flags);
 	/*
-	 * ·¢ËÍ´°¿ÚÀ©´óÒò×Ó£¬¼´Òª°ÑTCPÊ×²¿ÖĞÖ¸¶¨µÄ»¬¶¯´°¿Ú´óĞ¡
-	 * ×óÒÆsnd_wscaleÎ»ºó£¬×÷ÎªÕæÕıµÄ»¬¶¯´°¿Ú´óĞ¡¡£ÔÚTCP
-	 * Ê×²¿ÖĞ£¬»¬¶¯´°¿Ú´óĞ¡ÖµÎª16Î»µÄ£¬¶øsnd_wscaleµÄÖµ×î´ó
-	 * Ö»ÄÜÎª14¡£ËùÒÔ£¬»¬¶¯´°¿Ú×î´ó¿É±»À©Õ¹µ½30Î»£¬ÔÚĞ­ÒéÕ»
-	 * µÄÊµ¼ÊÊµÏÖÖĞ£¬¿ÉÒÔ¿´µ½´°¿Ú´óĞ¡±»ÖÃÎª5840£¬À©´óÒò×ÓÎª2£¬
-	 * ¼´Êµ¼ÊµÄ´°¿Ú´óĞ¡Îª5840<<2=23360B
+	 * å‘é€çª—å£æ‰©å¤§å› å­ï¼Œå³è¦æŠŠTCPé¦–éƒ¨ä¸­æŒ‡å®šçš„æ»‘åŠ¨çª—å£å¤§å°
+	 * å·¦ç§»snd_wscaleä½åï¼Œä½œä¸ºçœŸæ­£çš„æ»‘åŠ¨çª—å£å¤§å°ã€‚åœ¨TCP
+	 * é¦–éƒ¨ä¸­ï¼Œæ»‘åŠ¨çª—å£å¤§å°å€¼ä¸º16ä½çš„ï¼Œè€Œsnd_wscaleçš„å€¼æœ€å¤§
+	 * åªèƒ½ä¸º14ã€‚æ‰€ä»¥ï¼Œæ»‘åŠ¨çª—å£æœ€å¤§å¯è¢«æ‰©å±•åˆ°30ä½ï¼Œåœ¨åè®®æ ˆ
+	 * çš„å®é™…å®ç°ä¸­ï¼Œå¯ä»¥çœ‹åˆ°çª—å£å¤§å°è¢«ç½®ä¸º5840ï¼Œæ‰©å¤§å› å­ä¸º2ï¼Œ
+	 * å³å®é™…çš„çª—å£å¤§å°ä¸º5840<<2=23360B
 	 */
 	u16			snd_wscale : 4,
 				/*
-				 * ½ÓÊÕ´°¿ÚÀ©´óÒò×Ó
+				 * æ¥æ”¶çª—å£æ‰©å¤§å› å­
 				 */
 				rcv_wscale : 4,
 				/*
-				 * ±êÊ¶TCP¶ÎÊÇ·ñ´æÔÚTCPÊ±¼ä´ÁÑ¡Ïî
+				 * æ ‡è¯†TCPæ®µæ˜¯å¦å­˜åœ¨TCPæ—¶é—´æˆ³é€‰é¡¹
 				 */
 				tstamp_ok  : 1,
 				/*
-				 * ±êÊ¶ÊÇ·ñÖ§³ÖSACK£¬Ö§³ÖÔò¸ÃÑ¡ÏîÄÜ³öÏÖÔÚSYN¶ÎÖĞ
+				 * æ ‡è¯†æ˜¯å¦æ”¯æŒSACKï¼Œæ”¯æŒåˆ™è¯¥é€‰é¡¹èƒ½å‡ºç°åœ¨SYNæ®µä¸­
 				 */
 				sack_ok	   : 1,
 				/*
-				 * ±êÊ¶ÊÇ·ñÖ§³Ö´°¿ÚÀ©´óÒò×Ó£¬Èç¹ûÖ§³Ö¸ÃÑ¡ÏîÒ²Ö»ÄÜ³öÏÖ
-				 * ÔÚSYN¶ÎÖĞ
+				 * æ ‡è¯†æ˜¯å¦æ”¯æŒçª—å£æ‰©å¤§å› å­ï¼Œå¦‚æœæ”¯æŒè¯¥é€‰é¡¹ä¹Ÿåªèƒ½å‡ºç°
+				 * åœ¨SYNæ®µä¸­
 				 */
 				wscale_ok  : 1,
 				/*
-				 * ±êÖ¾ÊÇ·ñÆôÓÃÁËÏÔÊ½ÓµÈûÍ¨Öª
+				 * æ ‡å¿—æ˜¯å¦å¯ç”¨äº†æ˜¾å¼æ‹¥å¡é€šçŸ¥
 				 */
 				ecn_ok	   : 1,
 				/*
-				 * ±êÊ¶ÒÑ½ÓÊÕµ½µÚÈı´ÎÎÕÊÖµÄACK¶Î£¬µ«ÊÇÓÉÓÚ·şÎñÆ÷·±Ã¦
-				 * »òÆäËûÔ­Òòµ¼ÖÂÎ´ÄÜ½¨Á¢ÆğÁ¬½Ó£¬´ËÊ±¿É¸ù¾İ¸Ã±êÖ¾ÖØĞÂ
-				 * ¸ø¿Í»§¶Ë·¢ËÍSYN+ACK¶Î£¬ÔÙ´Î½øĞĞÁ¬½ÓµÄ½¨Á¢¡£¸Ã±êÖ¾
-				 * µÄÉèÖÃÍ¬Ê±ÊÜsysctl_tcp_abort_on_overflowµÄ¿ØÖÆ
+				 * æ ‡è¯†å·²æ¥æ”¶åˆ°ç¬¬ä¸‰æ¬¡æ¡æ‰‹çš„ACKæ®µï¼Œä½†æ˜¯ç”±äºæœåŠ¡å™¨ç¹å¿™
+				 * æˆ–å…¶ä»–åŸå› å¯¼è‡´æœªèƒ½å»ºç«‹èµ·è¿æ¥ï¼Œæ­¤æ—¶å¯æ ¹æ®è¯¥æ ‡å¿—é‡æ–°
+				 * ç»™å®¢æˆ·ç«¯å‘é€SYN+ACKæ®µï¼Œå†æ¬¡è¿›è¡Œè¿æ¥çš„å»ºç«‹ã€‚è¯¥æ ‡å¿—
+				 * çš„è®¾ç½®åŒæ—¶å—sysctl_tcp_abort_on_overflowçš„æ§åˆ¶
 				 */
 				acked	   : 1,
 				no_srccheck: 1;
 	kmemcheck_bitfield_end(flags);
-	struct ip_options	*opt;//·şÎñÆ÷¶ËÔÚ½ÓÊÕµ½SYNºó£¬»á½âÎöSKBÖĞµÄipÑ¡Ïî×Ö¶Î£¬¼ûtcp_v4_save_options
+	struct ip_options	*opt;//æœåŠ¡å™¨ç«¯åœ¨æ¥æ”¶åˆ°SYNåï¼Œä¼šè§£æSKBä¸­çš„ipé€‰é¡¹å­—æ®µï¼Œè§tcp_v4_save_options
 };
 
-//tcp_request_sock°üº¬inet_request_sock£¬inet_request_sock°üº¬request_sock
+//tcp_request_sockåŒ…å«inet_request_sockï¼Œinet_request_sockåŒ…å«request_sock
 struct inet_request_sock1 {
 	struct request_sock	req;
 #if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
@@ -259,126 +259,126 @@ struct rtable;
  * @mc_index - Multicast device index
  * @mc_list - Group array
  * @cork - info to build ip hdr on each ip frag while socket is corked
-Ì×½Ó×ÖÖĞ±¾¶ÎºÍ¶Ô¶ËµÄÏà¹ØĞÅÏ¢¶¼·ÅÔÚinet_sockÖĞ£¬¿ÉÒÔ±£Ö¤ºÍĞ­ÒéÎŞ¹Ø£¬¸÷ÖÖĞ­Òé¶¼ÓÃ¸Ã½á¹¹´æ´¢±¾µØµØÖ·¶Ë¿ÚºÍ¶Ô¶ËµØÖ·¶Ë¿ÚÒÑ¾­Á¬½Ó×´Ì¬µÈ
-ÒÔtcpÎªÀı£¬struct tcp_sock°üº¬struct inet_connection_sock,inet_connection_sock°üº¬ struct inet_sock£¬struct inet_sock°üº¬struct sock, struct sockºóÃæÊÇ struct sock_common¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct tcp_sock)
-ÒÔudpÎªÀı£¬struct udp_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock£¬ struct sockºóÃæÊÇ struct sock_common¡£¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct udp_sock)
-ÒÔrawÎªÀı£¬struct raw_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock£¬ struct sockºóÃæÊÇ struct sock_common¡£¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct raw_sock)
-tcp_sock->inet_connection_sock->inet_sock->sock(socketÀïÃæµÄskÖ¸Ïòsock)
+å¥—æ¥å­—ä¸­æœ¬æ®µå’Œå¯¹ç«¯çš„ç›¸å…³ä¿¡æ¯éƒ½æ”¾åœ¨inet_sockä¸­ï¼Œå¯ä»¥ä¿è¯å’Œåè®®æ— å…³ï¼Œå„ç§åè®®éƒ½ç”¨è¯¥ç»“æ„å­˜å‚¨æœ¬åœ°åœ°å€ç«¯å£å’Œå¯¹ç«¯åœ°å€ç«¯å£å·²ç»è¿æ¥çŠ¶æ€ç­‰
+ä»¥tcpä¸ºä¾‹ï¼Œstruct tcp_sockåŒ…å«struct inet_connection_sock,inet_connection_sockåŒ…å« struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sock, struct sockåé¢æ˜¯ struct sock_commonã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct tcp_sock)
+ä»¥udpä¸ºä¾‹ï¼Œstruct udp_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockï¼Œ struct sockåé¢æ˜¯ struct sock_commonã€‚ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct udp_sock)
+ä»¥rawä¸ºä¾‹ï¼Œstruct raw_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockï¼Œ struct sockåé¢æ˜¯ struct sock_commonã€‚ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct raw_sock)
+tcp_sock->inet_connection_sock->inet_sock->sock(socketé‡Œé¢çš„skæŒ‡å‘sock)
 */ 
-/*ÒÔtcpÎªÀı£¬struct tcp_sock°üº¬struct inet_connection_sock,inet_connection_sock°üº¬ struct inet_sock£¬struct inet_sock°üº¬struct sock, struct sockºóÃæÊÇ struct sock_common¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct tcp_sock)
-ÒÔudpÎªÀı£¬struct udp_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock£¬ struct sockºóÃæÊÇ struct sock_common¡£¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct udp_sock)
-ÒÔrawÎªÀı£¬struct raw_sock°üº¬struct inet_connection_sock inet_connection_sock°üº¬struct inet_sock£¬struct inet_sock°üº¬struct sock£¬ struct sockºóÃæÊÇ struct sock_common¡£¡£ËùÒÔÔÚstruct socketÀïÃæµÄskÖ¸ÏòµÄ¿ª±Ù¿Õ¼ä´óĞ¡ÊÇsizeof(struct raw_sock)
-//tcp_timewait_sock°üº¬inet_timewait_sock£¬inet_timewait_sock°üº¬sock_common
-tcp_request_sock°üº¬inet_request_sock£¬inet_request_sock°üº¬request_sock*/
+/*ä»¥tcpä¸ºä¾‹ï¼Œstruct tcp_sockåŒ…å«struct inet_connection_sock,inet_connection_sockåŒ…å« struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sock, struct sockåé¢æ˜¯ struct sock_commonã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct tcp_sock)
+ä»¥udpä¸ºä¾‹ï¼Œstruct udp_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockï¼Œ struct sockåé¢æ˜¯ struct sock_commonã€‚ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct udp_sock)
+ä»¥rawä¸ºä¾‹ï¼Œstruct raw_sockåŒ…å«struct inet_connection_sock inet_connection_sockåŒ…å«struct inet_sockï¼Œstruct inet_sockåŒ…å«struct sockï¼Œ struct sockåé¢æ˜¯ struct sock_commonã€‚ã€‚æ‰€ä»¥åœ¨struct socketé‡Œé¢çš„skæŒ‡å‘çš„å¼€è¾Ÿç©ºé—´å¤§å°æ˜¯sizeof(struct raw_sock)
+//tcp_timewait_sockåŒ…å«inet_timewait_sockï¼Œinet_timewait_sockåŒ…å«sock_common
+tcp_request_sockåŒ…å«inet_request_sockï¼Œinet_request_sockåŒ…å«request_sock*/
 
-//Ì×½Ó×ÖÖĞ±¾¶ËºÍ¶Ô¶ËµÄÏà¹ØĞÅÏ¢¶¼·ÅÔÚÕâÀïÃæ£¬´Ó¶øÓë¶ÔÓ¦µÄtcp_proc udp_procµÈĞ­ÒéÎŞ¹Ø£¬±£Ö¤Óë¾ßÌåĞ­ÒéÎŞ¹Ø£¬ËùÓĞĞ­Òé¶¼ÓÃÕâ¸ö¹«ÓÃ½á¹¹
+//å¥—æ¥å­—ä¸­æœ¬ç«¯å’Œå¯¹ç«¯çš„ç›¸å…³ä¿¡æ¯éƒ½æ”¾åœ¨è¿™é‡Œé¢ï¼Œä»è€Œä¸å¯¹åº”çš„tcp_proc udp_procç­‰åè®®æ— å…³ï¼Œä¿è¯ä¸å…·ä½“åè®®æ— å…³ï¼Œæ‰€æœ‰åè®®éƒ½ç”¨è¿™ä¸ªå…¬ç”¨ç»“æ„
 struct inet_sock {
     /* sk and pinet6 has to be the first two members of inet_sock */
     /*
-     * sock½á¹¹ÊÇÍ¨ÓÃµÄÍøÂç²ãÃèÊö¿é£¬¹¹³É´«Êä¿ØÖÆ¿éµÄ»ù´¡
+     * sockç»“æ„æ˜¯é€šç”¨çš„ç½‘ç»œå±‚æè¿°å—ï¼Œæ„æˆä¼ è¾“æ§åˆ¶å—çš„åŸºç¡€
      */
     struct sock     sk;
 #if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
-    /* Èç¹ûÖ§³ÖIPv6ÌØĞÔ£¬pinet6ÊÇÖ¸ÏòIPv6¿ØÖÆ¿éµÄÖ¸Õë */
+    /* å¦‚æœæ”¯æŒIPv6ç‰¹æ€§ï¼Œpinet6æ˜¯æŒ‡å‘IPv6æ§åˆ¶å—çš„æŒ‡é’ˆ */
     struct ipv6_pinfo   *pinet6;
 #endif
     /* Socket demultiplex comparisons on incoming packets. */
-    /* Ä¿µÄIPµØÖ·*/
+    /* ç›®çš„IPåœ°å€*/
     __be32          daddr;
     /*
-     * ÒÑ°ó¶¨µÄ±¾µØIPµØÖ·¡£½ÓÊÕÊı¾İÊ±£¬×÷ÎªÌõ¼şµÄÒ»²¿·Ö²éÕÒ
-     * Êı¾İËùÊôµÄ´«Êä¿ØÖÆ¿é
+     * å·²ç»‘å®šçš„æœ¬åœ°IPåœ°å€ã€‚æ¥æ”¶æ•°æ®æ—¶ï¼Œä½œä¸ºæ¡ä»¶çš„ä¸€éƒ¨åˆ†æŸ¥æ‰¾
+     * æ•°æ®æ‰€å±çš„ä¼ è¾“æ§åˆ¶å—
      */
     __be32          rcv_saddr;
-    /* Ä¿µÄ¶Ë¿ÚºÅ*/
+    /* ç›®çš„ç«¯å£å·*/
     __be16          dport;
-    /* Ö÷»ú×Ö½ÚĞò´æ´¢µÄ±¾µØ¶Ë¿Ú¡£*/
+    /* ä¸»æœºå­—èŠ‚åºå­˜å‚¨çš„æœ¬åœ°ç«¯å£ã€‚*/
     __u16           num;
     /*
-     * Ò²±êÊ¶±¾µØIPµØÖ·£¬µ«ÔÚ·¢ËÍÊ±Ê¹ÓÃ¡£rcv_saddrºÍsaddr
-     * ¶¼ÃèÊö±¾µØIPµØÖ·£¬µ«ÓÃÍ¾²»Í¬
+     * ä¹Ÿæ ‡è¯†æœ¬åœ°IPåœ°å€ï¼Œä½†åœ¨å‘é€æ—¶ä½¿ç”¨ã€‚rcv_saddrå’Œsaddr
+     * éƒ½æè¿°æœ¬åœ°IPåœ°å€ï¼Œä½†ç”¨é€”ä¸åŒ
      */
     __be32          saddr;
     /*
-     * µ¥²¥±¨ÎÄµÄTTL,Ä¬ÈÏÖµÎª-1£¬±íÊ¾Ê¹ÓÃÄ¬ÈÏµÄTTLÖµ¡£
-     * ÔÚÊä³öIPÊı¾İ°üÊ±£¬TTLÖµÊ×ÏÈ´ÓÕâÀï»ñÈ¡£¬ÈôÃ»ÓĞ
-     * ÉèÖÃ£¬Ôò´ÓÂ·ÓÉ»º´æµÄmetricÖĞ»ñÈ¡¡£²Î¼ûIP_TTL
-     * Ì×½Ó×ÖÑ¡Ïî 
+     * å•æ’­æŠ¥æ–‡çš„TTL,é»˜è®¤å€¼ä¸º-1ï¼Œè¡¨ç¤ºä½¿ç”¨é»˜è®¤çš„TTLå€¼ã€‚
+     * åœ¨è¾“å‡ºIPæ•°æ®åŒ…æ—¶ï¼ŒTTLå€¼é¦–å…ˆä»è¿™é‡Œè·å–ï¼Œè‹¥æ²¡æœ‰
+     * è®¾ç½®ï¼Œåˆ™ä»è·¯ç”±ç¼“å­˜çš„metricä¸­è·å–ã€‚å‚è§IP_TTL
+     * å¥—æ¥å­—é€‰é¡¹ 
      */
     __s16           uc_ttl;
     /* 
-     * ´æ·ÅÒ»Ğ©IPPROTO_IP¼¶±ğµÄÑ¡ÏîÖµ£¬¿ÉÄÜµÄÈ¡ÖµÎªIP_CMSG_PKTINFOµÈ
+     * å­˜æ”¾ä¸€äº›IPPROTO_IPçº§åˆ«çš„é€‰é¡¹å€¼ï¼Œå¯èƒ½çš„å–å€¼ä¸ºIP_CMSG_PKTINFOç­‰
      */
     __u16           cmsg_flags;
-    /* Ö¸ÏòIPÊı¾İ°üÑ¡ÏîµÄÖ¸Õë*/
+    /* æŒ‡å‘IPæ•°æ®åŒ…é€‰é¡¹çš„æŒ‡é’ˆ*/
     struct ip_options   *opt;
-    /* ÓÉnum×ª»»³ÉµÄÍøÂç×Ö½ÚĞòµÄÔ´¶Ë¿Ú£¬Ò²¾ÍÊÇ±¾µØ¶Ë¿Ú */
+    /* ç”±numè½¬æ¢æˆçš„ç½‘ç»œå­—èŠ‚åºçš„æºç«¯å£ï¼Œä¹Ÿå°±æ˜¯æœ¬åœ°ç«¯å£ */
     __be16          sport;
-    /* Ò»¸öµ¥µ÷µİÔöµÄÖµ£¬ÓÃÀ´¸³¸øIPÊ×²¿ÖĞµÄidÓò */
+    /* ä¸€ä¸ªå•è°ƒé€’å¢çš„å€¼ï¼Œç”¨æ¥èµ‹ç»™IPé¦–éƒ¨ä¸­çš„idåŸŸ */
     __u16           id;
-    /* ÓÃÓÚÉèÖÃIPÊı¾İ°üÊ×²¿µÄTOSÓò£¬²Î¼ûIP_TOSÌ×½Ó×ÖÑ¡Ïî */
+    /* ç”¨äºè®¾ç½®IPæ•°æ®åŒ…é¦–éƒ¨çš„TOSåŸŸï¼Œå‚è§IP_TOSå¥—æ¥å­—é€‰é¡¹ */
     __u8            tos;
-    /* ÓÃÓÚÉèÖÃ¶à²¥Êı¾İ°üµÄTTL */
+    /* ç”¨äºè®¾ç½®å¤šæ’­æ•°æ®åŒ…çš„TTL */
     __u8            mc_ttl;
     /* 
-     * ±êÊ¶Ì×½Ó×ÖÊÇ·ñÆôÓÃÂ·¾¶MTU·¢ÏÖ¹¦ÄÜ£¬³õÊ¼Öµ¸ù¾İÏµÍ³
-     * ¿ØÖÆ²ÎÊıip_no_pmtu_discÀ´È·¶¨£¬²Î¼ûIP_MTU_DISCOVER
-     * Ì×½Ó×ÖÑ¡Ïî¡£¿ÉÄÜµÄÈ¡ÖµÓĞIP_PMTUDISC_DOµÈ
+     * æ ‡è¯†å¥—æ¥å­—æ˜¯å¦å¯ç”¨è·¯å¾„MTUå‘ç°åŠŸèƒ½ï¼Œåˆå§‹å€¼æ ¹æ®ç³»ç»Ÿ
+     * æ§åˆ¶å‚æ•°ip_no_pmtu_discæ¥ç¡®å®šï¼Œå‚è§IP_MTU_DISCOVER
+     * å¥—æ¥å­—é€‰é¡¹ã€‚å¯èƒ½çš„å–å€¼æœ‰IP_PMTUDISC_DOç­‰
      */
     __u8            pmtudisc;
     /*
-     * ±êÊ¶ÊÇ·ñÔÊĞí½ÓÊÕÀ©Õ¹µÄ¿É¿¿´íÎóĞÅÏ¢¡£
-     * ²Î¼ûIP_RECVERRÌ×½Ó×ÖÑ¡Ïî
+     * æ ‡è¯†æ˜¯å¦å…è®¸æ¥æ”¶æ‰©å±•çš„å¯é é”™è¯¯ä¿¡æ¯ã€‚
+     * å‚è§IP_RECVERRå¥—æ¥å­—é€‰é¡¹
      */
     __u8            recverr:1,
     /*
-     * ±êÊ¶ÊÇ·ñÎª»ùÓÚÁ¬½ÓµÄ´«Êä¿ØÖÆ¿é£¬¼´ÊÇ·ñÎª»ùÓÚ
-     * inet_connection_sock½á¹¹µÄ´«Êä¿ØÖÆ¿é£¬ÈçTCPµÄ´«Êä¿ØÖÆ¿é
+     * æ ‡è¯†æ˜¯å¦ä¸ºåŸºäºè¿æ¥çš„ä¼ è¾“æ§åˆ¶å—ï¼Œå³æ˜¯å¦ä¸ºåŸºäº
+     * inet_connection_sockç»“æ„çš„ä¼ è¾“æ§åˆ¶å—ï¼Œå¦‚TCPçš„ä¼ è¾“æ§åˆ¶å—
      */
                 is_icsk:1,
     /*
-     * ±êÊ¶ÊÇ·ñÔÊĞí°ó¶¨·ÇÖ÷»úµØÖ·£¬²Î¼ûIP_FREEBINDÌ×½Ó×ÖÑ¡Ïî 
+     * æ ‡è¯†æ˜¯å¦å…è®¸ç»‘å®šéä¸»æœºåœ°å€ï¼Œå‚è§IP_FREEBINDå¥—æ¥å­—é€‰é¡¹ 
      *
      */
                 freebind:1,
     /*
-     * ±êÊ¶IPÊ×²¿ÊÇ·ñÓÉÓÃ»§Êı¾İ¹¹½¨¡£¸Ã±êÊ¶Ö»ÓÃÓÚRAWÌ×½Ó×Ö£¬
-     * Ò»µ©ÉèÖÃºó£¬IPÑ¡ÏîÖĞµÄIP_TTLºÍIP_TOS¶¼½«±»ºöÂÔ
+     * æ ‡è¯†IPé¦–éƒ¨æ˜¯å¦ç”±ç”¨æˆ·æ•°æ®æ„å»ºã€‚è¯¥æ ‡è¯†åªç”¨äºRAWå¥—æ¥å­—ï¼Œ
+     * ä¸€æ—¦è®¾ç½®åï¼ŒIPé€‰é¡¹ä¸­çš„IP_TTLå’ŒIP_TOSéƒ½å°†è¢«å¿½ç•¥
      */
                 hdrincl:1,
-    /* ±êÊ¶×é²¥ÊÇ·ñ·¢Ïò»ØÂ· */
+    /* æ ‡è¯†ç»„æ’­æ˜¯å¦å‘å‘å›è·¯ */
                 mc_loop:1,
                 transparent:1,
                 mc_all:1;
     /*
-     * ·¢ËÍ×é²¥±¨ÎÄµÄÍøÂçÉè±¸Ë÷ÒıºÅ¡£Èç¹ûÎª0£¬Ôò±íÊ¾
-     * ¿ÉÒÔ´ÓÈÎºÎÍøÂçÉè±¸·¢ËÍ
+     * å‘é€ç»„æ’­æŠ¥æ–‡çš„ç½‘ç»œè®¾å¤‡ç´¢å¼•å·ã€‚å¦‚æœä¸º0ï¼Œåˆ™è¡¨ç¤º
+     * å¯ä»¥ä»ä»»ä½•ç½‘ç»œè®¾å¤‡å‘é€
      */
     int         mc_index;
-    /* ·¢ËÍ×é²¥±¨ÎÄµÄÔ´µØÖ· */
+    /* å‘é€ç»„æ’­æŠ¥æ–‡çš„æºåœ°å€ */
     __be32          mc_addr;
-    /* ËùÔÚÌ×½Ó×Ö¼ÓÈëµÄ×é²¥µØÖ·ÁĞ±í */
+    /* æ‰€åœ¨å¥—æ¥å­—åŠ å…¥çš„ç»„æ’­åœ°å€åˆ—è¡¨ */
     struct ip_mc_socklist   *mc_list;
     struct {
-        /* ¿ÉÄÜµÄÖµÎªIPCORK_OPT»òIPCORK_ALLFRAG*/
+        /* å¯èƒ½çš„å€¼ä¸ºIPCORK_OPTæˆ–IPCORK_ALLFRAG*/
         unsigned int        flags;
-        /* UDPÊı¾İ°ü»òÔ­Ê¼IPÊı¾İ°ü·ÖÆ¬´óĞ¡ */
+        /* UDPæ•°æ®åŒ…æˆ–åŸå§‹IPæ•°æ®åŒ…åˆ†ç‰‡å¤§å° */
         unsigned int        fragsize;
-        /* Ö¸Ïò´Ë´Î·¢ËÍÊı¾İ°üµÄIPÑ¡Ïî */
+        /* æŒ‡å‘æ­¤æ¬¡å‘é€æ•°æ®åŒ…çš„IPé€‰é¡¹ */
         struct ip_options   *opt;
-        /* ·¢ËÍÊı¾İ°üÊ¹ÓÃµÄÊä³öÂ·ÓÉ»º´æÏî */
+        /* å‘é€æ•°æ®åŒ…ä½¿ç”¨çš„è¾“å‡ºè·¯ç”±ç¼“å­˜é¡¹ */
         struct dst_entry    *dst;
-        /* µ±Ç°·¢ËÍµÄÊı¾İ°üµÄÊı¾İ³¤¶È */
+        /* å½“å‰å‘é€çš„æ•°æ®åŒ…çš„æ•°æ®é•¿åº¦ */
         int         length; /* Total length of all frames */
-        /* Êä³öIPÊı¾İ°üµÄÄ¿µÄµØÖ· */
+        /* è¾“å‡ºIPæ•°æ®åŒ…çš„ç›®çš„åœ°å€ */
         __be32          addr;
         /* 
-         * ÓÃflowi½á¹¹À´»º´æÄ¿µÄµØÖ·¡¢Ä¿µÄ¶Ë¿Ú¡¢Ô´µØÖ·ºÍÔ´¶Ë¿Ú£¬
-         * ¹¹ÔìUDP±¨ÎÄÊ±ÓĞ¹ØĞÅÏ¢¾ÍÈ¡×ÔÕâÀï 
+         * ç”¨flowiç»“æ„æ¥ç¼“å­˜ç›®çš„åœ°å€ã€ç›®çš„ç«¯å£ã€æºåœ°å€å’Œæºç«¯å£ï¼Œ
+         * æ„é€ UDPæŠ¥æ–‡æ—¶æœ‰å…³ä¿¡æ¯å°±å–è‡ªè¿™é‡Œ 
          */
         struct flowi        fl;
-    } cork; /* UDP»òÔ­Ê¼IPÔÚÃ¿´Î·¢ËÍÊ±»º´æµÄÒ»Ğ©ÁÙÊ±ĞÅÏ¢¡£ÈçUDP
-     Êı¾İ°ü»òÔ­Ê¼IPÊı¾İ°ü·ÖÆ¬µÄ´óĞ¡*/
+    } cork; /* UDPæˆ–åŸå§‹IPåœ¨æ¯æ¬¡å‘é€æ—¶ç¼“å­˜çš„ä¸€äº›ä¸´æ—¶ä¿¡æ¯ã€‚å¦‚UDP
+     æ•°æ®åŒ…æˆ–åŸå§‹IPæ•°æ®åŒ…åˆ†ç‰‡çš„å¤§å°*/
 };
 
 struct inet_sock {

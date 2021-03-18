@@ -33,40 +33,40 @@ struct request_values {
 };
 
 /*
- * ´¦ÀíÁ¬½ÓÇëÇóµÄº¯ÊýÖ¸Õë±í£¬ÆäÖÐ°üÀ¨ÓÃÓÚ·¢ËÍSYN+ACK¶Î¡¢
- * ACK¶Î¡¢RST¶ÎµÄº¯Êý¡£TCPÖÐ£¬Ö¸ÏòµÄÊµÀýÎªtcp_request_sock_ops¡£ timewaitÎªtcp_timewait_sock_ops
+ * å¤„ç†è¿žæŽ¥è¯·æ±‚çš„å‡½æ•°æŒ‡é’ˆè¡¨ï¼Œå…¶ä¸­åŒ…æ‹¬ç”¨äºŽå‘é€SYN+ACKæ®µã€
+ * ACKæ®µã€RSTæ®µçš„å‡½æ•°ã€‚TCPä¸­ï¼ŒæŒ‡å‘çš„å®žä¾‹ä¸ºtcp_request_sock_opsã€‚ timewaitä¸ºtcp_timewait_sock_ops
  */
 struct request_sock_ops {
 	/*
-	 * ËùÊôÐ­Òé×å
+	 * æ‰€å±žåè®®æ—
 	 */
 	int		family;
 	/*
-	 * obj_sizeÊÇtcp_request_sock½á¹¹³¤¶È£¬ÓÃÓÚ´´½¨·ÖÅä
-	 * Á¬½ÓÇëÇó¿éµÄ¸ßËÙ»º´æslab£¬¸Ã»º´æÔÚ×¢²á´«Êä²ãÐ­Òé
-	 * Ê±´´½¨£¬²Î¼ûproto_register()¡£
+	 * obj_sizeæ˜¯tcp_request_sockç»“æž„é•¿åº¦ï¼Œç”¨äºŽåˆ›å»ºåˆ†é…
+	 * è¿žæŽ¥è¯·æ±‚å—çš„é«˜é€Ÿç¼“å­˜slabï¼Œè¯¥ç¼“å­˜åœ¨æ³¨å†Œä¼ è¾“å±‚åè®®
+	 * æ—¶åˆ›å»ºï¼Œå‚è§proto_register()ã€‚
 	 */
 	int		obj_size;
 	struct kmem_cache	*slab;
 	char		*slab_name;
 	/*
-	 * ·¢ËÍSYN+ACK¶ÎµÄº¯ÊýÖ¸Õë£¬TCPÖÐÎªtcp_v4_send_synack()
+	 * å‘é€SYN+ACKæ®µçš„å‡½æ•°æŒ‡é’ˆï¼ŒTCPä¸­ä¸ºtcp_v4_send_synack()
 	 */
 	int		(*rtx_syn_ack)(struct sock *sk,
 				       struct request_sock *req);
 	/*
-	 * ·¢ËÍACK¶ÎµÄº¯ÊýÖ¸Õë£¬TCPÖÐÎªtcp_v4_reqsk_send_ack()
+	 * å‘é€ACKæ®µçš„å‡½æ•°æŒ‡é’ˆï¼ŒTCPä¸­ä¸ºtcp_v4_reqsk_send_ack()
 	 */
 	void		(*send_ack)(struct sock *sk, struct sk_buff *skb,
 				    struct request_sock *req);
 	/*
-	 * ·¢ËÍRST¶ÎµÄº¯ÊýÖ¸Õë£¬TCPÖÐÎªtcp_v4_send_reset()
+	 * å‘é€RSTæ®µçš„å‡½æ•°æŒ‡é’ˆï¼ŒTCPä¸­ä¸ºtcp_v4_send_reset()
 	 */
 	void		(*send_reset)(struct sock *sk,
 				      struct sk_buff *skb);
 	/*
-	 * Îö¹¹º¯Êý£¬ÔÚÊÍ·ÅÁ¬½ÓÇëÇó¿éÊ±±»µ÷ÓÃ£¬ÓÃÀ´ÇåÀíÊÍ·Å×ÊÔ´¡£TCPÖÐ
-	 * Îªtcp_v4_reqsk_destructor()¡£
+	 * æžæž„å‡½æ•°ï¼Œåœ¨é‡Šæ”¾è¿žæŽ¥è¯·æ±‚å—æ—¶è¢«è°ƒç”¨ï¼Œç”¨æ¥æ¸…ç†é‡Šæ”¾èµ„æºã€‚TCPä¸­
+	 * ä¸ºtcp_v4_reqsk_destructor()ã€‚
 	 */
 	void		(*destructor)(struct request_sock *req);
 };
@@ -90,58 +90,58 @@ struct request_sock_ops1 {
 
 /* struct request_sock - mini sock to represent a connection request
  */   
- //tcp_request_sock°üº¬inet_request_sock£¬inet_request_sock°üº¬request_sock
+ //tcp_request_sockåŒ…å«inet_request_sockï¼Œinet_request_sockåŒ…å«request_sock
  /*
- * Ö÷ÒªÃèÊö¶Ô¶Ô¶ËµÄMSS¡¢±¾¶ËµÄ½ÓÊÕ´°¿Ú´óÐ¡ÒÔ¼°¿ØÖÆÁ¬½Ó²Ù×÷µÄÐÅÏ¢£¬±ÈÈç
- * ³¬Ê±Ê±¼äµÈ
-  tcp_request_sock°üº¬inet_request_sock£¬inet_request_sock°üº¬request_sock
- */  //request_sock_queueÖÐµÄlisten_sockÀïÃæµÄhash±ísyn_tableÖÐ´æ´¢µÄÕâ¸ö½á¹¹
+ * ä¸»è¦æè¿°å¯¹å¯¹ç«¯çš„MSSã€æœ¬ç«¯çš„æŽ¥æ”¶çª—å£å¤§å°ä»¥åŠæŽ§åˆ¶è¿žæŽ¥æ“ä½œçš„ä¿¡æ¯ï¼Œæ¯”å¦‚
+ * è¶…æ—¶æ—¶é—´ç­‰
+  tcp_request_sockåŒ…å«inet_request_sockï¼Œinet_request_sockåŒ…å«request_sock
+ */  //request_sock_queueä¸­çš„listen_socké‡Œé¢çš„hashè¡¨syn_tableä¸­å­˜å‚¨çš„è¿™ä¸ªç»“æž„
  struct request_sock {
 	/*
-	 * ÓÃÀ´½«request_sock½á¹¹ÊµÀýÁ´½Ó³ÉÁ´±í
+	 * ç”¨æ¥å°†request_sockç»“æž„å®žä¾‹é“¾æŽ¥æˆé“¾è¡¨
 	 */
 	struct request_sock		*dl_next; /* Must be first member! */
 	/*
-	 * ¿Í»§¶ËÁ¬½ÓÇëÇó¶ÎÖÐÍ¨¸æµÄMSS¡£Èç¹ûÎÞÍ¨¸æ£¬ÔòÎª³õÊ¼Öµ£¬
-	 * ¼´RFCÖÐ½¨ÒéµÄ536
+	 * å®¢æˆ·ç«¯è¿žæŽ¥è¯·æ±‚æ®µä¸­é€šå‘Šçš„MSSã€‚å¦‚æžœæ— é€šå‘Šï¼Œåˆ™ä¸ºåˆå§‹å€¼ï¼Œ
+	 * å³RFCä¸­å»ºè®®çš„536
 	 */
 	u16				mss;
 	/*
-	 * ·¢ËÍSYN+ACK¶ÎµÄ´ÎÊý£¬ÔÚ´ïµ½ÏµÍ³Éè¶¨µÄÉÏÏÞÊ±£¬È¡ÏûÁ¬½Ó²Ù×÷
+	 * å‘é€SYN+ACKæ®µçš„æ¬¡æ•°ï¼Œåœ¨è¾¾åˆ°ç³»ç»Ÿè®¾å®šçš„ä¸Šé™æ—¶ï¼Œå–æ¶ˆè¿žæŽ¥æ“ä½œ
 	 */
 	u8				retrans;
 	u8				cookie_ts; /* syncookie: encode tcpopts in timestamp */
 	/* The following two fields can be easily recomputed I think -AK */
 	/*
-	 * ±êÊ¶±¾¶ËµÄ×î´óÍ¨¸æ´°¿Ú£¬ÔÚÉú³ÉSYN+ACK¶ÎÊ±¼ÆËã¸ÃÖµ
+	 * æ ‡è¯†æœ¬ç«¯çš„æœ€å¤§é€šå‘Šçª—å£ï¼Œåœ¨ç”ŸæˆSYN+ACKæ®µæ—¶è®¡ç®—è¯¥å€¼
 	 */
 	u32				window_clamp; /* window clamp at creation time */
 	/*
-	 * ±êÊ¶ÔÚÁ¬½Ó½¨Á¢Ê±±¾¶Ë½ÓÊÕ´°¿Ú´óÐ¡£¬³õÊ¼»¯Îª0£¬ÔÚÉú³É
-	 * SYN+ACK¶ÎÊ±¼ÆËã¸ÃÖµ¡£
+	 * æ ‡è¯†åœ¨è¿žæŽ¥å»ºç«‹æ—¶æœ¬ç«¯æŽ¥æ”¶çª—å£å¤§å°ï¼Œåˆå§‹åŒ–ä¸º0ï¼Œåœ¨ç”Ÿæˆ
+	 * SYN+ACKæ®µæ—¶è®¡ç®—è¯¥å€¼ã€‚
 	 */
 	u32				rcv_wnd;	  /* rcv_wnd offered first time */
 	/*
-	 * ÏÂÒ»¸ö½«Òª·¢ËÍµÄACKÖÐµÄÊ±¼ä´ÁÖµ¡£µ±Ò»¸ö°üº¬×îºó·¢ËÍACKÈ·ÈÏÐòºÅµÄ
-	 * ¶Îµ½´ïÊ±£¬¸Ã¶ÎÖÐµÄÊ±¼ä´Á±»±£´æÔÚts_recentÖÐ
+	 * ä¸‹ä¸€ä¸ªå°†è¦å‘é€çš„ACKä¸­çš„æ—¶é—´æˆ³å€¼ã€‚å½“ä¸€ä¸ªåŒ…å«æœ€åŽå‘é€ACKç¡®è®¤åºå·çš„
+	 * æ®µåˆ°è¾¾æ—¶ï¼Œè¯¥æ®µä¸­çš„æ—¶é—´æˆ³è¢«ä¿å­˜åœ¨ts_recentä¸­
 	 */
 	u32				ts_recent;
 	/*
-	 * ·þÎñ¶Ë½ÓÊÕµ½Á¬½ÓÇëÇó£¬²¢·¢ËÍSYN+ACK¶Î×÷ÎªÓ¦´ðºó£¬µÈ´ý
-	 * ¿Í»§¶ËÈ·ÈÏµÄ³¬Ê±Ê±¼ä¡£Ò»µ©³¬Ê±£¬»áÖØÐÂ·¢ËÍSYN+ACK¶Î£¬
-	 * Ö±µ½Á¬½Ó½¨Á¢»òÖØ·¢´ÎÊý´ïµ½ÉÏÏÞ
+	 * æœåŠ¡ç«¯æŽ¥æ”¶åˆ°è¿žæŽ¥è¯·æ±‚ï¼Œå¹¶å‘é€SYN+ACKæ®µä½œä¸ºåº”ç­”åŽï¼Œç­‰å¾…
+	 * å®¢æˆ·ç«¯ç¡®è®¤çš„è¶…æ—¶æ—¶é—´ã€‚ä¸€æ—¦è¶…æ—¶ï¼Œä¼šé‡æ–°å‘é€SYN+ACKæ®µï¼Œ
+	 * ç›´åˆ°è¿žæŽ¥å»ºç«‹æˆ–é‡å‘æ¬¡æ•°è¾¾åˆ°ä¸Šé™
 	 */
 	unsigned long			expires;
 	/*
-	 * ´¦ÀíÁ¬½ÓÇëÇóµÄº¯ÊýÖ¸Õë±í£¬TCPÖÐÖ¸Ïò
+	 * å¤„ç†è¿žæŽ¥è¯·æ±‚çš„å‡½æ•°æŒ‡é’ˆè¡¨ï¼ŒTCPä¸­æŒ‡å‘
 	 * tcp_request_sock_ops
 	 */
 	const struct request_sock_ops	*rsk_ops;
 	/*
-	 * Ö¸Ïò¶ÔÓ¦×´Ì¬µÄ´«Êä¿ØÖÆ¿é¡£ÔÚÁ¬½Ó½¨Á¢Ö®Ç°ÎÞÐ§£¬Èý´ÎÎÕÊÖºó»á
-	 * ´´½¨¶ÔÓ¦µÄ´«Êä¿ØÖÆ¿é£¬¶ø´ËÊ±Á¬½ÓÇëÇó¿éÒ²Íê³ÉÁËÀúÊ·Ê¹Ãü£¬
-	 * µ÷ÓÃaccept()½«¸ÃÁ¬½ÓÇëÇó¿éÈ¡×ß²¢ÊÍ·Å(ÊÍ·ÅµÄÊÇrequest_sockÊµÀý£¬
-	 * ²»ÊÇsockÊµÀý)
+	 * æŒ‡å‘å¯¹åº”çŠ¶æ€çš„ä¼ è¾“æŽ§åˆ¶å—ã€‚åœ¨è¿žæŽ¥å»ºç«‹ä¹‹å‰æ— æ•ˆï¼Œä¸‰æ¬¡æ¡æ‰‹åŽä¼š
+	 * åˆ›å»ºå¯¹åº”çš„ä¼ è¾“æŽ§åˆ¶å—ï¼Œè€Œæ­¤æ—¶è¿žæŽ¥è¯·æ±‚å—ä¹Ÿå®Œæˆäº†åŽ†å²ä½¿å‘½ï¼Œ
+	 * è°ƒç”¨accept()å°†è¯¥è¿žæŽ¥è¯·æ±‚å—å–èµ°å¹¶é‡Šæ”¾(é‡Šæ”¾çš„æ˜¯request_sockå®žä¾‹ï¼Œ
+	 * ä¸æ˜¯sockå®žä¾‹)
 	 */
 	struct sock			*sk;
 	u32				secid;
@@ -191,54 +191,54 @@ extern int sysctl_max_syn_backlog;
  * @max_qlen_log - log_2 of maximal queued SYNs/REQUESTs
  */
 /*
- * listen_sock½á¹¹ÓÃÀ´´æ´¢Á¬½ÓÇëÇó¿é(Á¬½ÓÉÐÎ´½¨Á¢)£¬¸Ã½á¹¹
- * µÄÊµÀýÔÚlistenÏµÍ³µ÷ÓÃÖ®ºó²Å»á±»´´½¨      request_sock_queueµÄlisten_optÖ¸ÏòÕâÀï
- */ //¼û·®¶«¶«£¬P748 µÄÍ¼ÐÎ»¯Àí½â
- //Á¬½Ó½¨Á¢¶¨Ê±Æ÷¡¢±£»î¶¨Ê±Æ÷ºÍFIN_WAIT_2¶¨Ê±Æ÷ÓÃµÄÊÇÍ¬Ò»¸ö¶¨Ê±Æ÷£¬±£»î¶¨Ê±Æ÷tcp_keepalive_timer
- //·þÎñÆ÷¶ËÓ¦ÓÃ³ÌÐòlistenµÄÊ±ºò£¬À´×Ô¿Í»§¶ËµÄ°ëÁ¬½Ó¶¼»á´æ´¢ÔÚÕâ¸ö½á¹¹ÖÐµÄ
- //¸Ã½á¹¹ÔÚreqsk_alloc¿ª±Ù¿Õ¼ä£¬¸Ã½á¹¹Ê½´æµÄÊÇ°ëÁ¬½ÓÊý¡£Ôö¼ÓÄÚºËTCP SYN²¢·¢Ö§³Ö¿ÉÒÔ²Î¿¼:http://blog.chinaunix.net/uid-20662820-id-3776090.html
-struct listen_sock {   //·þÎñÆ÷¶Ë·¢ËÍµÄsyn+ackµÄÖØ´«ÔÚinet_csk_reqsk_queue_pruneÖÐÊµÏÖ¡£¸Ã½á¹¹Ìí¼Óµ½skÔÚinet_csk_reqsk_queue_hash_addÖÐ¡£°ëÁ¬½Ó³¬Ê±»òÕß¹Ø±ÕÌ×½Ó×Ö£¬É¾³ýÔÚinet_csk_reqsk_queue_removed
+ * listen_sockç»“æž„ç”¨æ¥å­˜å‚¨è¿žæŽ¥è¯·æ±‚å—(è¿žæŽ¥å°šæœªå»ºç«‹)ï¼Œè¯¥ç»“æž„
+ * çš„å®žä¾‹åœ¨listenç³»ç»Ÿè°ƒç”¨ä¹‹åŽæ‰ä¼šè¢«åˆ›å»º      request_sock_queueçš„listen_optæŒ‡å‘è¿™é‡Œ
+ */ //è§æ¨Šä¸œä¸œï¼ŒP748 çš„å›¾å½¢åŒ–ç†è§£
+ //è¿žæŽ¥å»ºç«‹å®šæ—¶å™¨ã€ä¿æ´»å®šæ—¶å™¨å’ŒFIN_WAIT_2å®šæ—¶å™¨ç”¨çš„æ˜¯åŒä¸€ä¸ªå®šæ—¶å™¨ï¼Œä¿æ´»å®šæ—¶å™¨tcp_keepalive_timer
+ //æœåŠ¡å™¨ç«¯åº”ç”¨ç¨‹åºlistençš„æ—¶å€™ï¼Œæ¥è‡ªå®¢æˆ·ç«¯çš„åŠè¿žæŽ¥éƒ½ä¼šå­˜å‚¨åœ¨è¿™ä¸ªç»“æž„ä¸­çš„
+ //è¯¥ç»“æž„åœ¨reqsk_allocå¼€è¾Ÿç©ºé—´ï¼Œè¯¥ç»“æž„å¼å­˜çš„æ˜¯åŠè¿žæŽ¥æ•°ã€‚å¢žåŠ å†…æ ¸TCP SYNå¹¶å‘æ”¯æŒå¯ä»¥å‚è€ƒ:http://blog.chinaunix.net/uid-20662820-id-3776090.html
+struct listen_sock {   //æœåŠ¡å™¨ç«¯å‘é€çš„syn+ackçš„é‡ä¼ åœ¨inet_csk_reqsk_queue_pruneä¸­å®žçŽ°ã€‚è¯¥ç»“æž„æ·»åŠ åˆ°skåœ¨inet_csk_reqsk_queue_hash_addä¸­ã€‚åŠè¿žæŽ¥è¶…æ—¶æˆ–è€…å…³é—­å¥—æŽ¥å­—ï¼Œåˆ é™¤åœ¨inet_csk_reqsk_queue_removed
     /*
-     * Êµ¼Ê·ÖÅäÓÃÀ´±£´æSYNÇëÇóÁ¬½ÓµÄrequest_sock½á¹¹Êý×éµÄ³¤¶È£¬Õâ¸öÖµ
-     * ÆäÖµÎªnr_table_entriesÒÔ2Îªµ×µÄ¶ÔÊý£¬Ò²¾ÍÊÇÏÂÃæµÄsyn_table[]Êý×é´óÐ¡
+     * å®žé™…åˆ†é…ç”¨æ¥ä¿å­˜SYNè¯·æ±‚è¿žæŽ¥çš„request_sockç»“æž„æ•°ç»„çš„é•¿åº¦ï¼Œè¿™ä¸ªå€¼
+     * å…¶å€¼ä¸ºnr_table_entriesä»¥2ä¸ºåº•çš„å¯¹æ•°ï¼Œä¹Ÿå°±æ˜¯ä¸‹é¢çš„syn_table[]æ•°ç»„å¤§å°
      */
     u8          max_qlen_log;
     /* 3 bytes hole, try to use */
     /*
-     * µ±Ç°Á¬½ÓÇëÇó¿éÊýÄ¿   °ëÁ¬½ÓÇëÇóÊýÄ¿£¬
+     * å½“å‰è¿žæŽ¥è¯·æ±‚å—æ•°ç›®   åŠè¿žæŽ¥è¯·æ±‚æ•°ç›®ï¼Œ
      */
     int         qlen;
     /*
-     * µ±Ç°Î´ÖØ´«¹ýSYN+ACK¶ÎµÄÇëÇó¿éÊýÄ¿¡£Èç¹ûÃ¿´Î½¨Á¢Á¬½Ó¶¼ºÜË³Àû£¬
-     * Èý´ÎÎÕÊÖµÄ¶ÎÃ»ÓÐÖØ´«£¬Ôòqlen_youngºÍqlenÊÇÒ»ÖÂµÄ£¬ÓÐSYN+ACK¶Î
-     * ÖØ´«Ê±»áµÝ¼õ
+     * å½“å‰æœªé‡ä¼ è¿‡SYN+ACKæ®µçš„è¯·æ±‚å—æ•°ç›®ã€‚å¦‚æžœæ¯æ¬¡å»ºç«‹è¿žæŽ¥éƒ½å¾ˆé¡ºåˆ©ï¼Œ
+     * ä¸‰æ¬¡æ¡æ‰‹çš„æ®µæ²¡æœ‰é‡ä¼ ï¼Œåˆ™qlen_youngå’Œqlenæ˜¯ä¸€è‡´çš„ï¼Œæœ‰SYN+ACKæ®µ
+     * é‡ä¼ æ—¶ä¼šé€’å‡
      */
     int         qlen_young;
     /*
-     * ÓÃÀ´¼ÇÂ¼Á¬½Ó½¨Á¢¶¨Ê±Æ÷´¦Àíº¯ÊýÏÂ´Î±»¼¤»îÊ±Ðè´¦ÀíµÄÁ¬½ÓÇëÇó¿é
-     * É¢ÁÐ±íÈë¿Ú¡£ÔÚ±¾´Î´¦Àí½áÊøÊ±½«µ±Ç°µÄÈë¿Ú±£´æµ½¸Ã×Ö¶ÎÖÐ£¬ÔÚ
-     * ÏÂ´Î´¦ÀíÊ±¾Í´Ó¸ÃÈë¿Ú¿ªÊ¼´¦Àí
+     * ç”¨æ¥è®°å½•è¿žæŽ¥å»ºç«‹å®šæ—¶å™¨å¤„ç†å‡½æ•°ä¸‹æ¬¡è¢«æ¿€æ´»æ—¶éœ€å¤„ç†çš„è¿žæŽ¥è¯·æ±‚å—
+     * æ•£åˆ—è¡¨å…¥å£ã€‚åœ¨æœ¬æ¬¡å¤„ç†ç»“æŸæ—¶å°†å½“å‰çš„å…¥å£ä¿å­˜åˆ°è¯¥å­—æ®µä¸­ï¼Œåœ¨
+     * ä¸‹æ¬¡å¤„ç†æ—¶å°±ä»Žè¯¥å…¥å£å¼€å§‹å¤„ç†
      */
     int         clock_hand;
     /*
-     * ÓÃÀ´¼ÆËãSYNÇëÇó¿éÉ¢ÁÐ±í¼üÖµµÄËæ»úÊý£¬¸ÃÖµÔÚ
-     * reqsk_queue_alloc()ÖÐËæ»úÉú³É
+     * ç”¨æ¥è®¡ç®—SYNè¯·æ±‚å—æ•£åˆ—è¡¨é”®å€¼çš„éšæœºæ•°ï¼Œè¯¥å€¼åœ¨
+     * reqsk_queue_alloc()ä¸­éšæœºç”Ÿæˆ
      */
-    u32         hash_rnd; //ÔÚËÑË÷²éÑ¯syn_talbe hash±íµÄÊ±ºò£¬ÐèÒªÓÃµ½¸ÃÖµ
+    u32         hash_rnd; //åœ¨æœç´¢æŸ¥è¯¢syn_talbe hashè¡¨çš„æ—¶å€™ï¼Œéœ€è¦ç”¨åˆ°è¯¥å€¼
     /*
-     * Êµ¼Ê·ÖÅäÓÃÀ´±£´æSYNÇëÇóÁ¬½ÓµÄrequest_sock½á¹¹Êý×éµÄ³¤¶È¡£¼ûmax_qlen_log£¬Ò²¾ÍÊÇÏÂÃæµÄsyn_table[]Êý×é´óÐ¡
-     */ //Õâ¸öÖµºÍstruct sockÖÐµÄsk_max_ack_backlogÏàÍ¬
-    u32         nr_table_entries;//ÔÚº¯Êýreqsk_queue_allocÖÐ¸³Öµ,×î´óµÄ°ëÁ¬½ÓÊý¸öÊý¡£Ôö¼ÓÄÚºËTCP SYN²¢·¢Ö§³Ö¿ÉÒÔ²Î¿¼:http://blog.chinaunix.net/uid-20662820-id-3776090.html
+     * å®žé™…åˆ†é…ç”¨æ¥ä¿å­˜SYNè¯·æ±‚è¿žæŽ¥çš„request_sockç»“æž„æ•°ç»„çš„é•¿åº¦ã€‚è§max_qlen_logï¼Œä¹Ÿå°±æ˜¯ä¸‹é¢çš„syn_table[]æ•°ç»„å¤§å°
+     */ //è¿™ä¸ªå€¼å’Œstruct sockä¸­çš„sk_max_ack_backlogç›¸åŒ
+    u32         nr_table_entries;//åœ¨å‡½æ•°reqsk_queue_allocä¸­èµ‹å€¼,æœ€å¤§çš„åŠè¿žæŽ¥æ•°ä¸ªæ•°ã€‚å¢žåŠ å†…æ ¸TCP SYNå¹¶å‘æ”¯æŒå¯ä»¥å‚è€ƒ:http://blog.chinaunix.net/uid-20662820-id-3776090.html
     /*
-     * µ÷ÓÃlistenÊ±²»½öÊ¹TCP½øÈëLISTEN×´Ì¬£¬Í¬Ê±»¹ÎªSYN_RECV×´Ì¬µÄ
-     * ÇëÇóÁ¬½Ó¿ØÖÆ¿é·ÖÅä¿Õ¼ä£¬ÆäÖÐsyn_tableÉ¢ÁÐ±í´óÐ¡ÓÉlistenÏµÍ³
-     * µ÷ÓÃµÄ²ÎÊýbacklog¿ØÖÆ
-     */ //Í¼ÐÎ»¯Àí½â²Î¿¼·®¶«¶«P769
-    //¿Õ¼ä¿ª±ÙÔÚreqsk_queue_allocÖÐ£¬±íÍ·ÊÇrequest_sock½á¹¹£¬ÀïÃæµÄ½ÚµãÊÇtcp_request_sock½á¹¹£¬
-    //ÕâÀïÃæÊÇnr_table_entries¸öÖ¸Ïòstruct request_sockµÄÖ¸Õë£¬Ò²¾ÍÊÇÖ¸ÕëÍ·¸öÊýºÍ×î´ó°ëÁ¬½ÓÊýnr_table_entriesÊÇÏàÍ¬µÄ
-    struct request_sock *syn_table[0];//Í¨¹ýclock_handÖ¸Ïò¶ÔÓ¦µÄsyn_table[clock_hand]É¢ÁÐ±íÖÐ£¬ÆäÊµ¾ÍÊÇ¸öhash±í¡£
-    //Õâ¸öÁ´±íÀïÃæ´æ´¢µÄÊÇrequest_sock½á¹¹,Ò²¾ÍÊÇ¿Í»§¶ËSYN¹ýÀ´µÄÊ±ºò´´½¨¡£ ÕâÀïÃæ´æµÄÊÇTCP°ëÁ¬½ÓÇëÇó¿é¡£ÊÕµ½SYNÇëÇótcp_v4_conn_requestµÄÊ±ºò¿ª±Ù¿Õ¼ä£¬Ìí¼Óµ½hash±íÖÐ¡£µ«Èý´ÎÎÕÊÖ³É¹¦µÚµÚÈý²½ºó£¬»á´ÓÕâ¸öhashÖÐÈ¡³öÀ´·ÅÈëµ½request_sock_queueÀïÃæµÄÒÑÁ¬½ÓÇëÇóÁ´±íÖÐ
-    //Á¬½ÓÇëÇó¿étcp_request_sock½ÚµãµÄÌí¼ÓÔÚinet_csk_reqsk_queue_hash_add  ²éÕÒÔÚinet_csk_search_req£¬´¦ÀíÔÚinet_csk_reqsk_queue_prune
+     * è°ƒç”¨listenæ—¶ä¸ä»…ä½¿TCPè¿›å…¥LISTENçŠ¶æ€ï¼ŒåŒæ—¶è¿˜ä¸ºSYN_RECVçŠ¶æ€çš„
+     * è¯·æ±‚è¿žæŽ¥æŽ§åˆ¶å—åˆ†é…ç©ºé—´ï¼Œå…¶ä¸­syn_tableæ•£åˆ—è¡¨å¤§å°ç”±listenç³»ç»Ÿ
+     * è°ƒç”¨çš„å‚æ•°backlogæŽ§åˆ¶
+     */ //å›¾å½¢åŒ–ç†è§£å‚è€ƒæ¨Šä¸œä¸œP769
+    //ç©ºé—´å¼€è¾Ÿåœ¨reqsk_queue_allocä¸­ï¼Œè¡¨å¤´æ˜¯request_sockç»“æž„ï¼Œé‡Œé¢çš„èŠ‚ç‚¹æ˜¯tcp_request_sockç»“æž„ï¼Œ
+    //è¿™é‡Œé¢æ˜¯nr_table_entriesä¸ªæŒ‡å‘struct request_sockçš„æŒ‡é’ˆï¼Œä¹Ÿå°±æ˜¯æŒ‡é’ˆå¤´ä¸ªæ•°å’Œæœ€å¤§åŠè¿žæŽ¥æ•°nr_table_entriesæ˜¯ç›¸åŒçš„
+    struct request_sock *syn_table[0];//é€šè¿‡clock_handæŒ‡å‘å¯¹åº”çš„syn_table[clock_hand]æ•£åˆ—è¡¨ä¸­ï¼Œå…¶å®žå°±æ˜¯ä¸ªhashè¡¨ã€‚
+    //è¿™ä¸ªé“¾è¡¨é‡Œé¢å­˜å‚¨çš„æ˜¯request_sockç»“æž„,ä¹Ÿå°±æ˜¯å®¢æˆ·ç«¯SYNè¿‡æ¥çš„æ—¶å€™åˆ›å»ºã€‚ è¿™é‡Œé¢å­˜çš„æ˜¯TCPåŠè¿žæŽ¥è¯·æ±‚å—ã€‚æ”¶åˆ°SYNè¯·æ±‚tcp_v4_conn_requestçš„æ—¶å€™å¼€è¾Ÿç©ºé—´ï¼Œæ·»åŠ åˆ°hashè¡¨ä¸­ã€‚ä½†ä¸‰æ¬¡æ¡æ‰‹æˆåŠŸç¬¬ç¬¬ä¸‰æ­¥åŽï¼Œä¼šä»Žè¿™ä¸ªhashä¸­å–å‡ºæ¥æ”¾å…¥åˆ°request_sock_queueé‡Œé¢çš„å·²è¿žæŽ¥è¯·æ±‚é“¾è¡¨ä¸­
+    //è¿žæŽ¥è¯·æ±‚å—tcp_request_sockèŠ‚ç‚¹çš„æ·»åŠ åœ¨inet_csk_reqsk_queue_hash_add  æŸ¥æ‰¾åœ¨inet_csk_search_reqï¼Œå¤„ç†åœ¨inet_csk_reqsk_queue_prune
 };
 
 
@@ -259,35 +259,35 @@ struct listen_sock {   //·þÎñÆ÷¶Ë·¢ËÍµÄsyn+ackµÄÖØ´«ÔÚinet_csk_reqsk_queue_prune
  * are always protected from the main sock lock.
  */
 /*
- * ÔÚTCP´«Êä¿ØÖÆ¿éÖÐÓÐÒ»¸öÓÃÓÚ´æ·ÅÁ¬½ÓÇëÇó¿é(´¦ÓÚSYN_RECV×´Ì¬ÒÔ¼°
- * ÒÑÁ¬½Óµ«Î´±»acceptµÄ´«Êä¿ØÖÆ¿é)µÄÈÝÆ÷
- */ ////¼û·®¶«¶«£¬P748 µÄÍ¼ÐÎ»¯Àí½â
- //¸Ã½á¹¹ÔÚinet_connection_sockÖÐµÄicsk_accept_queue
+ * åœ¨TCPä¼ è¾“æŽ§åˆ¶å—ä¸­æœ‰ä¸€ä¸ªç”¨äºŽå­˜æ”¾è¿žæŽ¥è¯·æ±‚å—(å¤„äºŽSYN_RECVçŠ¶æ€ä»¥åŠ
+ * å·²è¿žæŽ¥ä½†æœªè¢«acceptçš„ä¼ è¾“æŽ§åˆ¶å—)çš„å®¹å™¨
+ */ ////è§æ¨Šä¸œä¸œï¼ŒP748 çš„å›¾å½¢åŒ–ç†è§£
+ //è¯¥ç»“æž„åœ¨inet_connection_sockä¸­çš„icsk_accept_queue
 struct request_sock_queue {
     /*
-     * rskq_accept_headºÍrskq_accept_tail±íÊ¾µÄÁ´±í±£´æµÄÊÇ
-     * ÒÑÍê³ÉÁ¬½Ó½¨Á¢¹ý³ÌµÄÁ¬½ÓÇëÇó¿é  ·þÎñÆ÷¶ËacceptµÄÊ±ºò£¬struct sockÊÇ´ÓÕâ¸ö¶ÓÁÐÉÏÃæÈ¡³öÀ´µÄ
-     */ //ÒÑ¾­½¨Á¢Á¬½ÓµÄÁ¬½ÓµÄ½ÚµãÌí¼Óµ½ÕâÀï£¬ÕâÐ©Á´±íµÄ½ÚµãÐÅÏ¢½á¹¹ÌåÊÇtcp_request_sock¡£µ±Ó¦ÓÃ³ÌÐòµ÷ÓÃacceptº¯Êýºó£¬»á´ÓÕâÀïÃæÈ¡×ßÕâ¸ötcp_request_sock
-    struct request_sock *rskq_accept_head;// //µ±Ó¦ÓÃ³ÌÐòacceptµÄÊ±ºò£¬»áµ÷ÓÃreqsk_queue_get_childÈ¡×ßÕâ¸öÐÂ´´½¨µÄsock£¬Í¬Ê±¾ÍÐèÒª°ÑÕâ¸öÈ¡³öµÄtcp_request_sockÊÍ·Åµô
+     * rskq_accept_headå’Œrskq_accept_tailè¡¨ç¤ºçš„é“¾è¡¨ä¿å­˜çš„æ˜¯
+     * å·²å®Œæˆè¿žæŽ¥å»ºç«‹è¿‡ç¨‹çš„è¿žæŽ¥è¯·æ±‚å—  æœåŠ¡å™¨ç«¯acceptçš„æ—¶å€™ï¼Œstruct sockæ˜¯ä»Žè¿™ä¸ªé˜Ÿåˆ—ä¸Šé¢å–å‡ºæ¥çš„
+     */ //å·²ç»å»ºç«‹è¿žæŽ¥çš„è¿žæŽ¥çš„èŠ‚ç‚¹æ·»åŠ åˆ°è¿™é‡Œï¼Œè¿™äº›é“¾è¡¨çš„èŠ‚ç‚¹ä¿¡æ¯ç»“æž„ä½“æ˜¯tcp_request_sockã€‚å½“åº”ç”¨ç¨‹åºè°ƒç”¨acceptå‡½æ•°åŽï¼Œä¼šä»Žè¿™é‡Œé¢å–èµ°è¿™ä¸ªtcp_request_sock
+    struct request_sock *rskq_accept_head;// //å½“åº”ç”¨ç¨‹åºacceptçš„æ—¶å€™ï¼Œä¼šè°ƒç”¨reqsk_queue_get_childå–èµ°è¿™ä¸ªæ–°åˆ›å»ºçš„sockï¼ŒåŒæ—¶å°±éœ€è¦æŠŠè¿™ä¸ªå–å‡ºçš„tcp_request_socké‡Šæ”¾æŽ‰
     struct request_sock *rskq_accept_tail;
     /*
-     * ·ÃÎÊlisten_optÒÔ¼°listen_sock½á¹¹³ÉÔ±µÄÍ¬²½¿ØÖÆ¶ÁÐ´Ëø
+     * è®¿é—®listen_optä»¥åŠlisten_sockç»“æž„æˆå‘˜çš„åŒæ­¥æŽ§åˆ¶è¯»å†™é”
      */
     rwlock_t        syn_wait_lock;
     /*
-     * ±£´æÏà¹ØÌ×½Ó×ÖTCP²ãµÄÑ¡ÏîTCP_DEFER_ACCEPTµÄÖµ£¬²Î¼û
+     * ä¿å­˜ç›¸å…³å¥—æŽ¥å­—TCPå±‚çš„é€‰é¡¹TCP_DEFER_ACCEPTçš„å€¼ï¼Œå‚è§
      * TCP_DEFER_ACCEPT
-     * ±£´æµÄÊÇÆôÓÃTCP_DEFER_ACCEPTÊ±ÔÊÐíÖØ´«SYN+ACK¶ÎµÄ´ÎÊý¡£
-     * ×¢Òâ:Èç¹ûÆôÓÃÁËTCP_DEFER_ACCEPTÑ¡Ïî£¬½«Ê¹ÓÃrskq_defer_accept
-     * ×÷ÎªÔÊÐíÖØ´«µÄ×î´ó´ÎÊý£¬²»ÔÙÊÇsysctl_tcp_synack_retries£¬
-     * ²Î¼ûinet_csk_reqsk_queue_prune()¡£
+     * ä¿å­˜çš„æ˜¯å¯ç”¨TCP_DEFER_ACCEPTæ—¶å…è®¸é‡ä¼ SYN+ACKæ®µçš„æ¬¡æ•°ã€‚
+     * æ³¨æ„:å¦‚æžœå¯ç”¨äº†TCP_DEFER_ACCEPTé€‰é¡¹ï¼Œå°†ä½¿ç”¨rskq_defer_accept
+     * ä½œä¸ºå…è®¸é‡ä¼ çš„æœ€å¤§æ¬¡æ•°ï¼Œä¸å†æ˜¯sysctl_tcp_synack_retriesï¼Œ
+     * å‚è§inet_csk_reqsk_queue_prune()ã€‚
      */
     u8          rskq_defer_accept;
     /* 3 bytes hole, try to pack */
     /*
-     * ¸ÃÊµÀýÔÚ¼àÌýÊ±½¨Á¢£¬ËùÒÔÔÚÓ¦ÓÃ³ÌÐòÎ´listenµÄÊ±ºòÊÇÃ»ÓÐ¸Ã½á¹¹´æ´¢µÄ£¬Ò²¾ÍÊÇÃ»ÓÐÓÃÀ´´æ´¢°ëÁ¬½ÓÇëÇóµÄhash¿Õ¼ä
+     * è¯¥å®žä¾‹åœ¨ç›‘å¬æ—¶å»ºç«‹ï¼Œæ‰€ä»¥åœ¨åº”ç”¨ç¨‹åºæœªlistençš„æ—¶å€™æ˜¯æ²¡æœ‰è¯¥ç»“æž„å­˜å‚¨çš„ï¼Œä¹Ÿå°±æ˜¯æ²¡æœ‰ç”¨æ¥å­˜å‚¨åŠè¿žæŽ¥è¯·æ±‚çš„hashç©ºé—´
      */
-    struct listen_sock  *listen_opt; //»¹Î´Íê³ÉÁ¬½ÓµÄsockÓ¦¸Ã¶¼ÔÚÕâÀïµÄsyn_table hash±íÖÐ£¬ÒÑ¾­½¨Á¢Á¬½ÓµÄrequest_sock»á´ÓÕâÀïÃæÈ¡³ö·ÅÈëµ½·ÅÔÚÇ°ÃæµÄrskq_accept_head
+    struct listen_sock  *listen_opt; //è¿˜æœªå®Œæˆè¿žæŽ¥çš„sockåº”è¯¥éƒ½åœ¨è¿™é‡Œçš„syn_table hashè¡¨ä¸­ï¼Œå·²ç»å»ºç«‹è¿žæŽ¥çš„request_sockä¼šä»Žè¿™é‡Œé¢å–å‡ºæ”¾å…¥åˆ°æ”¾åœ¨å‰é¢çš„rskq_accept_head
 };
 
 
@@ -351,22 +351,22 @@ static inline struct request_sock *reqsk_queue_remove(struct request_sock_queue 
 }
 
 /*
- * ´ÓÒÑÁ¬½Ó¶ÓÁÐÉÏÈ¡×ßµÚÒ»¸öÁ¬½ÓÇëÇó¿é£¬È»ºóÓÉ¸ÃÁ¬½ÓÇëÇó¿é»ñµÃÒÑ´´½¨µÄ×Ó
- * ´«Êä¿ØÖÆ¿é£¬½Ó×ÅÊÍ·ÅÒÑÍê³É½¨Á¢Á¬½ÓµÄÁ¬½ÓÇëÇó¿é£¬Í¬Ê±¸üÐÂ¸¸´«Êä¿ØÖÆ¿é
- * ÉÏÒÑ½¨Á¢Á¬½ÓµÄÊýÄ¿£¬×îºó·µ»Ø×Ó´«Êä¿ØÖÆ¿é
- *///¸Ãº¯ÊýÔÚinet_csk_acceptÖÐµ÷ÓÃ¡£
- //·þÎñÆ÷¶ËÈý´ÎÎÕÊÖ³É¹¦ºó´´½¨×ÓskµÄº¯ÊýÎªtcp_v4_syn_recv_sock
+ * ä»Žå·²è¿žæŽ¥é˜Ÿåˆ—ä¸Šå–èµ°ç¬¬ä¸€ä¸ªè¿žæŽ¥è¯·æ±‚å—ï¼Œç„¶åŽç”±è¯¥è¿žæŽ¥è¯·æ±‚å—èŽ·å¾—å·²åˆ›å»ºçš„å­
+ * ä¼ è¾“æŽ§åˆ¶å—ï¼ŒæŽ¥ç€é‡Šæ”¾å·²å®Œæˆå»ºç«‹è¿žæŽ¥çš„è¿žæŽ¥è¯·æ±‚å—ï¼ŒåŒæ—¶æ›´æ–°çˆ¶ä¼ è¾“æŽ§åˆ¶å—
+ * ä¸Šå·²å»ºç«‹è¿žæŽ¥çš„æ•°ç›®ï¼Œæœ€åŽè¿”å›žå­ä¼ è¾“æŽ§åˆ¶å—
+ *///è¯¥å‡½æ•°åœ¨inet_csk_acceptä¸­è°ƒç”¨ã€‚
+ //æœåŠ¡å™¨ç«¯ä¸‰æ¬¡æ¡æ‰‹æˆåŠŸåŽåˆ›å»ºå­skçš„å‡½æ•°ä¸ºtcp_v4_syn_recv_sock
 static inline struct sock *reqsk_queue_get_child(struct request_sock_queue *queue,
 						 struct sock *parent)
 {
 	struct request_sock *req = reqsk_queue_remove(queue);
 
-	//ÕâÁ½¸ö¹ØÁªµÄµØ·½ÔÚreqsk_queue_add
-	struct sock *child = req->sk;//µ±Èý´ÎÎÕÊÖÍê³Éºó£¬·þÎñÆ÷¶ËÖØÐÂ´´½¨Ò»¸ösock,¼ûtcp_v4_syn_recv_sockÀïÃæµÄtcp_create_openreq_child  
+	//è¿™ä¸¤ä¸ªå…³è”çš„åœ°æ–¹åœ¨reqsk_queue_add
+	struct sock *child = req->sk;//å½“ä¸‰æ¬¡æ¡æ‰‹å®ŒæˆåŽï¼ŒæœåŠ¡å™¨ç«¯é‡æ–°åˆ›å»ºä¸€ä¸ªsock,è§tcp_v4_syn_recv_socké‡Œé¢çš„tcp_create_openreq_child  
 
 	WARN_ON(child == NULL);
 
-	sk_acceptq_removed(parent);//°ÑÔ´sock(Ò²¾ÍÊÇÓ¦ÓÃ³ÌÐòsocketº¯ÊýÄÚºË´´½¨µÄsockµÄÁ¬½Ó¸öÊý¼õ1£¬ÒòÎªÈ¡×ßÁËÒ»¸ö£¬¾ÍÊÇÉÏÃæµÄchild)
+	sk_acceptq_removed(parent);//æŠŠæºsock(ä¹Ÿå°±æ˜¯åº”ç”¨ç¨‹åºsocketå‡½æ•°å†…æ ¸åˆ›å»ºçš„sockçš„è¿žæŽ¥ä¸ªæ•°å‡1ï¼Œå› ä¸ºå–èµ°äº†ä¸€ä¸ªï¼Œå°±æ˜¯ä¸Šé¢çš„child)
 	__reqsk_free(req);
 	return child;
 }
@@ -405,8 +405,8 @@ static inline int reqsk_queue_len_young(const struct request_sock_queue *queue)
 static inline int reqsk_queue_is_full(const struct request_sock_queue *queue)
 {
     /*
-	 * max_qlen_logÊÇ¼àÌý¶ÓÁÐ³¤¶ÈÒÔ2Îªµ×µÄ¶ÔÊý£¬qlenÊÇµ±Ç°°ëÁ¬½ÓÇëÇó¿éµÄÊýÄ¿¡£
-	 * Èç¹ûÒÆÎ»Ö®ºóÎª0£¬Ôò±íÊ¾¼àÌý¶ÓÁÐ»¹ÓÐ¿Õ¼ä£¬Îª1±íÊ¾¶ÓÁÐÒÑÂú
+	 * max_qlen_logæ˜¯ç›‘å¬é˜Ÿåˆ—é•¿åº¦ä»¥2ä¸ºåº•çš„å¯¹æ•°ï¼Œqlenæ˜¯å½“å‰åŠè¿žæŽ¥è¯·æ±‚å—çš„æ•°ç›®ã€‚
+	 * å¦‚æžœç§»ä½ä¹‹åŽä¸º0ï¼Œåˆ™è¡¨ç¤ºç›‘å¬é˜Ÿåˆ—è¿˜æœ‰ç©ºé—´ï¼Œä¸º1è¡¨ç¤ºé˜Ÿåˆ—å·²æ»¡
 	 */
 	return queue->listen_opt->qlen >> queue->listen_opt->max_qlen_log;
 }

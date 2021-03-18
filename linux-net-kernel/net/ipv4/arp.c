@@ -160,7 +160,7 @@ static const struct neigh_ops arp_direct_ops = {
 	.queue_xmit =		dev_queue_xmit,
 };
 
-const struct neigh_ops arp_broken_ops = {//ÁÚ¾Ó³õÊ¼»¯µÄÊ±ºòµ÷ÓÃ  ÔÚº¯Êıarp_constructorÀïÃæµ÷ÓÃ
+const struct neigh_ops arp_broken_ops = {//é‚»å±…åˆå§‹åŒ–çš„æ—¶å€™è°ƒç”¨  åœ¨å‡½æ•°arp_constructoré‡Œé¢è°ƒç”¨
 	.family =		AF_INET,
 	.solicit =		arp_solicit,
 	.error_report =		arp_error_report,
@@ -170,7 +170,7 @@ const struct neigh_ops arp_broken_ops = {//ÁÚ¾Ó³õÊ¼»¯µÄÊ±ºòµ÷ÓÃ  ÔÚº¯Êıarp_const
 	.queue_xmit =		dev_queue_xmit,
 };
 
-//ARPÈ«¾Ö±äÁ¿£¬ARP»º´æ±í ÁÚ¾Ó±í
+//ARPå…¨å±€å˜é‡ï¼ŒARPç¼“å­˜è¡¨ é‚»å±…è¡¨
 struct neigh_table arp_tbl = {
 	.family =	AF_INET,
 	.entry_size =	sizeof(struct neighbour) + 4,
@@ -229,7 +229,7 @@ static u32 arp_hash(const void *pkey, const struct net_device *dev)
 	return jhash_2words(*(u32 *)pkey, dev->ifindex, arp_tbl.hash_rnd);
 }
 
-//ARPÁÚ¾Ó³õÊ¼»¯º¯Êı£¬ÓÃÀ´³õÊ¼»¯ĞÂµÄneibour½á¹¹ÊµÀı¡£ÔÚÁÚ¾Ó±í´´½¨º¯Êıneibour_createÖĞ±»µ÷ÓÃ  ¸Ãº¯ÊıÔÚarp_tblÖĞ³õÊ¼»¯
+//ARPé‚»å±…åˆå§‹åŒ–å‡½æ•°ï¼Œç”¨æ¥åˆå§‹åŒ–æ–°çš„neibourç»“æ„å®ä¾‹ã€‚åœ¨é‚»å±…è¡¨åˆ›å»ºå‡½æ•°neibour_createä¸­è¢«è°ƒç”¨  è¯¥å‡½æ•°åœ¨arp_tblä¸­åˆå§‹åŒ–
 static int arp_constructor(struct neighbour *neigh)
 {
 	__be32 addr = *(__be32*)neigh->primary_key;
@@ -328,7 +328,7 @@ static void arp_error_report(struct neighbour *neigh, struct sk_buff *skb)
 	kfree_skb(skb);
 }
 
-//ÔÚARPÁÚ¾ÓÏîº¯ÊıÖ¸ÕëÀïÃæ±»¸³Öµ
+//åœ¨ARPé‚»å±…é¡¹å‡½æ•°æŒ‡é’ˆé‡Œé¢è¢«èµ‹å€¼
 static void arp_solicit(struct neighbour *neigh, struct sk_buff *skb)
 {
 	__be32 saddr = 0;
@@ -740,7 +740,7 @@ void arp_send(int type, int ptype, __be32 dest_ip,
 /*
  *	Process an arp request.
  */
-//Õâ¸öÊÇÊÕµ½arpÇëÇóµÄÊ±ºò¸øarpÓ¦´ğµÄÊ±ºò»áµ÷ÓÃ
+//è¿™ä¸ªæ˜¯æ”¶åˆ°arpè¯·æ±‚çš„æ—¶å€™ç»™arpåº”ç­”çš„æ—¶å€™ä¼šè°ƒç”¨
 static int arp_process(struct sk_buff *skb)
 {
 	struct net_device *dev = skb->dev;

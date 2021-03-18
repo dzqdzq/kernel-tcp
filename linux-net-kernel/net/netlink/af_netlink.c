@@ -64,22 +64,22 @@
 #define NLGRPSZ(x)	(ALIGN(x, sizeof(unsigned long) * 8) / 8)
 #define NLGRPLONGS(x)	(NLGRPSZ(x)/sizeof(unsigned long))
 
-struct netlink_sock {//µÚÒ»¸ö³ÉÔ±¾ÍÊÇstruct sock
+struct netlink_sock {//ç¬¬ä¸€ä¸ªæˆå‘˜å°±æ˜¯struct sock
 	/* struct sock has to be the first member of netlink_sock */
 	struct sock		sk;
-	u32			pid;// ×Ô¼ºµÄpid, Í¨³£ÊÇ0 
-	u32			dst_pid;// ¶Ô·½µÄpid 
-	u32			dst_group;// ¶Ô·½µÄ×é 
-	u32			flags;//Èç¹ûÊÇÄÚºË¸Õ´´½¨Ì×½Ó×Önetlink_kernel_create£¬Ôòflags |= NETLINK_KERNEL_SOCKET
+	u32			pid;// è‡ªå·±çš„pid, é€šå¸¸æ˜¯0 
+	u32			dst_pid;// å¯¹æ–¹çš„pid 
+	u32			dst_group;// å¯¹æ–¹çš„ç»„ 
+	u32			flags;//å¦‚æœæ˜¯å†…æ ¸åˆšåˆ›å»ºå¥—æ¥å­—netlink_kernel_createï¼Œåˆ™flags |= NETLINK_KERNEL_SOCKET
 	u32			subscriptions;
 	u32			ngroups;
 	unsigned long		*groups;
 	unsigned long		state;
-	wait_queue_head_t	wait;//µÈ´ı¶ÓÁĞwake_up_interruptible_all wake_up_interruptible½øĞĞ»½ĞÑ  add_wait_queueÌí¼Ó  wait_eventºÍwait_event_interruptible¹ÒÆğµÈ´ı ¿ÉÒÔÔÚaf_netlink.cÖĞËÑË÷ÎÒwait×Ö·û´®²éÕÒ
+	wait_queue_head_t	wait;//ç­‰å¾…é˜Ÿåˆ—wake_up_interruptible_all wake_up_interruptibleè¿›è¡Œå”¤é†’  add_wait_queueæ·»åŠ   wait_eventå’Œwait_event_interruptibleæŒ‚èµ·ç­‰å¾… å¯ä»¥åœ¨af_netlink.cä¸­æœç´¢æˆ‘waitå­—ç¬¦ä¸²æŸ¥æ‰¾
 	struct netlink_callback	*cb;
 	struct mutex		*cb_mutex;
 	struct mutex		cb_def_mutex;
-	void			(*netlink_rcv)(struct sk_buff *skb);//// Êı¾İµ½´ïÊ±  //µÄ²Ù×÷, netlink¿ÉÓĞ²»Í¬ÀàĞÍ, ÈçROUTE, FIREWALL, ARPDµÈ, netlink_kernel_createµÄinputº¯Êı,Ò²¾ÍÊÇnetlink½ÓÊÕÓ¦ÓÃ²ãÊı¾İµÄº¯Êı
+	void			(*netlink_rcv)(struct sk_buff *skb);//// æ•°æ®åˆ°è¾¾æ—¶  //çš„æ“ä½œ, netlinkå¯æœ‰ä¸åŒç±»å‹, å¦‚ROUTE, FIREWALL, ARPDç­‰, netlink_kernel_createçš„inputå‡½æ•°,ä¹Ÿå°±æ˜¯netlinkæ¥æ”¶åº”ç”¨å±‚æ•°æ®çš„å‡½æ•°
 	struct module		*module;
 };
 
@@ -105,32 +105,32 @@ static inline int netlink_is_kernel(struct sock *sk)
 
 struct nl_pid_hash {
 	struct hlist_head *table;
-	unsigned long rehash_time;// ÖØĞÂ¼ÆËãHASHµÄÊ±¼ä¼ä¸ô 
+	unsigned long rehash_time;// é‡æ–°è®¡ç®—HASHçš„æ—¶é—´é—´éš” 
 
 	unsigned int mask;
 	unsigned int shift;
 
-	unsigned int entries;// Á´±í½ÚµãÊı 
-	unsigned int max_shift; // ×î´óÃİÖµ 
+	unsigned int entries;// é“¾è¡¨èŠ‚ç‚¹æ•° 
+	unsigned int max_shift; // æœ€å¤§å¹‚å€¼ 
 
-	u32 rnd;// Ëæ»úÊı 
+	u32 rnd;// éšæœºæ•° 
 };
 
-//×î´ó¿ÉÓĞMAX_LINKS(32)¸ö±í£¬  Í·²¿È«¾Ö±äÁ¿ÔÚ static struct netlink_table *nl_table;
+//æœ€å¤§å¯æœ‰MAX_LINKS(32)ä¸ªè¡¨ï¼Œ  å¤´éƒ¨å…¨å±€å˜é‡åœ¨ static struct netlink_table *nl_table;
 struct netlink_table {
-	struct nl_pid_hash hash;// ¸ù¾İpid½øĞĞHASHµÄnetlink sockÁ´±í, Ïàµ±ÓÚ¿Í»§¶ËÁ´±í 
-	struct hlist_head mc_list;// ¶à²¥µÄsockÁ´±í 
-	unsigned long *listeners;//listernsÊÇ¸öÎ»Í¼¶ÔÓ¦groupsÖĞÃ¿¸öÔªËØ 
+	struct nl_pid_hash hash;// æ ¹æ®pidè¿›è¡ŒHASHçš„netlink socké“¾è¡¨, ç›¸å½“äºå®¢æˆ·ç«¯é“¾è¡¨ 
+	struct hlist_head mc_list;// å¤šæ’­çš„socké“¾è¡¨ 
+	unsigned long *listeners;//listernsæ˜¯ä¸ªä½å›¾å¯¹åº”groupsä¸­æ¯ä¸ªå…ƒç´  
 	unsigned int nl_nonroot;
-	unsigned int groups; // Ã¿¸önetlinkµÄĞ­ÒéÀàĞÍ¿ÉÒÔ¶¨Òå¶à¸ö×é, 8µÄ±¶Êı,×îĞ¡ÊÇ32 
+	unsigned int groups; // æ¯ä¸ªnetlinkçš„åè®®ç±»å‹å¯ä»¥å®šä¹‰å¤šä¸ªç»„, 8çš„å€æ•°,æœ€å°æ˜¯32 
 	struct mutex *cb_mutex;
 	struct module *module;
-	int registered;// ¸Ã±êÖ¾±íÊ¾¸ÃÏî±»µÇ¼Ç 
+	int registered;// è¯¥æ ‡å¿—è¡¨ç¤ºè¯¥é¡¹è¢«ç™»è®° 
 };
 
 static struct netlink_table *nl_table;
-//ÕâÀïÃæ´æµÄÊÇstruct nl_pid_hash *hash = &nl_table[i].hash;£¬iµÄ·¶Î§0µ½MAX_LINKS£¬¸Ã½á¹¹ÎªMAX_LINKSÖĞµÄÃ¿ÖÖnetlinkĞ­ÒéÀàĞÍÌí¼ÓÒ»ÖÖ
-//¼ûnetlink_proto_initº¯Êı£¬ÔÚ¸Äº¯ÊıÖĞÖ»¿ª±ÙÁËMAX_LINKS¸öÖ¸Õë¿Õ¼ä´óĞ¡£¬ËùÒÔNETLINK×î¶à¿ÉÒÔÊ¹ÓÃ32¸ö£¬ÆäÖĞÇ°16¸öÒÑ¾­±»ÏµÍ³Ê¹ÓÃ
+//è¿™é‡Œé¢å­˜çš„æ˜¯struct nl_pid_hash *hash = &nl_table[i].hash;ï¼Œiçš„èŒƒå›´0åˆ°MAX_LINKSï¼Œè¯¥ç»“æ„ä¸ºMAX_LINKSä¸­çš„æ¯ç§netlinkåè®®ç±»å‹æ·»åŠ ä¸€ç§
+//è§netlink_proto_initå‡½æ•°ï¼Œåœ¨æ”¹å‡½æ•°ä¸­åªå¼€è¾Ÿäº†MAX_LINKSä¸ªæŒ‡é’ˆç©ºé—´å¤§å°ï¼Œæ‰€ä»¥NETLINKæœ€å¤šå¯ä»¥ä½¿ç”¨32ä¸ªï¼Œå…¶ä¸­å‰16ä¸ªå·²ç»è¢«ç³»ç»Ÿä½¿ç”¨
 
 //static DECLARE_WAIT_QUEUE_HEAD(nl_table_wait);
 static wait_queue_head_t nl_table_wait;
@@ -139,9 +139,9 @@ static int netlink_dump(struct sock *sk);
 static void netlink_destroy_callback(struct netlink_callback *cb);
 
 //static DEFINE_RWLOCK(nl_table_lock); yang change
-struct atomic_notifier_head nl_table_lock£»
+struct atomic_notifier_head nl_table_lockï¼›
 
-static atomic_t nl_table_users = ATOMIC_INIT(0); //Ã»´´½¨Ò»¸önetlink netlink_create,¸ÃÖµ¼Ó1
+static atomic_t nl_table_users = ATOMIC_INIT(0); //æ²¡åˆ›å»ºä¸€ä¸ªnetlink netlink_create,è¯¥å€¼åŠ 1
 
 //static ATOMIC_NOTIFIER_HEAD(netlink_chain);
 struct atomic_notifier_head netlink_chain;//
@@ -151,7 +151,7 @@ static u32 netlink_group_mask(u32 group)
 	return group ? 1 << (group - 1) : 0;
 }
 
-// nl_pid_hashfn¸ù¾İpid²éÕÒÏàÓ¦HASHÁ´±íÍ·
+// nl_pid_hashfnæ ¹æ®pidæŸ¥æ‰¾ç›¸åº”HASHé“¾è¡¨å¤´
 static struct hlist_head *nl_pid_hashfn(struct nl_pid_hash *hash, u32 pid)
 {
 	return &hash->table[jhash_1word(pid, hash->rnd) & hash->mask];
@@ -184,7 +184,7 @@ static void netlink_sock_destruct(struct sock *sk)
  * immediately hit write lock and grab all the cpus. Exclusive sleep solves
  * this, _but_ remember, it adds useless work on UP machines.
  */
-//Óënetlink_table_ungrabÅä¶Ô  Ïàµ±ÓÚ¼Ó½âËø
+//ä¸netlink_table_ungrabé…å¯¹  ç›¸å½“äºåŠ è§£é”
 void netlink_table_grab(void)
 	__acquires(nl_table_lock)
 {
@@ -210,7 +210,7 @@ void netlink_table_grab(void)
 	}
 }
 
-//ºÍnetlink_table_grabÅä¶Ô
+//å’Œnetlink_table_grabé…å¯¹
 void netlink_table_ungrab(void)
 	__releases(nl_table_lock)
 {
@@ -343,7 +343,7 @@ netlink_update_listeners(struct sock *sk)
 
 	for (i = 0; i < NLGRPLONGS(tbl->groups); i++) {
 		mask = 0;
-		sk_for_each_bound(sk, node, &tbl->mc_list) {//// ±éÀú¶à²¥Á´±íÉú³É¶à²¥×éµÄÑÚÂë
+		sk_for_each_bound(sk, node, &tbl->mc_list) {//// éå†å¤šæ’­é“¾è¡¨ç”Ÿæˆå¤šæ’­ç»„çš„æ©ç 
 			if (i < NLGRPLONGS(nlk_sk(sk)->ngroups))
 				mask |= nlk_sk(sk)->groups[i];
 		}
@@ -352,10 +352,10 @@ netlink_update_listeners(struct sock *sk)
 	/* this function is only called with the netlink table "grabbed", which
 	 * makes sure updates are visible before bind or setsockopt return. */
 }
-//Ò²¾ÍÊÇËµ£¬pidÊÇÆäÖĞ×îÎª¹Ø¼üµÄ¼üÖµ£¬Ã¿¸önetlink Ì×½Ó¿ÚµÄprotocol+pid¿ÉÒÔÎ¨Ò»µÄÈ·¶¨Ò»¸ösocketÊµÀı£¬Õâ¸öÒ²¿ÉÒÔÈÏÎªÊÇÒ»¸öµØÖ·
-//pidÈç¹ûÎª0£¬Ôò´ú±íÄÚºË
-//Îªsock->pid¸³Öµ£¬²¢°ÑskÌí¼Óµ½hash±íÖĞ£¬¸Ãhash±íÍ¨¹ıpid×ö¼üÖµ  Ó¦ÓÃ²ãbindµÄÊ±ºò¸ÃpidÎªÓ¦ÓÃ²ã½ø³Ìpid£¬ÄÚºËnetlink_kernel_create´´½¨ÄÚºËÌ×½Ó×ÖµÄÊ±ºòpidÎª0£¬0¶ÔÓ¦ÄÚºË
-////ÔÚnetlink_insertÖĞ»á¸ù¾İPID=0ÒÔ¼° unit(×î´ó32)´Ó¶ø°Ñstruct sock *skÌí¼Óµ½nl_table[unit].hashÖĞ
+//ä¹Ÿå°±æ˜¯è¯´ï¼Œpidæ˜¯å…¶ä¸­æœ€ä¸ºå…³é”®çš„é”®å€¼ï¼Œæ¯ä¸ªnetlink å¥—æ¥å£çš„protocol+pidå¯ä»¥å”¯ä¸€çš„ç¡®å®šä¸€ä¸ªsocketå®ä¾‹ï¼Œè¿™ä¸ªä¹Ÿå¯ä»¥è®¤ä¸ºæ˜¯ä¸€ä¸ªåœ°å€
+//pidå¦‚æœä¸º0ï¼Œåˆ™ä»£è¡¨å†…æ ¸
+//ä¸ºsock->pidèµ‹å€¼ï¼Œå¹¶æŠŠskæ·»åŠ åˆ°hashè¡¨ä¸­ï¼Œè¯¥hashè¡¨é€šè¿‡pidåšé”®å€¼  åº”ç”¨å±‚bindçš„æ—¶å€™è¯¥pidä¸ºåº”ç”¨å±‚è¿›ç¨‹pidï¼Œå†…æ ¸netlink_kernel_createåˆ›å»ºå†…æ ¸å¥—æ¥å­—çš„æ—¶å€™pidä¸º0ï¼Œ0å¯¹åº”å†…æ ¸
+////åœ¨netlink_insertä¸­ä¼šæ ¹æ®PID=0ä»¥åŠ unit(æœ€å¤§32)ä»è€ŒæŠŠstruct sock *skæ·»åŠ åˆ°nl_table[unit].hashä¸­
 static int netlink_insert(struct sock *sk, struct net *net, u32 pid)
 {
 	struct nl_pid_hash *hash = &nl_table[sk->sk_protocol].hash;
@@ -369,7 +369,7 @@ static int netlink_insert(struct sock *sk, struct net *net, u32 pid)
 	head = nl_pid_hashfn(hash, pid);
 	len = 0;
 	sk_for_each(osk, node, head) {
-		if (net_eq(sock_net(osk), net) && (nlk_sk(osk)->pid == pid))// ¼ì²épidÊÇ·ñÒÑ¾­ÔÚÁ´±íÖĞ£¬ ÓĞÔòÊ§°Ü
+		if (net_eq(sock_net(osk), net) && (nlk_sk(osk)->pid == pid))// æ£€æŸ¥pidæ˜¯å¦å·²ç»åœ¨é“¾è¡¨ä¸­ï¼Œ æœ‰åˆ™å¤±è´¥
 			break;
 		len++;
 	}
@@ -400,22 +400,22 @@ static void netlink_remove(struct sock *sk)
 {
 	netlink_table_grab();
 	if (sk_del_node_init(sk))
-		nl_table[sk->sk_protocol].hash.entries--;  //entriesÔÚnetlink_insertº¯ÊıÖĞ×ÔÔö
+		nl_table[sk->sk_protocol].hash.entries--;  //entriesåœ¨netlink_insertå‡½æ•°ä¸­è‡ªå¢
 	if (nlk_sk(sk)->subscriptions)
 		__sk_del_bind_node(sk);
 	netlink_table_ungrab();
 }
 
-static struct proto netlink_proto = {//tcp ¶ÔÓ¦tcp_prot  udp¶ÔÓ¦udp_prot
+static struct proto netlink_proto = {//tcp å¯¹åº”tcp_prot  udpå¯¹åº”udp_prot
 	.name	  = "NETLINK",
 	.owner	  = THIS_MODULE,
 	.obj_size = sizeof(struct netlink_sock),
 };
 
-//´´½¨Ò»¸östurct sock
-//ÔÚ__netlink_createº¯ÊıÖĞ¶¨ÒåÁËnetlinkÌ×½Ó¿ÚµÄ²Ù×÷½á¹¹Îªnetlink_ops: 
-//È»ºó´´½¨static struct proto netlink_proto½á¹¹¿Õ¼ä£¬²¢³õÊ¼»¯¸Ã½á¹¹ÖĞµÄ³ÉÔ±
-//´´½¨struct sock½á¹¹£¬²¢°Ñstruct socketÓëstruct sock¹ØÁªÆğÀ´£¬Í¨¹ısock_init_data
+//åˆ›å»ºä¸€ä¸ªsturct sock
+//åœ¨__netlink_createå‡½æ•°ä¸­å®šä¹‰äº†netlinkå¥—æ¥å£çš„æ“ä½œç»“æ„ä¸ºnetlink_ops: 
+//ç„¶ååˆ›å»ºstatic struct proto netlink_protoç»“æ„ç©ºé—´ï¼Œå¹¶åˆå§‹åŒ–è¯¥ç»“æ„ä¸­çš„æˆå‘˜
+//åˆ›å»ºstruct sockç»“æ„ï¼Œå¹¶æŠŠstruct socketä¸struct sockå…³è”èµ·æ¥ï¼Œé€šè¿‡sock_init_data
 static int __netlink_create(struct net *net, struct socket *sock,
 			    struct mutex *cb_mutex, int protocol)
 {
@@ -424,34 +424,34 @@ static int __netlink_create(struct net *net, struct socket *sock,
 
 	sock->ops = &netlink_ops;
 
-	sk = sk_alloc(net, PF_NETLINK, GFP_KERNEL, &netlink_proto);//¿ª±Ùstruct netlink_sock¿Õ¼ä´óĞ¡£¬¸Ã½á¹¹ÖĞ°üÀ¨struct sock£¬ÊÇstruct sockµÄÀ©Õ¹
+	sk = sk_alloc(net, PF_NETLINK, GFP_KERNEL, &netlink_proto);//å¼€è¾Ÿstruct netlink_sockç©ºé—´å¤§å°ï¼Œè¯¥ç»“æ„ä¸­åŒ…æ‹¬struct sockï¼Œæ˜¯struct sockçš„æ‰©å±•
 	if (!sk)
 		return -ENOMEM;
 
-	sock_init_data(sock, sk);//³õÊ¼»¯BSD socketºÍsockµÄ¹ØÏµ
+	sock_init_data(sock, sk);//åˆå§‹åŒ–BSD socketå’Œsockçš„å…³ç³»
 
-	nlk = nlk_sk(sk);//»ñÈ¡struct netlink_sockÊ×µØÖ·
+	nlk = nlk_sk(sk);//è·å–struct netlink_socké¦–åœ°å€
 	if (cb_mutex)
 		nlk->cb_mutex = cb_mutex;
 	else {
 		nlk->cb_mutex = &nlk->cb_def_mutex;
 		mutex_init(nlk->cb_mutex);
 	}
-	init_waitqueue_head(&nlk->wait);/// ³õÊ¼»¯µÈ´ı¶ÓÁĞ 
+	init_waitqueue_head(&nlk->wait);/// åˆå§‹åŒ–ç­‰å¾…é˜Ÿåˆ— 
 
 	sk->sk_destruct = netlink_sock_destruct;
 	sk->sk_protocol = protocol;
 	return 0;
 }
 
-// ÔÚÓÃ»§¿Õ¼äÃ¿´Î´ò¿ªnetlink socketÊ±¶¼»áµ÷ÓÃ´Ëº¯Êı:   //Ó¦ÓÃ²ã´´½¨netlinkÌ×½Ó×ÖµÄÊ±ºò£¬»áµ÷ÓÃ__sock_create£¬´Ó¶øÖ´ĞĞnetlink_createº¯Êı
-//Ö´ĞĞ¸Ãº¯ÊıµÄÓÃ»§³ÌĞò£¬ÄÚºËĞèÒªÍ¨¹ısock_registerº¯ÊıÀ´×¢²áºó²Å»áµ÷ÓÃ¸Ãº¯Êı  
-//PF_NETLINKĞ­Òé×åÌ×½Ó×Ö»áµ÷ÓÃÕâ¸öº¯Êı£¬ÒòÎªsock_register(&netlink_family_ops);×¢²áÁËnetlinkÌ×½Ó×Ö
+// åœ¨ç”¨æˆ·ç©ºé—´æ¯æ¬¡æ‰“å¼€netlink socketæ—¶éƒ½ä¼šè°ƒç”¨æ­¤å‡½æ•°:   //åº”ç”¨å±‚åˆ›å»ºnetlinkå¥—æ¥å­—çš„æ—¶å€™ï¼Œä¼šè°ƒç”¨__sock_createï¼Œä»è€Œæ‰§è¡Œnetlink_createå‡½æ•°
+//æ‰§è¡Œè¯¥å‡½æ•°çš„ç”¨æˆ·ç¨‹åºï¼Œå†…æ ¸éœ€è¦é€šè¿‡sock_registerå‡½æ•°æ¥æ³¨å†Œåæ‰ä¼šè°ƒç”¨è¯¥å‡½æ•°  
+//PF_NETLINKåè®®æ—å¥—æ¥å­—ä¼šè°ƒç”¨è¿™ä¸ªå‡½æ•°ï¼Œå› ä¸ºsock_register(&netlink_family_ops);æ³¨å†Œäº†netlinkå¥—æ¥å­—
 
-//netlink_create½¨Á¢¶ÔÓ¦¿Í»§¶ËµÄÌ×½Ó¿Ú£¬Õâ¸öÊÇÓ¦ÓÃ³ÌĞòµÄÌ×½Ó×Ö£¬Ó¦ÓÃ³ÌĞò´´½¨socketÌ×½Ó×ÖµÄÊ±ºò£¬ÄÚºË»áÓĞÒ»¸ö¶ÔÓ¦µÄÄÚºËÌ×½Ó×Ö£¬¾ÍÊÇ¿Í»§¶ËÌ×½Ó¿Ú
-//netlink_kernel_createÎª·şÎñÆ÷¶ËÌ×½Ó¿Ú£¬ÔÚ¸÷ÖÖĞ­ÒéÀàĞÍÄ£¿é³õÊ¼»¯Ê±µ÷ÓÃµÄ,, ¶ø²»ÊÇsocketÏµÍ³µ÷ÓÃÊ±µ÷ÓÃµÄ, Ã¿¸önetlinkĞ­Òé³õÊ¼»¯ÊÇÖ»µ÷ÓÃÒ»´Î(MAX_LINKSÀïÃæµÄÃ¿Ò»¸öÖµ×î¶ànetlink_kernel_createÒ»´Î)
+//netlink_createå»ºç«‹å¯¹åº”å®¢æˆ·ç«¯çš„å¥—æ¥å£ï¼Œè¿™ä¸ªæ˜¯åº”ç”¨ç¨‹åºçš„å¥—æ¥å­—ï¼Œåº”ç”¨ç¨‹åºåˆ›å»ºsocketå¥—æ¥å­—çš„æ—¶å€™ï¼Œå†…æ ¸ä¼šæœ‰ä¸€ä¸ªå¯¹åº”çš„å†…æ ¸å¥—æ¥å­—ï¼Œå°±æ˜¯å®¢æˆ·ç«¯å¥—æ¥å£
+//netlink_kernel_createä¸ºæœåŠ¡å™¨ç«¯å¥—æ¥å£ï¼Œåœ¨å„ç§åè®®ç±»å‹æ¨¡å—åˆå§‹åŒ–æ—¶è°ƒç”¨çš„,, è€Œä¸æ˜¯socketç³»ç»Ÿè°ƒç”¨æ—¶è°ƒç”¨çš„, æ¯ä¸ªnetlinkåè®®åˆå§‹åŒ–æ˜¯åªè°ƒç”¨ä¸€æ¬¡(MAX_LINKSé‡Œé¢çš„æ¯ä¸€ä¸ªå€¼æœ€å¤šnetlink_kernel_createä¸€æ¬¡)
 
-//¸Ãº¯ÊıÔÚÓ¦ÓÃ²ã´´½¨Ì×½Ó×ÖµÄÊ±ºò£¬ÒıÆğÏµÍ³µ÷ÓÃsys_socket£¬È»ºóÖ´ĞĞint __sock_create(struct net *net, int family, int type, int protocol,º¯ÊıµÄÊ±ºò»áµ÷ÓÃ¸Ãº¯Êı´´½¨Ó¦ÓÃ²ã¶ÔÓ¦µÄÌ×½Ó×Ö
+//è¯¥å‡½æ•°åœ¨åº”ç”¨å±‚åˆ›å»ºå¥—æ¥å­—çš„æ—¶å€™ï¼Œå¼•èµ·ç³»ç»Ÿè°ƒç”¨sys_socketï¼Œç„¶åæ‰§è¡Œint __sock_create(struct net *net, int family, int type, int protocol,å‡½æ•°çš„æ—¶å€™ä¼šè°ƒç”¨è¯¥å‡½æ•°åˆ›å»ºåº”ç”¨å±‚å¯¹åº”çš„å¥—æ¥å­—
 static int netlink_create(struct net *net, struct socket *sock, int protocol,
 			  int kern)
 {
@@ -462,7 +462,7 @@ static int netlink_create(struct net *net, struct socket *sock, int protocol,
 
 	sock->state = SS_UNCONNECTED;
 
-	if (sock->type != SOCK_RAW && sock->type != SOCK_DGRAM)//Ó¦ÓÃ³ÌĞò´´½¨socketÌ×½Ó×ÖµÄÊ±ºò£¬socket(PF_NETLINK, SOCK_RAW, NETLINK_FIREWALL)£¬type×Ö¶ÎÖ»ÄÜÓÃSOCK_RAW»òÕßSOCK_DGRAM
+	if (sock->type != SOCK_RAW && sock->type != SOCK_DGRAM)//åº”ç”¨ç¨‹åºåˆ›å»ºsocketå¥—æ¥å­—çš„æ—¶å€™ï¼Œsocket(PF_NETLINK, SOCK_RAW, NETLINK_FIREWALL)ï¼Œtypeå­—æ®µåªèƒ½ç”¨SOCK_RAWæˆ–è€…SOCK_DGRAM
 		return -ESOCKTNOSUPPORT;
 
 	if (protocol < 0 || protocol >= MAX_LINKS)
@@ -470,7 +470,7 @@ static int netlink_create(struct net *net, struct socket *sock, int protocol,
 
 	netlink_lock_table();
 #ifdef CONFIG_MODULES
-	if (!nl_table[protocol].registered) {// Èç¹ûÏàÓ¦µÄnetlinkĞ­ÒéÊÇÄ£¿éÓÖÃ»ÓĞ¼ÓÔØµÄ»°ÏÈ¼ÓÔØ¸ÃÄ£¿é 
+	if (!nl_table[protocol].registered) {// å¦‚æœç›¸åº”çš„netlinkåè®®æ˜¯æ¨¡å—åˆæ²¡æœ‰åŠ è½½çš„è¯å…ˆåŠ è½½è¯¥æ¨¡å— 
 		netlink_unlock_table();
 		request_module("net-pf-%d-proto-%d", PF_NETLINK, protocol);
 		netlink_lock_table();
@@ -505,7 +505,7 @@ out_module:
 	goto out;
 }
 
-//netlink_kernel_create´´½¨ÄÚºË·şÎñÆ÷¶ËÌ×½Ó¿ÚµÄÊ±ºò·µ»ØµÄ¾ÍÊÇstruct socket
+//netlink_kernel_createåˆ›å»ºå†…æ ¸æœåŠ¡å™¨ç«¯å¥—æ¥å£çš„æ—¶å€™è¿”å›çš„å°±æ˜¯struct socket
 static int netlink_release(struct socket *sock)
 {
 	struct sock *sk = sock->sk;
@@ -562,7 +562,7 @@ static int netlink_release(struct socket *sock)
 	return 0;
 }
 
-//Î´Ö¸¶¨pidÊ±µÄ×Ô¶¯°ó¶¨,ÓĞ¿ÉÄÜÓ¦ÓÃ²ãbindµÄÊ±ºòÃ»ÓĞÖ¸¶¨pid£¬ÕâÊ±ºòpidÎª0£¬ÎÒÃÇÄÚºË´´½¨sockµÄÊ±ºò¸øÆä×Ô¶¯·ÖÅäÒ»¸öpid
+//æœªæŒ‡å®špidæ—¶çš„è‡ªåŠ¨ç»‘å®š,æœ‰å¯èƒ½åº”ç”¨å±‚bindçš„æ—¶å€™æ²¡æœ‰æŒ‡å®špidï¼Œè¿™æ—¶å€™pidä¸º0ï¼Œæˆ‘ä»¬å†…æ ¸åˆ›å»ºsockçš„æ—¶å€™ç»™å…¶è‡ªåŠ¨åˆ†é…ä¸€ä¸ªpid
 static int netlink_autobind(struct socket *sock)
 {
 	struct sock *sk = sock->sk;
@@ -571,7 +571,7 @@ static int netlink_autobind(struct socket *sock)
 	struct hlist_head *head;
 	struct sock *osk;
 	struct hlist_node *node;
-	s32 pid = task_tgid_vnr(current);//    pidÈ¡Îªµ±Ç°½ø³ÌµÄ×éID
+	s32 pid = task_tgid_vnr(current);//    pidå–ä¸ºå½“å‰è¿›ç¨‹çš„ç»„ID
 	int err;
 	static s32 rover = -4097;
 
@@ -579,7 +579,7 @@ retry:
 	cond_resched();
 	netlink_table_grab();
 	head = nl_pid_hashfn(hash, pid);
-	sk_for_each(osk, node, head) {//±éÀúÎªÆä·ÖÅäÒ»¸öÃ»ÓĞÊ¹ÓÃµÄpid
+	sk_for_each(osk, node, head) {//éå†ä¸ºå…¶åˆ†é…ä¸€ä¸ªæ²¡æœ‰ä½¿ç”¨çš„pid
 		if (!net_eq(sock_net(osk), net))
 			continue;
 		if (nlk_sk(osk)->pid == pid) {
@@ -592,7 +592,7 @@ retry:
 		}
 	}
 	netlink_table_ungrab();
-//    ´ËÊ±µÄpidÊÇÒ»¸ö¸ºÊı×ª»»ÎªÎŞ·ûºÅ32Î»Êı£¬ ½«ÊÇÒ»¸ö·Ç³£´óµÄÊı
+//    æ­¤æ—¶çš„pidæ˜¯ä¸€ä¸ªè´Ÿæ•°è½¬æ¢ä¸ºæ— ç¬¦å·32ä½æ•°ï¼Œ å°†æ˜¯ä¸€ä¸ªéå¸¸å¤§çš„æ•°
 	err = netlink_insert(sk, net, pid);
 	if (err == -EADDRINUSE)
 		goto retry;
@@ -655,14 +655,14 @@ static int netlink_realloc_groups(struct sock *sk)
 	return err;
 }
 
-//²Î¿¼SYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)µÄerr = sock->ops->bind(sock,
-//¾ÍÊÇÍ¨¹ıÓ¦ÓÃ²ãaddrÖĞµÄpid£¬È»ºóÓëstruct sock *sk½¨Á¢¹ØÏµ£¬È»ºóÌí¼Óµ½nl_table[].hash¶ÔÓ¦hashÖĞ
+//å‚è€ƒSYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)çš„err = sock->ops->bind(sock,
+//å°±æ˜¯é€šè¿‡åº”ç”¨å±‚addrä¸­çš„pidï¼Œç„¶åä¸struct sock *skå»ºç«‹å…³ç³»ï¼Œç„¶åæ·»åŠ åˆ°nl_table[].hashå¯¹åº”hashä¸­
 static int netlink_bind(struct socket *sock, struct sockaddr *addr,
 			int addr_len)
 {
 	struct sock *sk = sock->sk;
 	struct net *net = sock_net(sk);
-	struct netlink_sock *nlk = nlk_sk(sk);//Ö®Ç°sk_alloc¿ª±ÙµÄÊÇnetlink_socket¿Õ¼ä
+	struct netlink_sock *nlk = nlk_sk(sk);//ä¹‹å‰sk_allocå¼€è¾Ÿçš„æ˜¯netlink_socketç©ºé—´
 	struct sockaddr_nl *nladdr = (struct sockaddr_nl *)addr;
 	int err;
 
@@ -681,7 +681,7 @@ static int netlink_bind(struct socket *sock, struct sockaddr *addr,
 	if (nlk->pid) {
 		if (nladdr->nl_pid != nlk->pid)
 			return -EINVAL;
-	} else {//°Ñpid¼ÓÈënl_table[]¶ÔÓ¦hash±íÖĞ
+	} else {//æŠŠpidåŠ å…¥nl_table[]å¯¹åº”hashè¡¨ä¸­
 		err = nladdr->nl_pid ?
 			netlink_insert(sk, net, nladdr->nl_pid) :
 			netlink_autobind(sock);
@@ -773,14 +773,14 @@ static void netlink_overrun(struct sock *sk)
 	atomic_inc(&sk->sk_drops);
 }
 
-//Í¨¹ıPIDºÍprotocol(netlink×î¶àÎª32£¬ÏµÍ³ÓÃÁË16¸ö)²éÕÒsock
-//¸ù¾İpidºÍÓ¦ÓÃ²ãsk¶ÔÓ¦µÄsk_protocolÀ´ÕÒµ½¶ÔÓ¦µÄÄÚºËsock£¬×îÖÕÖ´ĞĞÄÚºËsk->sk_data_ready(sk, len);£¬ÕâÑùÄÚºË¾ÍÊÕµ½Êı¾İÁË
+//é€šè¿‡PIDå’Œprotocol(netlinkæœ€å¤šä¸º32ï¼Œç³»ç»Ÿç”¨äº†16ä¸ª)æŸ¥æ‰¾sock
+//æ ¹æ®pidå’Œåº”ç”¨å±‚skå¯¹åº”çš„sk_protocolæ¥æ‰¾åˆ°å¯¹åº”çš„å†…æ ¸sockï¼Œæœ€ç»ˆæ‰§è¡Œå†…æ ¸sk->sk_data_ready(sk, len);ï¼Œè¿™æ ·å†…æ ¸å°±æ”¶åˆ°æ•°æ®äº†
 static struct sock *netlink_getsockbypid(struct sock *ssk, u32 pid)
 {
 	struct sock *sock;
 	struct netlink_sock *nlk;
 
-    //sk_protocol¶ÔÓ¦socket(PF_NETLINK, SOCK_RAW, NETLINK_KERNEL_MSG);ÖĞµÄNETLINK_KERNEL_MSG
+    //sk_protocolå¯¹åº”socket(PF_NETLINK, SOCK_RAW, NETLINK_KERNEL_MSG);ä¸­çš„NETLINK_KERNEL_MSG
 	sock = netlink_lookup(sock_net(ssk), ssk->sk_protocol, pid);
 	if (!sock)
 		return ERR_PTR(-ECONNREFUSED);
@@ -820,7 +820,7 @@ struct sock *netlink_getsockbyfilp(struct file *filp)
  * < 0: error. skb freed, reference to sock dropped.
  * 0: continue
  * 1: repeat lookup - reference dropped while waiting for socket memory.
- *///½«sockºÍsk_buff°ó¶¨ÔÚÒ»Æğ£¬ÔÚnetlinkÖĞÌ×½Ó×ÖºÍskbµÄ°ó¶¨Óë½â°ó¶¨ÊÇºÜÆµ·±µÄ¡£ 
+ *///å°†sockå’Œsk_buffç»‘å®šåœ¨ä¸€èµ·ï¼Œåœ¨netlinkä¸­å¥—æ¥å­—å’Œskbçš„ç»‘å®šä¸è§£ç»‘å®šæ˜¯å¾ˆé¢‘ç¹çš„ã€‚ 
 int netlink_attachskb(struct sock *sk, struct sk_buff *skb,
 		      long *timeo, struct sock *ssk)
 {
@@ -843,9 +843,9 @@ int netlink_attachskb(struct sock *sk, struct sk_buff *skb,
 		add_wait_queue(&nlk->wait, &wait);
 
         
-        //Èç¹û´ËÊ±Õâ¸ösock²»ÄÜ½ÓÊÜÕâ¸ösk£¬ÄÇÃ´¾ÍÒªµÈ´ıÁË£¬ÕıºÃµÈÔÚnlk->waitÉÏ£¬´ıµ½ºÍ¸ÃsockÏà¹ØµÄ½ø³ÌÔÚnetlink_rcv_wakeÖĞ»½ĞÑÖ®£¬ËµÃ÷¿ÉÒÔ¹ı¼ÌskbÁË¡£ 
+        //å¦‚æœæ­¤æ—¶è¿™ä¸ªsockä¸èƒ½æ¥å—è¿™ä¸ªskï¼Œé‚£ä¹ˆå°±è¦ç­‰å¾…äº†ï¼Œæ­£å¥½ç­‰åœ¨nlk->waitä¸Šï¼Œå¾…åˆ°å’Œè¯¥sockç›¸å…³çš„è¿›ç¨‹åœ¨netlink_rcv_wakeä¸­å”¤é†’ä¹‹ï¼Œè¯´æ˜å¯ä»¥è¿‡ç»§skbäº†ã€‚ 
 		if ((atomic_read(&sk->sk_rmem_alloc) > sk->sk_rcvbuf ||
-		     test_bit(0, &nlk->state)) &&  //ÔÚº¯Êınetlink_rcv_wakeÖĞÇåÁã£¬±íÊ¾Ã»ÓĞÊı¾İÔÚµÈ´ı¶ÓÁĞ£¬ĞèÒªµÈ´ı  Ò²¾ÍÊÇÓ¦ÓÃ²ãµ÷ÓÃÁË½ÓÊÕÏûÏ¢µÄº¯Êı²Å¿ÉÒÔÖ¸Ïò¸Ãº¯ÊıºóĞø¿½±´¶¯×÷µÈ
+		     test_bit(0, &nlk->state)) &&  //åœ¨å‡½æ•°netlink_rcv_wakeä¸­æ¸…é›¶ï¼Œè¡¨ç¤ºæ²¡æœ‰æ•°æ®åœ¨ç­‰å¾…é˜Ÿåˆ—ï¼Œéœ€è¦ç­‰å¾…  ä¹Ÿå°±æ˜¯åº”ç”¨å±‚è°ƒç”¨äº†æ¥æ”¶æ¶ˆæ¯çš„å‡½æ•°æ‰å¯ä»¥æŒ‡å‘è¯¥å‡½æ•°åç»­æ‹·è´åŠ¨ä½œç­‰
 		    !sock_flag(sk, SOCK_DEAD))
 			*timeo = schedule_timeout(*timeo);
 
@@ -863,7 +863,7 @@ int netlink_attachskb(struct sock *sk, struct sk_buff *skb,
 	return 0;
 }
 
-//ÄÚºËÏòÓÃ»§¿Õ¼ä·¢ËÍÊı¾İµ÷ÓÃ¸Ãº¯Êı£¬²Î¿¼netlink_unicast_kernel
+//å†…æ ¸å‘ç”¨æˆ·ç©ºé—´å‘é€æ•°æ®è°ƒç”¨è¯¥å‡½æ•°ï¼Œå‚è€ƒnetlink_unicast_kernel
 int netlink_sendskb(struct sock *sk, struct sk_buff *skb)
 {
 	int len = skb->len;
@@ -905,18 +905,18 @@ static inline struct sk_buff *netlink_trim(struct sk_buff *skb,
 	return skb;
 }
 
-//ÔÚº¯ÊıÖĞ¼ì²é¸Ã×´Ì¬netlink_attachskb
+//åœ¨å‡½æ•°ä¸­æ£€æŸ¥è¯¥çŠ¶æ€netlink_attachskb
 static inline void netlink_rcv_wake(struct sock *sk)
 {
 	struct netlink_sock *nlk = nlk_sk(sk);
 
-	if (skb_queue_empty(&sk->sk_receive_queue))//ÊÇ·ñ½ÓÊÕÒÑ¾­Íê³É 
-		clear_bit(0, &nlk->state);//µ±¶ÓÁĞÃ»ÓĞÊı¾İµÄÊ±ºò£¬Çå¿Õ
+	if (skb_queue_empty(&sk->sk_receive_queue))//æ˜¯å¦æ¥æ”¶å·²ç»å®Œæˆ 
+		clear_bit(0, &nlk->state);//å½“é˜Ÿåˆ—æ²¡æœ‰æ•°æ®çš„æ—¶å€™ï¼Œæ¸…ç©º
 	if (!test_bit(0, &nlk->state))
-		wake_up_interruptible(&nlk->wait);//Èç¹ûÇåÎ»ËµÃ÷½ÓÊÕÍê³É£¬ÄÇÃ´¾Í»½ĞÑµÈ´ı·¢ËÍµÄ½ø³Ì£¬Õâ¸ö½ÓÊÕ½ø³Ì¿ÉÒÔ¼ÌĞø½ÓÊÕÁË¡£ ÆäÊµÖ»ÓĞÔÚÒç³öµÄÇé¿öÏÂ²Å»áÖÃÎ»state 
+		wake_up_interruptible(&nlk->wait);//å¦‚æœæ¸…ä½è¯´æ˜æ¥æ”¶å®Œæˆï¼Œé‚£ä¹ˆå°±å”¤é†’ç­‰å¾…å‘é€çš„è¿›ç¨‹ï¼Œè¿™ä¸ªæ¥æ”¶è¿›ç¨‹å¯ä»¥ç»§ç»­æ¥æ”¶äº†ã€‚ å…¶å®åªæœ‰åœ¨æº¢å‡ºçš„æƒ…å†µä¸‹æ‰ä¼šç½®ä½state 
 }
 
-//ÓÃ»§¿Õ¼äsendmsgµÄÊ±ºò»áµ÷ÓÃ¸Ãº¯Êı¡£ÓÃ»§¿Õ¼äÏòÄÚºË·¢ËÍÊı¾İ¡£ÄÚºËÏòÓÃ»§¿Õ¼äÓÃnetlink_sendskb
+//ç”¨æˆ·ç©ºé—´sendmsgçš„æ—¶å€™ä¼šè°ƒç”¨è¯¥å‡½æ•°ã€‚ç”¨æˆ·ç©ºé—´å‘å†…æ ¸å‘é€æ•°æ®ã€‚å†…æ ¸å‘ç”¨æˆ·ç©ºé—´ç”¨netlink_sendskb
 static inline int netlink_unicast_kernel(struct sock *sk, struct sk_buff *skb)
 {
 	int ret;
@@ -926,7 +926,7 @@ static inline int netlink_unicast_kernel(struct sock *sk, struct sk_buff *skb)
 	if (nlk->netlink_rcv != NULL) {
 		ret = skb->len;
 		skb_set_owner_r(skb, sk);
-		nlk->netlink_rcv(skb);//ÔÚº¯Êınetlink_kernel_createÖĞ×¢²á¡£
+		nlk->netlink_rcv(skb);//åœ¨å‡½æ•°netlink_kernel_createä¸­æ³¨å†Œã€‚
 	}
 	kfree_skb(skb);
 	sock_put(sk);
@@ -943,14 +943,14 @@ int netlink_unicast(struct sock *ssk, struct sk_buff *skb,
 	skb = netlink_trim(skb, gfp_any());
 
 	timeo = sock_sndtimeo(ssk, nonblock);
-retry://netlink_unicastµÄ²ÎÊıdst_pidÎªÈ·¶¨Ä¿±êsockÌá¹©ÁË·½Ïò
-	sk = netlink_getsockbypid(ssk, pid);//ÓÃ»§¿Õ¼äsendmsgµÄÊ±ºò£¬ÌîĞ´µÄPIDÎª0£¬Ò²¾ÍÊÇ»ñÈ¡ÄÚºË¶Ë´´½¨µÄsock
+retry://netlink_unicastçš„å‚æ•°dst_pidä¸ºç¡®å®šç›®æ ‡sockæä¾›äº†æ–¹å‘
+	sk = netlink_getsockbypid(ssk, pid);//ç”¨æˆ·ç©ºé—´sendmsgçš„æ—¶å€™ï¼Œå¡«å†™çš„PIDä¸º0ï¼Œä¹Ÿå°±æ˜¯è·å–å†…æ ¸ç«¯åˆ›å»ºçš„sock
 	if (IS_ERR(sk)) {
 		kfree_skb(skb);
 		return PTR_ERR(sk);
 	}
 	if (netlink_is_kernel(sk)) 
-		return netlink_unicast_kernel(sk, skb); //ÕâÀïÓ¦¸ÃÊÇÄÚºËÏòÓ¦ÓÃ²ã·¢ËÍÊı¾İµÄÊ±ºò
+		return netlink_unicast_kernel(sk, skb); //è¿™é‡Œåº”è¯¥æ˜¯å†…æ ¸å‘åº”ç”¨å±‚å‘é€æ•°æ®çš„æ—¶å€™
 
 	if (sk_filter(sk, skb)) {
 		err = skb->len;
@@ -965,7 +965,7 @@ retry://netlink_unicastµÄ²ÎÊıdst_pidÎªÈ·¶¨Ä¿±êsockÌá¹©ÁË·½Ïò
 	if (err)
 		return err;
 
-	return netlink_sendskb(sk, skb);//ÔÚÌ×½Ó×ÖskÉÏ´«ÊäÕâ¸öskb£¬ÆäÊµ¾ÍÊÇ½«Õâ¸öskbÅÅÈëÁË¸ÃskµÄ½ÓÊÕ¶ÓÁĞµÄºóÍ·¡£ 
+	return netlink_sendskb(sk, skb);//åœ¨å¥—æ¥å­—skä¸Šä¼ è¾“è¿™ä¸ªskbï¼Œå…¶å®å°±æ˜¯å°†è¿™ä¸ªskbæ’å…¥äº†è¯¥skçš„æ¥æ”¶é˜Ÿåˆ—çš„åå¤´ã€‚ 
 }
 EXPORT_SYMBOL(netlink_unicast);
 
@@ -1018,7 +1018,7 @@ struct netlink_broadcast_data {
 	void *tx_data;
 };
 
-//·¢ËÍÊı¾İµ½sock
+//å‘é€æ•°æ®åˆ°sock
 static inline int do_one_broadcast(struct sock *sk,
 				   struct netlink_broadcast_data *p)
 {
@@ -1065,7 +1065,7 @@ static inline int do_one_broadcast(struct sock *sk,
 	} else if (sk_filter(sk, p->skb2)) {
 		kfree_skb(p->skb2);
 		p->skb2 = NULL;
-	} else if ((val = netlink_broadcast_deliver(sk, p->skb2)) < 0) {//·¢ËÍµ½¶ÔÓ¦µ½¶ÔÓ¦sock
+	} else if ((val = netlink_broadcast_deliver(sk, p->skb2)) < 0) {//å‘é€åˆ°å¯¹åº”åˆ°å¯¹åº”sock
 		netlink_overrun(sk);
 		if (nlk->flags & NETLINK_BROADCAST_SEND_ERROR)
 			p->delivery_failure = 1;
@@ -1336,7 +1336,7 @@ static int netlink_getsockopt(struct socket *sock, int level, int optname,
 	return err;
 }
 
-//Ìî³ästruct msghdr£¬È»ºó¿½±´struct msghdrÍ·²¿ºÍdataÊı¾İ²¿·Öµ½ÓÃ»§¿Õ¼ä
+//å¡«å……struct msghdrï¼Œç„¶åæ‹·è´struct msghdrå¤´éƒ¨å’Œdataæ•°æ®éƒ¨åˆ†åˆ°ç”¨æˆ·ç©ºé—´
 static void netlink_cmsg_recv_pktinfo(struct msghdr *msg, struct sk_buff *skb)
 {
 	struct nl_pktinfo info;
@@ -1392,7 +1392,7 @@ static int netlink_sendmsg(struct kiocb *kiocb, struct socket *sock,
 	if (len > sk->sk_sndbuf - 32)
 		goto out;
 	err = -ENOBUFS;
-	skb = alloc_skb(len, GFP_KERNEL);//¿ª±ÙÒ»¸öSKB
+	skb = alloc_skb(len, GFP_KERNEL);//å¼€è¾Ÿä¸€ä¸ªSKB
 	if (skb == NULL)
 		goto out;
 
@@ -1410,7 +1410,7 @@ static int netlink_sendmsg(struct kiocb *kiocb, struct socket *sock,
 	 */
 
 	err = -EFAULT;
-	if (memcpy_fromiovec(skb_put(skb, len), msg->msg_iov, len)) {// ½«·¢ËÍµÄĞÅÏ¢¿½±´µ½skbµÄ´æ´¢Çø
+	if (memcpy_fromiovec(skb_put(skb, len), msg->msg_iov, len)) {// å°†å‘é€çš„ä¿¡æ¯æ‹·è´åˆ°skbçš„å­˜å‚¨åŒº
 		kfree_skb(skb);
 		goto out;
 	}
@@ -1431,7 +1431,7 @@ out:
 	return err;
 }
 
-//Êı¾İÊÇÄÚºË´«ÏòÓÃ»§¿Õ¼äµÄ
+//æ•°æ®æ˜¯å†…æ ¸ä¼ å‘ç”¨æˆ·ç©ºé—´çš„
 static int netlink_recvmsg(struct kiocb *kiocb, struct socket *sock,
 			   struct msghdr *msg, size_t len,
 			   int flags)
@@ -1450,7 +1450,7 @@ static int netlink_recvmsg(struct kiocb *kiocb, struct socket *sock,
 
 	copied = 0;
 
-	skb = skb_recv_datagram(sk, flags, noblock, &err);//´Ó¶ÓÁĞsk_receive_queueÖĞÈ¡³öÒ»¸öÊı¾İ
+	skb = skb_recv_datagram(sk, flags, noblock, &err);//ä»é˜Ÿåˆ—sk_receive_queueä¸­å–å‡ºä¸€ä¸ªæ•°æ®
 	if (skb == NULL)
 		goto out;
 
@@ -1476,13 +1476,13 @@ static int netlink_recvmsg(struct kiocb *kiocb, struct socket *sock,
 	msg->msg_namelen = 0;
 
 	copied = data_skb->len;
-	if (len < copied) {//  //Èç¹ûÓÃ»§ĞèÒªµÄ³¤¶ÈĞ¡ÓÚÊı¾İ±¨µÄ³¤¶È£¬Ôò¶ªÆúÊ£ÓàµÄÊı¾İ°ü
+	if (len < copied) {//  //å¦‚æœç”¨æˆ·éœ€è¦çš„é•¿åº¦å°äºæ•°æ®æŠ¥çš„é•¿åº¦ï¼Œåˆ™ä¸¢å¼ƒå‰©ä½™çš„æ•°æ®åŒ…
 		msg->msg_flags |= MSG_TRUNC;
 		copied = len;
 	}
 
 	skb_reset_transport_header(data_skb);
-	err = skb_copy_datagram_iovec(data_skb, 0, msg->msg_iov, copied);//½«skb¿½±´ÖÁmsghdrµÄiovecÖĞ
+	err = skb_copy_datagram_iovec(data_skb, 0, msg->msg_iov, copied);//å°†skbæ‹·è´è‡³msghdrçš„iovecä¸­
 
 	if (msg->msg_name) {
 		struct sockaddr_nl *addr = (struct sockaddr_nl *)msg->msg_name;
@@ -1493,7 +1493,7 @@ static int netlink_recvmsg(struct kiocb *kiocb, struct socket *sock,
 		msg->msg_namelen = sizeof(*addr);
 	}
 
-	if (nlk->flags & NETLINK_RECV_PKTINFO)//°ÑnetlinkÏûÏ¢Í·(struct msghdr)ºÍÊı¾İ¿½±´µ½ÓÃ»§¿Õ¼ä
+	if (nlk->flags & NETLINK_RECV_PKTINFO)//æŠŠnetlinkæ¶ˆæ¯å¤´(struct msghdr)å’Œæ•°æ®æ‹·è´åˆ°ç”¨æˆ·ç©ºé—´
 		netlink_cmsg_recv_pktinfo(msg, skb);
 
 	if (NULL == siocb->scm) {
@@ -1521,10 +1521,10 @@ static void netlink_data_ready(struct sock *sk, int len)
 {
          struct netlink_opt *nlk = nlk_sk(sk);
          if (nlk->data_ready)
-                 nlk->data_ready(sk, len);  //ÕâÀïµ÷ÓÃµÄ»Øµ÷º¯Êı¾ÍÊÇÄÚºËnetlinkÌ×½Ó×Ö½¨Á¢µÄÊ±ºò´«ÈëµÄÄÇ¸öº¯Êı¡£
-         netlink_rcv_wake(sk);    //¸æÖª±ğµÄ½ø³Ì¸ÃsockÉÏ¸ÕÍê³ÉÁËÒ»´Î½ÓÊÕ£¬¿ÉÄÜ»áÌÚ³öµØ·½ÒÔ±ã½ÓÊÕĞÂµÄskb
+                 nlk->data_ready(sk, len);  //è¿™é‡Œè°ƒç”¨çš„å›è°ƒå‡½æ•°å°±æ˜¯å†…æ ¸netlinkå¥—æ¥å­—å»ºç«‹çš„æ—¶å€™ä¼ å…¥çš„é‚£ä¸ªå‡½æ•°ã€‚
+         netlink_rcv_wake(sk);    //å‘ŠçŸ¥åˆ«çš„è¿›ç¨‹è¯¥sockä¸Šåˆšå®Œæˆäº†ä¸€æ¬¡æ¥æ”¶ï¼Œå¯èƒ½ä¼šè…¾å‡ºåœ°æ–¹ä»¥ä¾¿æ¥æ”¶æ–°çš„skb
 } 
-*/ //ÕâÀïÎªÊ²Ã´ºÍhttp://blog.csdn.net/dog250/article/details/5303430ÖĞµÄ²»Ò»Ñù          ?????????????????????????????????
+*/ //è¿™é‡Œä¸ºä»€ä¹ˆå’Œhttp://blog.csdn.net/dog250/article/details/5303430ä¸­çš„ä¸ä¸€æ ·          ?????????????????????????????????
 static void netlink_data_ready(struct sock *sk, int len)
 {
 	BUG();
@@ -1536,10 +1536,10 @@ static void netlink_data_ready(struct sock *sk, int len)
  *	queueing.
  */
  
-//netlink_create½¨Á¢¶ÔÓ¦¿Í»§¶ËµÄÌ×½Ó¿Ú£¬Õâ¸öÊÇÓ¦ÓÃ³ÌĞòµÄÌ×½Ó×Ö£¬Ó¦ÓÃ³ÌĞò´´½¨socketÌ×½Ó×ÖµÄÊ±ºò£¬ÄÚºË»áÓĞÒ»¸ö¶ÔÓ¦µÄÄÚºËÌ×½Ó×Ö£¬¾ÍÊÇ¿Í»§¶ËÌ×½Ó¿Ú
-//netlink_kernel_createÎª·şÎñÆ÷¶ËÌ×½Ó¿Ú£¬ÔÚ¸÷ÖÖĞ­ÒéÀàĞÍÄ£¿é³õÊ¼»¯Ê±µ÷ÓÃµÄ,, ¶ø²»ÊÇsocketÏµÍ³µ÷ÓÃÊ±µ÷ÓÃµÄ, Ã¿¸önetlinkĞ­Òé³õÊ¼»¯ÊÇÖ»µ÷ÓÃÒ»´Î(MAX_LINKSÀïÃæµÄÃ¿Ò»¸öÖµ×î¶ànetlink_kernel_createÒ»´Î)
-//unitÈ¡Öµ·¶Î§ÎªnetlinkĞ­Òé·¶Î§ 0 - MAX_LINKS£¬inputÎªnetlink½ÓÊÕÓ¦ÓÃ²ãÊı¾İº¯Êı£¬µ±ÓĞÊı¾İÀ´µÄÊ±ºòµ÷ÓÃinputº¯Êı
-//ÔÚnetlink_insertÖĞ»á¸ù¾İPID=0ÒÔ¼° unit(×î´ó32)´Ó¶ø°Ñstruct sock *skÌí¼Óµ½nl_table[unit].hashÖĞ
+//netlink_createå»ºç«‹å¯¹åº”å®¢æˆ·ç«¯çš„å¥—æ¥å£ï¼Œè¿™ä¸ªæ˜¯åº”ç”¨ç¨‹åºçš„å¥—æ¥å­—ï¼Œåº”ç”¨ç¨‹åºåˆ›å»ºsocketå¥—æ¥å­—çš„æ—¶å€™ï¼Œå†…æ ¸ä¼šæœ‰ä¸€ä¸ªå¯¹åº”çš„å†…æ ¸å¥—æ¥å­—ï¼Œå°±æ˜¯å®¢æˆ·ç«¯å¥—æ¥å£
+//netlink_kernel_createä¸ºæœåŠ¡å™¨ç«¯å¥—æ¥å£ï¼Œåœ¨å„ç§åè®®ç±»å‹æ¨¡å—åˆå§‹åŒ–æ—¶è°ƒç”¨çš„,, è€Œä¸æ˜¯socketç³»ç»Ÿè°ƒç”¨æ—¶è°ƒç”¨çš„, æ¯ä¸ªnetlinkåè®®åˆå§‹åŒ–æ˜¯åªè°ƒç”¨ä¸€æ¬¡(MAX_LINKSé‡Œé¢çš„æ¯ä¸€ä¸ªå€¼æœ€å¤šnetlink_kernel_createä¸€æ¬¡)
+//unitå–å€¼èŒƒå›´ä¸ºnetlinkåè®®èŒƒå›´ 0 - MAX_LINKSï¼Œinputä¸ºnetlinkæ¥æ”¶åº”ç”¨å±‚æ•°æ®å‡½æ•°ï¼Œå½“æœ‰æ•°æ®æ¥çš„æ—¶å€™è°ƒç”¨inputå‡½æ•°
+//åœ¨netlink_insertä¸­ä¼šæ ¹æ®PID=0ä»¥åŠ unit(æœ€å¤§32)ä»è€ŒæŠŠstruct sock *skæ·»åŠ åˆ°nl_table[unit].hashä¸­
 struct sock *netlink_kernel_create(struct net *net, int unit, unsigned int groups,
 		      void (*input)(struct sk_buff *skb),
 		      struct mutex *cb_mutex, struct module *module)
@@ -1554,7 +1554,7 @@ struct sock *netlink_kernel_create(struct net *net, int unit, unsigned int group
 	if (unit < 0 || unit >= MAX_LINKS)
 		return NULL;
 
-    ////¸Ãº¯ÊıµÄÇ°Èı¸ö²ÎÊıºÍÓ¦ÓÃ²ãµÄint socket(int domain, int type, int protocol);º¯Êı²ÎÊıÒ»ÖÂ£¬²¢ÇÒdomainºÍprotocolÖµÒªÒ»ÖÂ
+    ////è¯¥å‡½æ•°çš„å‰ä¸‰ä¸ªå‚æ•°å’Œåº”ç”¨å±‚çš„int socket(int domain, int type, int protocol);å‡½æ•°å‚æ•°ä¸€è‡´ï¼Œå¹¶ä¸”domainå’Œprotocolå€¼è¦ä¸€è‡´
 	if (sock_create_lite(PF_NETLINK, SOCK_DGRAM, unit, &sock))
 		return NULL;
 
@@ -1567,7 +1567,7 @@ struct sock *netlink_kernel_create(struct net *net, int unit, unsigned int group
 	if (__netlink_create(&init_net, sock, cb_mutex, unit) < 0)
 		goto out_sock_release_nosk;
 
-	sk = sock->sk;//¼´ÎªÉÏÃæ__netlink_create´´½¨µÄstruct sock
+	sk = sock->sk;//å³ä¸ºä¸Šé¢__netlink_createåˆ›å»ºçš„struct sock
 	sk_change_net(sk, net);
 
 	if (groups < 32)
@@ -2097,7 +2097,7 @@ static const struct file_operations netlink_seq_fops = {
 
 #endif
 
-//Ìí¼ÓnbÊÂ¼şµ½netlink_chainÁ´ÖĞ
+//æ·»åŠ nbäº‹ä»¶åˆ°netlink_chainé“¾ä¸­
 int netlink_register_notifier(struct notifier_block *nb)
 {
 	return atomic_notifier_chain_register(&netlink_chain, nb);
@@ -2110,35 +2110,35 @@ int netlink_unregister_notifier(struct notifier_block *nb)
 }
 EXPORT_SYMBOL(netlink_unregister_notifier);
 
-//ÓÃ»§¿Õ¼äºÍÄÚºË¿Õ¼äÄÜ¹»Í¨ĞÅµÄ¹Ø¼ü¼ûº¯Êınetlink_getsockbypid
+//ç”¨æˆ·ç©ºé—´å’Œå†…æ ¸ç©ºé—´èƒ½å¤Ÿé€šä¿¡çš„å…³é”®è§å‡½æ•°netlink_getsockbypid
 static const struct proto_ops netlink_ops = {
 	.family =	PF_NETLINK,
 	.owner =	THIS_MODULE,
 	.release =	netlink_release,
 	.bind =		netlink_bind,
 	.connect =	netlink_connect,
-	.socketpair =	sock_no_socketpair, // ÎŞ¶¨Òå 
-	.accept =	sock_no_accept, // ÎŞ¶¨Òå 
+	.socketpair =	sock_no_socketpair, // æ— å®šä¹‰ 
+	.accept =	sock_no_accept, // æ— å®šä¹‰ 
 	.getname =	netlink_getname,
 	.poll =		datagram_poll,
-	.ioctl =	sock_no_ioctl, // ÎŞ¶¨Òå 
-	.listen =	sock_no_listen, // ÎŞ¶¨Òå 
-	.shutdown =	sock_no_shutdown, // ÎŞ¶¨Òå 
+	.ioctl =	sock_no_ioctl, // æ— å®šä¹‰ 
+	.listen =	sock_no_listen, // æ— å®šä¹‰ 
+	.shutdown =	sock_no_shutdown, // æ— å®šä¹‰ 
 	.setsockopt =	netlink_setsockopt,
 	.getsockopt =	netlink_getsockopt,
 	.sendmsg =	netlink_sendmsg,
 	.recvmsg =	netlink_recvmsg,
-	.mmap =		sock_no_mmap, // ÎŞ¶¨Òå 
-	.sendpage =	sock_no_sendpage, // ÎŞ¶¨Òå 
+	.mmap =		sock_no_mmap, // æ— å®šä¹‰ 
+	.sendpage =	sock_no_sendpage, // æ— å®šä¹‰ 
 };
 
 /*
-// netlinkĞ­Òé×å²Ù×÷, ÔÚÓÃ»§³ÌĞòÊ¹ÓÃsocket´ò¿ªnetlinkÀàĞÍµÄsocketÊ±µ÷ÓÃ, 
-// ÏàÓ¦µÄcreateº¯ÊıÔÚ__sock_create(net/socket.c)º¯ÊıÖĞµ÷ÓÃ: 
+// netlinkåè®®æ—æ“ä½œ, åœ¨ç”¨æˆ·ç¨‹åºä½¿ç”¨socketæ‰“å¼€netlinkç±»å‹çš„socketæ—¶è°ƒç”¨, 
+// ç›¸åº”çš„createå‡½æ•°åœ¨__sock_create(net/socket.c)å‡½æ•°ä¸­è°ƒç”¨: 
 */
-////pf_inetµÄnet_families[]Îªinet_family_ops£¬¶ÔÓ¦µÄÌ×½Ó¿Ú²ãops²Î¿¼inetsw_arrayÖĞµÄinet_stream_ops inet_dgram_ops inet_sockraw_ops£¬´«Êä²ã²Ù×÷¼¯·Ö±ğÎªtcp_prot udp_prot raw_prot
-//netlinkµÄnet_families[]netlink_family_ops£¬¶ÔÓ¦µÄÌ×½Ó¿Ú²ãopsÎªnetlink_ops
-static const struct net_proto_family netlink_family_ops = { //PF_INET¶ÔÓ¦inet_family_ops  ¶ÔÓ¦²Ù×÷¼¯netlink_ops
+////pf_inetçš„net_families[]ä¸ºinet_family_opsï¼Œå¯¹åº”çš„å¥—æ¥å£å±‚opså‚è€ƒinetsw_arrayä¸­çš„inet_stream_ops inet_dgram_ops inet_sockraw_opsï¼Œä¼ è¾“å±‚æ“ä½œé›†åˆ†åˆ«ä¸ºtcp_prot udp_prot raw_prot
+//netlinkçš„net_families[]netlink_family_opsï¼Œå¯¹åº”çš„å¥—æ¥å£å±‚opsä¸ºnetlink_ops
+static const struct net_proto_family netlink_family_ops = { //PF_INETå¯¹åº”inet_family_ops  å¯¹åº”æ“ä½œé›†netlink_ops
 	.family = PF_NETLINK,
 	.create = netlink_create,
 	.owner	= THIS_MODULE,	/* for consistency 8) */
@@ -2178,7 +2178,7 @@ static int __init netlink_proto_init(void)
 
 	BUILD_BUG_ON(sizeof(struct netlink_skb_parms) > sizeof(dummy_skb->cb));
 
-	nl_table = kcalloc(MAX_LINKS, sizeof(*nl_table), GFP_KERNEL);//Ö®¿ª±ÙÁËMAX_LINKS¸öna_talbeÖ¸Õë¿Õ¼ä
+	nl_table = kcalloc(MAX_LINKS, sizeof(*nl_table), GFP_KERNEL);//ä¹‹å¼€è¾Ÿäº†MAX_LINKSä¸ªna_talbeæŒ‡é’ˆç©ºé—´
 	if (!nl_table)
 		goto panic;
 
@@ -2191,7 +2191,7 @@ static int __init netlink_proto_init(void)
 	limit = (1UL << order) / sizeof(struct hlist_head);
 	order = get_bitmask_order(min(limit, (unsigned long)UINT_MAX)) - 1;
 
-	for (i = 0; i < MAX_LINKS; i++) {//·ÖÅäMAX_LINKS¸önetlink±í½á¹¹, nl_table, Ã¿¸ö³ÉÔ±´ú±íÒ»ÖÖĞ­ÒéÀàĞÍ
+	for (i = 0; i < MAX_LINKS; i++) {//åˆ†é…MAX_LINKSä¸ªnetlinkè¡¨ç»“æ„, nl_table, æ¯ä¸ªæˆå‘˜ä»£è¡¨ä¸€ç§åè®®ç±»å‹
 		struct nl_pid_hash *hash = &nl_table[i].hash;
 
 		hash->table = nl_pid_hash_zalloc(1 * sizeof(*hash->table));

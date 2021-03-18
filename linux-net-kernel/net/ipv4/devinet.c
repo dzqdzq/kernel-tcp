@@ -94,17 +94,17 @@ static const struct nla_policy ifa_ipv4_policy[IFA_MAX+1] = {
 
 static void rtmsg_ifa(int event, struct in_ifaddr *, struct nlmsghdr *, u32);
 
-//http://www.linuxidc.com/Linux/2013-07/86999.htmÈçÍ¼ 1ÖĞËùÊ¾£¬
-//LinuxµÄÍøÂç×ÓÏµÍ³Ò»¹²ÓĞ3¸öÍ¨ÖªÁ´£º±íÊ¾ipv4µØÖ··¢Éú±ä»¯Ê±µÄinetaddr_chain£»
-//±íÊ¾ipv6µØÖ··¢Éú±ä»¯µÄinet6addr_chain£»»¹ÓĞ±íÊ¾Éè±¸×¢²á¡¢×´Ì¬±ä»¯µÄnetdev_chain¡£
+//http://www.linuxidc.com/Linux/2013-07/86999.htmå¦‚å›¾ 1ä¸­æ‰€ç¤ºï¼Œ
+//Linuxçš„ç½‘ç»œå­ç³»ç»Ÿä¸€å…±æœ‰3ä¸ªé€šçŸ¥é“¾ï¼šè¡¨ç¤ºipv4åœ°å€å‘ç”Ÿå˜åŒ–æ—¶çš„inetaddr_chainï¼›
+//è¡¨ç¤ºipv6åœ°å€å‘ç”Ÿå˜åŒ–çš„inet6addr_chainï¼›è¿˜æœ‰è¡¨ç¤ºè®¾å¤‡æ³¨å†Œã€çŠ¶æ€å˜åŒ–çš„netdev_chainã€‚
 //static BLOCKING_NOTIFIER_HEAD(inetaddr_chain);
 /*  
-Ô­×ÓÍ¨ÖªÁ´£¨ Atomic notifier chains £©£ºÍ¨ÖªÁ´ÔªËØµÄ»Øµ÷º¯Êı£¨µ±ÊÂ¼ş·¢ÉúÊ±ÒªÖ´ĞĞµÄº¯Êı£©ÔÚÖĞ¶Ï»òÔ­×Ó²Ù×÷ÉÏÏÂÎÄÖĞÔËĞĞ£¬²»ÔÊĞí×èÈû¡£¶ÔÓ¦µÄÁ´±íÍ·½á¹¹£º
-¿É×èÈûÍ¨ÖªÁ´£¨ Blocking notifier chains £©£ºÍ¨ÖªÁ´ÔªËØµÄ»Øµ÷º¯ÊıÔÚ½ø³ÌÉÏÏÂÎÄÖĞÔËĞĞ£¬ÔÊĞí×èÈû¡£¶ÔÓ¦µÄÁ´±íÍ·£º
-Ô­Ê¼Í¨ÖªÁ´£¨ Raw notifierchains £©£º¶ÔÍ¨ÖªÁ´ÔªËØµÄ»Øµ÷º¯ÊıÃ»ÓĞÈÎºÎÏŞÖÆ£¬ËùÓĞËøºÍ±£»¤»úÖÆ¶¼ÓÉµ÷ÓÃÕßÎ¬»¤¡£¶ÔÓ¦µÄÁ´±íÍ·£º
-SRCU Í¨ÖªÁ´£¨ SRCU notifier chains £©£º¿É×èÈûÍ¨ÖªÁ´µÄÒ»ÖÖ±äÌå¡£¶ÔÓ¦µÄÁ´±íÍ·£º
+åŸå­é€šçŸ¥é“¾ï¼ˆ Atomic notifier chains ï¼‰ï¼šé€šçŸ¥é“¾å…ƒç´ çš„å›è°ƒå‡½æ•°ï¼ˆå½“äº‹ä»¶å‘ç”Ÿæ—¶è¦æ‰§è¡Œçš„å‡½æ•°ï¼‰åœ¨ä¸­æ–­æˆ–åŸå­æ“ä½œä¸Šä¸‹æ–‡ä¸­è¿è¡Œï¼Œä¸å…è®¸é˜»å¡ã€‚å¯¹åº”çš„é“¾è¡¨å¤´ç»“æ„ï¼š
+å¯é˜»å¡é€šçŸ¥é“¾ï¼ˆ Blocking notifier chains ï¼‰ï¼šé€šçŸ¥é“¾å…ƒç´ çš„å›è°ƒå‡½æ•°åœ¨è¿›ç¨‹ä¸Šä¸‹æ–‡ä¸­è¿è¡Œï¼Œå…è®¸é˜»å¡ã€‚å¯¹åº”çš„é“¾è¡¨å¤´ï¼š
+åŸå§‹é€šçŸ¥é“¾ï¼ˆ Raw notifierchains ï¼‰ï¼šå¯¹é€šçŸ¥é“¾å…ƒç´ çš„å›è°ƒå‡½æ•°æ²¡æœ‰ä»»ä½•é™åˆ¶ï¼Œæ‰€æœ‰é”å’Œä¿æŠ¤æœºåˆ¶éƒ½ç”±è°ƒç”¨è€…ç»´æŠ¤ã€‚å¯¹åº”çš„é“¾è¡¨å¤´ï¼š
+SRCU é€šçŸ¥é“¾ï¼ˆ SRCU notifier chains ï¼‰ï¼šå¯é˜»å¡é€šçŸ¥é“¾çš„ä¸€ç§å˜ä½“ã€‚å¯¹åº”çš„é“¾è¡¨å¤´ï¼š
 
-register_inetaddr_notifierºÍunregister_inetaddr_notifierÅä¶Ô
+register_inetaddr_notifierå’Œunregister_inetaddr_notifieré…å¯¹
 */
 struct blocking_notifier_head inetaddr_chain = BLOCKING_NOTIFIER_INIT(inetaddr_chain) 
 
@@ -161,8 +161,8 @@ void in_dev_finish_destroy(struct in_device *idev)
 EXPORT_SYMBOL(in_dev_finish_destroy);
 
 /*
-  * inetdev_init()ÎªÍ¨¹ı²ÎÊıÖ¸¶¨µÄÍøÂçÉè±¸·ÖÅä²¢°ó¶¨
-  * IPÅäÖÃ¿é¡£
+  * inetdev_init()ä¸ºé€šè¿‡å‚æ•°æŒ‡å®šçš„ç½‘ç»œè®¾å¤‡åˆ†é…å¹¶ç»‘å®š
+  * IPé…ç½®å—ã€‚
   */
 static struct in_device *inetdev_init(struct net_device *dev)
 {
@@ -171,22 +171,22 @@ static struct in_device *inetdev_init(struct net_device *dev)
 	ASSERT_RTNL();
 
 	/*
-	  * ·ÖÅäÒ»¸öIPÅäÖÃ¿é
+	  * åˆ†é…ä¸€ä¸ªIPé…ç½®å—
 	  */
 	in_dev = kzalloc(sizeof(*in_dev), GFP_KERNEL);
 	if (!in_dev)
 		goto out;
 	/*
-	  * ³õÊ¼»¯IPÅäÖÃ¿éÖĞµÄÒ»Ğ©³ÉÔ±£¬°üÀ¨
-	  * IPv4ÅäÖÃµÄÄ¬ÈÏÖµ£¬ÒÔ¼°ËùÊôµÄÍøÂçÉè±¸¡£
+	  * åˆå§‹åŒ–IPé…ç½®å—ä¸­çš„ä¸€äº›æˆå‘˜ï¼ŒåŒ…æ‹¬
+	  * IPv4é…ç½®çš„é»˜è®¤å€¼ï¼Œä»¥åŠæ‰€å±çš„ç½‘ç»œè®¾å¤‡ã€‚
 	  */
 	memcpy(&in_dev->cnf, dev_net(dev)->ipv4.devconf_dflt,
 			sizeof(in_dev->cnf));
 	in_dev->cnf.sysctl = NULL;
 	in_dev->dev = dev;
 	/*
-	  * ÎªIPÅäÖÃ¿é·ÖÅäÁÚ¾ÓĞ­Òé²ÎÊıÅäÖÃ¿é£¬
-	  * ²¢¸ù¾İARP±í³õÊ¼»¯
+	  * ä¸ºIPé…ç½®å—åˆ†é…é‚»å±…åè®®å‚æ•°é…ç½®å—ï¼Œ
+	  * å¹¶æ ¹æ®ARPè¡¨åˆå§‹åŒ–
 	  */
 	if ((in_dev->arp_parms = neigh_parms_alloc(dev, &arp_tbl)) == NULL)
 		goto out_kfree;
@@ -199,13 +199,13 @@ static struct in_device *inetdev_init(struct net_device *dev)
 
 	devinet_sysctl_register(in_dev);
 	/*
-	  * ³õÊ¼»¯IGMPÄ£¿é
+	  * åˆå§‹åŒ–IGMPæ¨¡å—
 	  */
 	ip_mc_init_dev(in_dev);
 	/*
-	  * Èç¹ûÍøÂçÉè±¸ÒÑÆôÓÃ£¬Ôò³õÊ¼»¯¸ÃÍøÂç
-	  * Éè±¸ÉÏµÄ×é²¥ÏûÏ¢£¬ÀıÈç£¬½«
-	  * ¸ÃÍøÂçÉè±¸¼ÓÈëµ½224.0.0.1×é²¥×éµÈ²Ù×÷
+	  * å¦‚æœç½‘ç»œè®¾å¤‡å·²å¯ç”¨ï¼Œåˆ™åˆå§‹åŒ–è¯¥ç½‘ç»œ
+	  * è®¾å¤‡ä¸Šçš„ç»„æ’­æ¶ˆæ¯ï¼Œä¾‹å¦‚ï¼Œå°†
+	  * è¯¥ç½‘ç»œè®¾å¤‡åŠ å…¥åˆ°224.0.0.1ç»„æ’­ç»„ç­‰æ“ä½œ
 	  */
 	if (dev->flags & IFF_UP)
 		ip_mc_up(in_dev);
@@ -213,8 +213,8 @@ static struct in_device *inetdev_init(struct net_device *dev)
 	/* we can receive as soon as ip_ptr is set -- do this last */
 	rcu_assign_pointer(dev->ip_ptr, in_dev);
 /*
-  * ²Ù×÷³É¹¦£¬·µ»Ø·ÖÅä²¢°ó¶¨³É¹¦µÄIPÅäÖÃ¿é£¬
-  * ·ñÔò·µ»ØNULL¡£
+  * æ“ä½œæˆåŠŸï¼Œè¿”å›åˆ†é…å¹¶ç»‘å®šæˆåŠŸçš„IPé…ç½®å—ï¼Œ
+  * å¦åˆ™è¿”å›NULLã€‚
   */
 out:
 	return in_dev;
@@ -231,8 +231,8 @@ static void in_dev_rcu_put(struct rcu_head *head)
 }
 
 /*
-  * inetdev_destroy()Í¨³£ÔÚÉè±¸×¢ÏúÊ±±»µ÷ÓÃ£¬
-  * ÊÍ·ÅÖ¸¶¨µÄIPÅäÖÃ¿é¡£
+  * inetdev_destroy()é€šå¸¸åœ¨è®¾å¤‡æ³¨é”€æ—¶è¢«è°ƒç”¨ï¼Œ
+  * é‡Šæ”¾æŒ‡å®šçš„IPé…ç½®å—ã€‚
   */
 static void inetdev_destroy(struct in_device *in_dev)
 {
@@ -244,17 +244,17 @@ static void inetdev_destroy(struct in_device *in_dev)
 	dev = in_dev->dev;
 
 	/*
-	  * ±êÊ¶´øÊÍ·ÅµÄIPÅäÖÃ¿éÕı´¦ÔÚÊÍ·Å¹ı³ÌÖĞ¡£
+	  * æ ‡è¯†å¸¦é‡Šæ”¾çš„IPé…ç½®å—æ­£å¤„åœ¨é‡Šæ”¾è¿‡ç¨‹ä¸­ã€‚
 	  */
 	in_dev->dead = 1;
 
 	/*
-	  * Ïú»Ù×é²¥Ïà¹ØµÄÅäÖÃ£¬ÈçÍ£Ö¹Ïà¹Ø¶¨Ê±Æ÷¡£
+	  * é”€æ¯ç»„æ’­ç›¸å…³çš„é…ç½®ï¼Œå¦‚åœæ­¢ç›¸å…³å®šæ—¶å™¨ã€‚
 	  */
 	ip_mc_destroy_dev(in_dev);
 
 	/*
-	  * É¾³ı²¢ÊÍ·ÅËùÓĞµÄIPµØÖ·¿é¡£
+	  * åˆ é™¤å¹¶é‡Šæ”¾æ‰€æœ‰çš„IPåœ°å€å—ã€‚
 	  */
 	while ((ifa = in_dev->ifa_list) != NULL) {
 		inet_del_ifa(in_dev, &in_dev->ifa_list, 0);
@@ -262,29 +262,29 @@ static void inetdev_destroy(struct in_device *in_dev)
 	}
 
 	/*
-	  * ½«ÍøÂçÉè±¸Ö¸ÏòIPÅäÖÃ¿éµÄÖ¸ÕëÉèÖÃÎªNULL¡£
+	  * å°†ç½‘ç»œè®¾å¤‡æŒ‡å‘IPé…ç½®å—çš„æŒ‡é’ˆè®¾ç½®ä¸ºNULLã€‚
 	  */
 	dev->ip_ptr = NULL;
 
 	/*
-	  * ×¢ÏúÁÚ¾Ó×ÓÏµÍ³Ïà¹ØµÄÅäÖÃ²ÎÊı
+	  * æ³¨é”€é‚»å±…å­ç³»ç»Ÿç›¸å…³çš„é…ç½®å‚æ•°
 	  */
 	devinet_sysctl_unregister(in_dev);
 	/*
-	  * ÊÍ·ÅIPÅäÖÃ¿éÖĞµÄÁÚ¾ÓĞ­Òé²ÎÊıÅäÖÃ¿é¡£
+	  * é‡Šæ”¾IPé…ç½®å—ä¸­çš„é‚»å±…åè®®å‚æ•°é…ç½®å—ã€‚
 	  */
 	neigh_parms_release(&arp_tbl, in_dev->arp_parms);
 	arp_ifdown(dev);
 
 	/*
-	  * Í¨¹ıRCU»úÖÆÊÍ·ÅIPÅäÖÃ¿é¡£
+	  * é€šè¿‡RCUæœºåˆ¶é‡Šæ”¾IPé…ç½®å—ã€‚
 	  */
 	call_rcu(&in_dev->rcu_head, in_dev_rcu_put);
 }
 
 /*
-  * ¸ù¾İÖ¸¶¨ÍøÂçÉè±¸µÄIPÅäÖÃ¿é£¬¼ì²éÁ½¸ö¸ø¶¨µÄ
-  * IPµØÖ·ÊÇ·ñÍ¬ÊôÓÚÒ»¸ö×ÓÍø
+  * æ ¹æ®æŒ‡å®šç½‘ç»œè®¾å¤‡çš„IPé…ç½®å—ï¼Œæ£€æŸ¥ä¸¤ä¸ªç»™å®šçš„
+  * IPåœ°å€æ˜¯å¦åŒå±äºä¸€ä¸ªå­ç½‘
   */
 int inet_addr_onlink(struct in_device *in_dev, __be32 a, __be32 b)
 {
@@ -317,11 +317,11 @@ static void __inet_del_ifa(struct in_device *in_dev, struct in_ifaddr **ifap,
 	 **/
 
 	/*
-	  * Èç¹ûÉ¾³ıµÄÊÇÖ÷IPµØÖ·£¬ÔòĞè¶Ô´ÓÊô
-	  * IPµØÖ·×÷ÏàÓ¦µÄ´¦Àí¡£Èç¹ûÃ»ÓĞÆôÓÃ
-	  * promote_secondaries£¬ÔòÉ¾³ıËùÓĞ¸ÃÖ÷IPµØÖ·µÄ
-	  * ´ÓÊôIPµØÖ·£¬·ñÔòÑ¡ÔñÒ»¸ö´ÓÊôIPµØÖ·£¬
-	  * Éı¼¶ÎªÖ÷IPµØÖ·¡£
+	  * å¦‚æœåˆ é™¤çš„æ˜¯ä¸»IPåœ°å€ï¼Œåˆ™éœ€å¯¹ä»å±
+	  * IPåœ°å€ä½œç›¸åº”çš„å¤„ç†ã€‚å¦‚æœæ²¡æœ‰å¯ç”¨
+	  * promote_secondariesï¼Œåˆ™åˆ é™¤æ‰€æœ‰è¯¥ä¸»IPåœ°å€çš„
+	  * ä»å±IPåœ°å€ï¼Œå¦åˆ™é€‰æ‹©ä¸€ä¸ªä»å±IPåœ°å€ï¼Œ
+	  * å‡çº§ä¸ºä¸»IPåœ°å€ã€‚
 	  */
 	if (!(ifa1->ifa_flags & IFA_F_SECONDARY)) {
 		struct in_ifaddr **ifap1 = &ifa1->ifa_next;
@@ -356,8 +356,8 @@ static void __inet_del_ifa(struct in_device *in_dev, struct in_ifaddr **ifap,
 	/* 2. Unlink it */
 
 	/*
-	  * ÏÈ½«´ıÉ¾³ıµÄIPµØÖ·¿é´ÓÁ´±íÖĞÉ¾³ı£¬
-	  * ºóĞø²Ù×÷ÖĞÔÙ¸ù¾İdestroy×÷´¦Àí
+	  * å…ˆå°†å¾…åˆ é™¤çš„IPåœ°å€å—ä»é“¾è¡¨ä¸­åˆ é™¤ï¼Œ
+	  * åç»­æ“ä½œä¸­å†æ ¹æ®destroyä½œå¤„ç†
 	  */
 	*ifap = ifa1->ifa_next;
 
@@ -372,22 +372,22 @@ static void __inet_del_ifa(struct in_device *in_dev, struct in_ifaddr **ifap,
 	   So that, this order is correct.
 	 */
 	/*
-	  * Í¨¹ınetlink·¢ËÍRTM_DELADDRÏûÏ¢¸ø¸ĞĞËÈ¤µÄ
-	  * ÓÃ»§½ø³Ì
+	  * é€šè¿‡netlinkå‘é€RTM_DELADDRæ¶ˆæ¯ç»™æ„Ÿå…´è¶£çš„
+	  * ç”¨æˆ·è¿›ç¨‹
 	  */
 	rtmsg_ifa(RTM_DELADDR, ifa1, nlh, pid);
 	/*
-	  * Í¨¹ıinetaddr_chainÍ¨ÖªÁ´·¢ËÍÉ¾³ıIPµØÖ·ÊÂ¼ş
-	  * ºÍIPµØÖ·ĞÅÏ¢¸ø¸ĞĞËÈ¤µÄÆäËûÄÚºËÄ£¿é
+	  * é€šè¿‡inetaddr_chainé€šçŸ¥é“¾å‘é€åˆ é™¤IPåœ°å€äº‹ä»¶
+	  * å’ŒIPåœ°å€ä¿¡æ¯ç»™æ„Ÿå…´è¶£çš„å…¶ä»–å†…æ ¸æ¨¡å—
 	  */
 	blocking_notifier_call_chain(&inetaddr_chain, NETDEV_DOWN, ifa1);
 
 	/*
-	  * Èç¹ûÆôÓÃÁËpromote_secondaries£¬½«Ñ¡Ôñµ½µÄ
-	  * ´ÓÊôIPµØÖ·Éı¼¶ÎªÖ÷IPµØÖ·£¬·¢ËÍ´ÓÊô
-	  * IPµØÖ·Éı¼¶ÎªÖ÷IPµØÖ·ÏûÏ¢¡£²¢Í¨¹ı
-	  * fib_add_ifaddr()½«´ÓÊôIPµØÖ·Ïà¹ØµÄÂ·ÓÉ
-	  * ±íÏîÌí¼Óµ½ip_fib_local_tableÂ·ÓÉ±íÖĞ¡£
+	  * å¦‚æœå¯ç”¨äº†promote_secondariesï¼Œå°†é€‰æ‹©åˆ°çš„
+	  * ä»å±IPåœ°å€å‡çº§ä¸ºä¸»IPåœ°å€ï¼Œå‘é€ä»å±
+	  * IPåœ°å€å‡çº§ä¸ºä¸»IPåœ°å€æ¶ˆæ¯ã€‚å¹¶é€šè¿‡
+	  * fib_add_ifaddr()å°†ä»å±IPåœ°å€ç›¸å…³çš„è·¯ç”±
+	  * è¡¨é¡¹æ·»åŠ åˆ°ip_fib_local_tableè·¯ç”±è¡¨ä¸­ã€‚
 	  */
 	if (promote) {
 
@@ -411,9 +411,9 @@ static void __inet_del_ifa(struct in_device *in_dev, struct in_ifaddr **ifap,
 	}
 	
 	/*
-	  * Èç¹û¸ù¾İdestroyĞèÒªÊÍ·Å£¬ÔòÍ¨¹ıRCU»úÖÆ
-	  * ÊÍ·ÅIPÅäÖÃ¿é¡£ÔÚÉ¾³ıµô×îºóÒ»¸öµØÖ·ºó£¬
-	  * ÊÍ·ÅËùÓĞµÄIPÅäÖÃ¿é¡£
+	  * å¦‚æœæ ¹æ®destroyéœ€è¦é‡Šæ”¾ï¼Œåˆ™é€šè¿‡RCUæœºåˆ¶
+	  * é‡Šæ”¾IPé…ç½®å—ã€‚åœ¨åˆ é™¤æ‰æœ€åä¸€ä¸ªåœ°å€åï¼Œ
+	  * é‡Šæ”¾æ‰€æœ‰çš„IPé…ç½®å—ã€‚
 	  */
 	if (destroy)
 		inet_free_ifa(ifa1);
@@ -439,18 +439,18 @@ static int __inet_insert_ifa(struct in_ifaddr *ifa, struct nlmsghdr *nlh,
 	}
 
 	/*
-	  * ÏÈÇå³ıµØÖ·µÄ´ÓÊô±êÖ¾£¬ÒòÎªÅäÖÃµÄµØÖ·
-	  * ÊÇÖ÷IPµØÖ·»¹ÊÇ´ÓÊôIPµØÖ·£¬²¢·Ç¸ù¾İ±êÖ¾
-	  * ¶øÊÇ¸ù¾İµ±Ç°ÒÑÅäÖÃµÄIPµØÖ·
+	  * å…ˆæ¸…é™¤åœ°å€çš„ä»å±æ ‡å¿—ï¼Œå› ä¸ºé…ç½®çš„åœ°å€
+	  * æ˜¯ä¸»IPåœ°å€è¿˜æ˜¯ä»å±IPåœ°å€ï¼Œå¹¶éæ ¹æ®æ ‡å¿—
+	  * è€Œæ˜¯æ ¹æ®å½“å‰å·²é…ç½®çš„IPåœ°å€
 	  */
 	ifa->ifa_flags &= ~IFA_F_SECONDARY;
 	last_primary = &in_dev->ifa_list;
 
 	/*
-	  * ÔÚËùÓĞÖ÷IPµØÖ·ÖĞ²éÕÒ£¬Èç¹û´æÔÚÏàÍ¬
-	  * Ñ°Ö··¶Î§µÄµØÖ·£¬Ôò±¾´ÎÌí¼ÓµÄIPµØÖ·
-	  * Îª´ÓÊôIPµØÖ·¡£¶øÈç¹ûÒÑÅäÖÃÁËÏàÍ¬µÄ
-	  * µØÖ·£¬Ôò·µ»Ø´íÎóÂë-EEXIST¡£
+	  * åœ¨æ‰€æœ‰ä¸»IPåœ°å€ä¸­æŸ¥æ‰¾ï¼Œå¦‚æœå­˜åœ¨ç›¸åŒ
+	  * å¯»å€èŒƒå›´çš„åœ°å€ï¼Œåˆ™æœ¬æ¬¡æ·»åŠ çš„IPåœ°å€
+	  * ä¸ºä»å±IPåœ°å€ã€‚è€Œå¦‚æœå·²é…ç½®äº†ç›¸åŒçš„
+	  * åœ°å€ï¼Œåˆ™è¿”å›é”™è¯¯ç -EEXISTã€‚
 	  */
 	for (ifap = &in_dev->ifa_list; (ifa1 = *ifap) != NULL;
 	     ifap = &ifa1->ifa_next) {
@@ -472,9 +472,9 @@ static int __inet_insert_ifa(struct in_ifaddr *ifa, struct nlmsghdr *nlh,
 	}
 
 	/*
-	  * Èç¹ûÅäÖÃµÄÊÇµÚÒ»¸öµØÖ·£¬ÔòÏÈÌí¼Ó
-	  * ìØµ½Î±Ëæ»úÊıÒıÇæÖĞ£¬È»ºó½«ÆäµØÖ·
-	  * Ìí¼Óµ½IPÅäÖÃ¿éÖĞ¡£
+	  * å¦‚æœé…ç½®çš„æ˜¯ç¬¬ä¸€ä¸ªåœ°å€ï¼Œåˆ™å…ˆæ·»åŠ 
+	  * ç†µåˆ°ä¼ªéšæœºæ•°å¼•æ“ä¸­ï¼Œç„¶åå°†å…¶åœ°å€
+	  * æ·»åŠ åˆ°IPé…ç½®å—ä¸­ã€‚
 	  */
 	if (!(ifa->ifa_flags & IFA_F_SECONDARY)) {
 		net_srandom(ifa->ifa_local);
@@ -488,13 +488,13 @@ static int __inet_insert_ifa(struct in_ifaddr *ifa, struct nlmsghdr *nlh,
 	   Notifier will trigger FIB update, so that
 	   listeners of netlink will know about new ifaddr */
 	/*
-	  * Í¨¹ınetlink·¢ËÍRTM_NEWADDRÏûÏ¢¸ø¸ĞĞËÈ¤µÄ
-	  * ÓÃ»§½ø³Ì¡£
+	  * é€šè¿‡netlinkå‘é€RTM_NEWADDRæ¶ˆæ¯ç»™æ„Ÿå…´è¶£çš„
+	  * ç”¨æˆ·è¿›ç¨‹ã€‚
 	  */
 	rtmsg_ifa(RTM_NEWADDR, ifa, nlh, pid);
 	/*
-	  * Í¨¹ıinetaddr_chainÍ¨ÖªÁ´·¢ËÍÌí¼ÓIPµØÖ·ÊÂ¼ş
-	  * ºÍIPµØÖ·ÏûÏ¢¸ø¸ĞĞËÈ¤µÄÆäËûÄÚºËÄ£¿é¡£
+	  * é€šè¿‡inetaddr_chainé€šçŸ¥é“¾å‘é€æ·»åŠ IPåœ°å€äº‹ä»¶
+	  * å’ŒIPåœ°å€æ¶ˆæ¯ç»™æ„Ÿå…´è¶£çš„å…¶ä»–å†…æ ¸æ¨¡å—ã€‚
 	  */
 	blocking_notifier_call_chain(&inetaddr_chain, NETDEV_UP, ifa);
 
@@ -502,11 +502,11 @@ static int __inet_insert_ifa(struct in_ifaddr *ifa, struct nlmsghdr *nlh,
 }
 
 /*
-  * inet_insert_ifa()ÓÃÀ´Ìí¼ÓÒ»¸öIPµØÖ·¡£
-  * Í¨³£ÔÚÉèÖÃ¹ã²¥µØÖ·¡¢µã¶Ôµã¶Ô¶Ë
-  * µØÖ·ºÍµØÖ·ÑÚÂëÊ±£¬ÏÈµ÷ÓÃinet_del_ifa()Çå³ı
-  * Ô­ÓĞµÄĞÅÏ¢£¬È»ºóÔÙµ÷ÓÃinet_insert_ifa()½øĞĞ
-  * ÉèÖÃ
+  * inet_insert_ifa()ç”¨æ¥æ·»åŠ ä¸€ä¸ªIPåœ°å€ã€‚
+  * é€šå¸¸åœ¨è®¾ç½®å¹¿æ’­åœ°å€ã€ç‚¹å¯¹ç‚¹å¯¹ç«¯
+  * åœ°å€å’Œåœ°å€æ©ç æ—¶ï¼Œå…ˆè°ƒç”¨inet_del_ifa()æ¸…é™¤
+  * åŸæœ‰çš„ä¿¡æ¯ï¼Œç„¶åå†è°ƒç”¨inet_insert_ifa()è¿›è¡Œ
+  * è®¾ç½®
   */
 static int inet_insert_ifa(struct in_ifaddr *ifa)
 {
@@ -535,8 +535,8 @@ static int inet_set_ifa(struct net_device *dev, struct in_ifaddr *ifa)
 }
 
 /*
-  * inetdev_by_index()¸ù¾İÍøÂçÉè±¸Ë÷ÒıºÅ»ñÈ¡
-  * ¶ÔÓ¦ÍøÂçÉè±¸µÄIPÅäÖÃ¿é
+  * inetdev_by_index()æ ¹æ®ç½‘ç»œè®¾å¤‡ç´¢å¼•å·è·å–
+  * å¯¹åº”ç½‘ç»œè®¾å¤‡çš„IPé…ç½®å—
   */
 struct in_device *inetdev_by_index(struct net *net, int ifindex)
 {
@@ -544,12 +544,12 @@ struct in_device *inetdev_by_index(struct net *net, int ifindex)
 	struct in_device *in_dev = NULL;
 	read_lock(&dev_base_lock);
 	/*
-	  * ¸ù¾İË÷Òı»ñÈ¡¶ÔÓ¦µÄÍøÂçÉè±¸
+	  * æ ¹æ®ç´¢å¼•è·å–å¯¹åº”çš„ç½‘ç»œè®¾å¤‡
 	  */
 	dev = __dev_get_by_index(net, ifindex);
 	/*
-	  * Èç¹û»ñµÃµÄÍøÂçÉè±¸ÓĞĞ§£¬Ôò·µ»ØÆä
-	  * IPÅäÖÃ¿é£¬·ñÔò·µ»ØNULL¡£
+	  * å¦‚æœè·å¾—çš„ç½‘ç»œè®¾å¤‡æœ‰æ•ˆï¼Œåˆ™è¿”å›å…¶
+	  * IPé…ç½®å—ï¼Œå¦åˆ™è¿”å›NULLã€‚
 	  */
 	if (dev)
 		in_dev = in_dev_get(dev);
@@ -561,8 +561,8 @@ EXPORT_SYMBOL(inetdev_by_index);
 
 /* Called only from RTNL semaphored context. No locks. */
 /*
-  * inet_ifa_byprefix()ÔÚÕıÔÚÅäÖÃµÄÊäÈëÉè±¸µÄÖ÷IP
-  * µØÖ·ÖĞ²éÕÒÓëÇ°×ººÍÑÚÂëÆ¥ÅäµÄIPµØÖ·
+  * inet_ifa_byprefix()åœ¨æ­£åœ¨é…ç½®çš„è¾“å…¥è®¾å¤‡çš„ä¸»IP
+  * åœ°å€ä¸­æŸ¥æ‰¾ä¸å‰ç¼€å’Œæ©ç åŒ¹é…çš„IPåœ°å€
   */
 struct in_ifaddr *inet_ifa_byprefix(struct in_device *in_dev, __be32 prefix,
 				    __be32 mask)
@@ -577,8 +577,8 @@ struct in_ifaddr *inet_ifa_byprefix(struct in_device *in_dev, __be32 prefix,
 }
 
 /*
-  * µ±Í¨¹ınetlink£¬²Ù×÷ÀàĞÍÎªRTM_DELADDRÉ¾³ıIPµØÖ·Ê±£¬
-  * ²Åµ÷ÓÃ´Ëº¯Êı
+  * å½“é€šè¿‡netlinkï¼Œæ“ä½œç±»å‹ä¸ºRTM_DELADDRåˆ é™¤IPåœ°å€æ—¶ï¼Œ
+  * æ‰è°ƒç”¨æ­¤å‡½æ•°
   */
 static int inet_rtm_deladdr(struct sk_buff *skb, struct nlmsghdr *nlh, void *arg)
 {
@@ -592,7 +592,7 @@ static int inet_rtm_deladdr(struct sk_buff *skb, struct nlmsghdr *nlh, void *arg
 	ASSERT_RTNL();
 
 	/*
-	  * ½âÎönetlink±¨ÎÄ£¬»ñÈ¡ÅäÖÃ²ÎÊı¡£
+	  * è§£ænetlinkæŠ¥æ–‡ï¼Œè·å–é…ç½®å‚æ•°ã€‚
 	  */
 	err = nlmsg_parse(nlh, sizeof(*ifm), tb, IFA_MAX, ifa_ipv4_policy);
 	if (err < 0)
@@ -608,8 +608,8 @@ static int inet_rtm_deladdr(struct sk_buff *skb, struct nlmsghdr *nlh, void *arg
 	__in_dev_put(in_dev);
 
 	/*
-	  * ¸ù¾İ±¾µØµØÖ·¡¢±êÇ©ÒÔ¼°ÑÚÂë²éÕÒ´ıÉ¾³ıµÄ
-	  * IPµØÖ·¿é£¬Èç¹û²éÕÒÃüÖĞ£¬Ôò½«ÆäÉ¾³ı²¢ÊÍ·Å¡£
+	  * æ ¹æ®æœ¬åœ°åœ°å€ã€æ ‡ç­¾ä»¥åŠæ©ç æŸ¥æ‰¾å¾…åˆ é™¤çš„
+	  * IPåœ°å€å—ï¼Œå¦‚æœæŸ¥æ‰¾å‘½ä¸­ï¼Œåˆ™å°†å…¶åˆ é™¤å¹¶é‡Šæ”¾ã€‚
 	  */
 	for (ifap = &in_dev->ifa_list; (ifa = *ifap) != NULL;
 	     ifap = &ifa->ifa_next) {
@@ -700,8 +700,8 @@ errout:
 }
 
 /*
-  * µ±Í¨¹ınetlink£¬²Ù×÷ÀàĞÍÎªRTM_NEWADDRÌí¼ÓIPµØÖ·
-  * Ê±£¬»áµ÷ÓÃ´Ëº¯Êı
+  * å½“é€šè¿‡netlinkï¼Œæ“ä½œç±»å‹ä¸ºRTM_NEWADDRæ·»åŠ IPåœ°å€
+  * æ—¶ï¼Œä¼šè°ƒç”¨æ­¤å‡½æ•°
   */
 static int inet_rtm_newaddr(struct sk_buff *skb, struct nlmsghdr *nlh, void *arg)
 {
@@ -711,14 +711,14 @@ static int inet_rtm_newaddr(struct sk_buff *skb, struct nlmsghdr *nlh, void *arg
 	ASSERT_RTNL();
 
 	/*
-	  * ´ÓÅäÖÃIPµØÖ·µÄÏûÏ¢ÖĞ»ñÈ¡µØÖ·ĞÅÏ¢
+	  * ä»é…ç½®IPåœ°å€çš„æ¶ˆæ¯ä¸­è·å–åœ°å€ä¿¡æ¯
 	  */
 	ifa = rtm_to_ifaddr(net, nlh);
 	if (IS_ERR(ifa))
 		return PTR_ERR(ifa);
 
 	/*
-	  * ½«IPµØÖ·ÅäÖÃµ½Ö¸¶¨µÄÍøÂçÉè±¸ÉÏ
+	  * å°†IPåœ°å€é…ç½®åˆ°æŒ‡å®šçš„ç½‘ç»œè®¾å¤‡ä¸Š
 	  */
 	return __inet_insert_ifa(ifa, nlh, NETLINK_CB(skb).pid);
 }
@@ -728,15 +728,15 @@ static int inet_rtm_newaddr(struct sk_buff *skb, struct nlmsghdr *nlh, void *arg
  *	Determine a default network mask, based on the IP address.
  */
 /*
-  * inet_abc_len()¸ù¾İÖ¸¶¨µÄIPµØÖ·»ñÈ¡Ä¬ÈÏÑÚÂë
-  * ³¤¶È¡£Ä¬ÈÏÑÚÂë³¤¶È±í:
+  * inet_abc_len()æ ¹æ®æŒ‡å®šçš„IPåœ°å€è·å–é»˜è®¤æ©ç 
+  * é•¿åº¦ã€‚é»˜è®¤æ©ç é•¿åº¦è¡¨:
   * ------------------------------------------
-  * µØÖ·			Ä¬ÈÏÑÚÂë³¤¶È
+  * åœ°å€			é»˜è®¤æ©ç é•¿åº¦
   * ------------------------------------------
-  * 0µØÖ·             0
-  * AÀàµØÖ·        8
-  * BÀàµØÖ·        16
-  * CÀàµØÖ·         24
+  * 0åœ°å€             0
+  * Aç±»åœ°å€        8
+  * Bç±»åœ°å€        16
+  * Cç±»åœ°å€         24
   */
 static __inline__ int inet_abc_len(__be32 addr)
 {
@@ -759,8 +759,8 @@ static __inline__ int inet_abc_len(__be32 addr)
 }
 
 /*
-  * Ó¦ÓÃ³ÌĞò¶ÔÌ×½Ó×ÖÓĞ¹Ø½Ó¿Ú²ãµØÖ·µÄioctl²Ù×÷£¬
-  * ×îÖÕÓÉdevinet_ioctl()À´´¦Àí
+  * åº”ç”¨ç¨‹åºå¯¹å¥—æ¥å­—æœ‰å…³æ¥å£å±‚åœ°å€çš„ioctlæ“ä½œï¼Œ
+  * æœ€ç»ˆç”±devinet_ioctl()æ¥å¤„ç†
   */
 int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 {
@@ -780,7 +780,7 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 	 */
 
 	/*
-	  * ´ÓÓÃ»§¿Õ¼ä¸´ÖÆÅäÖÃ²ÎÊı
+	  * ä»ç”¨æˆ·ç©ºé—´å¤åˆ¶é…ç½®å‚æ•°
 	  */
 	if (copy_from_user(&ifr, arg, sizeof(struct ifreq)))
 		goto out;
@@ -788,32 +788,32 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 
 	/* save original address for comparison */
 	/*
-	  * ½«Ô­Ê¼µÄÅäÖÃ²ÎÊı±£´æÆğÀ´£¬ÓÃÓÚ
-	  * ºóĞøµÄ±È½Ï²Ù×÷¡£
+	  * å°†åŸå§‹çš„é…ç½®å‚æ•°ä¿å­˜èµ·æ¥ï¼Œç”¨äº
+	  * åç»­çš„æ¯”è¾ƒæ“ä½œã€‚
 	  */
 	memcpy(&sin_orig, sin, sizeof(*sin));
 
 	/*
-	  * ÅäÖÃµÄÉè±¸ÃûÖĞÈç¹û´æÔÚ":"£¬Ôò±íÊ¾
-	  * ÅäÖÃÁË±ğÃû¡£ÓÉÓÚĞèÒª¸ù¾İÃû³Æ²Ù×÷£¬
-	  * Òò´ËÏÈ½«¸ÃÉè±¸Ãû½Ø¶Ï£¬ºóĞøÔÙ»Ö¸´
+	  * é…ç½®çš„è®¾å¤‡åä¸­å¦‚æœå­˜åœ¨":"ï¼Œåˆ™è¡¨ç¤º
+	  * é…ç½®äº†åˆ«åã€‚ç”±äºéœ€è¦æ ¹æ®åç§°æ“ä½œï¼Œ
+	  * å› æ­¤å…ˆå°†è¯¥è®¾å¤‡åæˆªæ–­ï¼Œåç»­å†æ¢å¤
 	  */
 	colon = strchr(ifr.ifr_name, ':');
 	if (colon)
 		*colon = 0;
 
 	/*
-	  * ¸ù¾İÍøÂçÉè±¸Ãû£¬¼ÇÔØÏàÓ¦µÄÉè±¸Çı¶¯
-	  * Ä£¿é
+	  * æ ¹æ®ç½‘ç»œè®¾å¤‡åï¼Œè®°è½½ç›¸åº”çš„è®¾å¤‡é©±åŠ¨
+	  * æ¨¡å—
 	  */
 	dev_load(net, ifr.ifr_name);
 
 	/*
-	  * ½øĞĞÏà¹ØĞ£Ñé¡£¶ÔÓÚ»ñÈ¡²Ù×÷£¬Ôò¼ì²â
-	  * µØÖ·×åÊÇ·ñÎªAF_INET£»¶ÔÓÚÉèÖÃ²Ù×÷£¬
-	  * Ôò±ØĞëÒªÓĞÏàÓ¦µÄÌØÈ¨£»¶ø¶ÔÓÚSIOCSIFADDR¡¢
-	  * SIOCSIFBRDADDR¡¢SIOCSIFDSTADDRºÍSIOCSIFNETMASK²Ù×÷£¬
-	  * µØÖ·×åÒ²±ØĞëÊÇAF_INET¡£
+	  * è¿›è¡Œç›¸å…³æ ¡éªŒã€‚å¯¹äºè·å–æ“ä½œï¼Œåˆ™æ£€æµ‹
+	  * åœ°å€æ—æ˜¯å¦ä¸ºAF_INETï¼›å¯¹äºè®¾ç½®æ“ä½œï¼Œ
+	  * åˆ™å¿…é¡»è¦æœ‰ç›¸åº”çš„ç‰¹æƒï¼›è€Œå¯¹äºSIOCSIFADDRã€
+	  * SIOCSIFBRDADDRã€SIOCSIFDSTADDRå’ŒSIOCSIFNETMASKæ“ä½œï¼Œ
+	  * åœ°å€æ—ä¹Ÿå¿…é¡»æ˜¯AF_INETã€‚
 	  */
 	switch (cmd) {
 	case SIOCGIFADDR:	/* Get interface address */
@@ -854,20 +854,20 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 
 	ret = -ENODEV;
 	/*
-	  * ¸ù¾İÍøÂçÉè±¸Ãû»ñÈ¡ÍøÂçÉè±¸
+	  * æ ¹æ®ç½‘ç»œè®¾å¤‡åè·å–ç½‘ç»œè®¾å¤‡
 	  */
 	if ((dev = __dev_get_by_name(net, ifr.ifr_name)) == NULL)
 		goto done;
 
 	/*
-	  * »Ö¸´ÅäÖÃ²ÎÊıÖĞµÄ±êÇ©±ğÃû
+	  * æ¢å¤é…ç½®å‚æ•°ä¸­çš„æ ‡ç­¾åˆ«å
 	  */
 	if (colon)
 		*colon = ':';
 
 	/*
-	  * È¡IPÅäÖÃ¿é£¬¼°ÓÃ»§µØÖ·±êÇ©¶ÔÓ¦µÄÉè±¸µØÖ·
-	  * ½á¹¹
+	  * å–IPé…ç½®å—ï¼ŒåŠç”¨æˆ·åœ°å€æ ‡ç­¾å¯¹åº”çš„è®¾å¤‡åœ°å€
+	  * ç»“æ„
 	  */
 	if ((in_dev = __in_dev_get_rtnl(dev)) != NULL) {
 		if (tryaddrmatch) {
@@ -897,58 +897,58 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 	}
 
 	/*
-	  * ÉèÖÃµØÖ·ºÍ±êÖ¾¡£SIOCSIFFLAGSÊÇÉèÖÃÍøÂçÉè±¸
-	  * µÄ±êÖ¾£¬SIOCSIFADDRÊÇÌí¼ÓIPµØÖ·£¬ÕâÁ½¸ö²Ù×÷
-	  * ²»Õë¶ÔÏÖÓĞµÄIPµØÖ·¿é¡£¶øÆäËû²Ù×÷
-	  * £¬ÈçSIOCGIFBRDADDR£¬¶¼ÊÇÕë¶ÔÏÖÓĞµÄIPµØÖ·¿é£¬Èç¹û
-	  * ²»´æÔÚÓëÅäÖÃ²ÎÊıÖĞµÄ±êÇ©»òµØÖ·Æ¥ÅäµÄIP
-	  * µØÖ·¿é£¬Ôò²»ÄÜ¼ÌĞø²Ù×÷¡£
+	  * è®¾ç½®åœ°å€å’Œæ ‡å¿—ã€‚SIOCSIFFLAGSæ˜¯è®¾ç½®ç½‘ç»œè®¾å¤‡
+	  * çš„æ ‡å¿—ï¼ŒSIOCSIFADDRæ˜¯æ·»åŠ IPåœ°å€ï¼Œè¿™ä¸¤ä¸ªæ“ä½œ
+	  * ä¸é’ˆå¯¹ç°æœ‰çš„IPåœ°å€å—ã€‚è€Œå…¶ä»–æ“ä½œ
+	  * ï¼Œå¦‚SIOCGIFBRDADDRï¼Œéƒ½æ˜¯é’ˆå¯¹ç°æœ‰çš„IPåœ°å€å—ï¼Œå¦‚æœ
+	  * ä¸å­˜åœ¨ä¸é…ç½®å‚æ•°ä¸­çš„æ ‡ç­¾æˆ–åœ°å€åŒ¹é…çš„IP
+	  * åœ°å€å—ï¼Œåˆ™ä¸èƒ½ç»§ç»­æ“ä½œã€‚
 	  */
 	ret = -EADDRNOTAVAIL;
 	if (!ifa && cmd != SIOCSIFADDR && cmd != SIOCSIFFLAGS)
 		goto done;
 
 	/*
-	  * Õë¶Ô¾ßÌåµÄÃüÁî½øĞĞ²Ù×÷¡£
+	  * é’ˆå¯¹å…·ä½“çš„å‘½ä»¤è¿›è¡Œæ“ä½œã€‚
 	  */
 	switch (cmd) {
 	/*
-	  * »ñÈ¡Ö¸¶¨ÍøÂçÉè±¸µÄ±¾µØIPµØÖ·
+	  * è·å–æŒ‡å®šç½‘ç»œè®¾å¤‡çš„æœ¬åœ°IPåœ°å€
 	  */
 	case SIOCGIFADDR:	/* Get interface address */
 		sin->sin_addr.s_addr = ifa->ifa_local;
 		goto rarok;
 
 	/*
-	  * »ñÈ¡Ö¸¶¨ÍøÂçÉè±¸µÄ×é²¥µØÖ·
+	  * è·å–æŒ‡å®šç½‘ç»œè®¾å¤‡çš„ç»„æ’­åœ°å€
 	  */
 	case SIOCGIFBRDADDR:	/* Get the broadcast address */
 		sin->sin_addr.s_addr = ifa->ifa_broadcast;
 		goto rarok;
 
 	/*
-	  * ÔÚµã¶ÔµãÁ¬½ÓµÄÇé¿öÏÂ£¬»ñÈ¡Ö¸¶¨
-	  * ÍøÂçÉè±¸µã¶Ôµã¶Ô¶ËµÄIPµØÖ·
+	  * åœ¨ç‚¹å¯¹ç‚¹è¿æ¥çš„æƒ…å†µä¸‹ï¼Œè·å–æŒ‡å®š
+	  * ç½‘ç»œè®¾å¤‡ç‚¹å¯¹ç‚¹å¯¹ç«¯çš„IPåœ°å€
 	  */
 	case SIOCGIFDSTADDR:	/* Get the destination address */
 		sin->sin_addr.s_addr = ifa->ifa_address;
 		goto rarok;
 
 	/*
-	  * »ñÈ¡Ö¸¶¨ÍøÂçÉè±¸µÄµØÖ·ÑÚÂë
+	  * è·å–æŒ‡å®šç½‘ç»œè®¾å¤‡çš„åœ°å€æ©ç 
 	  */
 	case SIOCGIFNETMASK:	/* Get the netmask for the interface */
 		sin->sin_addr.s_addr = ifa->ifa_mask;
 		goto rarok;
 
 	/*
-	  * »ñÈ¡ÍøÂçÉè±¸µÄ±êÖ¾
+	  * è·å–ç½‘ç»œè®¾å¤‡çš„æ ‡å¿—
 	  */
 	case SIOCSIFFLAGS:
 		/*
-		  * ¶ÔÓÚ¹Ø±ÕÍøÂçÉè±¸£¬Èç¹ûÖ¸¶¨ÁËÍøÂç
-		  * Éè±¸±ğÃû£¬²¢ÇÒ´æÔÚÓëÖ®¶ÔÓ¦µÄ
-		  * IPµØÖ·¿é£¬ÔòĞèÒªÉ¾³ıÊÍ·Å¸ÃIPµØÖ·¿é
+		  * å¯¹äºå…³é—­ç½‘ç»œè®¾å¤‡ï¼Œå¦‚æœæŒ‡å®šäº†ç½‘ç»œ
+		  * è®¾å¤‡åˆ«åï¼Œå¹¶ä¸”å­˜åœ¨ä¸ä¹‹å¯¹åº”çš„
+		  * IPåœ°å€å—ï¼Œåˆ™éœ€è¦åˆ é™¤é‡Šæ”¾è¯¥IPåœ°å€å—
 		  */
 		if (colon) {
 			ret = -EADDRNOTAVAIL;
@@ -960,27 +960,27 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 			break;
 		}
 		/*
-		  * ½«µØÖ·ÉèÖÃµ½ÍøÂçÉè±¸ÖĞ¡£
+		  * å°†åœ°å€è®¾ç½®åˆ°ç½‘ç»œè®¾å¤‡ä¸­ã€‚
 		  */
 		ret = dev_change_flags(dev, ifr.ifr_flags);
 		break;
 
 	/*
-	  * ÉèÖÃÖ¸¶¨ÍøÂçÉè±¸µÄ±¾µØµØÖ·
+	  * è®¾ç½®æŒ‡å®šç½‘ç»œè®¾å¤‡çš„æœ¬åœ°åœ°å€
 	  */
 	case SIOCSIFADDR:	/* Set interface address (and family) */
 		ret = -EINVAL;
 		/*
-		  * ¸ù¾İ±¾µØµØÖ·Ä¬ÈÏµÄÑÚÂë³¤¶È£¬Ğ£Ñé
-		  * ±¾µØµØÖ·µÄÓĞĞ§ĞÔ
+		  * æ ¹æ®æœ¬åœ°åœ°å€é»˜è®¤çš„æ©ç é•¿åº¦ï¼Œæ ¡éªŒ
+		  * æœ¬åœ°åœ°å€çš„æœ‰æ•ˆæ€§
 		  */
 		if (inet_abc_len(sin->sin_addr.s_addr) < 0)
 			break;
 
 		/*
-		  * Èç¹ûÉĞÎ´·ÖÅäIPµØÖ·¿é£¬Ôò½øĞĞ·ÖÅä£¬
-		  * ²¢½«ÍøÂçÉè±¸±ğÃû»òÍøÂçÉè±¸Ãû
-		  * ÉèÖÃµ½µØÖ·±êÇ©ÖĞ
+		  * å¦‚æœå°šæœªåˆ†é…IPåœ°å€å—ï¼Œåˆ™è¿›è¡Œåˆ†é…ï¼Œ
+		  * å¹¶å°†ç½‘ç»œè®¾å¤‡åˆ«åæˆ–ç½‘ç»œè®¾å¤‡å
+		  * è®¾ç½®åˆ°åœ°å€æ ‡ç­¾ä¸­
 		  */
 		if (!ifa) {
 			ret = -ENOBUFS;
@@ -995,8 +995,8 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 			if (ifa->ifa_local == sin->sin_addr.s_addr)
 				break;
 			/*
-			  * Ê×ÏÈ½«¶ÔÓ¦µÄIPµØÖ·¿é´ÓµØÖ·ÁĞ±í
-			  * ÖĞÉ¾³ı
+			  * é¦–å…ˆå°†å¯¹åº”çš„IPåœ°å€å—ä»åœ°å€åˆ—è¡¨
+			  * ä¸­åˆ é™¤
 			  */
 			inet_del_ifa(in_dev, ifap, 0);
 			ifa->ifa_broadcast = 0;
@@ -1004,15 +1004,15 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 		}
 
 		/*
-		  * È»ºóÉèÖÃ±¾µØIPµØÖ·
+		  * ç„¶åè®¾ç½®æœ¬åœ°IPåœ°å€
 		  */
 		ifa->ifa_address = ifa->ifa_local = sin->sin_addr.s_addr;
 
 		/*
-		  * ½Ó×Å¸ù¾İ½Ó¿ÚÊÇ·ñÎªµã¶ÔµãÉè±¸£¬À´ÉèÖÃ
-		  * ×ÓÍøÑÚÂë³¤¶ÈºÍ×ÓÍøÑÚÂë¡£Èç¹ûÊÇ·Çµã¶Ôµã
-		  * Éè±¸£¬Ôò¸ù¾İµØÖ·µÄÑÚÂë³¤¶ÈºÍÍøÂçÑÚÂë
-		  * ÉèÖÃ±ê×¼¹ã²¥µØÖ·£»·ñÔòÍøÂçÑÚÂë³¤¶ÈÎª32.
+		  * æ¥ç€æ ¹æ®æ¥å£æ˜¯å¦ä¸ºç‚¹å¯¹ç‚¹è®¾å¤‡ï¼Œæ¥è®¾ç½®
+		  * å­ç½‘æ©ç é•¿åº¦å’Œå­ç½‘æ©ç ã€‚å¦‚æœæ˜¯éç‚¹å¯¹ç‚¹
+		  * è®¾å¤‡ï¼Œåˆ™æ ¹æ®åœ°å€çš„æ©ç é•¿åº¦å’Œç½‘ç»œæ©ç 
+		  * è®¾ç½®æ ‡å‡†å¹¿æ’­åœ°å€ï¼›å¦åˆ™ç½‘ç»œæ©ç é•¿åº¦ä¸º32.
 		  * 
 		  */
 		if (!(dev->flags & IFF_POINTOPOINT)) {
@@ -1027,22 +1027,22 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 			ifa->ifa_mask = inet_make_mask(32);
 		}
 		/*
-		  * ×îºó½«ÅäÖÃĞÅÏ¢ÔÙÌí¼Óµ½IPµØÖ·¿éÁĞ±íÖĞ
+		  * æœ€åå°†é…ç½®ä¿¡æ¯å†æ·»åŠ åˆ°IPåœ°å€å—åˆ—è¡¨ä¸­
 		  */
 		ret = inet_set_ifa(dev, ifa);
 		break;
 
 	/*
-	  * ÉèÖÃÖ¸¶¨ÍøÂçÉè±¸µÄ×é²¥µØÖ·
+	  * è®¾ç½®æŒ‡å®šç½‘ç»œè®¾å¤‡çš„ç»„æ’­åœ°å€
 	  */
 	case SIOCSIFBRDADDR:	/* Set the broadcast address */
 		ret = 0;
 		/*
-		  * Èç¹ûÔ­ÓĞµÄ×é²¥µØÖ·Óë´ıÉèÖÃµÄ
-		  * ×é²¥µØÖ·²»µÈ£¬ÔòÏÈµÃ½«¶ÔÓ¦
-		  * IPµØÖ·¿é´ÓµØÖ·ÁĞ±íÖĞÉ¾³ı£¬
-		  * È»ºóÔÙ½«ÅäÖÃĞÅÏ¢Ìí¼Óµ½
-		  * IPµØÖ·¿éÁĞ±íÖĞ
+		  * å¦‚æœåŸæœ‰çš„ç»„æ’­åœ°å€ä¸å¾…è®¾ç½®çš„
+		  * ç»„æ’­åœ°å€ä¸ç­‰ï¼Œåˆ™å…ˆå¾—å°†å¯¹åº”
+		  * IPåœ°å€å—ä»åœ°å€åˆ—è¡¨ä¸­åˆ é™¤ï¼Œ
+		  * ç„¶åå†å°†é…ç½®ä¿¡æ¯æ·»åŠ åˆ°
+		  * IPåœ°å€å—åˆ—è¡¨ä¸­
 		  */
 		if (ifa->ifa_broadcast != sin->sin_addr.s_addr) {
 			inet_del_ifa(in_dev, ifap, 0);
@@ -1052,29 +1052,29 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 		break;
 
 	/*
-	  * ÔÚµã¶ÔµãÁ¬½ÓµÄÇé¿öÏÂ£¬ÉèÖÃÖ¸¶¨
-	  * ÍøÂçÉè±¸µã¶Ôµã¶Ô¶ËµÄIPµØÖ·
+	  * åœ¨ç‚¹å¯¹ç‚¹è¿æ¥çš„æƒ…å†µä¸‹ï¼Œè®¾ç½®æŒ‡å®š
+	  * ç½‘ç»œè®¾å¤‡ç‚¹å¯¹ç‚¹å¯¹ç«¯çš„IPåœ°å€
 	  */
 	case SIOCSIFDSTADDR:	/* Set the destination address */
 		ret = 0;
 		/*
-		  * Ö»ÓĞµ±Ô­ÓĞµÄÍøÂçÉè±¸µã¶Ôµã
-		  * ¶Ô¶ËIPµØÖ·Óë´ıÉèÖÃµÄµØÖ·²»µÈÊ±£¬
-		  * ²ÅÓĞ±ØÒª½øĞĞÉèÖÃ¡£
+		  * åªæœ‰å½“åŸæœ‰çš„ç½‘ç»œè®¾å¤‡ç‚¹å¯¹ç‚¹
+		  * å¯¹ç«¯IPåœ°å€ä¸å¾…è®¾ç½®çš„åœ°å€ä¸ç­‰æ—¶ï¼Œ
+		  * æ‰æœ‰å¿…è¦è¿›è¡Œè®¾ç½®ã€‚
 		  */
 		if (ifa->ifa_address == sin->sin_addr.s_addr)
 			break;
 		ret = -EINVAL;
 		/*
-		  * Ğ£Ñé´ıÉèÖÃµÄIPµØÖ·ÊÇ·ñÓĞĞ§
+		  * æ ¡éªŒå¾…è®¾ç½®çš„IPåœ°å€æ˜¯å¦æœ‰æ•ˆ
 		  */
 		if (inet_abc_len(sin->sin_addr.s_addr) < 0)
 			break;
 		ret = 0;
 		/*
-		  * ÏÈ½«¶ÔÓ¦IPµØÖ·¿é´ÓµØÖ·ÁĞ±íÉ¾³ı£¬
-		  * È»ºóÔÙ½«´ıÉèÖÃµÄIPµØÖ·ÉèÖÃµ½
-		  * IPµØÖ·¿éÖĞ²¢Ìí¼Óµ½IPµØÖ·¿éÁĞ±í
+		  * å…ˆå°†å¯¹åº”IPåœ°å€å—ä»åœ°å€åˆ—è¡¨åˆ é™¤ï¼Œ
+		  * ç„¶åå†å°†å¾…è®¾ç½®çš„IPåœ°å€è®¾ç½®åˆ°
+		  * IPåœ°å€å—ä¸­å¹¶æ·»åŠ åˆ°IPåœ°å€å—åˆ—è¡¨
 		  */
 		inet_del_ifa(in_dev, ifap, 0);
 		ifa->ifa_address = sin->sin_addr.s_addr;
@@ -1082,7 +1082,7 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 		break;
 
 	/*
-	  * ÉèÖÃÖ¸¶¨ÍøÂçÉè±¸µÄµØÖ·ÑÚÂë
+	  * è®¾ç½®æŒ‡å®šç½‘ç»œè®¾å¤‡çš„åœ°å€æ©ç 
 	  */
 	case SIOCSIFNETMASK: 	/* Set the netmask for the interface */
 
@@ -1091,24 +1091,24 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 		 */
 		ret = -EINVAL;
 		/*
-		  * ¼ì²â´ıÉèÖÃµÄÑÚÂëÊÇ·ñÓĞĞ§¡£
+		  * æ£€æµ‹å¾…è®¾ç½®çš„æ©ç æ˜¯å¦æœ‰æ•ˆã€‚
 		  */
 		if (bad_mask(sin->sin_addr.s_addr, 0))
 			break;
 		ret = 0;
 		/*
-		  * Ô­ÓĞµÄÑÚÂëÓë´ıÉèÖÃµÄÑÚÂë²»µÈÊ±£¬
-		  * ²ÅÓĞ±ØÒª½øĞĞÉèÖÃ¡£
+		  * åŸæœ‰çš„æ©ç ä¸å¾…è®¾ç½®çš„æ©ç ä¸ç­‰æ—¶ï¼Œ
+		  * æ‰æœ‰å¿…è¦è¿›è¡Œè®¾ç½®ã€‚
 		  */
 		if (ifa->ifa_mask != sin->sin_addr.s_addr) {
 			__be32 old_mask = ifa->ifa_mask;
 			/*
-			  * ÏÈ½«¶ÔÓ¦IPµØÖ·¿é´ÓµØÖ·ÁĞ±íÖĞ
-			  * É¾³ı£¬½Ó×ÅÈç¹ûÄ¿Ç°µÄ¹ã²¥µØÖ·
-			  * Óëµ±Ç°µÄÍøÂçÑÚÂëÆ¥ÅäÊ±£¬Ôò
-			  * ÖØĞÂ¼ÆËã¹ã²¥µØÖ·£¬×îºó½«Æä
-			  * ÉèÖÃµ½IPµØÖ·¿éÖĞ£¬²¢Ìí¼Óµ½
-			  * IPµØÖ·¿éÁĞ±íÖĞ¡£
+			  * å…ˆå°†å¯¹åº”IPåœ°å€å—ä»åœ°å€åˆ—è¡¨ä¸­
+			  * åˆ é™¤ï¼Œæ¥ç€å¦‚æœç›®å‰çš„å¹¿æ’­åœ°å€
+			  * ä¸å½“å‰çš„ç½‘ç»œæ©ç åŒ¹é…æ—¶ï¼Œåˆ™
+			  * é‡æ–°è®¡ç®—å¹¿æ’­åœ°å€ï¼Œæœ€åå°†å…¶
+			  * è®¾ç½®åˆ°IPåœ°å€å—ä¸­ï¼Œå¹¶æ·»åŠ åˆ°
+			  * IPåœ°å€å—åˆ—è¡¨ä¸­ã€‚
 			  */
 			inet_del_ifa(in_dev, ifap, 0);
 			ifa->ifa_mask = sin->sin_addr.s_addr;
@@ -1181,19 +1181,19 @@ out:
 }
 
 /*
-  * ÔÚÍ¨¹ıÊä³öÍøÂçÉè±¸ÏòÄ¿µÄµØÖ··¢ËÍ±¨ÎÄÊ±£¬Èç¹û
-  * Ã»ÓĞÖ¸¶¨Ô´µØÖ·£¬»áµ÷ÓÃinet_select_addr()À´¸ù¾İ¸ø¶¨Éè±¸¡¢
-  * Ä¿µÄµØÖ·ºÍ×÷ÓÃ·¶Î§£¬»ñÈ¡¸ø¶¨×÷ÓÃ·¶Î§ÄÚµÄÖ÷IP
-  * µØÖ·×÷ÎªÔ´µØÖ·
-  * @dev:»ñÈ¡Ô´µØÖ·µÄÍøÂçÉè±¸
-  * @dst:·¢ËÍ±¨ÎÄµÄÄ¿µÄµØÖ·¡£²»Îª0£¬·µ»ØÓëÄ¿µÄµØÖ·
-  *          ÔÚÍ¬Ò»×ÓÍøµÄIPµØÖ·(Êä³öÍøÂçÉè±¸ÉÏÅäÖÃµÄ²»Í¬
-  *           µØÖ·ÊôÓÚ²»Í¬×ÓÍø)¡£µÈÓÚ0£¬·µ»Ø±¾µØµØÖ·¡£
-  * @scope:µØÖ·×÷ÓÃµÄ·¶Î§¡£ÎªRT_SCOPE_HOSTÊ±£¬±íÊ¾µ±±¨ÎÄ±»
-  *             ËÍÍù±¾µØ£»ÎªRT_SCOPE_LINK£¬±íÊ¾±¨ÎÄ±»ËÍ¸øÖ»ÔÚ
-  *             ±¾µØÁ´Â·ÉÏÓĞÒâÒåµÄµØÖ·£¬ÖîÈç¹ã²¥¡¢ÊÜÏŞ
-  *             ¹ã²¥ºÍ±¾µØ×é²¥£»ÎªRT_SCOPE_UNIVERSE£¬±íÊ¾µ±
-  *             ±¨ÎÄ·¢ËÍµ½Í¨ÍùÔ¶³Ì·ÇÖ±Á¬Ä¿µÄµØ
+  * åœ¨é€šè¿‡è¾“å‡ºç½‘ç»œè®¾å¤‡å‘ç›®çš„åœ°å€å‘é€æŠ¥æ–‡æ—¶ï¼Œå¦‚æœ
+  * æ²¡æœ‰æŒ‡å®šæºåœ°å€ï¼Œä¼šè°ƒç”¨inet_select_addr()æ¥æ ¹æ®ç»™å®šè®¾å¤‡ã€
+  * ç›®çš„åœ°å€å’Œä½œç”¨èŒƒå›´ï¼Œè·å–ç»™å®šä½œç”¨èŒƒå›´å†…çš„ä¸»IP
+  * åœ°å€ä½œä¸ºæºåœ°å€
+  * @dev:è·å–æºåœ°å€çš„ç½‘ç»œè®¾å¤‡
+  * @dst:å‘é€æŠ¥æ–‡çš„ç›®çš„åœ°å€ã€‚ä¸ä¸º0ï¼Œè¿”å›ä¸ç›®çš„åœ°å€
+  *          åœ¨åŒä¸€å­ç½‘çš„IPåœ°å€(è¾“å‡ºç½‘ç»œè®¾å¤‡ä¸Šé…ç½®çš„ä¸åŒ
+  *           åœ°å€å±äºä¸åŒå­ç½‘)ã€‚ç­‰äº0ï¼Œè¿”å›æœ¬åœ°åœ°å€ã€‚
+  * @scope:åœ°å€ä½œç”¨çš„èŒƒå›´ã€‚ä¸ºRT_SCOPE_HOSTæ—¶ï¼Œè¡¨ç¤ºå½“æŠ¥æ–‡è¢«
+  *             é€å¾€æœ¬åœ°ï¼›ä¸ºRT_SCOPE_LINKï¼Œè¡¨ç¤ºæŠ¥æ–‡è¢«é€ç»™åªåœ¨
+  *             æœ¬åœ°é“¾è·¯ä¸Šæœ‰æ„ä¹‰çš„åœ°å€ï¼Œè¯¸å¦‚å¹¿æ’­ã€å—é™
+  *             å¹¿æ’­å’Œæœ¬åœ°ç»„æ’­ï¼›ä¸ºRT_SCOPE_UNIVERSEï¼Œè¡¨ç¤ºå½“
+  *             æŠ¥æ–‡å‘é€åˆ°é€šå¾€è¿œç¨‹éç›´è¿ç›®çš„åœ°
   */
 __be32 inet_select_addr(const struct net_device *dev, __be32 dst, int scope)
 {
@@ -1207,9 +1207,9 @@ __be32 inet_select_addr(const struct net_device *dev, __be32 dst, int scope)
 		goto no_in_dev;
 
 	/*
-	  * ÏÈ¼ì²â¸ÃÍøÂçÉè±¸ÉÏIPv4ÅäÖÃ¿éÊÇ·ñÓĞĞ§£¬
-	  * Í¨¹ı¼ì²âºó±éÀúIPv4ÅäÖÃ¿éµÄ±¾µØIPµØÖ·ÁĞ±í£¬
-	  * »ñÈ¡µÚÒ»¸öÂú×ãÌõ¼ş(ÈçscopeºÍdst)µÄ±¾µØµØÖ·¡£
+	  * å…ˆæ£€æµ‹è¯¥ç½‘ç»œè®¾å¤‡ä¸ŠIPv4é…ç½®å—æ˜¯å¦æœ‰æ•ˆï¼Œ
+	  * é€šè¿‡æ£€æµ‹åéå†IPv4é…ç½®å—çš„æœ¬åœ°IPåœ°å€åˆ—è¡¨ï¼Œ
+	  * è·å–ç¬¬ä¸€ä¸ªæ»¡è¶³æ¡ä»¶(å¦‚scopeå’Œdst)çš„æœ¬åœ°åœ°å€ã€‚
 	  */
 	for_primary_ifa(in_dev) {
 		if (ifa->ifa_scope > scope)
@@ -1225,7 +1225,7 @@ no_in_dev:
 	rcu_read_unlock();
 
 	/*
-	  * Èç¹û»ñµÃÂú×ãÌõ¼şµÄµØÖ·£¬Ôò½«Æä·µ»Ø
+	  * å¦‚æœè·å¾—æ»¡è¶³æ¡ä»¶çš„åœ°å€ï¼Œåˆ™å°†å…¶è¿”å›
 	  */
 	if (addr)
 		goto out;
@@ -1237,9 +1237,9 @@ no_in_dev:
 	read_lock(&dev_base_lock);
 	rcu_read_lock();
 	/*
-	  * Èç¹û¸ø¶¨ÅäÖÃµÄµØÖ·¶¼²»Âú×ãÓÉscopeºÍdstÏŞ¶¨
-	  * µÄÌõ¼ş£¬Ôò³¢ÊÔÆäËûÉè±¸ÊÇ·ñÂú×ãËùÒªÇóµÄ
-	  * scopeµÄÒ»¸öIPµØÖ·¡£
+	  * å¦‚æœç»™å®šé…ç½®çš„åœ°å€éƒ½ä¸æ»¡è¶³ç”±scopeå’Œdsté™å®š
+	  * çš„æ¡ä»¶ï¼Œåˆ™å°è¯•å…¶ä»–è®¾å¤‡æ˜¯å¦æ»¡è¶³æ‰€è¦æ±‚çš„
+	  * scopeçš„ä¸€ä¸ªIPåœ°å€ã€‚
 	  */
 	for_each_netdev(net, dev) {
 		if ((in_dev = __in_dev_get_rcu(dev)) == NULL)
@@ -1306,17 +1306,17 @@ static __be32 confirm_addr_indev(struct in_device *in_dev, __be32 dst,
  * - scope: maximum allowed scope value for the local address
  */
 /*
-  * ÓÃÀ´È·ÈÏ²ÎÊıÖĞÖ¸¶¨µÄ±¾µØµØÖ·ÊÇ·ñ
-  * ´æÔÚ¡£
-  * @in_dev:ÓÃÀ´È·¶¨ÊÇ·ñÔÚÖ¸¶¨±¾µØµØÖ·µÄ
-  *          IPÅäÖÃ¿é£¬Èç¹ûÎªNULL£¬Ôò±íÊ¾
-  *          ÔÚËùÓĞµÄÍøÂçÉè±¸ÉÏÈ·ÈÏ±¾µØµØÖ·
-  * @dst:Ä¿µÄIPµØÖ·£¬µ±Æä²»Îª0Ê±£¬Ôò´ıÈ·¶¨
-  *          µÄ±¾µØµØÖ·±ØĞëÓë¸ÃµØÖ·ÔÚÍ¬Ò»×ÓÍø
-  *          ÄÚ¡£
-  * @local:´ıÈ·ÈÏµÄ±¾µØµØÖ·£¬µ±ÆäÎª0Ê±£¬Ôò×Ô¶¯
-  *           Ñ¡ÔñÒ»¸ö±¾µØµØÖ·
-  * @scope:È·ÈÏ±¾µØµØÖ·Ê±ÔÊĞíµÄ×î´ó·¶Î§¡£
+  * ç”¨æ¥ç¡®è®¤å‚æ•°ä¸­æŒ‡å®šçš„æœ¬åœ°åœ°å€æ˜¯å¦
+  * å­˜åœ¨ã€‚
+  * @in_dev:ç”¨æ¥ç¡®å®šæ˜¯å¦åœ¨æŒ‡å®šæœ¬åœ°åœ°å€çš„
+  *          IPé…ç½®å—ï¼Œå¦‚æœä¸ºNULLï¼Œåˆ™è¡¨ç¤º
+  *          åœ¨æ‰€æœ‰çš„ç½‘ç»œè®¾å¤‡ä¸Šç¡®è®¤æœ¬åœ°åœ°å€
+  * @dst:ç›®çš„IPåœ°å€ï¼Œå½“å…¶ä¸ä¸º0æ—¶ï¼Œåˆ™å¾…ç¡®å®š
+  *          çš„æœ¬åœ°åœ°å€å¿…é¡»ä¸è¯¥åœ°å€åœ¨åŒä¸€å­ç½‘
+  *          å†…ã€‚
+  * @local:å¾…ç¡®è®¤çš„æœ¬åœ°åœ°å€ï¼Œå½“å…¶ä¸º0æ—¶ï¼Œåˆ™è‡ªåŠ¨
+  *           é€‰æ‹©ä¸€ä¸ªæœ¬åœ°åœ°å€
+  * @scope:ç¡®è®¤æœ¬åœ°åœ°å€æ—¶å…è®¸çš„æœ€å¤§èŒƒå›´ã€‚
   */
 __be32 inet_confirm_addr(struct in_device *in_dev,
 			 __be32 dst, __be32 local, int scope)
@@ -1326,13 +1326,13 @@ __be32 inet_confirm_addr(struct in_device *in_dev,
 	struct net *net;
 
 	/*
-	  * Èç¹ûÖ¸¶¨IPÅäÖÃ¿é£¬ÔòÔÚ¸ÃIPÅäÖÃ¿é
-	  * ËùÊôµÄÍøÂçÉè±¸ÉÏ
-	  * È·ÈÏ±¾µØIPµØÖ·¡£È·ÈÏ¹ı³ÌÈçÏÂ:
-	  * µ÷ÓÃconfirm_addr_indev()ÔÚÖ¸¶¨µÄIPÅäÖÃ¿éÉÏ
-	  * ²éÕÒÓë²ÎÊılocal¸ø³öµÄIPµØÖ·ÏàÍ¬£¬
-	  * Óë²ÎÊıdst¸ø³öµÄIPµØÖ·ÔÚÏàÍ¬×ÓÍøÄÚ£¬
-	  * ÇÒ·¶Î§Ğ¡ÓÚscopeµÄ±¾µØµØÖ·¡£
+	  * å¦‚æœæŒ‡å®šIPé…ç½®å—ï¼Œåˆ™åœ¨è¯¥IPé…ç½®å—
+	  * æ‰€å±çš„ç½‘ç»œè®¾å¤‡ä¸Š
+	  * ç¡®è®¤æœ¬åœ°IPåœ°å€ã€‚ç¡®è®¤è¿‡ç¨‹å¦‚ä¸‹:
+	  * è°ƒç”¨confirm_addr_indev()åœ¨æŒ‡å®šçš„IPé…ç½®å—ä¸Š
+	  * æŸ¥æ‰¾ä¸å‚æ•°localç»™å‡ºçš„IPåœ°å€ç›¸åŒï¼Œ
+	  * ä¸å‚æ•°dstç»™å‡ºçš„IPåœ°å€åœ¨ç›¸åŒå­ç½‘å†…ï¼Œ
+	  * ä¸”èŒƒå›´å°äºscopeçš„æœ¬åœ°åœ°å€ã€‚
 	  */
 	if (scope != RT_SCOPE_LINK)
 		return confirm_addr_indev(in_dev, dst, local, scope);
@@ -1341,8 +1341,8 @@ __be32 inet_confirm_addr(struct in_device *in_dev,
 	read_lock(&dev_base_lock);
 	rcu_read_lock();
 	/*
-	  * µ±Ã»ÓĞÖ¸¶¨IPÅäÖÃ¿éÊ±£¬ÔòÔÚËùÓĞµÄÍøÂç
-	  * Éè±¸ÉÏÈ·ÈÏ±¾µØIPµØÖ·¡£
+	  * å½“æ²¡æœ‰æŒ‡å®šIPé…ç½®å—æ—¶ï¼Œåˆ™åœ¨æ‰€æœ‰çš„ç½‘ç»œ
+	  * è®¾å¤‡ä¸Šç¡®è®¤æœ¬åœ°IPåœ°å€ã€‚
 	  */
 	for_each_netdev(net, dev) {
 		if ((in_dev = __in_dev_get_rcu(dev))) {

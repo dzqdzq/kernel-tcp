@@ -119,7 +119,7 @@ static int proc_allowed_congestion_control(ctl_table *ctl,
 	return ret;
 }
 
-//ÔÚÓ¦ÓÃ²ãµÄ/proc/sys/netÖĞÉèÖÃµÄÊ±ºò£¬¶ÔÓ¦µÄÖµ»áĞ´Èëµ½dataÖĞ
+//åœ¨åº”ç”¨å±‚çš„/proc/sys/netä¸­è®¾ç½®çš„æ—¶å€™ï¼Œå¯¹åº”çš„å€¼ä¼šå†™å…¥åˆ°dataä¸­
 static struct ctl_table ipv4_table[] = {
 	{
 		.procname	= "tcp_timestamps",

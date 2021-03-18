@@ -159,9 +159,9 @@ static void inet6_prefix_notify(int event, struct inet6_dev *idev,
 static bool ipv6_chk_same_addr(struct net *net, const struct in6_addr *addr,
 			       struct net_device *dev);
 
-//http://www.linuxidc.com/Linux/2013-07/86999.htmÈçÍ¼ 1ÖĞËùÊ¾£¬
-//LinuxµÄÍøÂç×ÓÏµÍ³Ò»¹²ÓĞ3¸öÍ¨ÖªÁ´£º±íÊ¾ipv4µØÖ··¢Éú±ä»¯Ê±µÄinetaddr_chain£»
-//±íÊ¾ipv6µØÖ··¢Éú±ä»¯µÄinet6addr_chain£»»¹ÓĞ±íÊ¾Éè±¸×¢²á¡¢×´Ì¬±ä»¯µÄnetdev_chain¡£
+//http://www.linuxidc.com/Linux/2013-07/86999.htmå¦‚å›¾ 1ä¸­æ‰€ç¤ºï¼Œ
+//Linuxçš„ç½‘ç»œå­ç³»ç»Ÿä¸€å…±æœ‰3ä¸ªé€šçŸ¥é“¾ï¼šè¡¨ç¤ºipv4åœ°å€å‘ç”Ÿå˜åŒ–æ—¶çš„inetaddr_chainï¼›
+//è¡¨ç¤ºipv6åœ°å€å‘ç”Ÿå˜åŒ–çš„inet6addr_chainï¼›è¿˜æœ‰è¡¨ç¤ºè®¾å¤‡æ³¨å†Œã€çŠ¶æ€å˜åŒ–çš„netdev_chainã€‚
 
 //static ATOMIC_NOTIFIER_HEAD(inet6addr_chain);
 struct atomic_notifier_head inet6addr_chain =ATOMIC_NOTIFIER_INIT(inet6addr_chain);

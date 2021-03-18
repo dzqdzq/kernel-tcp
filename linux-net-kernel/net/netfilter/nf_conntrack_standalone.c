@@ -301,7 +301,7 @@ static const struct file_operations ct_cpu_seq_fops = {
 	.release = seq_release_net,
 };
 
-//ÓÃÓÚÏÔÊ¾ÒÑ½¨Á¬½Ó
+//ç”¨äºæ˜¾ç¤ºå·²å»ºè¿æ¥
 static int nf_conntrack_standalone_init_proc(struct net *net)
 {
 	struct proc_dir_entry *pde;
@@ -413,7 +413,7 @@ static struct ctl_path nf_ct_path[] = {
 	{ }
 };
 
-//×¢²ánetfilterÖĞµÄnf_conntrack_*ÖĞµÄÏà¹Øproc sysctlÎÄ¼ş£¬Â·¾¶/proc/sys/net
+//æ³¨å†Œnetfilterä¸­çš„nf_conntrack_*ä¸­çš„ç›¸å…³proc sysctlæ–‡ä»¶ï¼Œè·¯å¾„/proc/sys/net
 static int nf_conntrack_standalone_init_sysctl(struct net *net)
 {
 	struct ctl_table *table;
@@ -473,7 +473,7 @@ static void nf_conntrack_standalone_fini_sysctl(struct net *net)
 }
 #endif /* CONFIG_SYSCTL */
 
-//³õÊ¼»¯conntrackÏà¹Ø±äÁ¿¼°Êı¾İ½á¹¹£¬ÒÑ¾­proc/sys/net/xxxÏà¹ØÅäÖÃÎÄ¼ş
+//åˆå§‹åŒ–conntrackç›¸å…³å˜é‡åŠæ•°æ®ç»“æ„ï¼Œå·²ç»proc/sys/net/xxxç›¸å…³é…ç½®æ–‡ä»¶
 static int nf_conntrack_net_init(struct net *net)
 {
 	int ret;
@@ -511,8 +511,8 @@ static struct pernet_operations nf_conntrack_net_ops = {
 	.exit = nf_conntrack_net_exit,
 };
 
-//nf_conntrackµÄ³õÊ¼»¯£¬¾ÍÊÇ³õÊ¼»¯ÉÏÃæÌáµ½µÄÄÇĞ©Êı¾İ½á¹¹£¬ËüÔÚÄÚºËÆô¶¯Ê±µ÷ÓÃnf_conntrack_standalone_init()º¯Êı½øĞĞ³õÊ¼»¯µÄ
-//²Î¿¼:http://blog.csdn.net/ye_shizhe/article/details/17331947
+//nf_conntrackçš„åˆå§‹åŒ–ï¼Œå°±æ˜¯åˆå§‹åŒ–ä¸Šé¢æåˆ°çš„é‚£äº›æ•°æ®ç»“æ„ï¼Œå®ƒåœ¨å†…æ ¸å¯åŠ¨æ—¶è°ƒç”¨nf_conntrack_standalone_init()å‡½æ•°è¿›è¡Œåˆå§‹åŒ–çš„
+//å‚è€ƒ:http://blog.csdn.net/ye_shizhe/article/details/17331947
 static int __init nf_conntrack_standalone_init(void)
 {
 	return register_pernet_subsys(&nf_conntrack_net_ops);

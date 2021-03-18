@@ -122,13 +122,13 @@ EXPORT_SYMBOL_GPL(inet_twsk_put);
  * Essentially we whip up a timewait bucket, copy the relevant info into it
  * from the SK, and mess with hash chains and list linkage.
  *//*
- * ��timewait���ƿ����ӵ�tcp_hashinfo��ebashɢ�б��У�
- * ���������TCP���ƿ��ehashɢ�б���ɾ��������
- * FIN_WAIT2��TIME_WAIT״̬��Ҳ���Խ�������Ĵ�����
- * ͬʱ����timewait���ƿ����ӵ�bhashɢ�б��У���
- * ����ɾ����ɢ�б��б������TCP���ƿ飬��Ϊ
- * ֻҪinet->num��Ϊ0������󶨹�ϵ�ʹ��ڣ�
- * ��ʹ���׽����Ѿ��ر�
+ * 将timewait控制块添加到tcp_hashinfo的ebash散列表中，
+ * 将被替代的TCP控制块从ehash散列表中删除。这样
+ * FIN_WAIT2和TIME_WAIT状态下也可以进行输入的处理。
+ * 同时将该timewait控制块添加到bhash散列表中，但
+ * 并不删除该散列表中被替代的TCP控制块，因为
+ * 只要inet->num不为0，这个绑定关系就存在，
+ * 即使该套接字已经关闭
  */
 void __inet_twsk_hashdance(struct inet_timewait_sock *tw, struct sock *sk,
 			   struct inet_hashinfo *hashinfo)
@@ -148,8 +148,8 @@ void __inet_twsk_hashdance(struct inet_timewait_sock *tw, struct sock *sk,
 	tw->tw_tb = icsk->icsk_bind_hash;
 	WARN_ON(!icsk->icsk_bind_hash);
 
-	//��inet_timewait_sock���ӵ�
-	inet_twsk_add_bind_node(tw, &tw->tw_tb->owners);//��inet_bind_bucketͰָ��tw->tw_bind_node������ú����������ͷ�sk��ʱ�򣬻��ͷŵ�bindͰ��Ϣ
+	//将inet_timewait_sock添加到
+	inet_twsk_add_bind_node(tw, &tw->tw_tb->owners);//讲inet_bind_bucket桶指向tw->tw_bind_node，避免该函数外面在释放sk的时候，会释放掉bind桶信息
 	spin_unlock(&bhead->lock);
 
 	spin_lock(lock);
@@ -159,10 +159,10 @@ void __inet_twsk_hashdance(struct inet_timewait_sock *tw, struct sock *sk,
 	 * Should be done before removing sk from established chain
 	 * because readers are lockless and search established first.
 	 */
-	inet_twsk_add_node_rcu(tw, &ehead->twchain);//���´�����inet_timewait_sock���뵽inet_hash�е�ehash��
+	inet_twsk_add_node_rcu(tw, &ehead->twchain);//把新创建的inet_timewait_sock加入到inet_hash中的ehash中
 
 	/* Step 3: Remove SK from established hash. */
-	if (__sk_nulls_del_node_init_rcu(sk))//��sk��inet_hash�е�ehash����ɾ��
+	if (__sk_nulls_del_node_init_rcu(sk))//把sk从inet_hash中的ehash表中删除
 		sock_prot_inuse_add(sock_net(sk), sk->sk_prot, -1);
 
 	/*
@@ -221,19 +221,19 @@ EXPORT_SYMBOL_GPL(inet_twsk_alloc);
 
 /* Returns non-zero if quota exceeded.  */
 /*
- * ɾ��cellsɢ�б��е�ǰ�ؼ��������ϵ�timewait���ƿ顣
- * �����inet_twdr_do_twkill_work()������timewait���ƿ�������
- * 100������˵������һ������timewait���ƿ���Ҫ������
- * ���ڶ�ʱ�������д�������ʱ�䲻���أ���Ӱ��
- * ϵͳ���ܣ����ʣ�µ�timewait���ƿ����twkill_work
- * ���������д���������twkill_work��������ǰ���ȱ�ʶ
- * ��ɾ��slot��λͼ��������twkill_work�������д����У�
- * ����thread_slotsλͼ������cellsɢ�б�����Ӧ��������
- * inet_twdr_do_twkill_work()����ɾ��ָ��cellsɢ�б���slot���
- * ������slot��������ϵ�timewait���ƿ飬Ȼ�����ͷţ�
- * ������ϵͳ��timewait���ƿ�������ɾ�������У�
- * �������ɾ���ĸ����ﵽ100���򷵻ط��㣬��ʾ
- * ���������жϱ��δ��������µ��ȡ�
+ * 删除cells散列表中当前关键字链表上的timewait控制块。
+ * 如果在inet_twdr_do_twkill_work()清理的timewait控制块数超过
+ * 100个，则说明还有一定量的timewait控制块需要处理。
+ * 而在定时器例程中处理，长时间不返回，会影响
+ * 系统性能，因此剩下的timewait控制块放在twkill_work
+ * 工作队列中处理。调度twkill_work工作队列前，先标识
+ * 待删除slot的位图，这样在twkill_work工作队列处理中，
+ * 根据thread_slots位图，处理cells散列表中相应的链表。
+ * inet_twdr_do_twkill_work()用来删除指定cells散列表中slot入口
+ * 链表中slot入口链表上的timewait控制块，然后将其释放，
+ * 最后更新系统中timewait控制块数。在删除过程中，
+ * 如果本次删除的个数达到100，则返回非零，表示
+ * 调用者需中断本次处理，重新调度。
  */
 static int inet_twdr_do_twkill_work(struct inet_timewait_death_row *twdr,
 				    const int slot)
@@ -284,9 +284,9 @@ rescan:
 }
 
 /*
- * tw_timer��ʱ�������̣��ö�ʱ����ʱ�󣬻�
- * ����twcal_rowɢ�б��е�ǰ�ؼ���slot�����ϵ�
- * timewait���ƿ顣
+ * tw_timer定时器的例程，该定时器超时后，会
+ * 遍历twcal_row散列表中当前关键字slot链表上的
+ * timewait控制块。
  */
 void inet_twdr_hangman(unsigned long data)
 {
@@ -297,47 +297,47 @@ void inet_twdr_hangman(unsigned long data)
 	spin_lock(&twdr->death_lock);
 
 	/*
-	 * �����ǰtimewait���ƿ���Ϊ�㣬������
-	 * ���������ˡ�
+	 * 如果当前timewait控制块数为零，则无需
+	 * 再做处理了。
 	 */
 	if (twdr->tw_count == 0)
 		goto out;
 
 	/*
-	 * ɾ��cellsɢ�б��е�ǰ�ؼ��������ϵ�timewait���ƿ顣
-	 * �����inet_twdr_do_twkill_work()������timewait���ƿ�������
-	 * 100������˵������һ������timewait���ƿ���Ҫ������
-	 * ���ڶ�ʱ�������д�������ʱ�䲻���أ���Ӱ��
-	 * ϵͳ���ܣ����ʣ�µ�timewait���ƿ����twkill_work
-	 * ���������д���������twkill_work��������ǰ���ȱ�ʶ
-	 * ��ɾ��slot��λͼ��������twkill_work�������д����У�
-	 * ����thread_slotsλͼ������cellsɢ�б�����Ӧ��������
-	 * inet_twdr_do_twkill_work()����ɾ��ָ��cellsɢ�б���slot���
-	 * ������slot��������ϵ�timewait���ƿ飬Ȼ�����ͷţ�
-	 * ������ϵͳ��timewait���ƿ�������ɾ�������У�
-	 * �������ɾ���ĸ����ﵽ100���򷵻ط��㣬��ʾ
-	 * ���������жϱ��δ��������µ��ȡ�
+	 * 删除cells散列表中当前关键字链表上的timewait控制块。
+	 * 如果在inet_twdr_do_twkill_work()清理的timewait控制块数超过
+	 * 100个，则说明还有一定量的timewait控制块需要处理。
+	 * 而在定时器例程中处理，长时间不返回，会影响
+	 * 系统性能，因此剩下的timewait控制块放在twkill_work
+	 * 工作队列中处理。调度twkill_work工作队列前，先标识
+	 * 待删除slot的位图，这样在twkill_work工作队列处理中，
+	 * 根据thread_slots位图，处理cells散列表中相应的链表。
+	 * inet_twdr_do_twkill_work()用来删除指定cells散列表中slot入口
+	 * 链表中slot入口链表上的timewait控制块，然后将其释放，
+	 * 最后更新系统中timewait控制块数。在删除过程中，
+	 * 如果本次删除的个数达到100，则返回非零，表示
+	 * 调用者需中断本次处理，重新调度。
 	 */
 	need_timer = 0;
-	if (inet_twdr_do_twkill_work(twdr, twdr->slot)) {//��һ��tw_timer��ʱ��ʱ��twdr->slot=0,�Ͷ���tw_timer��ʱ��ʱ�򣬸�ֵ��1������7���ֻص�1��Ҳ�ͱ�֤��cells�е�����timewait��������
+	if (inet_twdr_do_twkill_work(twdr, twdr->slot)) {//第一个tw_timer超时的时候，twdr->slot=0,低二个tw_timer超时的时候，该值变1，当到7后又回到1，也就保证了cells中的所有timewait被遍历到
 		twdr->thread_slots |= (1 << twdr->slot);
 		schedule_work(&twdr->twkill_work);
 		need_timer = 1;
 	} else {
 		/* We purged the entire slot, anything left?  */
 		/*
-		 * �������timewait���ƿ飬�������ö�ʱ����
+		 * 如果还有timewait控制块，则还需设置定时器。
 		 */
 		if (twdr->tw_count)
 			need_timer = 1;
 		/*
-		 * ���γ�ʱ������ɺ��������´γ�ʱ������
-		 * cellsɢ�б���ڡ�
+		 * 本次超时处理完成后，需设置下次超时处理的
+		 * cells散列表入口。
 		 */
 		twdr->slot = ((twdr->slot + 1) & (INET_TWDR_TWKILL_SLOTS - 1));
 	}
 	/*
-	 * �������timewait���ƿ��账�������ٴ����ö�ʱ����
+	 * 如果还有timewait控制块需处理，则再次设置定时器。
 	 */
 	if (need_timer)
 		mod_timer(&twdr->tw_timer, jiffies + twdr->period);
@@ -375,13 +375,13 @@ out:
 EXPORT_SYMBOL_GPL(inet_twdr_hangman);
 
 /*
- * twkill_work�������е����̣���tw_timer��ʱ�������д���
- * ��timewait���ƿ�ﵽ100��ʱ�������twkill_work�������У�
- * ����ʣ�µ�timewait���ƿ顣
- * ����ʱ����ݴ�ɾ��slot��λͼ��ɾ����Ӧslot�����ϵ�
- * timewait���ƿ飬��twkill_work��������������ÿ����100��
- * timewait���ƿ���ʱ˯�ߣ�Ȼ���ٴδ�����ֱ��ȫ������
- * ��ɡ�
+ * twkill_work工作队列的例程，当tw_timer定时器例程中处理
+ * 的timewait控制块达到100个时，会调度twkill_work工作队列，
+ * 清理剩下的timewait控制块。
+ * 处理时会根据待删除slot的位图，删除对应slot链表上的
+ * timewait控制块，在twkill_work工作队列例程中每处理100个
+ * timewait控制块暂时睡眠，然后再次处理，直至全部处理
+ * 完成。
  */
 void inet_twdr_twkill_work(struct work_struct *work)
 {
@@ -433,15 +433,15 @@ void inet_twsk_deschedule(struct inet_timewait_sock *tw,
 EXPORT_SYMBOL(inet_twsk_deschedule);
 
 /*
- * ��������FIN_WAIT_2��TIME_WAIT��ʱ������Ȼ
- * ������������ʱ���õ���ͬһ���ӿڣ�����
- * ����timewait���ƿ��tw_substate����ȷ������
- * ��ǰ���������ĸ���ʱ��
- * @tw: �Ѿ����TCP������ƿ��timewait���ƿ�
- * @twdr: ������ص����ݵ�������ͨ������ȫ��
- *             ����tcp_death_row��
- * @timeo: �趨��ʱ���ĳ�ʱʱ��
- * @timewait_len: ��ʱʱ�����ޣ�ΪTCP_TIMEWAIT_LEN��
+ * 用于启动FIN_WAIT_2或TIME_WAIT定时器。虽然
+ * 启动这两个定时器用的是同一个接口，但是
+ * 根据timewait控制块的tw_substate很明确地区别
+ * 当前启动的是哪个定时器
+ * @tw: 已经替代TCP传输控制块的timewait控制块
+ * @twdr: 管理相关的数据的容器，通常传入全局
+ *             变量tcp_death_row。
+ * @timeo: 设定定时器的超时时间
+ * @timewait_len: 超时时间上限，为TCP_TIMEWAIT_LEN。
  */
 void inet_twsk_schedule(struct inet_timewait_sock *tw,
 		       struct inet_timewait_death_row *twdr,
@@ -451,31 +451,31 @@ void inet_twsk_schedule(struct inet_timewait_sock *tw,
 	int slot;
 
 	/*
-	 * RTO�ǳ�ʱ�ش�ʱ��(Retransmission timeout)����˼��
-	 * ��ʱ����RTOӦ�Դ���RTT(ƽ������ʱ�䣬
+	 * RTO是超时重传时间(Retransmission timeout)的意思。
+	 * 计时器的RTO应略大于RTT(平均往返时间，
 	 * Round-Trip Time)
-        * ����RTO��b*RTT
-        * ����b�Ǹ�����1��ϵ����
-        * ��ȡb�ܽӽ���1�����Ͷ˿ɼ�ʱ���ش���ʧ
-        * �ı��ĶΣ����Ч�ʵõ���ߡ�
-        * �������Ķβ�δ��ʧ��������������һ��ʱ��,
-        * ��ô������ش��������������ĸ�����
-        * ���TCPԭ�ȵı�׼�Ƽ���bֵȡΪ2��
+        * 即：RTO＝b*RTT
+        * 这里b是个大于1的系数。
+        * 若取b很接近于1，发送端可及时地重传丢失
+        * 的报文段，因此效率得到提高。
+        * 但若报文段并未丢失而仅仅是增加了一点时延,
+        * 那么过早地重传反而会加重网络的负担。
+        * 因此TCP原先的标准推荐将b值取为2。
 	 */
 	 /*
-	 * ���ش�����£��ش���ʱʱ�����һ�ֳ�Ϊ
-	 * ��ָ���˱ܡ��ķ�ʽ���㡣���磺���ش���
-	 * ʱʱ��Ϊ1S������·����������ش�������
-	 * �����ش���ʱʱ��Ϊ2S�Ķ�ʱ�����ش����ݣ�
-	 * ��һ����4S��һֱ���ӵ�64SΪֹ���μ�tcp_retransmit_timer��������
-	 * ���������RTO*3.5=RTO*0.5+RTO*1+RTO*2,����RTO*0.5��
-	 * ��һ�η���ACK��ʱ�䵽�Զ˵ĳ�ʱʱ�䣨ϵ
-	 * �����ǳ���RTO��ֵ����RTO*1�ǶԶ˵�һ���ش�FIN
-	 * ����ACK������Զ˵ĳ�ʱʱ�䣬RTO*2�ǶԶ˵�
-	 * �����ش�FIN����ACK������Զ˵ĳ�ʱʱ�䡣ע��
-	 * ���ش���ʱʱ���ָ���˱ܲ��������ǳ���2������
-	 * �ش�֮��ִ�еģ����Ե�һ���ش��ĳ�ʱʱ���
-	 * ��һ�η��͵ĳ�ʱʱ����ͬ��
+	 * 在重传情况下，重传超时时间采用一种称为
+	 * “指数退避”的方式计算。例如：当重传超
+	 * 时时间为1S的情况下发生了数据重传，我们
+	 * 就用重传超时时间为2S的定时器来重传数据，
+	 * 下一次用4S，一直增加到64S为止（参见tcp_retransmit_timer（））。
+	 * 所以这里的RTO*3.5=RTO*0.5+RTO*1+RTO*2,其中RTO*0.5是
+	 * 第一次发送ACK的时间到对端的超时时间（系
+	 * 数就是乘以RTO的值），RTO*1是对端第一次重传FIN
+	 * 包到ACK包到达对端的超时时间，RTO*2是对端第
+	 * 二次重传FIN包到ACK包到达对端的超时时间。注意
+	 * ，重传超时时间的指数退避操作（就是乘以2）是在
+	 * 重传之后执行的，所以第一次重传的超时时间和
+	 * 第一次发送的超时时间相同。
 	 */
 	/* timeout := RTO * 3.5
 	 *
@@ -502,12 +502,12 @@ void inet_twsk_schedule(struct inet_timewait_sock *tw,
 	 * of PAWS.
 	 */
 	/*
-	 * TIME_WAIT��ʱʱ�����INET_TWDR_RECYCLE_TICK��
-	 * ����ȡ���������жϽ���timewait���ƿ�����
-	 * ��cells����twcal_rowɢ�б��С�
-	 * ����õ�ֵ���ڻ����INET_TWDR_RECYCLE_SLOTS��
-	 * �������ӵ�cellsɢ�б��У��������ӵ�
-	 * twcal_rowɢ�б���
+	 * TIME_WAIT超时时间除以INET_TWDR_RECYCLE_TICK后
+	 * 向上取整，用来判断将该timewait控制块添加
+	 * 到cells还是twcal_row散列表中。
+	 * 如果得到值大于或等于INET_TWDR_RECYCLE_SLOTS，
+	 * 则将其添加到cells散列表中，否则添加到
+	 * twcal_row散列表中
 	 */
 	slot = (timeo + (1 << INET_TWDR_RECYCLE_TICK) - 1) >> INET_TWDR_RECYCLE_TICK;
 
@@ -515,26 +515,26 @@ void inet_twsk_schedule(struct inet_timewait_sock *tw,
 
 	/* Unlink it, if it was scheduled */
 	/*
-	 * �����timewait���ƿ��Ѿ������ȣ���ɢ�б���ժ����
-	 * ����Ҫ�ݼ���ǰϵͳ�д���TIME_wAIT״̬���׽�����
+	 * 如果该timewait控制块已经被调度，从散列表中摘除，
+	 * 并需要递减当前系统中处于TIME_wAIT状态的套接字数
 	 */
 	if (inet_twsk_del_dead_node(tw)) 
-		twdr->tw_count--; //�ڸú���inet_twsk_schedule�����inet_twsk_put���Ƿ�timewait�ռ�
+		twdr->tw_count--; //在该函数inet_twsk_schedule外面的inet_twsk_put中是否timewait空间
 	else
 		atomic_inc(&tw->tw_refcnt);
 
-	if (slot >= INET_TWDR_RECYCLE_SLOTS) { //�����slot�Ǹ��ݶ�ʱ����ʱʱ��timeo���ģ����Ծ��൱�ڸ��ݳ�ʱʱ���timewaitɢ�е�cells���С�
+	if (slot >= INET_TWDR_RECYCLE_SLOTS) { //这里的slot是根据定时器超时时间timeo来的，所以就相当于根据超时时间把timewait散列到cells表中。
 	/*
-	 * ׼�����ӵ�cellsɢ�б��С�����timewait���ƿ�
-	 * ��ʱɾ��ʱ�䣬���������ӵ�cellsɢ�б���
-	 * �ĸ�Ͱ��
+	 * 准备添加到cells散列表中。设置timewait控制块
+	 * 超时删除时间，并计算添加到cells散列表的
+	 * 哪个桶中
 	 */
 		/* Schedule to slow timer */
 		if (timeo >= timewait_len) {
 			slot = INET_TWDR_TWKILL_SLOTS - 1;
 		} else {
-			slot = DIV_ROUND_UP(timeo, twdr->period);//����൱���Ǽ���timeo��twdr->period�ļ�����Ҳ���Ǽ���TCP_TIMEWAIT_LEN / INET_TWDR_TWKILL_SLOTS
-			if (slot >= INET_TWDR_TWKILL_SLOTS) //�����Ϳ��԰���ʱ��ɢ�е�cell�У���ʾ�ж��ٸ�slot��TCP_TIMEWAIT_LEN / INET_TWDR_TWKILL_SLOTS
+			slot = DIV_ROUND_UP(timeo, twdr->period);//这个相当于是计算timeo是twdr->period的几倍，也就是几个TCP_TIMEWAIT_LEN / INET_TWDR_TWKILL_SLOTS
+			if (slot >= INET_TWDR_TWKILL_SLOTS) //这样就可以按照时间散列到cell中，表示有多少个slot个TCP_TIMEWAIT_LEN / INET_TWDR_TWKILL_SLOTS
 				slot = INET_TWDR_TWKILL_SLOTS - 1;
 		}
 		tw->tw_ttd = jiffies + timeo;
@@ -542,13 +542,13 @@ void inet_twsk_schedule(struct inet_timewait_sock *tw,
 		list = &twdr->cells[slot];
 	} else {
 		/*
-		 * ׼�����ӵ�twcal_rowɢ�б��С����twcal_row
-		 * ɢ�б�Ϊ�գ����������´γ�ʱʱ������
-		 * Ͱ��Ȼ�����ó�ʱʱ���������ʱ����
-		 * ���twcal_rowɢ�б���Ϊ�գ��ұ��γ�ʱʱ��
-		 * �����ö�ʱ���ĳ�ʱʱ�䣬������������
-		 * ��ʱ���ĳ�ʱʱ�䡣
-		 * ����ȡ���ӵ�twcal_rowɢ�б����ĸ�Ͱ
+		 * 准备添加到twcal_row散列表中。如果twcal_row
+		 * 散列表为空，则先设置下次超时时处理的
+		 * 桶，然后设置超时时间后启动定时器。
+		 * 如果twcal_row散列表不为空，且本次超时时间
+		 * 遭遇该定时器的超时时间，则需重新设置
+		 * 定时器的超时时间。
+		 * 最后获取添加到twcal_row散列表的哪个桶
 		 */
 		tw->tw_ttd = jiffies + (slot << INET_TWDR_RECYCLE_TICK);
 
@@ -569,16 +569,16 @@ void inet_twsk_schedule(struct inet_timewait_sock *tw,
 	}
 
 	/*
-	 * ��timewait���ƿ����ӵ���Ӧ��ɢ�б��С�
+	 * 将timewait控制块添加到相应的散列表中。
 	 */
 	hlist_add_head(&tw->tw_death_node, list);
 
 	/*
-	 * ���ϵͳ֮ǰ������timewait���ƿ飬
-	 * �����趨tw_timer��ʱ����
+	 * 如果系统之前不存在timewait控制块，
+	 * 则需设定tw_timer定时器。
 	 */ //inet_twdr_hangman 
-	if (twdr->tw_count++ == 0)  //������timewait���ƿ���������ɾ��        tw_timer��ʱ���ص�������inet_twdr_hangman
-		mod_timer(&twdr->tw_timer, jiffies + twdr->period);//ע�⣬�����tcp_death_row����Ķ�ʱ������Ҫһֱ������,ע���inet_csk_init_xmit_timers�м��ֶ�ʱ��������
+	if (twdr->tw_count++ == 0)  //真正的timewait控制块在这里面删除        tw_timer定时器回调函数是inet_twdr_hangman
+		mod_timer(&twdr->tw_timer, jiffies + twdr->period);//注意，这个是tcp_death_row里面的定时器，需要一直运行着,注意和inet_csk_init_xmit_timers中几种定时器的区别
 	spin_unlock(&twdr->death_lock);
 }
 
@@ -663,9 +663,9 @@ void inet_twsk_schedule1(struct inet_timewait_sock *tw,
 EXPORT_SYMBOL_GPL(inet_twsk_schedule);
 
 /*
- * twcal_timer��ʱ�������̣��ö�ʱ����ʱ��
- * �����twcal_rowɢ�б�����������ѳ�ʱ
- * ��timewait���ƿ�
+ * twcal_timer定时器的例程，该定时器超时后，
+ * 会遍历twcal_row散列表，清除其中已超时
+ * 的timewait控制块
  */
 void inet_twdr_twcal_tick(unsigned long data)
 {
@@ -680,29 +680,29 @@ void inet_twdr_twcal_tick(unsigned long data)
 
 	spin_lock(&twdr->death_lock);
 	/*
-	 * twcal_handС��0����ʾtwcal_rowɢ�б��в�����
-	 * timewait���ƿ飬����ڱ���֮ǰ����У�顣
+	 * twcal_hand小于0，表示twcal_row散列表中不存在
+	 * timewait控制块，因此在遍历之前需先校验。
 	 */
 	if (twdr->twcal_hand < 0)
 		goto out;
 
 	/*
-	 * ��ȡ���α���twcal_rowɢ�б�����ڡ�ͬʱ
-	 * ȡ�ø�ɢ�б���ڶ����ϵĳ�ʱʱ�䣬
-	 * ���ڼ��timewait���ƿ��Ƿ��ѳ�ʱ
+	 * 获取本次遍历twcal_row散列表的入口。同时
+	 * 取得该散列表入口队列上的超时时间，
+	 * 用于检测timewait控制块是否已超时
 	 */
 	slot = twdr->twcal_hand;
 	j = twdr->twcal_jiffie;
 
 	/*
-	 * ����twcal_rowɢ�б���ɾ���ѳ�ʱ��timewait���ƿ�
+	 * 遍历twcal_row散列表，删除已超时的timewait控制块
 	 */
 	for (n = 0; n < INET_TWDR_RECYCLE_SLOTS; n++) {
 		/*
-		 * �����ǰ��������е�timewait���ƿ��ѳ�ʱ��
-		 * �����twcal_row�Լ�bhash��ehashɢ�б���ɾ����
-		 * Ȼ�����ͷţ����ͳ�Ʊ���ɾ���ͷŵ�
-		 * timewait���ƿ�����
+		 * 如果当前入口链表中的timewait控制块已超时，
+		 * 则将其从twcal_row以及bhash、ehash散列表中删除，
+		 * 然后将其释放，最后统计本次删除释放的
+		 * timewait控制块数。
 		 */
 		if (time_before_eq(j, now)) {
 			struct hlist_node *node, *safe;
@@ -720,12 +720,12 @@ void inet_twdr_twcal_tick(unsigned long data)
 			}
 		} else {
 			/*
-			 * ����������ʱʱ��С�ڵ�ǰ��ʱʱ���ڣ�˵��
-			 * ��ʱ��timewait���ƿ���ȫ��������ɣ���������
-			 * ��һ�γ�ʱ��twcal_jiffie�����twcal_hand��Ȼ����ʣ��
-			 * ��ɢ�б��в����Ƿ���δ��ʱ��timewait���ƿ飬
-			 * ��������������ó�ʱʱ��󷵻أ�����˵��
-			 * ���е�timewait���ƿ鶼��������轫twcal_hand����Ϊ-1.
+			 * 当遍历到超时时间小于当前超时时间内，说明
+			 * 超时的timewait控制块已全部处理完成，可以设置
+			 * 下一次超时的twcal_jiffie和入口twcal_hand。然后在剩下
+			 * 的散列表中查找是否还有未超时的timewait控制块，
+			 * 如果有则重新设置超时时间后返回，否则说明
+			 * 所有的timewait控制块都已清除，需将twcal_hand设置为-1.
 			 */
 			if (!adv) {
 				adv = 1;
@@ -739,8 +739,8 @@ void inet_twdr_twcal_tick(unsigned long data)
 			}
 		}
 		/*
-		 * �ڱ���timewait���ƿ�ʱ����Ҫ��ڵĹؼ���
-		 * ����������ϵĳ�ʱʱ�䡣
+		 * 在遍历timewait控制块时，需要入口的关键字
+		 * 及入口链表上的超时时间。
 		 */
 		j += 1 << INET_TWDR_RECYCLE_TICK;
 		slot = (slot + 1) & (INET_TWDR_RECYCLE_SLOTS - 1);
@@ -748,8 +748,8 @@ void inet_twdr_twcal_tick(unsigned long data)
 	twdr->twcal_hand = -1;
 
 /*
- * �����ǰϵͳtimewait���ƿ���Ϊ�㣬��
- * ֹͣtw_timer��ʱ����
+ * 如果当前系统timewait控制块数为零，则
+ * 停止tw_timer定时器。
  */
 out:
 	if ((twdr->tw_count -= killed) == 0)

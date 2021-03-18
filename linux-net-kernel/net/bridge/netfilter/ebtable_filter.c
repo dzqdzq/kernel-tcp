@@ -12,7 +12,7 @@
 #include <linux/module.h>
 
 #define FILTER_VALID_HOOKS ((1 << NF_BR_LOCAL_IN) | (1 << NF_BR_FORWARD) | \
-   (1 << NF_BR_LOCAL_OUT))//表示注册到这几个钩子上面
+   (1 << NF_BR_LOCAL_OUT))//琛ㄧず娉ㄥ唽鍒拌繖鍑犱釜閽╁瓙涓婇潰
 
 static struct ebt_entries initial_chains[] =
 {

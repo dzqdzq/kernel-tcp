@@ -38,9 +38,9 @@ EXPORT_SYMBOL(net_msg_warn);
 DEFINE_RATELIMIT_STATE(net_ratelimit_state, 5 * HZ, 10);
 /*
  * All net warning printk()s should be guarded by this function.
- ���������ֹ��Ϣ��ӡ. ��������Ϊ��"�����"����net_ratelimit()ʱ,�����ֻ����������ӡ
-ǰ10����Ϣ, �����Ϣÿ��5��������ӡһ��.�����ɷ�ֹ������ʹ�ں˲��ϲ���������Ϣ��ʹϵ
-ͳ���صľܾ����񹥻�.
+ 返回零则禁止信息打印. 它的特性为当"极快地"调用net_ratelimit()时,它最多只允许连续打印
+前10条信息, 后继信息每隔5秒允许打印一次.这样可防止攻击者使内核不断产生调试信息来使系
+统过载的拒绝服务攻击.
  */
 int net_ratelimit(void)
 {

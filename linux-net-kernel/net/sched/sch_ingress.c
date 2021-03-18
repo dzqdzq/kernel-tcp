@@ -16,14 +16,14 @@
 #include <net/pkt_sched.h>
 
 /*
-Èë¿ÚÁ÷¿Ø¶ÔÏóµÄË½ÓĞÊı¾İÊÇ£º
+å…¥å£æµæ§å¯¹è±¡çš„ç§æœ‰æ•°æ®æ˜¯ï¼š
 struct ingress_qdisc_data {
        struct tcf_proto      *filter_list;
 };
-Èë¿ÚÁ÷¿Ø¶ÔÏóÖ»ÓĞÈë¶Óº¯Êı£¬Ã»ÓĞ³ö¶Óº¯Êı¡£
-Èë¶Ó¶¯×÷£ºÏÈ±éÀú¹ıÂËÆ÷£¬Èç¹ûÄ³¸ö¹ıÂËÆ÷Æ¥Åä£¬Ö´ĞĞaction£¨½ÓÊÕ»òÕß¶ªÆúÊı¾İ°ü£©£¬²¢½«½á¹û·µ»Ø£¬×îÖÕ¸ù¾İÕâ¸ö·µ»ØµÄ½á¹û¾ö¶¨ÊÇ·ñ¶ªÆúÊı¾İ°ü¡£
+å…¥å£æµæ§å¯¹è±¡åªæœ‰å…¥é˜Ÿå‡½æ•°ï¼Œæ²¡æœ‰å‡ºé˜Ÿå‡½æ•°ã€‚
+å…¥é˜ŸåŠ¨ä½œï¼šå…ˆéå†è¿‡æ»¤å™¨ï¼Œå¦‚æœæŸä¸ªè¿‡æ»¤å™¨åŒ¹é…ï¼Œæ‰§è¡Œactionï¼ˆæ¥æ”¶æˆ–è€…ä¸¢å¼ƒæ•°æ®åŒ…ï¼‰ï¼Œå¹¶å°†ç»“æœè¿”å›ï¼Œæœ€ç»ˆæ ¹æ®è¿™ä¸ªè¿”å›çš„ç»“æœå†³å®šæ˜¯å¦ä¸¢å¼ƒæ•°æ®åŒ…ã€‚
 */
-struct ingress_qdisc_data { //¼ûingress_qdisc_ops
+struct ingress_qdisc_data { //è§ingress_qdisc_ops
 	struct tcf_proto	*filter_list;
 };
 
@@ -127,25 +127,25 @@ static const struct Qdisc_class_ops ingress_class_ops = {
 };
 
 /*
-Èë¿ÚÁ÷¿Ø¶ÔÏóµÄË½ÓĞÊı¾İÊÇ£º
+å…¥å£æµæ§å¯¹è±¡çš„ç§æœ‰æ•°æ®æ˜¯ï¼š
 struct ingress_qdisc_data {
        struct tcf_proto      *filter_list;
 };
-Èë¿ÚÁ÷¿Ø¶ÔÏóÖ»ÓĞÈë¶Óº¯Êı£¬Ã»ÓĞ³ö¶Óº¯Êı¡£
-Èë¶Ó¶¯×÷£ºÏÈ±éÀú¹ıÂËÆ÷£¬Èç¹ûÄ³¸ö¹ıÂËÆ÷Æ¥Åä£¬Ö´ĞĞaction£¨½ÓÊÕ»òÕß¶ªÆúÊı¾İ°ü£©£¬²¢½«½á¹û·µ»Ø£¬×îÖÕ¸ù¾İÕâ¸ö·µ»ØµÄ½á¹û¾ö¶¨ÊÇ·ñ¶ªÆúÊı¾İ°ü¡£
+å…¥å£æµæ§å¯¹è±¡åªæœ‰å…¥é˜Ÿå‡½æ•°ï¼Œæ²¡æœ‰å‡ºé˜Ÿå‡½æ•°ã€‚
+å…¥é˜ŸåŠ¨ä½œï¼šå…ˆéå†è¿‡æ»¤å™¨ï¼Œå¦‚æœæŸä¸ªè¿‡æ»¤å™¨åŒ¹é…ï¼Œæ‰§è¡Œactionï¼ˆæ¥æ”¶æˆ–è€…ä¸¢å¼ƒæ•°æ®åŒ…ï¼‰ï¼Œå¹¶å°†ç»“æœè¿”å›ï¼Œæœ€ç»ˆæ ¹æ®è¿™ä¸ªè¿”å›çš„ç»“æœå†³å®šæ˜¯å¦ä¸¢å¼ƒæ•°æ®åŒ…ã€‚
 
-int netif_receive_skb(struct sk_buff *skb)¨¤
-skb = handle_ing(skb, &pt_prev, &ret, orig_dev);¨¤
+int netif_receive_skb(struct sk_buff *skb)Ã 
+skb = handle_ing(skb, &pt_prev, &ret, orig_dev);Ã 
 ing_filter(skb)
-Ôö¼ÓÒ»¸öÈë¿ÚÁ÷¿Ø¶ÓÁĞ# tc qdisc add dev eth0 ingress
+å¢åŠ ä¸€ä¸ªå…¥å£æµæ§é˜Ÿåˆ—# tc qdisc add dev eth0 ingress
 
 */
-/*pfifo_qdisc_ops tbf_qdisc_ops sfq_qdisc_ops prio_class_opsÕâ¼¸¸ö¶¼Îª³ö¿Ú£¬ingress_qdisc_opsÎªÈë¿Ú */
+/*pfifo_qdisc_ops tbf_qdisc_ops sfq_qdisc_ops prio_class_opsè¿™å‡ ä¸ªéƒ½ä¸ºå‡ºå£ï¼Œingress_qdisc_opsä¸ºå…¥å£ */
 static struct Qdisc_ops ingress_qdisc_ops { // __read_mostly = {
 	.cl_ops		=	&ingress_class_ops,
 	.id		=	"ingress",
 	.priv_size	=	sizeof(struct ingress_qdisc_data),
-	.enqueue	=	ingress_enqueue,////ingressÍ¨¹ıing_filterÈë¶Ó
+	.enqueue	=	ingress_enqueue,////ingressé€šè¿‡ing_filterå…¥é˜Ÿ
 	.destroy	=	ingress_destroy,
 	.dump		=	ingress_dump,
 	.owner		=	THIS_MODULE,

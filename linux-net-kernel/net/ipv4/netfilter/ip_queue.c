@@ -10,8 +10,8 @@
  * published by the Free Software Foundation.
 
 
- //http://blog.chinaunix.net/uid-127037-id-2919444.html  ²Î¿¼ip_queueµÄÊµÏÖ·ÖÎö
- Ç°Ãæ½²µ½£¬ËùÎ½IP Queue»úÖÆ£¬Ö»ÊÇµ±NFÉÏHookº¯Êı¶ÔÊı¾İ°ü´¦ÀíµÄ·µ»ØÖµÎªNF_QUEUEÊ±£¬Ğ­ÒéÕ»»á½«Êı¾İ°ü½»¸øÄÚºËÖĞµÄip_queueÄ£¿é
+ //http://blog.chinaunix.net/uid-127037-id-2919444.html  å‚è€ƒip_queueçš„å®ç°åˆ†æ
+ å‰é¢è®²åˆ°ï¼Œæ‰€è°“IP Queueæœºåˆ¶ï¼Œåªæ˜¯å½“NFä¸ŠHookå‡½æ•°å¯¹æ•°æ®åŒ…å¤„ç†çš„è¿”å›å€¼ä¸ºNF_QUEUEæ—¶ï¼Œåè®®æ ˆä¼šå°†æ•°æ®åŒ…äº¤ç»™å†…æ ¸ä¸­çš„ip_queueæ¨¡å—
  */
 #include <linux/module.h>
 #include <linux/skbuff.h>
@@ -51,7 +51,7 @@ static unsigned char copy_mode = IPQ_COPY_NONE;
 static unsigned int queue_maxlen = IPQ_QMAX_DEFAULT;
 static DEFINE_RWLOCK(queue_lock);
 //static int peer_pid __read_mostly;
-static int peer_pid;//¼ÇÂ¼ÓÃ»§¿Õ¼ä½ø³ÌIDºÅ
+static int peer_pid;//è®°å½•ç”¨æˆ·ç©ºé—´è¿›ç¨‹IDå·
 
 //static unsigned int copy_range __read_mostly;
 static unsigned int copy_range;
@@ -242,7 +242,7 @@ nlmsg_failure:
 	return NULL;
 }
 
-//ÏòÓÃ»§¿Õ¼ä·¢ËÍÊı¾İ
+//å‘ç”¨æˆ·ç©ºé—´å‘é€æ•°æ®
 static int
 ipq_enqueue_packet(struct nf_queue_entry *entry, unsigned int queuenum)
 {
@@ -583,7 +583,7 @@ static const struct nf_queue_handler nfqh = {
 	.outfn	= &ipq_enqueue_packet,
 };
 
-//ip_queue³õÊ¼»¯£¬ÓÃÓÚ´ÓÓÃ»§¿Õ¼ä½ÓÊÕiptableÅäÖÃ¼°ÏòÓÃ»§¿Õ¼ä·¢ËÍÊı¾İ
+//ip_queueåˆå§‹åŒ–ï¼Œç”¨äºä»ç”¨æˆ·ç©ºé—´æ¥æ”¶iptableé…ç½®åŠå‘ç”¨æˆ·ç©ºé—´å‘é€æ•°æ®
 static int __init ip_queue_init(void)
 {
 	int status = -ENOMEM;

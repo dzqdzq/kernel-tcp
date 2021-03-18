@@ -177,9 +177,9 @@ static inline unsigned short in_chksum_tcp(  unsigned short *h, unsigned short *
 *  dlen - length of payload in bytes
 *
 
-Ê×ÏÈ£¬²é¿´ÁËLinux 2.6ÄÚºËÖĞµÄĞ£ÑéËã·¨£¬Ê¹ÓÃ»ã±àÓïÑÔ±àĞ´µÄ£¬ÏÔÈ»Ğ§ÂÊÒª¸ßĞ©¡£´úÂëÈçÏÂ£º
+é¦–å…ˆï¼ŒæŸ¥çœ‹äº†Linux 2.6å†…æ ¸ä¸­çš„æ ¡éªŒç®—æ³•ï¼Œä½¿ç”¨æ±‡ç¼–è¯­è¨€ç¼–å†™çš„ï¼Œæ˜¾ç„¶æ•ˆç‡è¦é«˜äº›ã€‚ä»£ç å¦‚ä¸‹ï¼š
 unsigned short ip_fast_csum(unsigned char * iph,
-unsigned int ihl) ÔÚÍâ³öip_rcvÖĞÒÑ¾­Ğ£Ñé¹ıÁË£¬ÎªÊ²Ã´»¹ÒªĞ£Ñé£¬»¹ÓĞÕâ¸öĞ£ÑéÎªÊ²Ã´²»ÊÇÅĞ¶ÏÁ½¸öÖµÊÇ·ñÏàµÈ£¬¾ÍÊÇºÍ½ÓÊÕµÄĞ£ÑéÂëÏàµÈ
+unsigned int ihl) åœ¨å¤–å‡ºip_rcvä¸­å·²ç»æ ¡éªŒè¿‡äº†ï¼Œä¸ºä»€ä¹ˆè¿˜è¦æ ¡éªŒï¼Œè¿˜æœ‰è¿™ä¸ªæ ¡éªŒä¸ºä»€ä¹ˆä¸æ˜¯åˆ¤æ–­ä¸¤ä¸ªå€¼æ˜¯å¦ç›¸ç­‰ï¼Œå°±æ˜¯å’Œæ¥æ”¶çš„æ ¡éªŒç ç›¸ç­‰
 
 */
 static inline unsigned short in_chksum_udp(  unsigned short *h, unsigned short * d, int dlen )

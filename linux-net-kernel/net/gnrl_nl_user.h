@@ -33,7 +33,7 @@ enum {
 };
 #define MSG_CMD_MAX (__MSG_CMD_MAX - 1)
 
-/* netlink ÏûÏ¢½á¹¹Ìå */
+/* netlink æ¶ˆæ¯ç»“æ„ä½“ */
 typedef struct genlnet_msg_s {
     struct nlmsghdr     n;
     struct genlmsghdr   g;

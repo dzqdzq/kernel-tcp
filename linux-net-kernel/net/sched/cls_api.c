@@ -32,8 +32,8 @@
 #include <net/pkt_cls.h>
 
 /* The list of all installed classifier types */
-//tcf_protoÖÐµÄops£¬ËùÓÐµÄtcf_proto_opsÍ¨¹ýtcf_proto_baseÁ¬½ÓÔÚÒ»Æð£¬¼ûregister_tcf_proto_ops
-//Ö÷ÒªÓÐcls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
+//tcf_protoä¸­çš„opsï¼Œæ‰€æœ‰çš„tcf_proto_opsé€šè¿‡tcf_proto_baseè¿žæŽ¥åœ¨ä¸€èµ·ï¼Œè§register_tcf_proto_ops
+//ä¸»è¦æœ‰cls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
 static struct tcf_proto_ops *tcf_proto_base;// __read_mostly;
 
 /* Protects list of registered TC modules. It is pure SMP lock. */
@@ -41,7 +41,7 @@ static DEFINE_RWLOCK(cls_mod_lock);
 
 /* Find classifier type by string name */
 
-//Í¨¹ýtc filter add dev eth0 protocol ip parent 22: prio 2 u32 match ip dst 4.3.2.1/32 flowid 22:4ÖÐµÄu32²éÕÒ¶ÔÓ¦µÄtcf_proto_ops
+//é€šè¿‡tc filter add dev eth0 protocol ip parent 22: prio 2 u32 match ip dst 4.3.2.1/32 flowid 22:4ä¸­çš„u32æŸ¥æ‰¾å¯¹åº”çš„tcf_proto_ops
 static struct tcf_proto_ops *tcf_proto_lookup_ops(struct nlattr *kind)
 {
 	struct tcf_proto_ops *t = NULL;
@@ -61,10 +61,10 @@ static struct tcf_proto_ops *tcf_proto_lookup_ops(struct nlattr *kind)
 }
 
 /* Register(unregister) new classifier type */
-//    Ê¹ÓÃint register_qdisc(struct Qdisc_ops *qops)×¢²á¶ÔÏóÀàÐÍ¡£
-//    Ê¹ÓÃint register_tcf_proto_ops(struct tcf_proto_ops *ops)×¢²á¹ýÂËÆ÷ÀàÐÍ¡£
-//°ÑOPSÌí¼Óµ½tcf_proto_baseÁ´±íÖÐ
-int register_tcf_proto_ops(struct tcf_proto_ops *ops) //Ö÷ÒªÓÐcls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
+//    ä½¿ç”¨int register_qdisc(struct Qdisc_ops *qops)æ³¨å†Œå¯¹è±¡ç±»åž‹ã€‚
+//    ä½¿ç”¨int register_tcf_proto_ops(struct tcf_proto_ops *ops)æ³¨å†Œè¿‡æ»¤å™¨ç±»åž‹ã€‚
+//æŠŠOPSæ·»åŠ åˆ°tcf_proto_baseé“¾è¡¨ä¸­
+int register_tcf_proto_ops(struct tcf_proto_ops *ops) //ä¸»è¦æœ‰cls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
 {
 	struct tcf_proto_ops *t, **tp;
 	int rc = -EEXIST;
@@ -121,9 +121,9 @@ static inline u32 tcf_auto_prio(struct tcf_proto *tp)
 }
 
 /* Add/change/delete/get a filter node */
-//tc class ºÍtc qdiscÔÚpktsched_init×¢²á
+//tc class å’Œtc qdiscåœ¨pktsched_initæ³¨å†Œ
 //tc filter add dev eth0 protocol ip parent 22: prio 2 u32 match ip dst 4.3.2.1/32 flowid 22:4
-//¹ýÂËÆ÷opsÖ÷ÒªÓÐ//Ö÷ÒªÓÐcls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
+//è¿‡æ»¤å™¨opsä¸»è¦æœ‰//ä¸»è¦æœ‰cls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
 static int tc_ctl_tfilter(struct sk_buff *skb, struct nlmsghdr *n, void *arg)
 {
 	struct net *net = sock_net(skb->sk);
@@ -133,28 +133,28 @@ static int tc_ctl_tfilter(struct sk_buff *skb, struct nlmsghdr *n, void *arg)
 	u32 protocol;
 	u32 prio;
 	u32 nprio;
-	u32 parent;//¸¸handle Èç22:0 ±íÊ¾¹ýÂËÆ÷Ëù´¦µÄ·ÖÀà½Úµãclass»òÕßËù´¦qdisc
+	u32 parent;//çˆ¶handle å¦‚22:0 è¡¨ç¤ºè¿‡æ»¤å™¨æ‰€å¤„çš„åˆ†ç±»èŠ‚ç‚¹classæˆ–è€…æ‰€å¤„qdisc
 	struct net_device *dev;
 	struct Qdisc  *q;
 	struct tcf_proto **back, 
-	    **chain;//´æ´¢filterµÄÁ´±í
+	    **chain;//å­˜å‚¨filterçš„é“¾è¡¨
 	struct tcf_proto *tp;
 	struct tcf_proto_ops *tp_ops;
 	const struct Qdisc_class_ops *cops;
-	unsigned long cl; //Êµ¼ÊÉÏ¾ÍÊÇclassid 3:4¶ÔÓ¦µÄhtb_class½á¹¹µØÖ·£¬ ¼ûhtb_get
+	unsigned long cl; //å®žé™…ä¸Šå°±æ˜¯classid 3:4å¯¹åº”çš„htb_classç»“æž„åœ°å€ï¼Œ è§htb_get
 	unsigned long fh;
 	int err;
 	int tp_created = 0;
 
 replay:
 	t = NLMSG_DATA(n);
-	protocol = TC_H_MIN(t->tcm_info); //protocol ip¶ÔÓ¦µÄÊÇÊý×ÖETH_P_IP
-	prio = TC_H_MAJ(t->tcm_info); //¶ÔÓ¦prio
+	protocol = TC_H_MIN(t->tcm_info); //protocol ipå¯¹åº”çš„æ˜¯æ•°å­—ETH_P_IP
+	prio = TC_H_MAJ(t->tcm_info); //å¯¹åº”prio
 	nprio = prio;
 	parent = t->tcm_parent;
 	cl = 0;
 
-	if (prio == 0) { //Èç¹ûÓ¦ÓÃ²ãÖ¸¶¨µÄprioÎª0£¬»òÕßÎ´Ö¸¶¨prio£¬ÔòÄ¬ÈÏÖ¸¶¨Ò»¸ö0x80µÄÓÅÏÈ¼¶
+	if (prio == 0) { //å¦‚æžœåº”ç”¨å±‚æŒ‡å®šçš„prioä¸º0ï¼Œæˆ–è€…æœªæŒ‡å®šprioï¼Œåˆ™é»˜è®¤æŒ‡å®šä¸€ä¸ª0x80çš„ä¼˜å…ˆçº§
 		/* If no priority is given, user wants we allocated it. */
 		if (n->nlmsg_type != RTM_NEWTFILTER || !(n->nlmsg_flags&NLM_F_CREATE))
 			return -ENOENT;
@@ -173,7 +173,7 @@ replay:
 		return err;
 
 	/* Find qdisc */
-	if (!parent) { //ËµÃ÷ÊÇ¸ú¶ÓÁÐ¹æ³Ì
+	if (!parent) { //è¯´æ˜Žæ˜¯è·Ÿé˜Ÿåˆ—è§„ç¨‹
 		q = dev->qdisc;
 		parent = q->handle;
 	} else {
@@ -190,20 +190,20 @@ replay:
 		return -EOPNOTSUPP;
 
 	/* Do we search for filter, attached to class? */
-	if (TC_H_MIN(parent)) {//parent 22:4 ¸ÃfilterÊÇÑ¡Ôñ¸¸qdiscµÄ·ÖÀàÊý×éÖÐµÄÄÇ¸ö¾ßÌå·ÖÀàÐÅÏ¢
-		cl = cops->get(q, parent);//¼ûhtb_get,Ò²¾ÍÊÇ¸Ã¹ýÂËÆ÷ÊÇ·Åµ½ÄÇ¸öµØ·½£¬¾ÍÊÇparent½ÓµãÉÏÃæ¼Ó¸ö¹ýÂËÆ÷
+	if (TC_H_MIN(parent)) {//parent 22:4 è¯¥filteræ˜¯é€‰æ‹©çˆ¶qdiscçš„åˆ†ç±»æ•°ç»„ä¸­çš„é‚£ä¸ªå…·ä½“åˆ†ç±»ä¿¡æ¯
+		cl = cops->get(q, parent);//è§htb_get,ä¹Ÿå°±æ˜¯è¯¥è¿‡æ»¤å™¨æ˜¯æ”¾åˆ°é‚£ä¸ªåœ°æ–¹ï¼Œå°±æ˜¯parentæŽ¥ç‚¹ä¸Šé¢åŠ ä¸ªè¿‡æ»¤å™¨
 		if (cl == 0)
 			return -ENOENT;
 	}
 
 	/* And the last stroke */
-	chain = cops->tcf_chain(q, cl); //Èç¹ûÎªprio ·µ»Øprio_sched_data->filter_list£¬¹ýÂËÆ÷ËùÔÚclass»òÕßqdisc´¦µÄ¹ýÂËÆ÷Á´±í
+	chain = cops->tcf_chain(q, cl); //å¦‚æžœä¸ºprio è¿”å›žprio_sched_data->filter_listï¼Œè¿‡æ»¤å™¨æ‰€åœ¨classæˆ–è€…qdiscå¤„çš„è¿‡æ»¤å™¨é“¾è¡¨
 	err = -EINVAL;
 	if (chain == NULL)
 		goto errout;
 
 	/* Check the chain for existence of proto-tcf with this priority */
-	//¼ì²éÊÇ·ñ´æÔÚ¸ÃÓÅÏÈ¼¶µÄfilter
+	//æ£€æŸ¥æ˜¯å¦å­˜åœ¨è¯¥ä¼˜å…ˆçº§çš„filter
 	for (back = chain; (tp=*back) != NULL; back = &tp->next) {
 		if (tp->prio >= prio) {
 			if (tp->prio == prio) {
@@ -231,11 +231,11 @@ replay:
 		/* Create new proto tcf */
 
 		err = -ENOBUFS;
-		tp = kzalloc(sizeof(*tp), GFP_KERNEL); //¿ª±Ùfilter¹ýÂËÆ÷¿Õ¼ä
+		tp = kzalloc(sizeof(*tp), GFP_KERNEL); //å¼€è¾Ÿfilterè¿‡æ»¤å™¨ç©ºé—´
 		if (tp == NULL)
 			goto errout;
 		err = -ENOENT;
-		tp_ops = tcf_proto_lookup_ops(tca[TCA_KIND]); ////Ö÷ÒªÓÐcls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
+		tp_ops = tcf_proto_lookup_ops(tca[TCA_KIND]); ////ä¸»è¦æœ‰cls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
 		if (tp_ops == NULL) {
 #ifdef CONFIG_MODULES
 			struct nlattr *kind = tca[TCA_KIND];
@@ -264,12 +264,12 @@ replay:
 		}
 		tp->ops = tp_ops;
 		tp->protocol = protocol;
-		tp->prio = nprio ? : TC_H_MAJ(tcf_auto_prio(*back)); //×Ô¶¯·ÖÅäÒ»¸öÓÅÏÈ¼¶
+		tp->prio = nprio ? : TC_H_MAJ(tcf_auto_prio(*back)); //è‡ªåŠ¨åˆ†é…ä¸€ä¸ªä¼˜å…ˆçº§
 		tp->q = q;
 		tp->classify = tp_ops->classify;
 		tp->classid = parent;
 
-		err = tp_ops->init(tp);////Ö÷ÒªÓÐcls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
+		err = tp_ops->init(tp);////ä¸»è¦æœ‰cls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
 		if (err != 0) {
 			module_put(tp_ops->owner);
 			kfree(tp);
@@ -282,7 +282,7 @@ replay:
 		goto errout;
 
     //tc filter add dev eth0 protocol ip parent 22: prio 2 u32 match ip dst 4.3.2.1/32 flowid 22:4
-	fh = tp->ops->get(tp, t->tcm_handle); //Ö÷ÒªÓÐcls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
+	fh = tp->ops->get(tp, t->tcm_handle); //ä¸»è¦æœ‰cls_u32_ops cls_basic_ops  cls_cgroup_ops  cls_flow_ops cls_route4_ops RSVP_OPS
 
 	if (fh == 0) {
 		if (n->nlmsg_type == RTM_DELTFILTER && t->tcm_handle == 0) {
@@ -324,11 +324,11 @@ replay:
 		}
 	}
 
-	err = tp->ops->change(tp, cl, t->tcm_handle, tca, &fh); //tpÎªÐÂ´´½¨»òÕßÐèÒªÐÞ¸ÄµÄtc filter¹ýÂËÆ÷tcf_proto£¬ clÎªclassid 3:4¶ÔÓ¦µÄhtb_class½á¹¹£¬¼ûhtb_get
+	err = tp->ops->change(tp, cl, t->tcm_handle, tca, &fh); //tpä¸ºæ–°åˆ›å»ºæˆ–è€…éœ€è¦ä¿®æ”¹çš„tc filterè¿‡æ»¤å™¨tcf_protoï¼Œ clä¸ºclassid 3:4å¯¹åº”çš„htb_classç»“æž„ï¼Œè§htb_get
 	if (err == 0) {
 		if (tp_created) {
 			spin_lock_bh(root_lock);
-			tp->next = *back; //°ÑÐÂ´´½¨µÄtcf_protoÌì½¾µ½chain = cops->tcf_chain(q, cl);¹ýÂËÆ÷Á´±íÎ²²¿
+			tp->next = *back; //æŠŠæ–°åˆ›å»ºçš„tcf_protoå¤©éª„åˆ°chain = cops->tcf_chain(q, cl);è¿‡æ»¤å™¨é“¾è¡¨å°¾éƒ¨
 			*back = tp;
 			spin_unlock_bh(root_lock);
 		}
@@ -610,7 +610,7 @@ nla_put_failure: __attribute__ ((unused))
 }
 EXPORT_SYMBOL(tcf_exts_dump_stats);
 
-//tc class ºÍtc qdiscÔÚpktsched_init×¢²á
+//tc class å’Œtc qdiscåœ¨pktsched_initæ³¨å†Œ
 static int __init tc_filter_init(void)
 {
 	rtnl_register(PF_UNSPEC, RTM_NEWTFILTER, tc_ctl_tfilter, NULL);

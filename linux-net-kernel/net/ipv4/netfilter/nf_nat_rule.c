@@ -25,7 +25,7 @@
 #include <net/netfilter/nf_nat.h>
 #include <net/netfilter/nf_nat_core.h>
 #include <net/netfilter/nf_nat_rule.h>
-//iptable的三个mange filter nat表的内核对应hook为MANGLE_VALID_HOOKS  FILTER_VALID_HOOKS   NAT_VALID_HOOKS
+//iptable鐨勪笁涓猰ange filter nat琛ㄧ殑鍐呮牳瀵瑰簲hook涓篗ANGLE_VALID_HOOKS  FILTER_VALID_HOOKS   NAT_VALID_HOOKS
 #define NAT_VALID_HOOKS ((1 << NF_INET_PRE_ROUTING) | \
 			 (1 << NF_INET_POST_ROUTING) | \
 			 (1 << NF_INET_LOCAL_OUT))

@@ -28,9 +28,9 @@
  * The bindhash mutex for snum's hash chain must be held here.
  */
  /*
- * ÓÃÀ´ÔÚbind_bucket_cachep¸ßËÙ»º´æÖĞ·ÖÅäbind¶Ë¿ÚÊµÀı£¬
- * ÉèÖÃºó½«ÆäÌí¼Óµ½inet_bind_hashbucketÉ¢ÁĞ±íÖĞ
- */ //cachep¼ûtcp_hashinfo
+ * ç”¨æ¥åœ¨bind_bucket_cachepé«˜é€Ÿç¼“å­˜ä¸­åˆ†é…bindç«¯å£å®ä¾‹ï¼Œ
+ * è®¾ç½®åå°†å…¶æ·»åŠ åˆ°inet_bind_hashbucketæ•£åˆ—è¡¨ä¸­
+ */ //cachepè§tcp_hashinfo
 struct inet_bind_bucket *inet_bind_bucket_create(struct kmem_cache *cachep,
 						 struct net *net,
 						 struct inet_bind_hashbucket *head,
@@ -52,7 +52,7 @@ struct inet_bind_bucket *inet_bind_bucket_create(struct kmem_cache *cachep,
 /*
  * Caller must hold hashbucket lock for this tb with local BH disabled
  *//*
- * ½«Ö¸¶¨µÄbind¶Ë¿ÚÊµÀı´Óinet_bind_hashbucketÉ¢ÁĞ±íÖĞÉ¾³ı²¢ÊÍ·Å
+ * å°†æŒ‡å®šçš„bindç«¯å£å®ä¾‹ä»inet_bind_hashbucketæ•£åˆ—è¡¨ä¸­åˆ é™¤å¹¶é‡Šæ”¾
  */
 void inet_bind_bucket_destroy(struct kmem_cache *cachep, struct inet_bind_bucket *tb)
 {
@@ -63,11 +63,11 @@ void inet_bind_bucket_destroy(struct kmem_cache *cachep, struct inet_bind_bucket
 	}
 }
 
-//½«´«Êä¿ØÖÆ¿éÓë°ó¶¨¶Ë¿ÚĞÅÏ¢¹ØÁª£¬Íê³É°ó¶¨¡£°ÑtbÓësk¹ØÁªÆğÀ´
+//å°†ä¼ è¾“æ§åˆ¶å—ä¸ç»‘å®šç«¯å£ä¿¡æ¯å…³è”ï¼Œå®Œæˆç»‘å®šã€‚æŠŠtbä¸skå…³è”èµ·æ¥
 void inet_bind_hash(struct sock *sk, struct inet_bind_bucket *tb,
 		    const unsigned short snum)
 {
-	struct inet_hashinfo *hashinfo = sk->sk_prot->h.hashinfo; //tcp Îªtcp_hashinfo
+	struct inet_hashinfo *hashinfo = sk->sk_prot->h.hashinfo; //tcp ä¸ºtcp_hashinfo
 
 	atomic_inc(&hashinfo->bsockets);
 
@@ -274,9 +274,9 @@ out:
 EXPORT_SYMBOL_GPL(__inet_lookup_established);
 
 /* called with local bh disabled 
-Í¨¹ı__inet_check_established()À´¼ì²â¸Ã¶Ë¿ÚÄÜ·ñ±»¸´ÓÃ£¬
- * ¶¯Ì¬°ó¶¨µÄ¶Ë¿ÚÖ»ÄÜ¸´ÓÃÔÚTIME_WAIT×´Ì¬ÏÂ°ó¶¨µÄ¶Ë¿Ú£¬
- * µ±È»»¹ĞèÒªÆôÓÃtcp_tw_reuse
+é€šè¿‡__inet_check_established()æ¥æ£€æµ‹è¯¥ç«¯å£èƒ½å¦è¢«å¤ç”¨ï¼Œ
+ * åŠ¨æ€ç»‘å®šçš„ç«¯å£åªèƒ½å¤ç”¨åœ¨TIME_WAITçŠ¶æ€ä¸‹ç»‘å®šçš„ç«¯å£ï¼Œ
+ * å½“ç„¶è¿˜éœ€è¦å¯ç”¨tcp_tw_reuse
 */
 static int __inet_check_established(struct inet_timewait_death_row *death_row,
 				    struct sock *sk, __u16 lport,
@@ -317,8 +317,8 @@ static int __inet_check_established(struct inet_timewait_death_row *death_row,
 
 	/* And established part... */
 	/*
-	 * head->chainÖ¸ÏòµÄÁ´±íÖĞ´æ´¢µÄÊÇ³ıLISTENºÍTIME-WAIT×´Ì¬ÍâµÄ
-	 * Ì×½Ó×Ö£¬Ò²¾ÍÊÇËµ²»½öÖ»°üÀ¨established×´Ì¬¡£
+	 * head->chainæŒ‡å‘çš„é“¾è¡¨ä¸­å­˜å‚¨çš„æ˜¯é™¤LISTENå’ŒTIME-WAITçŠ¶æ€å¤–çš„
+	 * å¥—æ¥å­—ï¼Œä¹Ÿå°±æ˜¯è¯´ä¸ä»…åªåŒ…æ‹¬establishedçŠ¶æ€ã€‚
 	 */
 	sk_nulls_for_each(sk2, node, &head->chain) {
 		if (INET_MATCH(sk2, net, hash, acookie,
@@ -367,7 +367,7 @@ static inline u32 inet_sk_port_offset(const struct sock *sk)
 }
 
 
-//°ÑskÌí¼Óµ½tcp_hashinfoµÄehashÖĞ
+//æŠŠskæ·»åŠ åˆ°tcp_hashinfoçš„ehashä¸­
 int __inet_hash_nolisten(struct sock *sk, struct inet_timewait_sock *tw)
 {
 	struct inet_hashinfo *hashinfo = sk->sk_prot->h.hashinfo;
@@ -400,12 +400,12 @@ static void __inet_hash(struct sock *sk)
 	struct inet_hashinfo *hashinfo = sk->sk_prot->h.hashinfo;
 	struct inet_listen_hashbucket *ilb;
 
-	if (sk->sk_state != TCP_LISTEN) {  //°ÑskÌí¼Óµ½tcp_hashinfoµÄehashÖĞ
+	if (sk->sk_state != TCP_LISTEN) {  //æŠŠskæ·»åŠ åˆ°tcp_hashinfoçš„ehashä¸­
 		__inet_hash_nolisten(sk, NULL);
 		return;
 	}
 
-    //°ÑskÌí¼Óµ½tcp_hashinfoµÄlistening_hashÖĞ
+    //æŠŠskæ·»åŠ åˆ°tcp_hashinfoçš„listening_hashä¸­
 	WARN_ON(!sk_unhashed(sk));
 	ilb = &hashinfo->listening_hash[inet_sk_listen_hashfn(sk)];
 
@@ -415,7 +415,7 @@ static void __inet_hash(struct sock *sk)
 	spin_unlock(&ilb->lock);
 }
 
-////½«¸Ã´«Êä¿ØÖÆ¿ésocketÌí¼Óµ½tcp_hashinfoµÄ¶ÔÓ¦hashÖĞ
+////å°†è¯¥ä¼ è¾“æ§åˆ¶å—socketæ·»åŠ åˆ°tcp_hashinfoçš„å¯¹åº”hashä¸­
 void inet_hash(struct sock *sk)
 {
 	if (sk->sk_state != TCP_CLOSE) {
@@ -448,23 +448,23 @@ void inet_unhash(struct sock *sk)
 }
 EXPORT_SYMBOL_GPL(inet_unhash);
 
-/*´ÓÕâ¸öº¯ÊıµÄÊµÏÖ¿ÉÒÔ¿´³ö£¬Ö÷ÒªÊÇÓÉÓÚ¿ÉÓÃµÄ¶Ë¿Ú±»Õ¼ÂúÁË£¬ËùÒÔÕÒ²»µ½Ò»¸ö¿ÉÓÃµÄ¶Ë¿Ú£¬µ¼ÖÂÁ¬½ÓÊ§°Ü¡£
-ÔËĞĞnetstat¿ÉÒÔ·¢ÏÖÈ·Êµ´æÔÚºÜ¶àTIME_WAIT×´Ì¬µÄsocket£¬ÕâĞ©socket½«¿ÉÓÃ¶Ë¿ÚÕ¼ÂúÁË¡£
+/*ä»è¿™ä¸ªå‡½æ•°çš„å®ç°å¯ä»¥çœ‹å‡ºï¼Œä¸»è¦æ˜¯ç”±äºå¯ç”¨çš„ç«¯å£è¢«å æ»¡äº†ï¼Œæ‰€ä»¥æ‰¾ä¸åˆ°ä¸€ä¸ªå¯ç”¨çš„ç«¯å£ï¼Œå¯¼è‡´è¿æ¥å¤±è´¥ã€‚
+è¿è¡Œnetstatå¯ä»¥å‘ç°ç¡®å®å­˜åœ¨å¾ˆå¤šTIME_WAITçŠ¶æ€çš„socketï¼Œè¿™äº›socketå°†å¯ç”¨ç«¯å£å æ»¡äº†ã€‚
 [root@test miuistorage-dev]# netstat -n | awk '/^tcp/ {++state[$NF]} END {for(key in state) 
 print key,"\t",state[key]}'
 TIME_WAIT        26837
 ESTABLISHED      30 
 */
-//²Î¿¼:http://www.yunstorage.org/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/socket-connect-error-99cannot-assign-requested-address/
-//Èç¹û¿ìËÙ»ØÊÕTIME_WAIT×´Ì¬µÄ¶Ë¿Ú
+//å‚è€ƒ:http://www.yunstorage.org/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/socket-connect-error-99cannot-assign-requested-address/
+//å¦‚æœå¿«é€Ÿå›æ”¶TIME_WAITçŠ¶æ€çš„ç«¯å£
 int __inet_hash_connect(struct inet_timewait_death_row *death_row,
 		struct sock *sk, u32 port_offset,
 		int (*check_established)(struct inet_timewait_death_row *,
 			struct sock *, __u16, struct inet_timewait_sock **),
 		int (*hash)(struct sock *sk, struct inet_timewait_sock *twp))
 {
-    /* Í¨¹ıtcp_death_rowÖĞµÄ³ÉÔ±hashinfo£¬»ñÈ¡Ö¸ÏòTCPÖĞÉ¢ÁĞ±í¹ÜÀíÆ÷hashinfo¡£ */
-	struct inet_hashinfo *hinfo = death_row->hashinfo;//Ò²¾ÍÊÇtcp_hashinfo
+    /* é€šè¿‡tcp_death_rowä¸­çš„æˆå‘˜hashinfoï¼Œè·å–æŒ‡å‘TCPä¸­æ•£åˆ—è¡¨ç®¡ç†å™¨hashinfoã€‚ */
+	struct inet_hashinfo *hinfo = death_row->hashinfo;//ä¹Ÿå°±æ˜¯tcp_hashinfo
 	const unsigned short snum = inet_sk(sk)->inet_num;
 	struct inet_bind_hashbucket *head;
 	struct inet_bind_bucket *tb;
@@ -472,7 +472,7 @@ int __inet_hash_connect(struct inet_timewait_death_row *death_row,
 	struct net *net = sock_net(sk);
 	int twrefcnt = 1;
 
-	if (!snum) {//Èç¹ûÊÇÓ¦ÓÃ³ÌĞòbindµÄÊ±ºòÖ¸¶¨ÁË¶Ë¿Ú£¬ÔòÎŞĞè¶Ë¿Ú¸´ÓÃ¼ì²é¡£
+	if (!snum) {//å¦‚æœæ˜¯åº”ç”¨ç¨‹åºbindçš„æ—¶å€™æŒ‡å®šäº†ç«¯å£ï¼Œåˆ™æ— éœ€ç«¯å£å¤ç”¨æ£€æŸ¥ã€‚
 		int i, remaining, low, high, port;
 		static u32 hint;
 		u32 offset = hint + port_offset;
@@ -485,14 +485,14 @@ int __inet_hash_connect(struct inet_timewait_death_row *death_row,
 		local_bh_disable();
 		for (i = 1; i <= remaining; i++) {
 		    /*
-			 * ÔÚ¶¯Ì¬¶Ë¿Ú·¶Î§ÄÚ£¬°ÑÍ¨¹ıÔ´µØÖ·¡¢Ä¿µÄµØÖ·ºÍ
-			 * Ä¿µÄ¶Ë¿Ú¼ÆËãµÃµ½µÄÖµ×÷Îª¶Ë¿ÚºÅ³õÊ¼Öµ¡£offset´ÓÕâÀïinet_sk_port_offsetÀ´
+			 * åœ¨åŠ¨æ€ç«¯å£èŒƒå›´å†…ï¼ŒæŠŠé€šè¿‡æºåœ°å€ã€ç›®çš„åœ°å€å’Œ
+			 * ç›®çš„ç«¯å£è®¡ç®—å¾—åˆ°çš„å€¼ä½œä¸ºç«¯å£å·åˆå§‹å€¼ã€‚offsetä»è¿™é‡Œinet_sk_port_offsetæ¥
 			 */
 			port = low + (i + offset) % remaining; //
 			if (inet_is_reserved_local_port(port))
 				continue;
 			head = &hinfo->bhash[inet_bhashfn(net, port,
-					hinfo->bhash_size)]; //bhash¼ÆËã³öµÄÊÇkey¼üÖµ£¬ headÎªÕÒµ½µÄhashÍ°ÖĞµÄ¹Ø¼ü×Ö±íÍ·
+					hinfo->bhash_size)]; //bhashè®¡ç®—å‡ºçš„æ˜¯keyé”®å€¼ï¼Œ headä¸ºæ‰¾åˆ°çš„hashæ¡¶ä¸­çš„å…³é”®å­—è¡¨å¤´
 			spin_lock(&head->lock);
 
 			/* Does not bother with rcv_saddr checks,
@@ -500,15 +500,15 @@ int __inet_hash_connect(struct inet_timewait_death_row *death_row,
 			 * unique enough.
 			 */
 			 /*
-			 * ÔÚinet_bind_hashbucketÉ¢ÁĞ±íÖĞ²éÕÒ¸Ã¶Ë¿ÚÊÇ·ñÒÑ±»Ê¹ÓÃ¡£
-			 * Èç¹ûÒÑ±»Ê¹ÓÃ£¬ÔòĞèÒª¼ì²âÄÜ·ñ±»¸´ÓÃ¡£
-			 * ÔÚ¶¯Ì¬Ñ¡Ôñ¶Ë¿Ú²»ÔÊĞí¸´ÓÃÍ¨¹ıbindÏµÍ³µ÷ÓÃ°ó¶¨µÄ
-			 * ¶Ë¿Ú£¬ÎŞÂÛ¸Ã¶Ë¿ÚÄÜ·ñ±»¸´ÓÃ£¬¶¼²»ÄÜ±»¸´ÓÃ£¬Ğè
-			 * ÖØĞÂÑ¡Ôñ¡£¼ûÓ¦ÓÃ²ãlistenµÄÊ±ºò£¬ÔÚÄÚºËÖĞ·ÖÅä¼ì²é¶Ë¿Úº¯Êıinet_csk_get_port
-			 * Í¨¹ı__inet_check_established()À´¼ì²â¸Ã¶Ë¿ÚÄÜ·ñ±»¸´ÓÃ£¬
-			 * ¶¯Ì¬°ó¶¨µÄ¶Ë¿ÚÖ»ÄÜ¸´ÓÃÔÚTIME_WAIT×´Ì¬ÏÂ°ó¶¨µÄ¶Ë¿Ú£¬
-			 * µ±È»»¹ĞèÒªÆôÓÃtcp_tw_reuse¡£ÈôÍ¨¹ı¼ì²â£¬ÔòÌø×ªµ½
-			 * ok´¦½øĞĞ°ó¶¨£¬·ñÔòµİÔö¶Ë¿ÚºÅ£¬¼ÌĞøÏÂÒ»ÂÖÈ·ÈÏ¡£
+			 * åœ¨inet_bind_hashbucketæ•£åˆ—è¡¨ä¸­æŸ¥æ‰¾è¯¥ç«¯å£æ˜¯å¦å·²è¢«ä½¿ç”¨ã€‚
+			 * å¦‚æœå·²è¢«ä½¿ç”¨ï¼Œåˆ™éœ€è¦æ£€æµ‹èƒ½å¦è¢«å¤ç”¨ã€‚
+			 * åœ¨åŠ¨æ€é€‰æ‹©ç«¯å£ä¸å…è®¸å¤ç”¨é€šè¿‡bindç³»ç»Ÿè°ƒç”¨ç»‘å®šçš„
+			 * ç«¯å£ï¼Œæ— è®ºè¯¥ç«¯å£èƒ½å¦è¢«å¤ç”¨ï¼Œéƒ½ä¸èƒ½è¢«å¤ç”¨ï¼Œéœ€
+			 * é‡æ–°é€‰æ‹©ã€‚è§åº”ç”¨å±‚listençš„æ—¶å€™ï¼Œåœ¨å†…æ ¸ä¸­åˆ†é…æ£€æŸ¥ç«¯å£å‡½æ•°inet_csk_get_port
+			 * é€šè¿‡__inet_check_established()æ¥æ£€æµ‹è¯¥ç«¯å£èƒ½å¦è¢«å¤ç”¨ï¼Œ
+			 * åŠ¨æ€ç»‘å®šçš„ç«¯å£åªèƒ½å¤ç”¨åœ¨TIME_WAITçŠ¶æ€ä¸‹ç»‘å®šçš„ç«¯å£ï¼Œ
+			 * å½“ç„¶è¿˜éœ€è¦å¯ç”¨tcp_tw_reuseã€‚è‹¥é€šè¿‡æ£€æµ‹ï¼Œåˆ™è·³è½¬åˆ°
+			 * okå¤„è¿›è¡Œç»‘å®šï¼Œå¦åˆ™é€’å¢ç«¯å£å·ï¼Œç»§ç»­ä¸‹ä¸€è½®ç¡®è®¤ã€‚
 			 */
 			inet_bind_bucket_for_each(tb, node, &head->chain) {
 				if (net_eq(ib_net(tb), net) &&
@@ -517,13 +517,13 @@ int __inet_hash_connect(struct inet_timewait_death_row *death_row,
 						goto next_port;
 					WARN_ON(hlist_empty(&tb->owners));
 					if (!check_established(death_row, sk,
-								port, &tw)) //ÕâÀïµ÷ÓÃµÄÊÇ__inet_check_established()º¯Êı
+								port, &tw)) //è¿™é‡Œè°ƒç”¨çš„æ˜¯__inet_check_established()å‡½æ•°
 						goto ok;
 					goto next_port;
 				}
 			}
             /*
-			 * Èç¹û¸Ã¶Ë¿ÚºÅÎ´Ê¹ÓÃ£¬Ôò¿ÉÊ¹ÓÃ¸Ã¶Ë¿Ú£¬Îª¸Ã¶Ë¿Ú´´½¨ĞÅÏ¢¿é²¢½«ÆäÌí¼Óµ½bhashÉ¢ÁĞ±íÖĞ¡£´´½¨ĞÅÏ¢¿éÊ§°Ü£¬·µ»ØEADDRNOTAVAIL´íÎóºÅ¡£
+			 * å¦‚æœè¯¥ç«¯å£å·æœªä½¿ç”¨ï¼Œåˆ™å¯ä½¿ç”¨è¯¥ç«¯å£ï¼Œä¸ºè¯¥ç«¯å£åˆ›å»ºä¿¡æ¯å—å¹¶å°†å…¶æ·»åŠ åˆ°bhashæ•£åˆ—è¡¨ä¸­ã€‚åˆ›å»ºä¿¡æ¯å—å¤±è´¥ï¼Œè¿”å›EADDRNOTAVAILé”™è¯¯å·ã€‚
 			 */
 			tb = inet_bind_bucket_create(hinfo->bind_bucket_cachep,
 					net, head, port);
@@ -546,25 +546,25 @@ ok:
 
 		/* Head lock still held and bh's disabled */
 		/*
-		 * ½«´«Êä¿ØÖÆ¿éÓë°ó¶¨¶Ë¿ÚĞÅÏ¢¹ØÁª£¬Íê³É°ó¶¨¡£
+		 * å°†ä¼ è¾“æ§åˆ¶å—ä¸ç»‘å®šç«¯å£ä¿¡æ¯å…³è”ï¼Œå®Œæˆç»‘å®šã€‚
 		 */
 		inet_bind_hash(sk, tb, port);
 		/*
-		 * Èç¹û¸Ã´«Êä¿ØÖÆ¿éÎ´Ìí¼Óµ½»òÒÑÍÑÀë
-		 * ehashÉ¢ÁĞ±í£¬ÔòĞèÌí¼Óµ½¸ÃÉ¢ÁĞ±íÖĞ¡£
+		 * å¦‚æœè¯¥ä¼ è¾“æ§åˆ¶å—æœªæ·»åŠ åˆ°æˆ–å·²è„±ç¦»
+		 * ehashæ•£åˆ—è¡¨ï¼Œåˆ™éœ€æ·»åŠ åˆ°è¯¥æ•£åˆ—è¡¨ä¸­ã€‚
 		 */
 		if (sk_unhashed(sk)) {
 			inet_sk(sk)->inet_sport = htons(port);
-			twrefcnt += hash(sk, tw);//ÕâÀïµ÷ÓÃµÄÊÇ__inet_hash_nolisten()º¯Êı
+			twrefcnt += hash(sk, tw);//è¿™é‡Œè°ƒç”¨çš„æ˜¯__inet_hash_nolisten()å‡½æ•°
 		}
 		if (tw)
 			twrefcnt += inet_twsk_bind_unhash(tw, hinfo);
 		spin_unlock(&head->lock);
 
         /*
-		 * Èç¹ûÓëÒ»¸öTIME_WAIT×´Ì¬µÄÌ×½Ó×Ö¸´ÓÃ¸Ã¶Ë¿Ú£¬
-		 * ÔòĞèÉ¾³ıÊÍ·Å¸ÃTIMEWAIT×´Ì¬µÄÌ×½Ó×Ö¡£°ó¶¨
-		 * Íê³Éºó·µ»Ø¡£
+		 * å¦‚æœä¸ä¸€ä¸ªTIME_WAITçŠ¶æ€çš„å¥—æ¥å­—å¤ç”¨è¯¥ç«¯å£ï¼Œ
+		 * åˆ™éœ€åˆ é™¤é‡Šæ”¾è¯¥TIMEWAITçŠ¶æ€çš„å¥—æ¥å­—ã€‚ç»‘å®š
+		 * å®Œæˆåè¿”å›ã€‚
 		 */
 		if (tw) {
 			inet_twsk_deschedule(tw, death_row);
@@ -579,23 +579,23 @@ ok:
 	}
 
     /*
-	 * ¶ÔÓÚÒÑ°ó¶¨¶Ë¿ÚµÄ´«Êä¿ØÖÆ¿éºÍ°ó¶¨ĞÅÏ¢¿éĞèÒª
-	 * ÏàÓ¦È·ÈÏ¡£È·ÈÏ°ó¶¨¶Ë¿ÚĞÅÏ¢¿éÓëÖ®Ïà°ó¶¨µÄ´«
-	 * Êä¿ØÖÆ¿éÊÇ²»ÊÇ¸Ã´«Êä¿ØÖÆ¿é£¬¸Ã´«Êä¿ØÖÆ¿éÖ¸
-	 * Ïò°ó¶¨ĞÅÏ¢¿éµÄÖ¸ÕëÊÇ·ñÓĞĞ§¡£²»È»ĞèÒªÖØĞÂÍ¨
-	 * ¹ı__inet_check_established()À´¼ì²â¸Ã¶Ë¿ÚÄÜ·ñ±»Ê¹ÓÃ¡£
+	 * å¯¹äºå·²ç»‘å®šç«¯å£çš„ä¼ è¾“æ§åˆ¶å—å’Œç»‘å®šä¿¡æ¯å—éœ€è¦
+	 * ç›¸åº”ç¡®è®¤ã€‚ç¡®è®¤ç»‘å®šç«¯å£ä¿¡æ¯å—ä¸ä¹‹ç›¸ç»‘å®šçš„ä¼ 
+	 * è¾“æ§åˆ¶å—æ˜¯ä¸æ˜¯è¯¥ä¼ è¾“æ§åˆ¶å—ï¼Œè¯¥ä¼ è¾“æ§åˆ¶å—æŒ‡
+	 * å‘ç»‘å®šä¿¡æ¯å—çš„æŒ‡é’ˆæ˜¯å¦æœ‰æ•ˆã€‚ä¸ç„¶éœ€è¦é‡æ–°é€š
+	 * è¿‡__inet_check_established()æ¥æ£€æµ‹è¯¥ç«¯å£èƒ½å¦è¢«ä½¿ç”¨ã€‚
 	 */
 	head = &hinfo->bhash[inet_bhashfn(net, snum, hinfo->bhash_size)];
 	tb  = inet_csk(sk)->icsk_bind_hash;
 	spin_lock_bh(&head->lock);
 	if (sk_head(&tb->owners) == sk && !sk->sk_bind_node.next) {
-		hash(sk, NULL);//ÕâÀïµ÷ÓÃµÄÊÇ__inet_hash_nolisten()º¯Êı
+		hash(sk, NULL);//è¿™é‡Œè°ƒç”¨çš„æ˜¯__inet_hash_nolisten()å‡½æ•°
 		spin_unlock_bh(&head->lock);
 		return 0;
 	} else {
 		spin_unlock(&head->lock);
 		/* No definite answer... Walk to established hash table */
-		ret = check_established(death_row, sk, snum, NULL);//ÕâÀïµ÷ÓÃµÄÊÇ__inet_check_established()º¯Êı
+		ret = check_established(death_row, sk, snum, NULL);//è¿™é‡Œè°ƒç”¨çš„æ˜¯__inet_check_established()å‡½æ•°
 out:
 		local_bh_enable();
 		return ret;
@@ -606,17 +606,17 @@ out:
  * Bind a port for a connect operation and hash it.
  */
  /*
- * inet_hash_connect()Ö÷ÒªÓÃÓÚÔÚÖ÷¶¯Á¬½ÓÊ±¶¯Ì¬°ó¶¨Ò»¸ö¶Ë¿Ú¡£
- * 1)ÔÚ¶¯Ì¬¶Ë¿Ú·¶Î§ÄÚ£¬´ÓÍ¨¹ıÔ´µØÖ·¡¢Ä¿µÄµØÖ·ºÍÄ¿µÄ¶Ë¿Ú
- *    ¼ÆËãµÃµ½µÄÆ«ÒÆ¿ªÊ¼£¬È·ÈÏÒ»¸ö¿ÉÓÃµÄ¶Ë¿ÚºÅ
- * 2)Èç¹û¸Ã¶Ë¿ÚÒÑÊ¹ÓÃ£¬Ôò½ø¶øÈ·¶¨¸Ã¶Ë¿ÚÊÇ·ñÄÜÊ¹ÓÃ£¬²»ÄÜ
- *    ÔòµİÔö¶Ë¿ÚºÅ¼ÌĞøÈ·ÈÏ£»ÄÜÊ¹ÓÃÔò¿ÉÓÃ¶Ë¿ÚÒÑÕÒµ½¡£
- * 3)Èç¹û¸Ã¶Ë¿ÚÎ´Ê¹ÓÃ£¬Ôò¿ÉÊ¹ÓÃ¸Ã¶Ë¿Ú
- * 4)×îºóÍê³É°ó¶¨¹ı³Ì¡£
+ * inet_hash_connect()ä¸»è¦ç”¨äºåœ¨ä¸»åŠ¨è¿æ¥æ—¶åŠ¨æ€ç»‘å®šä¸€ä¸ªç«¯å£ã€‚
+ * 1)åœ¨åŠ¨æ€ç«¯å£èŒƒå›´å†…ï¼Œä»é€šè¿‡æºåœ°å€ã€ç›®çš„åœ°å€å’Œç›®çš„ç«¯å£
+ *    è®¡ç®—å¾—åˆ°çš„åç§»å¼€å§‹ï¼Œç¡®è®¤ä¸€ä¸ªå¯ç”¨çš„ç«¯å£å·
+ * 2)å¦‚æœè¯¥ç«¯å£å·²ä½¿ç”¨ï¼Œåˆ™è¿›è€Œç¡®å®šè¯¥ç«¯å£æ˜¯å¦èƒ½ä½¿ç”¨ï¼Œä¸èƒ½
+ *    åˆ™é€’å¢ç«¯å£å·ç»§ç»­ç¡®è®¤ï¼›èƒ½ä½¿ç”¨åˆ™å¯ç”¨ç«¯å£å·²æ‰¾åˆ°ã€‚
+ * 3)å¦‚æœè¯¥ç«¯å£æœªä½¿ç”¨ï¼Œåˆ™å¯ä½¿ç”¨è¯¥ç«¯å£
+ * 4)æœ€åå®Œæˆç»‘å®šè¿‡ç¨‹ã€‚
  */ 
- /* ¶¯Ì¬°ó¶¨Ò»¸ö±¾µØ¶Ë¿Ú£¬²¢½«´«Êä¿ØÖÆ¿éÌí¼Óµ½ehashÉ¢ÁĞ±íÖĞ¡£ÓÉÓÚÔÚ¶¯Ì¬·ÖÅä¶Ë¿ÚÊ±£¬Èç¹ûÕÒµ½µÄÊÇÒÑÊ¹ÓÃµÄ¶Ë¿Ú£¬Ôò
-	 * ĞèÔÚTIME_WAIT×´Ì¬ÖĞ½øĞĞÏàÓ¦µÄÈ·ÈÏ£¬Òò´Ëµ÷ÓÃinet_hash_connect()Ê±ĞèÓÃtimewait´«Êä¿ØÖÆ¿éºÍ²ÎÊı¹ÜÀíÆ÷tcp_death_row×÷Îª²ÎÊı¡£*/
- //ÕâÀïÃæ»á°ÑskÌí¼Óµ½ehashÖĞ£¬ËäÈ»Á¬½Ó»¹Ã»½¨Á¢ÆğÀ´¡£¸Ãº¯ÊıÍâµÄtcp_connect²ÅÊÇÕæÕı·¢ËÍSYN±¨ÎÄµÄµØ·½
+ /* åŠ¨æ€ç»‘å®šä¸€ä¸ªæœ¬åœ°ç«¯å£ï¼Œå¹¶å°†ä¼ è¾“æ§åˆ¶å—æ·»åŠ åˆ°ehashæ•£åˆ—è¡¨ä¸­ã€‚ç”±äºåœ¨åŠ¨æ€åˆ†é…ç«¯å£æ—¶ï¼Œå¦‚æœæ‰¾åˆ°çš„æ˜¯å·²ä½¿ç”¨çš„ç«¯å£ï¼Œåˆ™
+	 * éœ€åœ¨TIME_WAITçŠ¶æ€ä¸­è¿›è¡Œç›¸åº”çš„ç¡®è®¤ï¼Œå› æ­¤è°ƒç”¨inet_hash_connect()æ—¶éœ€ç”¨timewaitä¼ è¾“æ§åˆ¶å—å’Œå‚æ•°ç®¡ç†å™¨tcp_death_rowä½œä¸ºå‚æ•°ã€‚*/
+ //è¿™é‡Œé¢ä¼šæŠŠskæ·»åŠ åˆ°ehashä¸­ï¼Œè™½ç„¶è¿æ¥è¿˜æ²¡å»ºç«‹èµ·æ¥ã€‚è¯¥å‡½æ•°å¤–çš„tcp_connectæ‰æ˜¯çœŸæ­£å‘é€SYNæŠ¥æ–‡çš„åœ°æ–¹
 int inet_hash_connect(struct inet_timewait_death_row *death_row,
 		      struct sock *sk)
 {

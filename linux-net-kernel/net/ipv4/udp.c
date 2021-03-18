@@ -107,7 +107,7 @@
 #include <net/xfrm.h>
 #include "udp_impl.h"
 
-//Ìí¼Óµ½udp_protµÄ.h.udp_tableÖĞ£¬ udpÌ×½Ó×ÖµÄstruct sock½á¹¹×îÖÕÁ¬½ÓÔÚ¸ÃhashÖĞ
+//æ·»åŠ åˆ°udp_protçš„.h.udp_tableä¸­ï¼Œ udpå¥—æ¥å­—çš„struct sockç»“æ„æœ€ç»ˆè¿æ¥åœ¨è¯¥hashä¸­
 struct udp_table udp_table ;//__read_mostly;
 EXPORT_SYMBOL(udp_table);
 
@@ -987,7 +987,7 @@ do_confirm:
 }
 
 /**
- * ·¢ËÍUDP°ü¡£
+ * å‘é€UDPåŒ…ã€‚
  */
 int udp_sendmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 		size_t len)
@@ -1004,111 +1004,111 @@ int udp_sendmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 	u8  tos;
 	int err;
 	/**
-	 * ¾Ö²¿±êÖ¾corkreqµÄ³õÊ¼»¯È¡¾öÓÚ¶à¸öÒòËØ£¬¶ø´Ë±êÖ¾»á´«¸øip_append_data£¬ÓÃÓÚÖ¸³öÊÇ·ñÓ¦¸ÃÊ¹ÓÃ»º³åÇø»úÖÆ¡£ÆäÖĞÒ»Ğ©ÒòËØÊÇ£º
-	 *		MSG_MORE£º				´Ë±êÖ¾¿ÉÒÔÔÚÃ¿´Î´«ÊäÇëÇóÊ±µ¥¶ÀÉè¶¨»òÇå³ı¡£
-	 *		corkflag£¨UDP_CORE£©£º	Õâ¸ö±êÖ¾Ö»»á¶ÔÌ×½Ó×ÖÉè¶¨Ò»´Î£¬È»ºóÒ»Ö±±£³Ö²»±ä£¬Ö±µ½ÏÔÊ½µÄ±»¹Ø±ÕÎªÖ¹¡£
+	 * å±€éƒ¨æ ‡å¿—corkreqçš„åˆå§‹åŒ–å–å†³äºå¤šä¸ªå› ç´ ï¼Œè€Œæ­¤æ ‡å¿—ä¼šä¼ ç»™ip_append_dataï¼Œç”¨äºæŒ‡å‡ºæ˜¯å¦åº”è¯¥ä½¿ç”¨ç¼“å†²åŒºæœºåˆ¶ã€‚å…¶ä¸­ä¸€äº›å› ç´ æ˜¯ï¼š
+	 *		MSG_MOREï¼š				æ­¤æ ‡å¿—å¯ä»¥åœ¨æ¯æ¬¡ä¼ è¾“è¯·æ±‚æ—¶å•ç‹¬è®¾å®šæˆ–æ¸…é™¤ã€‚
+	 *		corkflagï¼ˆUDP_COREï¼‰ï¼š	è¿™ä¸ªæ ‡å¿—åªä¼šå¯¹å¥—æ¥å­—è®¾å®šä¸€æ¬¡ï¼Œç„¶åä¸€ç›´ä¿æŒä¸å˜ï¼Œç›´åˆ°æ˜¾å¼çš„è¢«å…³é—­ä¸ºæ­¢ã€‚
 	 */
 	int corkreq = up->corkflag || msg->msg_flags&MSG_MORE;
 
-	if (len > 0xFFFF)/* IPÊı¾İ±¨ÏŞÖÆUDPÊı¾İ±¨³¤¶ÈÎª64K 65535*/
+	if (len > 0xFFFF)/* IPæ•°æ®æŠ¥é™åˆ¶UDPæ•°æ®æŠ¥é•¿åº¦ä¸º64K 65535*/
 		return -EMSGSIZE;
 
 	/* 
 	 *	Check the flags.
 	 */
-	/* UDP²»Ö§³Ö´øÍâÊı¾İµÄ·¢ËÍ */
+	/* UDPä¸æ”¯æŒå¸¦å¤–æ•°æ®çš„å‘é€ */
 	if (msg->msg_flags&MSG_OOB)	/* Mirror BSD error message compatibility */
 		return -EOPNOTSUPP;
 
 	ipc.opt = NULL;
 
-	if (up->pending) {/* UDPÕıÔÚÊä³öÊı¾İ */
+	if (up->pending) {/* UDPæ­£åœ¨è¾“å‡ºæ•°æ® */
 		/*
 		 * There are pending frames.
 	 	 * The socket lock must be held while it's corked.
 		 */
-		lock_sock(sk)/* »ñÈ¡Ì×½Ó¿ÚµÄËø */
+		lock_sock(sk)/* è·å–å¥—æ¥å£çš„é” */
 		if (likely(up->pending)) {
-			if (unlikely(up->pending != AF_INET)) {/* ±êÖ¾ÎŞĞ§?? */
+			if (unlikely(up->pending != AF_INET)) {/* æ ‡å¿—æ— æ•ˆ?? */
 				release_sock(sk);
 				return -EINVAL;
 			}
- 			goto do_append_data;/* È·ÊµÔÚÊä³öÊı¾İ£¬Ìø×ªµ½do_append_dataÖ±½Ó´¦ÀíUDPÊı¾İ */
+ 			goto do_append_data;/* ç¡®å®åœ¨è¾“å‡ºæ•°æ®ï¼Œè·³è½¬åˆ°do_append_dataç›´æ¥å¤„ç†UDPæ•°æ® */
 		}
 		release_sock(sk);
 	}
-	ulen += sizeof(struct udphdr);/* ¼ÆËãUDP±¨ÎÄ×Ü³¤¶È */
+	ulen += sizeof(struct udphdr);/* è®¡ç®—UDPæŠ¥æ–‡æ€»é•¿åº¦ */
 
 	/*
 	 *	Get and verify the address. 
 	 */
-	if (msg->msg_name) {/* ´¦ÀímsgÖĞ´øÓĞÄ¿µÄµØÖ·µÄÇé¿ö£¬¼´Ó¦ÓÃ³ÌĞòÍ¨¹ısendtoµ÷ÓÃ±¾º¯Êı */
+	if (msg->msg_name) {/* å¤„ç†msgä¸­å¸¦æœ‰ç›®çš„åœ°å€çš„æƒ…å†µï¼Œå³åº”ç”¨ç¨‹åºé€šè¿‡sendtoè°ƒç”¨æœ¬å‡½æ•° */
 		struct sockaddr_in * usin = (struct sockaddr_in*)msg->msg_name;
-		if (msg->msg_namelen < sizeof(*usin))/* ¼ì²éÄ¿µÄµØÖ·³¤¶È */
+		if (msg->msg_namelen < sizeof(*usin))/* æ£€æŸ¥ç›®çš„åœ°å€é•¿åº¦ */
 			return -EINVAL;
-		if (usin->sin_family != AF_INET) {/* ¼ì²éĞ­Òé×å */
+		if (usin->sin_family != AF_INET) {/* æ£€æŸ¥åè®®æ— */
 			if (usin->sin_family != AF_UNSPEC)
 				return -EAFNOSUPPORT;
 		}
 
-		daddr = usin->sin_addr.s_addr;/* »º´æÄ¿µÄµØÖ·ºÍ¶Ë¿Ú */
+		daddr = usin->sin_addr.s_addr;/* ç¼“å­˜ç›®çš„åœ°å€å’Œç«¯å£ */
 		dport = usin->sin_port;
 		if (dport == 0)
 			return -EINVAL;
 	} else {
-		if (sk->sk_state != TCP_ESTABLISHED)/* Ã»ÓĞÖ¸¶¨Ä¿µÄµØÖ·£¬²¢ÇÒÒÔÇ°Ã»ÓĞµ÷ÓÃ¹ıconnect */ //Ò²¾ÍÊÇËµudp·¢ËÍsendµÄÊ±ºò¿ÉÒÔ²»Ö¸¶¨Ä¿µÄµØÖ·£¬µ«±ØĞëÔÚ·¢ËÍÇ°connect¡£¾ÍºÍTCPÒ»Ñù
+		if (sk->sk_state != TCP_ESTABLISHED)/* æ²¡æœ‰æŒ‡å®šç›®çš„åœ°å€ï¼Œå¹¶ä¸”ä»¥å‰æ²¡æœ‰è°ƒç”¨è¿‡connect */ //ä¹Ÿå°±æ˜¯è¯´udpå‘é€sendçš„æ—¶å€™å¯ä»¥ä¸æŒ‡å®šç›®çš„åœ°å€ï¼Œä½†å¿…é¡»åœ¨å‘é€å‰connectã€‚å°±å’ŒTCPä¸€æ ·
 			return -EDESTADDRREQ;
-		daddr = inet->daddr;/* »º´æÄ¿µÄµØÖ·ºÍ¶Ë¿Ú */
+		daddr = inet->daddr;/* ç¼“å­˜ç›®çš„åœ°å€å’Œç«¯å£ */
 		dport = inet->dport;
 		/* Open fast path for connected socket.
 		   Route will not be used, if at least one option is set.
 		 */
-		connected = 1;/* ºóĞø´¦ÀíÂ·ÓÉÊ±ÓÃ */
+		connected = 1;/* åç»­å¤„ç†è·¯ç”±æ—¶ç”¨ */
   	}
-	ipc.addr = inet->saddr;/* Ô´µØÖ· */
+	ipc.addr = inet->saddr;/* æºåœ°å€ */
 
-	ipc.oif = sk->sk_bound_dev_if;/* Ô´Éè±¸ */
-	if (msg->msg_controllen) {/* ÓĞ¿ØÖÆĞÅÏ¢ĞèÒª´¦Àí */
-		err = ip_cmsg_send(msg, &ipc);/* ´¦Àí¿ØÖÆĞÅÏ¢£¬ÈçIPÑ¡Ïî£¬Ô´µØÖ·ºÍÔ´Éè±¸Ë÷Òı */
-		if (err)/* ¿ØÖÆĞÅÏ¢ÓĞÎó */
+	ipc.oif = sk->sk_bound_dev_if;/* æºè®¾å¤‡ */
+	if (msg->msg_controllen) {/* æœ‰æ§åˆ¶ä¿¡æ¯éœ€è¦å¤„ç† */
+		err = ip_cmsg_send(msg, &ipc);/* å¤„ç†æ§åˆ¶ä¿¡æ¯ï¼Œå¦‚IPé€‰é¡¹ï¼Œæºåœ°å€å’Œæºè®¾å¤‡ç´¢å¼• */
+		if (err)/* æ§åˆ¶ä¿¡æ¯æœ‰è¯¯ */
 			return err;
-		if (ipc.opt)/* ÓĞÑ¡ÏîĞÅÏ¢£¬ÔòÉèÖÃfree±êÖ¾£¬±íÊ¾Ñ¡ÏîÊÇÔÚip_cmsg_sendÖĞ·ÖÅäµÄ */
+		if (ipc.opt)/* æœ‰é€‰é¡¹ä¿¡æ¯ï¼Œåˆ™è®¾ç½®freeæ ‡å¿—ï¼Œè¡¨ç¤ºé€‰é¡¹æ˜¯åœ¨ip_cmsg_sendä¸­åˆ†é…çš„ */
 			free = 1;
 		connected = 0;
 	}
-	if (!ipc.opt)/* Ã»ÓĞÖ¸¶¨Ñ¡Ïî£¬ÔòÊ¹ÓÃÌ×½Ó¿Ú½á¹¹ÖĞµÄÑ¡Ïî£¬ËüÊÇÓÃIP_OPTIONSÌ×½Ó¿ÚÑ¡ÏîÉèÖÃµÄ */
+	if (!ipc.opt)/* æ²¡æœ‰æŒ‡å®šé€‰é¡¹ï¼Œåˆ™ä½¿ç”¨å¥—æ¥å£ç»“æ„ä¸­çš„é€‰é¡¹ï¼Œå®ƒæ˜¯ç”¨IP_OPTIONSå¥—æ¥å£é€‰é¡¹è®¾ç½®çš„ */
 		ipc.opt = inet->opt;
 
 	saddr = ipc.addr;
 	ipc.addr = faddr = daddr;
 
-	if (ipc.opt && ipc.opt->srr) {/* Ö¸¶¨ÁËÑ¡Â·ĞÅÏ¢ */
+	if (ipc.opt && ipc.opt->srr) {/* æŒ‡å®šäº†é€‰è·¯ä¿¡æ¯ */
 		if (!daddr)/*  */
 			return -EINVAL;
-		/* Ä¿µÄµØÖ·Ó¦µ±ÊÇµÚÒ»¸öÔ´Â·ÓÉ */
+		/* ç›®çš„åœ°å€åº”å½“æ˜¯ç¬¬ä¸€ä¸ªæºè·¯ç”± */
 		faddr = ipc.opt->faddr;
 		connected = 0;
 	}
 	tos = RT_TOS(inet->tos);
-	if (sk->sk_localroute || (msg->msg_flags & MSG_DONTROUTE) || /* Èç¹ûÉèÖÃÁËSO_DONTROUTE»òÕß·¢ËÍÊ±ÉèÖÃÁËMSG_DONTROUTE */
-	    (ipc.opt && ipc.opt->is_strictroute)) {/* »òÕßÉèÖÃÁËÑÏ¸ñÔ´Õ¾Ñ¡Â· */
-		tos |= RTO_ONLINK;/* ´Ë±êÖ¾±íÊ¾ÏÂÒ»Õ¾±Ø¶¨Î»ÓÚ±¾µØ×ÓÍø */
+	if (sk->sk_localroute || (msg->msg_flags & MSG_DONTROUTE) || /* å¦‚æœè®¾ç½®äº†SO_DONTROUTEæˆ–è€…å‘é€æ—¶è®¾ç½®äº†MSG_DONTROUTE */
+	    (ipc.opt && ipc.opt->is_strictroute)) {/* æˆ–è€…è®¾ç½®äº†ä¸¥æ ¼æºç«™é€‰è·¯ */
+		tos |= RTO_ONLINK;/* æ­¤æ ‡å¿—è¡¨ç¤ºä¸‹ä¸€ç«™å¿…å®šä½äºæœ¬åœ°å­ç½‘ */
 		connected = 0;
 	}
 
-	if (MULTICAST(daddr)) {/* ×é²¥µØÖ· */
-		if (!ipc.oif)/* Ã»ÓĞÖ¸¶¨×é²¥Êä³öÍøÂçÉè±¸£¬ÔòÊ¹ÓÃIP_MULTICAST_IFÑ¡ÏîÉèÖÃµÄÄ¬ÈÏ×é²¥Éè±¸ */
+	if (MULTICAST(daddr)) {/* ç»„æ’­åœ°å€ */
+		if (!ipc.oif)/* æ²¡æœ‰æŒ‡å®šç»„æ’­è¾“å‡ºç½‘ç»œè®¾å¤‡ï¼Œåˆ™ä½¿ç”¨IP_MULTICAST_IFé€‰é¡¹è®¾ç½®çš„é»˜è®¤ç»„æ’­è®¾å¤‡ */
 			ipc.oif = inet->mc_index;
-		if (!saddr)/* Ã»ÓĞÖ¸¶¨×é²¥Ô´µØÖ·£¬ÔòÊ¹ÓÃIP_MULTICAST_IFÑ¡ÏîÉèÖÃµÄÄ¬ÈÏ×é²¥µØÖ· */
+		if (!saddr)/* æ²¡æœ‰æŒ‡å®šç»„æ’­æºåœ°å€ï¼Œåˆ™ä½¿ç”¨IP_MULTICAST_IFé€‰é¡¹è®¾ç½®çš„é»˜è®¤ç»„æ’­åœ°å€ */
 			saddr = inet->mc_addr;
-		connected = 0;/* ÓÉÓÚÊÇ×é²¥±¨ÎÄ£¬Òò´ËĞèÒªÔÚÂ·ÓÉ±íÖĞ²éÕÒÂ·ÓÉ */
+		connected = 0;/* ç”±äºæ˜¯ç»„æ’­æŠ¥æ–‡ï¼Œå› æ­¤éœ€è¦åœ¨è·¯ç”±è¡¨ä¸­æŸ¥æ‰¾è·¯ç”± */
 	}
 
-	if (connected)/* »ñÈ¡Â·ÓÉ»º´æÏî */
+	if (connected)/* è·å–è·¯ç”±ç¼“å­˜é¡¹ */
 		rt = (struct rtable*)sk_dst_check(sk, 0);
 
 	/**
-	 * ¶ÔÓÚÎ´½¨Á¢Á¬½ÓµÄUDPÌ×½Ó¿Ú£¬»òÕßÖ¸¶¨ÁË¿ØÖÆĞÅÏ¢£¬»òÕßÊÇ×é²¥±¨ÎÄ
+	 * å¯¹äºæœªå»ºç«‹è¿æ¥çš„UDPå¥—æ¥å£ï¼Œæˆ–è€…æŒ‡å®šäº†æ§åˆ¶ä¿¡æ¯ï¼Œæˆ–è€…æ˜¯ç»„æ’­æŠ¥æ–‡
 	 */
 	if (rt == NULL) {
 		struct flowi fl = { .oif = ipc.oif,
@@ -1119,30 +1119,30 @@ int udp_sendmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 				    .proto = IPPROTO_UDP,
 				    .uli_u = { .ports =
 					       { .sport = inet->sport,
-						 .dport = dport } } };/* Â·ÓÉ²éÑ¯Ñ¡Ïî */
-		/* ÔÚÂ·ÓÉ±íÖĞ²éÑ¯Â·ÓÉ */
+						 .dport = dport } } };/* è·¯ç”±æŸ¥è¯¢é€‰é¡¹ */
+		/* åœ¨è·¯ç”±è¡¨ä¸­æŸ¥è¯¢è·¯ç”± */
 		err = ip_route_output_flow(&rt, &fl, sk, !(msg->msg_flags&MSG_DONTWAIT));
 		if (err)
 			goto out;
 
 		err = -EACCES;
 		if ((rt->rt_flags & RTCF_BROADCAST) &&
-		    !sock_flag(sk, SOCK_BROADCAST))/* ¹ã²¥µØÖ·£¬µ«ÊÇ²»ÔÊĞí½øĞĞ¹ã²¥£¬ÍË³ö */
+		    !sock_flag(sk, SOCK_BROADCAST))/* å¹¿æ’­åœ°å€ï¼Œä½†æ˜¯ä¸å…è®¸è¿›è¡Œå¹¿æ’­ï¼Œé€€å‡º */
 			goto out;
-		if (connected)/* Èç¹ûÒÑ¾­µ÷ÓÃÁËconnect£¬Ôò»º´æ±¾´Î²éÑ¯µ½µÄÂ·ÓÉ */
+		if (connected)/* å¦‚æœå·²ç»è°ƒç”¨äº†connectï¼Œåˆ™ç¼“å­˜æœ¬æ¬¡æŸ¥è¯¢åˆ°çš„è·¯ç”± */
 			sk_dst_set(sk, dst_clone(&rt->u.dst));
 	}
 
-	if (msg->msg_flags&MSG_CONFIRM)/* ÓÃ»§²ãÈ·ÈÏÂ·¾¶ */
+	if (msg->msg_flags&MSG_CONFIRM)/* ç”¨æˆ·å±‚ç¡®è®¤è·¯å¾„ */
 		goto do_confirm;
 back_from_confirm:
 
-	saddr = rt->rt_src;/* ´ÓÂ·ÓÉÖĞ»ñÈ¡Ô´µØÖ·ºÍÄ¿µÄµØÖ· */
+	saddr = rt->rt_src;/* ä»è·¯ç”±ä¸­è·å–æºåœ°å€å’Œç›®çš„åœ°å€ */
 	if (!ipc.addr)
 		daddr = ipc.addr = rt->rt_dst;
 
 	lock_sock(sk);
-	if (unlikely(up->pending)) {/* »¹´¦ÓÚÉÏ´ÎµÄ·¢ËÍ¹ı³ÌÖĞ£¬Õâ²»Ó¦¸Ã£¬ÒòÎªÇ°ÃæÒÑ¾­ÅĞ¶Ï¹ıÁË */
+	if (unlikely(up->pending)) {/* è¿˜å¤„äºä¸Šæ¬¡çš„å‘é€è¿‡ç¨‹ä¸­ï¼Œè¿™ä¸åº”è¯¥ï¼Œå› ä¸ºå‰é¢å·²ç»åˆ¤æ–­è¿‡äº† */
 		/* The socket is already corked while preparing it. */
 		/* ... which is an evident application bug. --ANK */
 		release_sock(sk);
@@ -1154,30 +1154,30 @@ back_from_confirm:
 	/*
 	 *	Now cork the socket to pend data.
 	 */
-	/* »º´æÄ¿µÄµØÖ·¡¢Ä¿µÄ¶Ë¿Ú¡¢Ô´µØÖ·ºÍÔ´¶Ë¿Ú */
+	/* ç¼“å­˜ç›®çš„åœ°å€ã€ç›®çš„ç«¯å£ã€æºåœ°å€å’Œæºç«¯å£ */
 	inet->cork.fl.fl4_dst = daddr;
 	inet->cork.fl.fl_ip_dport = dport;
 	inet->cork.fl.fl4_src = saddr;
 	inet->cork.fl.fl_ip_sport = inet->sport;
-	up->pending = AF_INET;/* ´Ë±êÖ¾±íÊ¾ÕıÔÚ·¢ËÍÊı¾İ */
+	up->pending = AF_INET;/* æ­¤æ ‡å¿—è¡¨ç¤ºæ­£åœ¨å‘é€æ•°æ® */
 
-do_append_data:/* ´¦ÀíÊı¾İ·¢ËÍ */
-	up->len += ulen;/* ÀÛ¼Æ·¢ËÍ±¨ÎÄ³¤¶È */
+do_append_data:/* å¤„ç†æ•°æ®å‘é€ */
+	up->len += ulen;/* ç´¯è®¡å‘é€æŠ¥æ–‡é•¿åº¦ */
 	/**
-	 * ½«Êı¾İ»º´æÆğÀ´¡£
+	 * å°†æ•°æ®ç¼“å­˜èµ·æ¥ã€‚
 	 */
 	err = ip_append_data(sk, ip_generic_getfrag, msg->msg_iov, ulen, 
 			sizeof(struct udphdr), &ipc, rt, 
 			corkreq ? msg->msg_flags|MSG_MORE : msg->msg_flags);
-	if (err)/* Ìí¼Ó±¨ÎÄ´íÎó£¬Ôò½«»º´æÖĞµÄÊı¾İ·¢ËÍ³öÈ¥ */
+	if (err)/* æ·»åŠ æŠ¥æ–‡é”™è¯¯ï¼Œåˆ™å°†ç¼“å­˜ä¸­çš„æ•°æ®å‘é€å‡ºå» */
 		udp_flush_pending_frames(sk);
-	else if (!corkreq)/* Ã»ÓĞºóĞøÊı¾İ»òÕßIPÑ¡Ïî²»»º´æÊı¾İ£¬Ôòµ÷ÓÃudp_push_pending_frames·¢ËÍÊı¾İ */
+	else if (!corkreq)/* æ²¡æœ‰åç»­æ•°æ®æˆ–è€…IPé€‰é¡¹ä¸ç¼“å­˜æ•°æ®ï¼Œåˆ™è°ƒç”¨udp_push_pending_frameså‘é€æ•°æ® */
 		err = udp_push_pending_frames(sk, up);
 	release_sock(sk);
 
 out:
-	ip_rt_put(rt);/* ·¢ËÍÍê³É£¬µİ¼õ¶ÔÂ·ÓÉµÄÒıÓÃ */
-	if (free)/* Èç¹ûÓĞ±ØÒª£¬ÔòÊÍ·ÅÑ¡Ïî */
+	ip_rt_put(rt);/* å‘é€å®Œæˆï¼Œé€’å‡å¯¹è·¯ç”±çš„å¼•ç”¨ */
+	if (free)/* å¦‚æœæœ‰å¿…è¦ï¼Œåˆ™é‡Šæ”¾é€‰é¡¹ */
 		kfree(ipc.opt);
 	if (!err) {
 		UDP_INC_STATS_USER(UDP_MIB_OUTDATAGRAMS);
@@ -1185,9 +1185,9 @@ out:
 	}
 	return err;
 
-do_confirm:/* ·¢ËÍÊı¾İÊ±ÉèÖÃÁËMSG_CONFIRM±êÖ¾ */
-	dst_confirm(&rt->u.dst);/* Ó¦ÓÃ²ãÖªµÀÍø¹Ø¿É´ï£¬Òò´ËÖ±½Ó¶ÔÂ·ÓÉ»º´æÏî½øĞĞÈ·ÈÏ */
-	if (!(msg->msg_flags&MSG_PROBE) || len)/* MSG_PROBE±êÖ¾±íÊ¾½ö½öÓÃÀ´·¢ÏÖÂ·¾¶£¬²¢²»ÕıÖ±·¢ËÍÊı¾İ¡£Èç¹ûÃ»ÓĞÖ¸¶¨Õâ¸ö±êÖ¾£¬Ôò·¢ËÍÊı¾İ */
+do_confirm:/* å‘é€æ•°æ®æ—¶è®¾ç½®äº†MSG_CONFIRMæ ‡å¿— */
+	dst_confirm(&rt->u.dst);/* åº”ç”¨å±‚çŸ¥é“ç½‘å…³å¯è¾¾ï¼Œå› æ­¤ç›´æ¥å¯¹è·¯ç”±ç¼“å­˜é¡¹è¿›è¡Œç¡®è®¤ */
+	if (!(msg->msg_flags&MSG_PROBE) || len)/* MSG_PROBEæ ‡å¿—è¡¨ç¤ºä»…ä»…ç”¨æ¥å‘ç°è·¯å¾„ï¼Œå¹¶ä¸æ­£ç›´å‘é€æ•°æ®ã€‚å¦‚æœæ²¡æœ‰æŒ‡å®šè¿™ä¸ªæ ‡å¿—ï¼Œåˆ™å‘é€æ•°æ® */
 		goto back_from_confirm;
 	err = 0;
 	goto out;
@@ -2078,8 +2078,8 @@ unsigned int udp_poll(struct file *file, struct socket *sock, poll_table *wait)
 }
 EXPORT_SYMBOL(udp_poll);
 
-//udp´«Êä²ã²Ù×÷¼¯
-struct proto udp_prot = { ////ÓÉudp_protocolÀïÃæµÄrecvº¯ÊıÌø×ªµ½ÕâÀïÃæ             UDPµÄÌ×½Ó¿Ú²ã²Ù×÷¼¯ÔÚinetsw_arrayÊı×éÖĞµÄinet_dgram_ops
+//udpä¼ è¾“å±‚æ“ä½œé›†
+struct proto udp_prot = { ////ç”±udp_protocolé‡Œé¢çš„recvå‡½æ•°è·³è½¬åˆ°è¿™é‡Œé¢             UDPçš„å¥—æ¥å£å±‚æ“ä½œé›†åœ¨inetsw_arrayæ•°ç»„ä¸­çš„inet_dgram_ops
 	.name		   = "UDP",
 	.owner		   = THIS_MODULE,
 	.close		   = udp_lib_close,
@@ -2093,9 +2093,9 @@ struct proto udp_prot = { ////ÓÉudp_protocolÀïÃæµÄrecvº¯ÊıÌø×ªµ½ÕâÀïÃæ          
 	.recvmsg	   = udp_recvmsg,
 	.sendpage	   = udp_sendpage,
 	.backlog_rcv	   = __udp_queue_rcv_skb,
-	.hash		   = udp_lib_hash,  //inet_createÖĞÖ´ĞĞ
+	.hash		   = udp_lib_hash,  //inet_createä¸­æ‰§è¡Œ
 	.unhash		   = udp_lib_unhash,
-	.rehash		   = udp_v4_rehash, //udpµÄhashÊ¹ÓÃrehashÀ´°Ñstruct sockÌí¼Óµ½udp_table hash±íÖĞ
+	.rehash		   = udp_v4_rehash, //udpçš„hashä½¿ç”¨rehashæ¥æŠŠstruct sockæ·»åŠ åˆ°udp_table hashè¡¨ä¸­
 	.get_port	   = udp_v4_get_port,
 	.memory_allocated  = &udp_memory_allocated,
 	.sysctl_mem	   = sysctl_udp_mem,

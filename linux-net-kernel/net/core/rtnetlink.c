@@ -99,11 +99,11 @@ int lockdep_rtnl_is_held(void)
 EXPORT_SYMBOL(lockdep_rtnl_is_held);
 #endif /* #ifdef CONFIG_PROVE_LOCKING */
 
-/*ÏÂÃæÒÔÃüÁî#tc qdisc add dev eth0 root handle 22 prio bands 4ÎªÀı×ÓËµÃ÷ÈçºÎ½øĞĞÍ¨ĞÅµÄ¡£
-·ÖÎötc£ºmain(int argc, char **argv)±»µ÷ÓÃ£¬´Ëº¯ÊıÔÚtc/tc.cÖĞ£»
-·ÖÎötc qdisc£ºdo_qdisc(argc-2, argv+2);±»µ÷ÓÃ£¬´Ëº¯ÊıÔÚtc/tc_qdisc.cÖĞ£»
-·ÖÎötc qdisc add£º tc_qdisc_modify(RTM_NEWQDISC, NLM_F_EXCL|NLM_F_CREATE, argc-1, argv+1); ±»µ÷ÓÃ£¬´Ëº¯ÊıÔÚtc/tc_qdisc.cÖĞ£¬ÔÚÕâ¸öº¯ÊıÖĞ£¬½«·ÖÎöÍêÕâÒ»ĞĞtcµÄÃüÁî£¬¸÷ÖÖ²ÎÊı£¨ÀıÈçRTM_NEWQDISC£© ±»Ğ´µ½netlink°üÖĞ£¬²¢ÇÒ¿ªÊ¼ÓëºËĞÄÍ¨ĞÅ¡£
-Netlink°üĞ¯´øµÄÊı¾İÈçÏÂ
+/*ä¸‹é¢ä»¥å‘½ä»¤#tc qdisc add dev eth0 root handle 22 prio bands 4ä¸ºä¾‹å­è¯´æ˜å¦‚ä½•è¿›è¡Œé€šä¿¡çš„ã€‚
+åˆ†ætcï¼šmain(int argc, char **argv)è¢«è°ƒç”¨ï¼Œæ­¤å‡½æ•°åœ¨tc/tc.cä¸­ï¼›
+åˆ†ætc qdiscï¼šdo_qdisc(argc-2, argv+2);è¢«è°ƒç”¨ï¼Œæ­¤å‡½æ•°åœ¨tc/tc_qdisc.cä¸­ï¼›
+åˆ†ætc qdisc addï¼š tc_qdisc_modify(RTM_NEWQDISC, NLM_F_EXCL|NLM_F_CREATE, argc-1, argv+1); è¢«è°ƒç”¨ï¼Œæ­¤å‡½æ•°åœ¨tc/tc_qdisc.cä¸­ï¼Œåœ¨è¿™ä¸ªå‡½æ•°ä¸­ï¼Œå°†åˆ†æå®Œè¿™ä¸€è¡Œtcçš„å‘½ä»¤ï¼Œå„ç§å‚æ•°ï¼ˆä¾‹å¦‚RTM_NEWQDISCï¼‰ è¢«å†™åˆ°netlinkåŒ…ä¸­ï¼Œå¹¶ä¸”å¼€å§‹ä¸æ ¸å¿ƒé€šä¿¡ã€‚
+NetlinkåŒ…æºå¸¦çš„æ•°æ®å¦‚ä¸‹
 struct {
               struct nlmsghdr        n;
               struct tcmsg              t;
@@ -111,22 +111,22 @@ struct {
        } req;
        req.n.nlmsg_type = cmd; = RTM_NEWQDISC
        req.t.tcm_family = AF_UNSPEC;
-ÄÚºËÊÇ¸ù¾İÒÔÉÏÁ½¸ö²ÎÊı¶¨Î»½ÓÊÕº¯Êı¡£
-ÄÚºË½ÓÊÕº¯ÊıÊÇstatic int rtnetlink_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
-¸ù¾İÒÔÉÏÁ½¸ö²ÎÊıÑ¡Ôñ½ÓÊÕº¯Êı£º
+å†…æ ¸æ˜¯æ ¹æ®ä»¥ä¸Šä¸¤ä¸ªå‚æ•°å®šä½æ¥æ”¶å‡½æ•°ã€‚
+å†…æ ¸æ¥æ”¶å‡½æ•°æ˜¯static int rtnetlink_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+æ ¹æ®ä»¥ä¸Šä¸¤ä¸ªå‚æ•°é€‰æ‹©æ¥æ”¶å‡½æ•°ï¼š
 doit = rtnl_get_doit(family, type);
-´ÓÇ°Ãæ³õÊ¼»¯Ê±×¢²áµÄ´¦Àíº¯ÊıÊÇ£º
+ä»å‰é¢åˆå§‹åŒ–æ—¶æ³¨å†Œçš„å¤„ç†å‡½æ•°æ˜¯ï¼š
 rtnl_register(PF_UNSPEC, RTM_NEWQDISC, tc_modify_qdisc, NULL);
-¿ÉÒÔÖªµÀ¶ÔÓ¦µÄ½ÓÊÕº¯ÊıÊÇ£º
+å¯ä»¥çŸ¥é“å¯¹åº”çš„æ¥æ”¶å‡½æ•°æ˜¯ï¼š
 static int tc_modify_qdisc(struct sk_buff *skb, struct nlmsghdr *n, void *arg)
  
-Í¨ĞÅ×Ü½áÈçÏÂ£º
-1.      ÄÚºËµ÷ÓÃvoid rtnl_register(int protocol, int msgtype, rtnl_doit_func doit, rtnl_dumpit_func dumpit)½«½ÓÊÕº¯Êı×¢²áµ½rtnl_msg_handlersÖĞ¡£
-2.      ÓÃ»§¿Õ¼äÌî³änetlinkÊı¾İ°ü£¬Ê¹ÓÃµÄnetlinkĞ­ÒéÊÇNETLINK_ROUTE¡£
-3.      ÄÚºË¸ù¾İnetlinkÊı¾İ°üÖĞµÄprotocolºÍmsgtype×Ö¶Î£¬ËÑË÷rtnl_msg_handlers£¬¶¨Î»½ÓÊÕº¯Êı¡£
+é€šä¿¡æ€»ç»“å¦‚ä¸‹ï¼š
+1.      å†…æ ¸è°ƒç”¨void rtnl_register(int protocol, int msgtype, rtnl_doit_func doit, rtnl_dumpit_func dumpit)å°†æ¥æ”¶å‡½æ•°æ³¨å†Œåˆ°rtnl_msg_handlersä¸­ã€‚
+2.      ç”¨æˆ·ç©ºé—´å¡«å……netlinkæ•°æ®åŒ…ï¼Œä½¿ç”¨çš„netlinkåè®®æ˜¯NETLINK_ROUTEã€‚
+3.      å†…æ ¸æ ¹æ®netlinkæ•°æ®åŒ…ä¸­çš„protocolå’Œmsgtypeå­—æ®µï¼Œæœç´¢rtnl_msg_handlersï¼Œå®šä½æ¥æ”¶å‡½æ•°ã€‚
 */
-//Ã¿¸ö±íÍ·rtnl_msg_handlers[i]ÉÏÃæ´æ´¢RTM_NR_MSGTYPES¸örtnl_link£¬Í¼½â¼ûTCÁ÷Á¿¿ØÖÆÊµÏÖ·ÖÎö
-static struct rtnl_link *rtnl_msg_handlers[RTNL_FAMILY_MAX + 1]; //rtnl_register×¢²áµÄproto msgtype·Ö²¼µ½¸Ã½á¹¹ÖĞ£¬Ã¿¸ö¶ÔÓ¦µÄº¯Êı¼ûpktsched_init
+//æ¯ä¸ªè¡¨å¤´rtnl_msg_handlers[i]ä¸Šé¢å­˜å‚¨RTM_NR_MSGTYPESä¸ªrtnl_linkï¼Œå›¾è§£è§TCæµé‡æ§åˆ¶å®ç°åˆ†æ
+static struct rtnl_link *rtnl_msg_handlers[RTNL_FAMILY_MAX + 1]; //rtnl_registeræ³¨å†Œçš„proto msgtypeåˆ†å¸ƒåˆ°è¯¥ç»“æ„ä¸­ï¼Œæ¯ä¸ªå¯¹åº”çš„å‡½æ•°è§pktsched_init
 
 static inline int rtm_msgindex(int msgtype)
 {
@@ -141,7 +141,7 @@ static inline int rtm_msgindex(int msgtype)
 
 	return msgindex;
 }
-//tc rtnlµÄdotº¯ÊıÔÚpktsched_init
+//tc rtnlçš„dotå‡½æ•°åœ¨pktsched_init
 static rtnl_doit_func rtnl_get_doit(int protocol, int msgindex)
 {
 	struct rtnl_link *tab;
@@ -157,7 +157,7 @@ static rtnl_doit_func rtnl_get_doit(int protocol, int msgindex)
 	return tab ? tab[msgindex].doit : NULL;
 }
 
-//tc rtnlµÄdumpitº¯ÊıÔÚpktsched_init
+//tc rtnlçš„dumpitå‡½æ•°åœ¨pktsched_init
 static rtnl_dumpit_func rtnl_get_dumpit(int protocol, int msgindex)
 {
 	struct rtnl_link *tab;
@@ -226,7 +226,7 @@ EXPORT_SYMBOL_GPL(__rtnl_register);
  * to lack of memory when allocating the chain to store all message
  * handlers for a protocol. Meant for use in init functions where lack
  * of memory implies no sense in continueing.
- *///ÆäÖĞµÄrtnl_register()º¯ÊıÓÃÓÚ×¢²áTCÒª½ÓÊÕµÄÏûÏ¢ÀàĞÍÒÔ¼°¶ÔÓ¦µÄ½ÓÊÕº¯Êı¡£
+ *///å…¶ä¸­çš„rtnl_register()å‡½æ•°ç”¨äºæ³¨å†ŒTCè¦æ¥æ”¶çš„æ¶ˆæ¯ç±»å‹ä»¥åŠå¯¹åº”çš„æ¥æ”¶å‡½æ•°ã€‚
 void rtnl_register(int protocol, int msgtype,
 		   rtnl_doit_func doit, rtnl_dumpit_func dumpit)
 {
@@ -1687,7 +1687,7 @@ void rtmsg_ifinfo(int type, struct net_device *dev, unsigned change)
 		kfree_skb(skb);
 		goto errout;
 	}
-	rtnl_notify(skb, net, 0, RTNLGRP_LINK, NULL, GFP_KERNEL);//Í¨¹ıdevÊÂ¼şÍ¨ÖªÁ´RTM_NEWLINKÍ¨Öª¸øÓ¦ÓÃ³ÌĞò£¬¸Ãdev×¢ÏúÁË
+	rtnl_notify(skb, net, 0, RTNLGRP_LINK, NULL, GFP_KERNEL);//é€šè¿‡deväº‹ä»¶é€šçŸ¥é“¾RTM_NEWLINKé€šçŸ¥ç»™åº”ç”¨ç¨‹åºï¼Œè¯¥devæ³¨é”€äº†
 	return;
 errout:
 	if (err < 0)
@@ -1699,7 +1699,7 @@ static struct rtattr **rta_buf;
 static int rtattr_max;
 
 /* Process one rtnetlink message. */
-//nlhÊÇÔÚrtnetlink_rcvº¯ÊıÖĞ´ÓSKBÖĞ½âÎö³öÀ´µÄnlmsghdr
+//nlhæ˜¯åœ¨rtnetlink_rcvå‡½æ•°ä¸­ä»SKBä¸­è§£æå‡ºæ¥çš„nlmsghdr
 static int rtnetlink_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 {
 	struct net *net = sock_net(skb->sk);
@@ -1767,7 +1767,7 @@ static int rtnetlink_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 	if (doit == NULL)
 		return -EOPNOTSUPP;
 
-	return doit(skb, nlh, (void *)&rta_buf[0]);//tc ¼û//tc rtnlµÄdoitº¯ÊıÔÚpktsched_init
+	return doit(skb, nlh, (void *)&rta_buf[0]);//tc è§//tc rtnlçš„doitå‡½æ•°åœ¨pktsched_init
 }
 
 static void rtnetlink_rcv(struct sk_buff *skb)
@@ -1827,7 +1827,7 @@ static struct pernet_operations rtnetlink_net_ops = {
 	.exit = rtnetlink_net_exit,
 };
 
-//µ÷ÓÃrtnetlink_initÍê³ÉÂ·ÓÉnetlinkµÄ³õÊ¼»¯
+//è°ƒç”¨rtnetlink_initå®Œæˆè·¯ç”±netlinkçš„åˆå§‹åŒ–
 void __init rtnetlink_init(void)
 {
 	int i;
@@ -1852,6 +1852,6 @@ void __init rtnetlink_init(void)
 	rtnl_register(PF_UNSPEC, RTM_DELLINK, rtnl_dellink, NULL);
 
 	rtnl_register(PF_UNSPEC, RTM_GETADDR, NULL, rtnl_dump_all); 
-	rtnl_register(PF_UNSPEC, RTM_GETROUTE, NULL, rtnl_dump_all); //Èç¹ûÊÕµ½familyÊÇPF_UNSPEC£¬ typeÊÇRTM_GETROUTE£¬Ö´ĞĞrtnl_dump_all      rtnetlink_rcv_msg
+	rtnl_register(PF_UNSPEC, RTM_GETROUTE, NULL, rtnl_dump_all); //å¦‚æœæ”¶åˆ°familyæ˜¯PF_UNSPECï¼Œ typeæ˜¯RTM_GETROUTEï¼Œæ‰§è¡Œrtnl_dump_all      rtnetlink_rcv_msg
 }
 

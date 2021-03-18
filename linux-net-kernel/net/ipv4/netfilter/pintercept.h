@@ -24,9 +24,9 @@ struct packet_attribute
 /* WATCH OUT: this is the same as the definition of struct pcap_pkthdr */
 /* Just for compliance */ 
 struct pintercept_pkthdr {
-	struct timeval ts;	/* time stamp  yang ½ÓÊÕÊý¾Ý°üµÄÊ±¼ä */
-	u_int32_t caplen;	/* actually captured packet length  È¥µôËíµÀÍ·²¿ºóµÄ±¨ÎÄ³¤¶È */
-	u_int32_t len;	        /* packet length: same as caplen for yang ºÍcaplenÏàÍ¬¸³Öµ pkthdr->caplen = pkthdr->len;
+	struct timeval ts;	/* time stamp  yang æŽ¥æ”¶æ•°æ®åŒ…çš„æ—¶é—´ */
+	u_int32_t caplen;	/* actually captured packet length  åŽ»æŽ‰éš§é“å¤´éƒ¨åŽçš„æŠ¥æ–‡é•¿åº¦ */
+	u_int32_t len;	        /* packet length: same as caplen for yang å’Œcaplenç›¸åŒèµ‹å€¼ pkthdr->caplen = pkthdr->len;
 				   the moment */
 };
 /* xdang */

@@ -86,7 +86,7 @@ static int wait_for_packet(struct sock *sk, int *err, long *timeo_p)
 	int error;
 	DEFINE_WAIT_FUNC(wait, receiver_wake_function);
     /* 
-     Ç°ÃæµÄ²Ù×÷¶¼ÊÇ³õÊ¼»¯wait£¬Îª½«socket¼ÓÈëwait¶ÓÁĞ×÷×¼±¸£¬Õâ²¿·Ö´úÂëÇ£Éæµ½½ø³Ìµ÷¶È¡£¹ØÓÚ½ø³Ìµ÷¶È£¬ÎÒ      Ö»ÊÇÖªµÀÒ»Ğ©Æ¤Ã«£¬ÁôÔÚÒÔºóÑ§Ï°¡£ÕâÀïÖ»ĞèÒª½«Æä¿´×÷ÊÇÒ»Ğ©¼ÓÈëwait¶ÓÁĞµÄ×¼±¸¹¤×÷¼´¿É£¬²¢²»Ó°ÏìÀí½â´úÂë      ¡£
+     å‰é¢çš„æ“ä½œéƒ½æ˜¯åˆå§‹åŒ–waitï¼Œä¸ºå°†socketåŠ å…¥waité˜Ÿåˆ—ä½œå‡†å¤‡ï¼Œè¿™éƒ¨åˆ†ä»£ç ç‰µæ¶‰åˆ°è¿›ç¨‹è°ƒåº¦ã€‚å…³äºè¿›ç¨‹è°ƒåº¦ï¼Œæˆ‘      åªæ˜¯çŸ¥é“ä¸€äº›çš®æ¯›ï¼Œç•™åœ¨ä»¥åå­¦ä¹ ã€‚è¿™é‡Œåªéœ€è¦å°†å…¶çœ‹ä½œæ˜¯ä¸€äº›åŠ å…¥waité˜Ÿåˆ—çš„å‡†å¤‡å·¥ä½œå³å¯ï¼Œå¹¶ä¸å½±å“ç†è§£ä»£ç       ã€‚
      */
 	prepare_to_wait_exclusive(sk_sleep(sk), &wait, TASK_INTERRUPTIBLE);
 
@@ -94,32 +94,32 @@ static int wait_for_packet(struct sock *sk, int *err, long *timeo_p)
 	error = sock_error(sk);
 	if (error)
 		goto out_err;
-    /* Ò»¸öÍê±¸¼ì²â¡£ÔÚ¾ö¶¨waitºÍµ÷ÓÃwaitÖ®¼ä£¬ÓĞÊı¾İ°üµ½ÁË£¬ÄÇÃ´¾Í²»ĞèÒªwait£¬ËùÒÔÕâÀïÔÙ´Î¼ì²ésocket      µÄ¶ÓÁĞÊÇ·ñÎª¿Õ */
+    /* ä¸€ä¸ªå®Œå¤‡æ£€æµ‹ã€‚åœ¨å†³å®šwaitå’Œè°ƒç”¨waitä¹‹é—´ï¼Œæœ‰æ•°æ®åŒ…åˆ°äº†ï¼Œé‚£ä¹ˆå°±ä¸éœ€è¦waitï¼Œæ‰€ä»¥è¿™é‡Œå†æ¬¡æ£€æŸ¥socket      çš„é˜Ÿåˆ—æ˜¯å¦ä¸ºç©º */
 
 	if (!skb_queue_empty(&sk->sk_receive_queue))
 		goto out;
 
 	/* Socket shut down? */
-	/* Íê±¸¼ì²â¡£Ò²ĞísocketÎŞÊı¾İ°ü¶ÁÈ¡£¬ÒòÎªsocketÒÑ¾­±»ÁíÍâµÄÏß³Ì¹Ø±ÕÁË¡£ÕâÑù¿ÉÒÔ±£Ö¤¹Ø±ÕsocketµÄÊ±      ºò£¬²»»áµ¼ÖÂÆäËûµÄsocketµÄ¶ÁĞ´²Ù×÷±»×èÈû¡£*/
+	/* å®Œå¤‡æ£€æµ‹ã€‚ä¹Ÿè®¸socketæ— æ•°æ®åŒ…è¯»å–ï¼Œå› ä¸ºsocketå·²ç»è¢«å¦å¤–çš„çº¿ç¨‹å…³é—­äº†ã€‚è¿™æ ·å¯ä»¥ä¿è¯å…³é—­socketçš„æ—¶      å€™ï¼Œä¸ä¼šå¯¼è‡´å…¶ä»–çš„socketçš„è¯»å†™æ“ä½œè¢«é˜»å¡ã€‚*/
 	if (sk->sk_shutdown & RCV_SHUTDOWN)
 		goto out_noerr;
 
 	/* Sequenced packets can come disconnected.
 	 * If so we report the problem
-	 *//* ¶ÔÓÚÃæÏòÁ¬½ÓµÄsocket½øĞĞ¼ì²é¡£Èç¹ûÊÇÃæÏòÁ¬½ÓµÄsocket£¬Èç¹û²»ÊÇÒÑ¾­½¨Á¢Á¬½Ó»òÕßÕıÔÚ¼àÌı×´Ì¬µÄso       cketÊÇ²»¿ÉÄÜÓĞÊı¾İ°üµÄ¡£²»È»¼´³ö´í*/
+	 *//* å¯¹äºé¢å‘è¿æ¥çš„socketè¿›è¡Œæ£€æŸ¥ã€‚å¦‚æœæ˜¯é¢å‘è¿æ¥çš„socketï¼Œå¦‚æœä¸æ˜¯å·²ç»å»ºç«‹è¿æ¥æˆ–è€…æ­£åœ¨ç›‘å¬çŠ¶æ€çš„so       cketæ˜¯ä¸å¯èƒ½æœ‰æ•°æ®åŒ…çš„ã€‚ä¸ç„¶å³å‡ºé”™*/
 	error = -ENOTCONN;
 	if (connection_based(sk) &&
 	    !(sk->sk_state == TCP_ESTABLISHED || sk->sk_state == TCP_LISTEN))
 		goto out_err;
 
 	/* handle signals */
-	if (signal_pending(current))/* ¼ì²éÊÇ·ñÓĞpendingµÄsignal£¬±£Ö¤×èÈûÊ±£¬½ø³Ì¿ÉÒÔ±»signal»½ĞÑ */
+	if (signal_pending(current))/* æ£€æŸ¥æ˜¯å¦æœ‰pendingçš„signalï¼Œä¿è¯é˜»å¡æ—¶ï¼Œè¿›ç¨‹å¯ä»¥è¢«signalå”¤é†’ */
 		goto interrupted;
 
 	error = 0;
-	*timeo_p = schedule_timeout(*timeo_p); /* sleep±¾½ø³Ì£¬Ö±ÖÁÂú×ã»½ĞÑÌõ¼ş»òÕß±»ĞÅºÅ»½ĞÑ¡ª¡ªÒòÎªÇ°ÃæÉèÖÃÁËTASK_INTERRUPTIBLE*/
+	*timeo_p = schedule_timeout(*timeo_p); /* sleepæœ¬è¿›ç¨‹ï¼Œç›´è‡³æ»¡è¶³å”¤é†’æ¡ä»¶æˆ–è€…è¢«ä¿¡å·å”¤é†’â€•â€•å› ä¸ºå‰é¢è®¾ç½®äº†TASK_INTERRUPTIBLE*/
 out:
-	finish_wait(sk_sleep(sk), &wait); /* wait¶ÓÁĞµÄÇåÀí¹¤×÷ */
+	finish_wait(sk_sleep(sk), &wait); /* waité˜Ÿåˆ—çš„æ¸…ç†å·¥ä½œ */
 	return error;
 interrupted:
 	error = sock_intr_errno(*timeo_p);
@@ -160,7 +160,7 @@ out_noerr:
  *	The order of the tests when we find no data waiting are specified
  *	quite explicitly by POSIX 1003.1g, don't change them without having
  *	the standard around please.
- *///´Ósk->sk_receive_queue¶ÓÁĞÖĞÈ¡³öSKB
+ *///ä»sk->sk_receive_queueé˜Ÿåˆ—ä¸­å–å‡ºSKB
 struct sk_buff *__skb_recv_datagram(struct sock *sk, unsigned flags,
 				    int *peeked, int *err)
 {
@@ -174,7 +174,7 @@ struct sk_buff *__skb_recv_datagram(struct sock *sk, unsigned flags,
 	if (error)
 		goto no_packet;
 
-    // /* µ±socketÎª×èÈûÊ±£¬»ñÈ¡timeoutµÄÖµ */
+    // /* å½“socketä¸ºé˜»å¡æ—¶ï¼Œè·å–timeoutçš„å€¼ */
 	timeo = sock_rcvtimeo(sk, flags & MSG_DONTWAIT);
 
 	do {
@@ -186,37 +186,37 @@ struct sk_buff *__skb_recv_datagram(struct sock *sk, unsigned flags,
 		 */
 		unsigned long cpu_flags;
          /* 
-         µ±²é¿´socketÊÇ·ñÓĞÊı¾İ°üÊ±£¬ĞèÒªÉÏËø£¬ÒòÎªĞèÒª±£Ö¤ÆäËüÏß³Ì²»»á½«Êı¾İ°üÈ¡×ß¡£
+         å½“æŸ¥çœ‹socketæ˜¯å¦æœ‰æ•°æ®åŒ…æ—¶ï¼Œéœ€è¦ä¸Šé”ï¼Œå› ä¸ºéœ€è¦ä¿è¯å…¶å®ƒçº¿ç¨‹ä¸ä¼šå°†æ•°æ®åŒ…å–èµ°ã€‚
          */
 		spin_lock_irqsave(&sk->sk_receive_queue.lock, cpu_flags);
-		skb = skb_peek(&sk->sk_receive_queue); /* ²é¿´ÔÚsocketµÄbufferÖĞÊÇ·ñÓĞÊı¾İ°ü */
+		skb = skb_peek(&sk->sk_receive_queue); /* æŸ¥çœ‹åœ¨socketçš„bufferä¸­æ˜¯å¦æœ‰æ•°æ®åŒ… */
 		if (skb) {
 			*peeked = skb->peeked;
 			if (flags & MSG_PEEK) {
 			     /* 
-                ÉèÖÃMSG_PEEK£¬±íÊ¾ÓÃ»§²»ÊÇÕæµÄÒª¶ÁÈ¡Êı¾İ£¬Ö»ÊÇÒ»¸öpeekµ÷ÓÃ¡£
-                ÄÇÃ´²¢²»ÕæÕı¶ÁÈ¡Êı¾İ
+                è®¾ç½®MSG_PEEKï¼Œè¡¨ç¤ºç”¨æˆ·ä¸æ˜¯çœŸçš„è¦è¯»å–æ•°æ®ï¼Œåªæ˜¯ä¸€ä¸ªpeekè°ƒç”¨ã€‚
+                é‚£ä¹ˆå¹¶ä¸çœŸæ­£è¯»å–æ•°æ®
                 */
 				skb->peeked = 1;
 				atomic_inc(&skb->users);
 			} else
-				__skb_unlink(skb, &sk->sk_receive_queue);//´Ó¶ÓÁĞÖĞÈ¡³öÊı¾İ£¬¼´¿É¿´×÷¶Á³öÊı¾İ
+				__skb_unlink(skb, &sk->sk_receive_queue);//ä»é˜Ÿåˆ—ä¸­å–å‡ºæ•°æ®ï¼Œå³å¯çœ‹ä½œè¯»å‡ºæ•°æ®
 		}
 		spin_unlock_irqrestore(&sk->sk_receive_queue.lock, cpu_flags);
 
-		if (skb) // ÓĞÊı¾İ°ü£¬·µ»Øskb
+		if (skb) // æœ‰æ•°æ®åŒ…ï¼Œè¿”å›skb
 			return skb;
 
          /*
-        timeoÎª0£¬ÓĞ2ÖĞÇé¿ö£º1ÖÖÊÇsocketÎª·Ç×èÈûµÄ£¬µÚ2ÖÖ£¬¼´socket×èÈûµÄÊ±¼äÒÑ¾­³¬¹ıÁËtimeoµÄÖµ£¬
-	ÄÇÃ´¾ÍÌøµ½no_packet´¦Àí 
+        timeoä¸º0ï¼Œæœ‰2ä¸­æƒ…å†µï¼š1ç§æ˜¯socketä¸ºéé˜»å¡çš„ï¼Œç¬¬2ç§ï¼Œå³socketé˜»å¡çš„æ—¶é—´å·²ç»è¶…è¿‡äº†timeoçš„å€¼ï¼Œ
+	é‚£ä¹ˆå°±è·³åˆ°no_packetå¤„ç† 
         */
 		/* User doesn't want to wait */
 		error = -EAGAIN;
 		if (!timeo)
 			goto no_packet;
 
-	} while (!wait_for_packet(sk, err, &timeo));//×èÈû½ø³Ì£¬µÈ´ıÊı¾İ°ü
+	} while (!wait_for_packet(sk, err, &timeo));//é˜»å¡è¿›ç¨‹ï¼Œç­‰å¾…æ•°æ®åŒ…
 
 	return NULL;
 
@@ -225,7 +225,7 @@ no_packet:
 	return NULL;
 }
 EXPORT_SYMBOL(__skb_recv_datagram);
-//´ÓµÈ´ı¶ÓÁĞÖĞ½ÓÊÜÒ»¸öÊı¾İ°ü
+//ä»ç­‰å¾…é˜Ÿåˆ—ä¸­æ¥å—ä¸€ä¸ªæ•°æ®åŒ…
 struct sk_buff *skb_recv_datagram(struct sock *sk, unsigned flags,
 				  int noblock, int *err)
 {
@@ -314,7 +314,7 @@ EXPORT_SYMBOL(skb_kill_datagram);
  *	@len: amount of data to copy from buffer to iovec
  *
  *	Note: the iovec is modified during the copy.
- *///½«skb¿½±´ÖÁmsghdrµÄiovecÖĞ
+ *///å°†skbæ‹·è´è‡³msghdrçš„iovecä¸­
 int skb_copy_datagram_iovec(const struct sk_buff *skb, int offset,
 			    struct iovec *to, int len)
 {

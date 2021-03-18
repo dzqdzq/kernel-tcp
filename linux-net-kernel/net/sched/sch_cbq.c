@@ -2025,7 +2025,7 @@ static void cbq_walk(struct Qdisc *sch, struct qdisc_walker *arg)
 	}
 }
 
-//prio对应prio_class_ops htb对应htb_class_ops cbq对应cbq_class_ops等等
+//prio瀵瑰簲prio_class_ops htb瀵瑰簲htb_class_ops cbq瀵瑰簲cbq_class_ops绛夌瓑
 static const struct Qdisc_class_ops cbq_class_ops = {
 	.graft		=	cbq_graft,
 	.leaf		=	cbq_leaf,

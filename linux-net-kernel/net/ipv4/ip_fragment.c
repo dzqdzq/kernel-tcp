@@ -595,7 +595,7 @@ out_fail:
 }
 
 /* Process an incoming IP datagram fragment. */
-//yang  IP碎片重组
+//yang  IP纰庣墖閲嶇粍
 int ip_defrag(struct sk_buff *skb, u32 user)
 {
 	struct ipq *qp;
@@ -764,7 +764,7 @@ static struct pernet_operations ip4_frags_ops = {
 	.exit = ipv4_frags_exit_net,
 };
 
-void __init ipfrag_init(void) //初始化IP分片模块
+void __init ipfrag_init(void) //鍒濆鍖朓P鍒嗙墖妯″潡
 {
 	ip4_frags_ctl_register();
 	register_pernet_subsys(&ip4_frags_ops);

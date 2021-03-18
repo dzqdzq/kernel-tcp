@@ -58,7 +58,7 @@ typedef struct _Stream
 
     ubi_trRoot data;
 
-    giop_data_t giop; /* TCP上层的giop 重组 */
+    giop_data_t giop; /* TCP涓婂眰鐨刧iop 閲嶇粍 */
 } Stream;
 
 typedef struct _SessionHashKey
@@ -133,7 +133,7 @@ typedef struct _Stream4Data
     char evasion_alerts;
     u_int32_t memcap;
     u_int32_t max_sessions;
-    u_int32_t cache_clean_percent; /* 万分之几 */
+    u_int32_t cache_clean_percent; /* 涓囧垎涔嬪嚑 */
     u_int16_t cache_clean_sessions;
 
     char log_flushed_streams;

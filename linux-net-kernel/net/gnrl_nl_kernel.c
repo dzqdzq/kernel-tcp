@@ -11,9 +11,9 @@ int g_pid = 0;
 
 /* general netlink family */
 static struct genl_family genlnet_family = {
-    .id = GENL_ID_GENERATE,                 /* ±íÊ¾×Ô¶¯Éú³ÉÒ»¸öfamily id */
-    .name = GENLNET_NAME,                   /* Ãû³Æ */
-    .version = GENLNET_VERSION,             /* °æ±¾ºÅ */
+    .id = GENL_ID_GENERATE,                 /* è¡¨ç¤ºè‡ªåŠ¨ç”Ÿæˆä¸€ä¸ªfamily id */
+    .name = GENLNET_NAME,                   /* åç§° */
+    .version = GENLNET_VERSION,             /* ç‰ˆæœ¬å· */
     .maxattr = MSG_CMD_ATTR_MAX,            /* NLA TYPE MAX */
 };
 
@@ -25,11 +25,11 @@ static struct genl_ops genlnet_msg_trans_ops = {
     .doit = genlnet_msg_handle,
 };
 
-/* ´ÓÄÚºË·¢ÏûÏ¢¸øÓÃ»§¿Õ¼ä */
+/* ä»å†…æ ¸å‘æ¶ˆæ¯ç»™ç”¨æˆ·ç©ºé—´ */
 /*
- * @pid:ÓÃ»§½øĞĞid
-   @data:·¢ËÍÊı¾İ»º³åÇø
-   @data_len:»º³åÇø³¤¶È
+ * @pid:ç”¨æˆ·è¿›è¡Œid
+   @data:å‘é€æ•°æ®ç¼“å†²åŒº
+   @data_len:ç¼“å†²åŒºé•¿åº¦
   */
 static int genlnet_msg_send(int pid, char *data, uint32_t data_len)
 {
@@ -83,7 +83,7 @@ err:
     return -1;
 }
 
-/* ÓÃ»§¿Õ¼ä·¢ËÍÊı¾İ¹ıÀ´£¬µ÷ÓÃ´Ë½Ó¿Ú½øĞĞ´¦Àí */
+/* ç”¨æˆ·ç©ºé—´å‘é€æ•°æ®è¿‡æ¥ï¼Œè°ƒç”¨æ­¤æ¥å£è¿›è¡Œå¤„ç† */
 static int genlnet_msg_handle(struct sk_buff *skb, struct genl_info *info)
 {
     char str[MAX_STR_LEN];
@@ -109,7 +109,7 @@ static int genlnet_msg_handle(struct sk_buff *skb, struct genl_info *info)
     return 0;
 }
 
-/* ´´½¨Ò»¸önetlink */
+/* åˆ›å»ºä¸€ä¸ªnetlink */
 static int gnrl_register()
 {
     int ret;
@@ -130,13 +130,13 @@ static int gnrl_register()
     return 0;
 }
 
-/* ½â³ı×¢²á */
+/* è§£é™¤æ³¨å†Œ */
 static void gnrl_unregister()
 {    
     if (genlnet_family.id != GENL_ID_GENERATE) {
-        /* Õâ²½¿ÉÒÔÊ¡ÁË */
+        /* è¿™æ­¥å¯ä»¥çœäº† */
         genl_unregister_ops(&genlnet_family, &genlnet_msg_trans_ops);
-        /* ±ØĞë */
+        /* å¿…é¡» */
         genl_unregister_family(&genlnet_family);
     }
 }
@@ -147,7 +147,7 @@ static int __init genlnet_init(void)
         return -1;
     }
     
-    /* ´´½¨ÄÚºËÏß³Ì£ºkthread_run */
+    /* åˆ›å»ºå†…æ ¸çº¿ç¨‹ï¼škthread_run */
     return 0;
 }
 

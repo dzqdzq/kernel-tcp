@@ -290,8 +290,8 @@ EXPORT_SYMBOL(sysctl_tcp_mem);
 EXPORT_SYMBOL(sysctl_tcp_rmem);
 EXPORT_SYMBOL(sysctl_tcp_wmem);
 
-//��tcp_memory_allocated����sysctl_tcp_mem[1]ʱ��TCP����������뾯��״̬��tcp_memory_pressure��Ϊ1�� �⼸�������浽proto�еĶ�Ӧ�����С�������뾯��״̬�����ڽ������ݵ�ʱ���tcp_should_expand_sndbuf
-//��tcp_memory_allocatedС��sysctl_tcp_mem[0]ʱ��TCP��������˳�����״̬��tcp_memory_pressure��Ϊ0�� 
+//当tcp_memory_allocated大于sysctl_tcp_mem[1]时，TCP缓存管理进入警告状态，tcp_memory_pressure置为1。 这几个变量存到proto中的对应变量中。如果进入警告状态，则在接收数据的时候会tcp_should_expand_sndbuf
+//当tcp_memory_allocated小于sysctl_tcp_mem[0]时，TCP缓存管理退出警告状态，tcp_memory_pressure置为0。 
 atomic_t tcp_memory_allocated;	/* Current allocated memory. */
 EXPORT_SYMBOL(tcp_memory_allocated);
 
@@ -522,16 +522,16 @@ static inline void tcp_mark_push(struct tcp_sock *tp, struct sk_buff *skb)
 }
 
 /*
- * ������ϴη����Ժ�������Ѿ������Է�ͨ���
- * ��󴰿ڵ�һ�룬�򷵻�1����ʾ��Ҫ�������͡�
- */ //Ҳ���Ǳ���δ���ͳ�ȥ�����ݳ��ȴﵽ�˶Է���󻬶�����ֵ��һ����
+ * 如果自上次发送以后的数据已经超过对方通告的
+ * 最大窗口的一半，则返回1，表示需要立即发送。
+ */ //也就是本端未发送出去的数据长度达到了对方最大滑动窗口值的一半了
 static inline int forced_push(struct tcp_sock *tp)
 {
 	return after(tp->write_seq, tp->pushed_seq + (tp->max_window >> 1));
 }
 
-//skb_entail���skb���ӵ�sk�ķ��Ͷ���β����Ȼ�����sk_mem_charge����sk_wmem_quequed��sk_forward_alloc��ǰ�����Ӹ�skb�����ݵĳ��ȣ�����������ٸ�skb�����ݵĳ���
-//�ڷ���ʱ�����skb_set_owner_w���ø�skb��������ͬʱ�����ͷ��ǵĻص�����Ϊsock_wfree�����sk_wmem_alloc�����Ӹ�skb�����ݵĳ��ȡ�
+//skb_entail会把skb添加到sk的发送队列尾部，然后调用sk_mem_charge调整sk_wmem_quequed和sk_forward_alloc。前则将增加该skb中数据的长度，而后则则减少该skb中数据的长度
+//在发送时会调用skb_set_owner_w设置该skb的宿主，同时设置释放是的回调函数为sock_wfree，最后sk_wmem_alloc将增加该skb中数据的长度。
 static inline void skb_entail(struct sock *sk, struct sk_buff *skb)
 {
 	struct tcp_sock *tp = tcp_sk(sk);
@@ -690,9 +690,9 @@ ssize_t tcp_splice_read(struct socket *sock, loff_t *ppos,
 }
 
 /*
- * sk_stream_alloc_skb()������������͵�SKB��
-�׽��ַ������ݵ�ʱ��struct sock��SKB�Ĺ�ϵ����ͨ��sock_alloc_send_pskb(UDP��RAW�׽��������)������ϸ�˽⡣TCP�ڹ���SYN+ACKʱʹ
-��sock_wmalloc�������û�����ʱͨ��ʹ��sk_stream_alloc_skb()���䷢�ͻ��档���⣬��������(Ҳ��ѡ���)�ķ���ʹ��sock_kmalloc����
+ * sk_stream_alloc_skb()用来分配待发送的SKB。
+套接字发送数据的时候，struct sock和SKB的关系可以通过sock_alloc_send_pskb(UDP和RAW套接字用这个)函数详细了解。TCP在构造SYN+ACK时使
+用sock_wmalloc，发送用户数据时通常使用sk_stream_alloc_skb()分配发送缓存。另外，辅助缓存(也叫选项缓存)的分配使用sock_kmalloc函数
 */
 struct sk_buff *sk_stream_alloc_skb(struct sock *sk, int size, gfp_t gfp)
 {
@@ -702,8 +702,8 @@ struct sk_buff *sk_stream_alloc_skb(struct sock *sk, int size, gfp_t gfp)
 	size = ALIGN(size, 4);
 
     /*
-	 * ����alloc_skb_fclone()����ָ�����ȵ�SKB��
-	 * ����TCPЭ����˵sk->sk_prot->max_header��ֵΪMAX_TCP_HEADER��
+	 * 调用alloc_skb_fclone()分配指定长度的SKB。
+	 * 对于TCP协议来说sk->sk_prot->max_header的值为MAX_TCP_HEADER，
 	 */
 	skb = alloc_skb_fclone(size + sk->sk_prot->max_header, gfp);
 	if (skb) {
@@ -713,11 +713,11 @@ struct sk_buff *sk_stream_alloc_skb(struct sock *sk, int size, gfp_t gfp)
 			 * available to the caller, no more, no less.
 			 */
 			 /*
-        		 * ������ɹ�������Ҫsk_wmem_schedule()ȷ�Ϸ���
-        		 * �����Ƿ���ã������򷵻��ѷ����SKB��
-        		 * �����ͷŷ���Ļ��沢����NULL��
-        		 * sk_wmem_schedule()�Ĵ����л�ѱ��η�����ڴ�����
-        		 * ���ӵ�tcp_prot��memory_allocated�ϡ�
+        		 * 若分配成功，则需要sk_wmem_schedule()确认发送
+        		 * 缓存是否可用，可用则返回已分配的SKB，
+        		 * 否则释放分配的缓存并返回NULL。
+        		 * sk_wmem_schedule()的处理中会把本次分配的内存数量
+        		 * 添加到tcp_prot的memory_allocated上。
         		 */
 			skb_reserve(skb, skb_tailroom(skb) - size);
 			return skb;
@@ -725,10 +725,10 @@ struct sk_buff *sk_stream_alloc_skb(struct sock *sk, int size, gfp_t gfp)
 		__kfree_skb(skb);
 	} else {
 	    /*
-		 * ������ʧ�ܣ���ʹTCP����������뾯��״̬��
-		 * ͬʱ���û��ͨ��SO_SNDBUFѡ������ֹ��趨
-		 * ���ͻ����С�����ޣ��������µ������ͻ���
-		 * ��С�����ޣ���󷵻�NULL��
+		 * 若分配失败，则使TCP缓存管理进入警告状态，
+		 * 同时如果没有通过SO_SNDBUF选项进行手工设定
+		 * 发送缓存大小的上限，则需重新调整发送缓存
+		 * 大小的上限，最后返回NULL。
 		 */
 		sk->sk_prot->enter_memory_pressure(sk);
 		sk_stream_moderate_sndbuf(sk);
@@ -736,7 +736,7 @@ struct sk_buff *sk_stream_alloc_skb(struct sock *sk, int size, gfp_t gfp)
 	return NULL;
 }
 
-//��֧��gso������£�mss_now��xmit_size_goal��ͬ
+//不支持gso的情况下，mss_now和xmit_size_goal相同
 static unsigned int tcp_xmit_size_goal(struct sock *sk, u32 mss_now,
 				       int large_allowed)
 {
@@ -768,7 +768,7 @@ static unsigned int tcp_xmit_size_goal(struct sock *sk, u32 mss_now,
 	return max(xmit_size_goal, mss_now);
 }
 
-//һ��size_goalֵ��mss_nowֵ��ͬ����Ϊһ�㲻֧��g
+//一般size_goal值与mss_now值相同，因为一般不支持g
 static int tcp_send_mss(struct sock *sk, int *size_goal, int flags)
 {
 	int mss_now;
@@ -776,9 +776,9 @@ static int tcp_send_mss(struct sock *sk, int *size_goal, int flags)
 	mss_now = tcp_current_mss(sk);
 
 	/*
-	 * ���flags��������MSG_OOB����!(flags & MSG_OOB)��ֵΪ0��
-	 * ���û������MSG_OOB����!(flags & MSG_OOB)��ֵΪ1.
-	 *///��֧��gso������£�mss_now��size_goal��ͬ
+	 * 如果flags中设置了MSG_OOB，则!(flags & MSG_OOB)的值为0，
+	 * 如果没有设置MSG_OOB，则!(flags & MSG_OOB)的值为1.
+	 *///不支持gso的情况下，mss_now和size_goal相同
 	*size_goal = tcp_xmit_size_goal(sk, mss_now, !(flags & MSG_OOB));
 
 	return mss_now;
@@ -917,15 +917,15 @@ ssize_t tcp_sendpage(struct socket *sock, struct page *page, int offset,
 }
 
 /*
-sk_sndmsg_page��ָ��Ϊ��������ƿ����һ�η����ҳ�棬ͨ���ǵ�ǰ�׽ӿڷ��Ͷ��������һ��SKB�ķ�Ƭ���ݵ����һҳ��
-sk_sndmsg_off:��ʾ���һҳ��Ƭ��ҳ��ƫ�ƣ��µ����ݿ���ֱ�Ӵ����λ�ø��Ƶ��÷�Ƭ�С�
+sk_sndmsg_page：指向为本传输控制块最近一次分配的页面，通常是当前套接口发送队列中最后一个SKB的分片数据的最后一页。
+sk_sndmsg_off:表示最后一页分片的页内偏移，新的数据可以直接从这个位置复制到该分片中。
 */
-#define TCP_PAGE(sk)	(sk->sk_sndmsg_page) //��tcp_sendmsg�п��ٿռ�󣬲����ƣ��������TCP_PAGE(sk) = page
-#define TCP_OFF(sk)	(sk->sk_sndmsg_off)//��tcp_sendmsg�п��ٿռ�󣬲����ƣ��������TCP_OFF(sk) = off + copy;
+#define TCP_PAGE(sk)	(sk->sk_sndmsg_page) //在tcp_sendmsg中开辟空间后，并复制，见里面的TCP_PAGE(sk) = page
+#define TCP_OFF(sk)	(sk->sk_sndmsg_off)//在tcp_sendmsg中开辟空间后，并复制，见里面的TCP_OFF(sk) = off + copy;
 
 /*
- * �������֧��TSO�����ҿ����˸�ѡ���
- * select_size()�ķ���ֵΪ0.
+ * 如果网卡支持TSO，并且开启了该选项，则
+ * select_size()的返回值为0.
  */
 static inline int select_size(struct sock *sk)
 {
@@ -937,13 +937,13 @@ static inline int select_size(struct sock *sk)
 			tmp = 0;
 		else {
 			/*
-			 * SKB_MAX_HEAD��ķ���ֵΪPAGE_SIZE-MAX_TCP_HEADER��
+			 * SKB_MAX_HEAD宏的返回值为PAGE_SIZE-MAX_TCP_HEADER。
 			 */
 			int pgbreak = SKB_MAX_HEAD(MAX_TCP_HEADER);
 
 			/*
-			 * ���赱ǰ��mss����MAX_TCP_HEADER������PAGE_SIZE��
-			 * ��tmp��ֵ����Ϊpgbreak��(�ڶ���������̫����Ϊ��)
+			 * 假设当前的mss加上MAX_TCP_HEADER超过了PAGE_SIZE，
+			 * 则将tmp的值调整为pgbreak。(第二个条件不太可能为假)
 			 */
 			if (tmp >= pgbreak &&
 			    tmp <= pgbreak + (MAX_SKB_FRAGS - 1) * PAGE_SIZE)
@@ -958,47 +958,47 @@ int tcp_sendmsg(struct kiocb *iocb, struct socket *sock, struct msghdr *msg,
 		size_t size)
 {
 	struct sock *sk = sock->sk;
-	struct iovec *iov;//ָ��Ӧ�ó����͵����ݿ�block
+	struct iovec *iov;//指向应用程序发送的数据块block
 	struct tcp_sock *tp = tcp_sk(sk);
 	struct sk_buff *skb;
-	int iovlen;//��ʾ�ж��ٸ�iov���ݿ�
+	int iovlen;//表示有多少个iov数据块
 	int flags;
-	int mss_now, size_goal;//�����֧��GSO����TSO��mss_now��size_goalһ������ͬ��
+	int mss_now, size_goal;//如果不支持GSO或者TSO，mss_now和size_goal一般是相同的
 	int sg, err, copied;
 	long timeo;
 
     /*
-	 * �ڷ��ͺͽ���TCP����ǰ��Ҫ�Դ�����ƿ�����������
-	 * Ӧ�ó����������ͽ��պʹ�����ƿ鱻�����ն�����
-	 * ���ƿ��еķ��ͻ���ն��л��ҡ�
+	 * 在发送和接收TCP数据前都要对传输控制块上锁，以免
+	 * 应用程序主动发送接收和传输控制块被动接收而导致
+	 * 控制块中的发送或接收队列混乱。
 	 */
 	lock_sock(sk);
 	TCP_CHECK_TIMER(sk);
 
     /*
-	 * ��ȡ���������Ƿ����������ʶ�������������ͨ��
-	 * sock_sndtimeo()��ȡ������ʱʱ�䡣����������ʱʱ�䱣��
-	 * ��sock�ṹ��sk_sndtimeo��Ա�С�
+	 * 获取发送数据是否进行阻塞标识，如果阻塞，则通过
+	 * sock_sndtimeo()获取阻塞超时时间。发送阻塞超时时间保存
+	 * 在sock结构的sk_sndtimeo成员中。
 	 */
-	flags = msg->msg_flags;//Ӧ�ò�send sendto sendmsg�����е�flag������һ�㶼����0������һ�У�����һ�㶼��������
-	timeo = sock_sndtimeo(sk, flags & MSG_DONTWAIT); //Ĭ����sk->sk_sndtimeo		=	MAX_SCHEDULE_TIMEOUT  ���޴�����һֱ����
+	flags = msg->msg_flags;//应用层send sendto sendmsg函数中的flag参数，一般都是填0，见下一行，所以一般都是阻塞的
+	timeo = sock_sndtimeo(sk, flags & MSG_DONTWAIT); //默认是sk->sk_sndtimeo		=	MAX_SCHEDULE_TIMEOUT  无限大，所以一直阻塞
 
 	/* Wait for a connection to finish. */
        /* 
-        * sk_state��ֵ��tcp_states.h�ж��壬ʹ�õ��������
-        * TCP_ESTABLISHED���ڵ�ö���е�ֵ��������TCPF_ESTABLISHED
-        * ���ڵ�ö�١���������ö�ٵĹ�ϵ��:
-        * TCPF_xxx = 1<<TCP_xxx��TCPF_ESTABLISHED���ڵ�ö��
-        * ֻ��������֤sk->sk_state�е�״̬��ʲô,ͨ��
-        * λ�������ͬʱ��֤��������ٱȽϵĴ�����
-        * ���������Ϊ�˼�����ǰ��������������
-        * Э��涨��������Խ�TCP_xxxֱ��ʹ��TCPF_xxx����ʽ����
+        * sk_state的值在tcp_states.h中定义，使用的是上面的
+        * TCP_ESTABLISHED所在的枚举中的值，而不是TCPF_ESTABLISHED
+        * 所在的枚举。上下两个枚举的关系是:
+        * TCPF_xxx = 1<<TCP_xxx。TCPF_ESTABLISHED所在的枚举
+        * 只是用来验证sk->sk_state中的状态是什么,通过
+        * 位运算可以同时验证多个，减少比较的次数。
+        * 这里或许是为了兼容以前的作法，或许是
+        * 协议规定，否则可以将TCP_xxx直接使用TCPF_xxx的形式即可
         */
 	/*
-	 * TCPֻ��ESTABLISHED��CLOSE_WAIT������״̬�£����մ���
-	 * �Ǵ򿪵ģ����ܽ������ݡ�������������������
-	 * ״̬�������sk_stream_wait_connect()�ȴ����������ӣ�һ��
-	 * ��ʱ����ת��out_err��������������
+	 * TCP只在ESTABLISHED或CLOSE_WAIT这两种状态下，接收窗口
+	 * 是打开的，才能接收数据。因此如果不处于这两种
+	 * 状态，则调用sk_stream_wait_connect()等待建立起连接，一旦
+	 * 超时则跳转到out_err处做出错处理。
 	 */
 	if ((1 << sk->sk_state) & ~(TCPF_ESTABLISHED | TCPF_CLOSE_WAIT)) 
 		if ((err = sk_stream_wait_connect(sk, &timeo)) != 0)
@@ -1008,29 +1008,29 @@ int tcp_sendmsg(struct kiocb *iocb, struct socket *sock, struct msghdr *msg,
 	clear_bit(SOCK_ASYNC_NOSPACE, &sk->sk_socket->flags);
 
 	/*
-	 * ����tcp_send_mss()��ȡ��ǰ��ЧMSS���ڴ˽������־�е�MSG_OOBȥ����
-	 * ������Ϊtcp_current_mss()��MSG_OOB���ж��Ƿ�֧��GSO������֮һ����
-	 * �������ݲ�֧��GSO��
-	 * ������˻�ȡ��ǰ��MSS�⣬�����ȡĿ�귢�͵�����
-	 * size_goal�洢����TCP�ֶ������ݲ��ֵ���󳤶ȣ����������֧��TSO,
-	 * ��ֵ��MSS����ȵģ��������֧��TSO����ֵҪ�ۺϿ�������֧��
-	 * �����ֶδ�С�����շ�ͨ�����󴰿ڵȣ��μ�tcp_xmit_size_goal().
+	 * 调用tcp_send_mss()获取当前有效MSS，在此将传入标志中的MSG_OOB去除，
+	 * 这是因为tcp_current_mss()中MSG_OOB是判断是否支持GSO的条件之一，而
+	 * 带外数据不支持GSO。
+	 * 这里除了获取当前的MSS外，还会获取目标发送的数据
+	 * size_goal存储的是TCP分段中数据部分的最大长度，如果网卡不支持TSO,
+	 * 其值和MSS是相等的；如果网卡支持TSO，其值要综合考虑网卡支持
+	 * 的最大分段大小及接收方通告的最大窗口等，参见tcp_xmit_size_goal().
 	 */
-	mss_now = tcp_send_mss(sk, &size_goal, flags); //mss_now��size_goalһ������ͬ��
+	mss_now = tcp_send_mss(sk, &size_goal, flags); //mss_now和size_goal一般是相同的
 
 	/* Ok commence sending. */
 	/*
-	 * ��ȡ���������ݿ���������ݿ�ָ�룬ͬʱ����
-	 * copied��copied���Ѵ��û����ݿ鸴�Ƶ�SKB���ֽ�����
+	 * 获取待发送数据块块数及数据块指针，同时清零
+	 * copied。copied是已从用户数据块复制到SKB的字节数。
 	 */
 	iovlen = msg->msg_iovlen;
 	iov = msg->msg_iov;
 	copied = 0;
 
     /*
-	 * �ڿ�ʼ�ֶ�ǰ���ȳ�ʼ��������ΪEPIPE��Ȼ���жϴ�ʱ�׽���
-	 * �Ƿ���ڴ����Լ����׽����Ƿ������������ݣ�����д���
-	 * �������������ݣ�����ת��do_error����������
+	 * 在开始分段前，先初始化错误码为EPIPE，然后判断此时套接字
+	 * 是否存在错误，以及该套接字是否允许发送数据，如果有错误
+	 * 或不允许发送数据，则跳转到do_error处作处理。
 	 */
 	err = -EPIPE;
 	if (sk->sk_err || (sk->sk_shutdown & SEND_SHUTDOWN))
@@ -1038,22 +1038,22 @@ int tcp_sendmsg(struct kiocb *iocb, struct socket *sock, struct msghdr *msg,
 
 	sg = sk->sk_route_caps & NETIF_F_SG;
 
-	while (--iovlen >= 0) { //һ��һ����iovec�ķ���
-		int seglen = iov->iov_len; //ʵ�ʵ��û��ռ䷢�͵����ݳ��ȡ�
+	while (--iovlen >= 0) { //一个一个的iovec的发送
+		int seglen = iov->iov_len; //实际的用户空间发送的数据长度。
 		unsigned char __user *from = iov->iov_base;
 
-		iov++;//ָ��ǰһ�����ݿ����һ�����ݿ�
+		iov++;//指向前一个数据块的下一个数据块
 
 		while (seglen > 0) {
 		    /*
-        		 * �ֶι�����������ѭ�������Ƶģ����ѭ������
-        		 * �Ƿ������û����ݿ鶼�Ѹ�����ɡ����Ȼ�ȡÿ
-        		 * �����ݿ�ĳ��ȼ�ָ�룬ͬʱ�����ݿ�ָ��ָ��
-        		 * ��һ�����ݿ飬Ϊ������һ�����ݿ���׼����
-        		 * seglen�洢���ǵ�ǰ���ݿ�Ĵ�С��from�ǵ�ǰ���ݿ�
-        		 * ����ʼ��ַ��
+        		 * 分段过程是由两个循环来控制的，外层循环控制
+        		 * 是否所有用户数据块都已复制完成。首先获取每
+        		 * 个数据块的长度及指针，同时将数据块指针指向
+        		 * 下一个数据块，为复制下一个数据块作准备。
+        		 * seglen存储的是当前数据块的大小，from是当前数据块
+        		 * 的起始地址。
         		 */
-			int copy = 0;//copy�洢���ǿ��Կ��������ݴ�С��
+			int copy = 0;//copy存储的是可以拷贝的数据大小。
 			int max = size_goal;
 
 			skb = tcp_write_queue_tail(sk);
@@ -1063,7 +1063,7 @@ int tcp_sendmsg(struct kiocb *iocb, struct socket *sock, struct msghdr *msg,
 				copy = max - skb->len;
 			}
 
-			if (copy <= 0) {//˵��sk���Ͷ��е����һ��skb�Ѿ�û�ж���Ŀռ��ˣ�����Ҫ���¿���skb�ռ�
+			if (copy <= 0) {//说明sk发送队列的最后一个skb已经没有多余的空间了，则需要从新开辟skb空间
 new_segment:
 				/* Allocate new segment. If the interface is SG,
 				 * allocate skb fitting to single page.
@@ -1071,10 +1071,10 @@ new_segment:
 				if (!sk_stream_memory_free(sk))
 					goto wait_for_sndbuf;
 
-                //ע�������������alloc_skb_fclone
+                //注意这里面掉的是alloc_skb_fclone
 				skb = sk_stream_alloc_skb(sk,
 							  select_size(sk, sg),
-							  sk->sk_allocation); //���֧��SG(NETIF_F_SG)�����������Ի���������������ֱ�Ӵ浽shinfoҳ��
+							  sk->sk_allocation); //如果支持SG(NETIF_F_SG)，则无需线性缓冲区，所有数据直接存到shinfo页中
 				if (!skb)
 					goto wait_for_memory;
 
@@ -1085,45 +1085,45 @@ new_segment:
 					skb->ip_summed = CHECKSUM_PARTIAL;
 
                 /*
-				 * ����SKB���ӵ����Ͷ���β����
+				 * 将该SKB添加到发送队列尾部。
 				 */
 				skb_entail(sk, skb);
 
 				/*
-				 * ��ʼ��copy����Ϊ�������ݰ�������
-				 * �豸ʱ������ݶγ��ȡ�copy��ʾÿ
-				 * �θ��Ƶ�SKB�����ݳ��ȡ�
+				 * 初始化copy变量为发送数据包到网络
+				 * 设备时最大数据段长度。copy表示每
+				 * 次复制到SKB的数据长度。
 				 */
 				copy = size_goal;
 				max = size_goal;
 			}
 
 			/* Try to append data to the end of skb. */
-			if (copy > seglen) //��Ӧ�ò㷢�͵������п����������ݵ�skb��ʱ�����ֻ�ܿ���ʵ�����ݴ�С
+			if (copy > seglen) //从应用层发送的数据中拷贝复制数据到skb的时候，最多只能拷贝实际数据大小
 				copy = seglen;
 
 			/* Where to copy to? */
-			if (skb_tailroom(skb) > 0) {//˵�����Ի������л�������
+			if (skb_tailroom(skb) > 0) {//说明线性缓冲区中还有数据
 				/* We have some space in skb head. Superb! */
 				if (copy > skb_tailroom(skb))
-					copy = skb_tailroom(skb);//�Ȱ�tail skb�е�ʣ��ռ����ϣ������ֻ����ʣ��Ŀռ��С
-				if ((err = skb_add_data(skb, from, copy)) != 0) //��Ӧ�ò㷢���������������һ���ֵ�tail skb��
+					copy = skb_tailroom(skb);//先把tail skb中的剩余空间填上，但最多只能填剩余的空间大小
+				if ((err = skb_add_data(skb, from, copy)) != 0) //把应用层发送来的数据线填充一部分到tail skb中
 					goto do_fault;
-			} else { //������Ի������Ѿ����ˣ�����Ҫ�����ݿ�����shinfo����
-			    /*���SKB���Դ洢���ײ��Ѿ�û�пռ��ˣ��Ǿ���Ҫ�����ݸ��Ƶ�֧�ַ�ɢ�ۺϵķ�ҳ��*/
-			    /*merge��ʶ�Ƿ������һ����ҳ���������ݣ���ʼ��Ϊ0*/
-			    //���Բο�http://blog.chinaunix.net/uid-23629988-id-196823.html  Scatter/Gather I/O��L3�е�Ӧ�� 
-				int merge = 0;//�ж����һ����ҳ�Ƿ���׷������  1����  0������
-				int i = skb_shinfo(skb)->nr_frags;/*��ȡ��ǰSKB�ķ�Ƭ��������skb_shared_info����nr_frags��ʾ��*/
-				struct page *page = TCP_PAGE(sk); //��һ��ʹ�õ�ʱ������һ��ΪNULL
-				int off = TCP_OFF(sk);//��һ��ʹ�õ�ʱ������һ��ΪNULL
+			} else { //如果线性缓冲区已经满了，则需要把数据拷贝到shinfo里面
+			    /*如果SKB线性存储区底部已经没有空间了，那就需要把数据复制到支持分散聚合的分页中*/
+			    /*merge标识是否在最后一个分页中添加数据，初始化为0*/
+			    //可以参考http://blog.chinaunix.net/uid-23629988-id-196823.html  Scatter/Gather I/O在L3中的应用 
+				int merge = 0;//判断最后一个分页是否能追加数据  1可以  0不可以
+				int i = skb_shinfo(skb)->nr_frags;/*获取当前SKB的分片段数，在skb_shared_info中用nr_frags表示。*/
+				struct page *page = TCP_PAGE(sk); //第一次使用的时候这里一般为NULL
+				int off = TCP_OFF(sk);//第一次使用的时候这里一般为NULL
 
 				if (skb_can_coalesce(skb, i, page, off) &&
-				    off != PAGE_SIZE) { //��ҳ��ûд�������Լ�������Ҳд������Ǻ�������else����Ҫ���·���pageҳ
+				    off != PAGE_SIZE) { //该页还没写满，可以继续忘该也写。如果是后面两种else则需要从新分配page页
 					/* We can extend the last page
 					 * fragment. */
 					merge = 1;
-				} else if (i == MAX_SKB_FRAGS || !sg) { //�������skb_shared_info->��frags[]��Ӧ
+				} else if (i == MAX_SKB_FRAGS || !sg) { //这个数和skb_shared_info->的frags[]对应
 					/* Need to add new fragment and cannot
 					 * do this because interface is non-SG,
 					 * or because all the page slots are
@@ -1132,74 +1132,74 @@ new_segment:
 					goto new_segment;
 
 					/*
-        				 * ��������������һ����Ƭ��׷�����ݣ���
-        				 * ��Ҫ�жϷ�Ƭ�����Ƿ��Ѿ��ﵽ���ޣ����
-        				 * �ﵽ���ޣ���˵������������SKB���������ˣ�
-        				 * ��Ҫ�����µ�SKB�����������豸��֧�ַ�ɢ
-        				 * �ۺ�I/O����Ҳ˵����������Ƭ�и������ݡ���
-        				 * ��������£��Ե�ǰ��TCP������PSH��־������
-        				 * ����pushed_seq��Ա����ʾpushed_seqΪֹ����ϣ����
-        				 * ���췢���ġ������ת��new_segment�����ֿ�ʼ
-        				 * �����µ�SKB����Ϊ���ݻ�û��ȫ�������ꡣ
-        				 * ������������һ����ҳ��׷�����ݣ������ж�
-        				 * ��ʲôԭ��:
-        				 * 1)����Ƿ�Ƭ���Ѵﵽ���ޣ���˵����������ǰ
-        				 *    SKB�и��������ˣ���Ҫ�����µ�SKB��
-        				 * 2)����������豸��֧�ַ�ɢ�ۺ�I/O����Ե�ǰTCP
-        				 *    ������PSH��־��������pushed_seq��Ա����ʾ��pushed_seq
-        				 *    Ϊֹ�Ķζ�ϣ���ܾ��췢�ͳ�ȥ�������ת��
-        				 *    new_segment�����ٴο�ʼ�����µ�SKB����Ϊ���ݻ�û��
-        				 *    ȫ�������ꡣ
+        				 * 如果不可以往最后一个分片内追加数据，则
+        				 * 需要判断分片数量是否已经达到上限，如果
+        				 * 达到上限，则说明不能再往此SKB复制数据了，
+        				 * 需要分配新的SKB。或者网络设备不支持分散
+        				 * 聚合I/O，则也说明不能往分片中复制数据。在
+        				 * 这种情况下，对当前的TCP段设置PSH标志，并且
+        				 * 更新pushed_seq成员，表示pushed_seq为止都是希望能
+        				 * 尽快发出的。最后跳转到new_segment处，又开始
+        				 * 分配新的SKB，因为数据还没有全部复制完。
+        				 * 如果不能往最后一个分页内追加数据，则需判断
+        				 * 是什么原因:
+        				 * 1)如果是分片数已达到上限，则说明不能再向当前
+        				 *    SKB中复制数据了，需要分配新的SKB。
+        				 * 2)如果是网络设备不支持分散聚合I/O，则对当前TCP
+        				 *    段设置PSH标志，并更新pushed_seq成员，表示到pushed_seq
+        				 *    为止的段都希望能尽快发送出去。最后跳转到
+        				 *    new_segment处，再次开始分配新的SKB，因为数据还没有
+        				 *    全部复制完。
         				 */
 				} else if (page) {
 				    /*
-					 * ���һ����ҳ�������Ѿ���������
-					 * ��ҳ����δ�ﵽ���ޡ���
+					 * 最后一个分页中数据已经填满，且
+					 * 分页数量未达到上限。则
 					 */
 					if (off == PAGE_SIZE) {
 						put_page(page);
 						TCP_PAGE(sk) = page = NULL;
-						off = 0;//��Ҫ���¿���pageҳ
+						off = 0;//需要从新开辟page页
 					}
 				} else
 				/*
-					 * ����ֻʣ��һ�����----�Ȳ��������һ��
-					 * ��ҳ׷�����ݣ��ֲ��ܷ����µ�SKB����ô
-					 * �������SKB�Ƿ���ڷ�ҳ�����ݱض�����
-					 * ����ҳ��ʼ����
+					 * 到此只剩下一种情况----既不能在最后一个
+					 * 分页追加数据，又不能分配新的SKB。那么
+					 * 无论这个SKB是否存在分页，数据必定复制
+					 * 到分页起始处。
 					 */
-					off = 0;//��Ҫ���¿���pageҳ
+					off = 0;//需要从新开辟page页
 
 				if (copy > PAGE_SIZE - off)
 					copy = PAGE_SIZE - off;
 
                 /*
-				 * �ڸ�������֮ǰ,�����ж��������ʹ�õĻ���
-				 * �Ƿ�ﵽ����,һ���ﵽ��ֻ�ܵȴ�,ֱ���п���
-				 * ��������ʱΪֹ.
+				 * 在复制数据之前,还需判断用于输出使用的缓存
+				 * 是否达到上限,一旦达到则只能等待,直到有可用
+				 * 输出缓存或超时为止.
 				 */
 				if (!sk_wmem_schedule(sk, copy))
 					goto wait_for_memory;
 
 
                 /*
-				 * ������һ��ҳ��Ϊ��(һ�����·����SKB,
-				 * ����ǰ��һ��ҳ��ֶθպ�ȫ��ʹ��,��ô��
-				 * ��Ҫ����sk_stream_alloc_page()����һ���µ�ҳ����
-				 * �洢����.�������ʧ������ת��wait_for_memory��.
+				 * 如果最后一个页面为空(一般是新分配的SKB,
+				 * 或者前面一个页面分段刚好全部使用,那么就
+				 * 需要调用sk_stream_alloc_page()分配一个新的页面来
+				 * 存储数据.如果分配失败则跳转到wait_for_memory处.
 				 */
 				if (!page) {
 					/* Allocate new cache page. */
-					if (!(page = sk_stream_alloc_page(sk))) //�����µ�pageҳ
+					if (!(page = sk_stream_alloc_page(sk))) //开辟新的page页
 						goto wait_for_memory;
 				}
 
                 /*
-				 * ��ʱ,SKB �ķ�ҳ��׼����,������ԭ�ȴ��ڻ��Ǹոշ���,
-				 * �������͵���skb_copy_to_page()�����ݸ��Ƶ���ҳ��.�������
-				 * ʧ��,����Ҫ����sk_sndmsg_page��sk_sndmsg_off.��Ϊ��Ȼ����ʧ��
-				 * ��,���п������ҳ���Ǹոշ����,������¼�Ա��ͷ�
-				 * ������һ�θ���ʱʹ��.
+				 * 这时,SKB 的分页已准备好,无论是原先存在还是刚刚分配,
+				 * 接下来就调用skb_copy_to_page()将数据复制到分页中.如果复制
+				 * 失败,则需要更新sk_sndmsg_page和sk_sndmsg_off.因为虽然复制失败
+				 * 了,但有可能这个页面是刚刚分配的,因此需记录以备释放
+				 * 或在下一次复制时使用.
 				 */
 				/* Time to copy data. We are close to
 				 * the end! */
@@ -1208,7 +1208,7 @@ new_segment:
 				if (err) {
 					/* If this page was new, give it to the
 					 * socket so it does not get leaked.
-					 */ //����ʧ��
+					 */ //复制失败
 					if (!TCP_PAGE(sk)) {
 						TCP_PAGE(sk) = page;
 						TCP_OFF(sk) = 0;
@@ -1218,82 +1218,82 @@ new_segment:
 
 				/* Update the skb. */
 				/*
-				 * ��ɸ������ݵ�һ����ҳ,��ʱ��Ҫ�����йطֶε�
-				 * ��Ϣ.����������һ��ҳ��ֶ���׷�ӵ�,�������
-				 * ��ҳ������Ч���ݵĳ���.
+				 * 完成复制数据到一个分页,这时需要更新有关分段的
+				 * 信息.如果是在最后一个页面分段中追加的,则需更新
+				 * 该页面内有效数据的长度.
 				 */
-				if (merge) {//mergeΪ1��ʾ֮ǰ�Ѿ������ݴ��ڵ��÷�ҳ����
+				if (merge) {//merge为1表示之前已经有数据存在到该分页中了
 					skb_shinfo(skb)->frags[i - 1].size +=
 									copy;
-				} else {//Ϊ0��ʾ�մ�����pageҳ����һ��д���ݵ���ҳ��
+				} else {//为0表示刚创建的page页，第一次写数据到该页中
 					/*
-					 * ����Ǹ��Ƶ�һ���µ�ҳ��ֶ���,������µ��й�
-					 * �ֶε���Ϣ�ͻ��һЩ,��ֶ����ݵĳ��ȡ�ҳ��ƫ�ơ�
-					 * �ֶ������ȣ�����skb_fill_page_desc()����ɡ������ʶ���
-					 * һ�η���ҳ���sk_sndmsg_page��Ϊ�գ������ӶԸ�ҳ���
-					 * ���ã�����˵�����������ݵ�ҳ��ʱ�·���ģ���û��
-					 * ʹ���꣬�����ӶԸ�ҳ������õ�ͬʱ������Ҫ����
-					 * sk_sndmsg_page��ֵ������·����ҳ����ʹ���꣬������
-					 * ����sk_sndmsg_page��ֵ�ˣ���Ϊ���SKBδ���������ޣ���ô
-					 * �´αض���������µ�ҳ�棬����ڴ˾�ʡȥ�˶�off+copy==PAGE_SIZE
-					 * ������֧�Ĵ���
+					 * 如果是复制到一个新的页面分段中,则需更新的有关
+					 * 分段的信息就会多一些,如分段数据的长度、页内偏移、
+					 * 分段数量等，这由skb_fill_page_desc()来完成。如果标识最近
+					 * 一次分配页面的sk_sndmsg_page不为空，则增加对该页面的
+					 * 引用；否则说明复制了数据的页面时新分配的，且没有
+					 * 使用完，在增加对该页面的引用的同时，还需要更新
+					 * sk_sndmsg_page的值。如果新分配的页面已使用完，就无需
+					 * 更新sk_sndmsg_page的值了，因为如果SKB未超过段上限，那么
+					 * 下次必定还会分配新的页面，因此在此就省去了对off+copy==PAGE_SIZE
+					 * 这条分支的处理
 					 */
 					skb_fill_page_desc(skb, i, page, off, copy);
 					if (TCP_PAGE(sk)) {
 						get_page(page);
-					} else if (off + copy < PAGE_SIZE) { //��һ�η���ҳ������һ������Ҳд���ݣ���ͨ��sk->sk_sndmsg_page��¼�¸�ҳ�����������ü���
+					} else if (off + copy < PAGE_SIZE) { //第一次分配页，并第一次往该也写数据，则通过sk->sk_sndmsg_page记录下该页，并增加引用计数
 						get_page(page);
-						TCP_PAGE(sk) = page; //sk->sk_sndmsg_pageָ�򿪱ٵ�ҳ��
+						TCP_PAGE(sk) = page; //sk->sk_sndmsg_page指向开辟的页面
 					}
 				}
 
                 /*
-                     * ������������,���������β�������һҳ
-                     * ��Ƭ��ҳ��ƫ��.
+                     * 复制了新数据,需更新数据尾端在最后一页
+                     * 分片的页内偏移.
                      */
-				TCP_OFF(sk) = off + copy; //��¼�¸�ҳ�Ѿ�д�����ݵ��ڴ��ҳƫ�Ƶĵط����´ν�������д
+				TCP_OFF(sk) = off + copy; //记录下该页已经写了数据的内存的页偏移的地方，下次紧跟后面写
 			}
 
             /*
-			 * ������Ƶ����ݳ���Ϊ��,��ȡ��TCPCB_FLAG_PSH��־.
+			 * 如果复制的数据长度为零,则取消TCPCB_FLAG_PSH标志.
 			 */
 			if (!copied)
 				TCP_SKB_CB(skb)->flags &= ~TCPCB_FLAG_PSH;
 
             /*
-			 * ���·��Ͷ����е����һ�����write_seq,�Լ�ÿ�����ݰ���
-			 * ���һ������end_seq,��ʼ��gso�ֶ���gso_segs.
+			 * 更新发送队列中的最后一个序号write_seq,以及每个数据包的
+			 * 最后一个序列end_seq,初始化gso分段数gso_segs.
 			 */
 			tp->write_seq += copy;
 			TCP_SKB_CB(skb)->end_seq += copy;
 			skb_shinfo(skb)->gso_segs = 0;
 
-			from += copy; //�������ݵ�Դ��ַ����ƶ�
-			copied += copy;//�Ѿ����������ֽ����������¿�����copy�ֽڡ�
-			if ((seglen -= copy) == 0 && iovlen == 0) //iovlen��iovec���ݶ�����������
+			from += copy; //拷贝数据的源地址向后移动
+			copied += copy;//已经拷贝的总字节数加上最新拷贝的copy字节。
+			if ((seglen -= copy) == 0 && iovlen == 0) //iovlen个iovec数据都拷贝结束。
 				goto out;
 
-			if (skb->len < max || (flags & MSG_OOB)) //˵�����skb��û�ﵽmss�����Լ��������п�����һ��iovec�е����ݽ���
-				continue;//��������һ��i/oʸ��iovec��ȥ����
+			if (skb->len < max || (flags & MSG_OOB)) //说明这个skb还没达到mss，可以继续向其中拷贝下一个iovec中的数据进来
+				continue;//继续从下一个i/o矢量iovec中去数据
 
 			if (forced_push(tp)) { 
 			    /*
-				 * ����Ƿ������������,��������ϴη��ͺ�
-				 * �����������Ƿ��ѳ����Է�����ͨ�������
-				 * ��ͨ�洰��ֵ��һ��.���������������,������
-				 * PSH��־�����__tcp_push_pending_frames()���ڷ��Ͷ���
-				 * �ϵ�SKB��sk_send_head��ʼ���ͳ�ȥ.
-				 * __tcp_push_pending_frames()�����Ͷ����ϵĶη��ͳ�ȥ.���
-				 * ����ʧ��,������Ƿ���Ҫ���������ʱ��.ʵ����,
-				 * �ܶദ��������tcp_write_xmit()�н��е�,frames()ֻ�����ж�
-				 * �Ƿ��ж���Ҫ����ʱ�򵥵ص���tcp_write_xmit()���Ͷ�,���
-				 * ����ʧ��,�ٵ���tcp_check_probe_timer()��λ����̽�ⶨʱ��.
+				 * 检查是否必须立即发送,即检查自上次发送后
+				 * 产生的数据是否已超过对方曾经通告过的最
+				 * 大通告窗口值的一半.如果必须立即发送,则设置
+				 * PSH标志后调用__tcp_push_pending_frames()将在发送队列
+				 * 上的SKB从sk_send_head开始发送出去.
+				 * __tcp_push_pending_frames()将发送队列上的段发送出去.如果
+				 * 发送失败,则会检测是否需要激活持续定时器.实际上,
+				 * 很多处理都是在tcp_write_xmit()中进行的,frames()只是在判断
+				 * 是否有段需要发送时简单地调用tcp_write_xmit()发送段,如果
+				 * 发送失败,再调用tcp_check_probe_timer()复位持续探测定时器.
 				 */
 				tcp_mark_push(tp, skb);
-				__tcp_push_pending_frames(sk, mss_now, TCP_NAGLE_PUSH); //��sk���Ͷ��������е�skbȫ�����ͳ�ȥ
+				__tcp_push_pending_frames(sk, mss_now, TCP_NAGLE_PUSH); //把sk发送队列中所有的skb全部发送出去
 			} /*
-			 * ���û�б�Ҫ��������,�ҷ��Ͷ�����ֻ���������,��
-			 * ����tcp_push_one()ֻ���͵�ǰ��.
+			 * 如果没有必要立即发送,且发送队列上只存在这个段,则
+			 * 调用tcp_push_one()只发送当前段.
 			 */
 			else if (skb == tcp_send_head(sk))
 				tcp_push_one(sk, mss_now); 
@@ -1312,8 +1312,8 @@ wait_for_memory:
 		}
 	}
 
-//������ɻ��߿ռ䲻���do_error�ߵ�����
-out: //Ӧ�ò����ݿ�����ɻ��߷��Ͷ����е�buffer�ռ�ﵽsk_sndbufʱ�����ؿ����ɹ����ֽ�������������Ҳ˵����Ӧ�ò�send����write���ݵ�ʱ�򲢲���һ��write����send�꣬������ݰ�������Ҫ��η���
+//拷贝完成或者空间不足从do_error走到这里
+out: //应用层数据拷贝完成或者发送队列中的buffer空间达到sk_sndbuf时，返回拷贝成功的字节数。所以这里也说明了应用层send或者write数据的时候并不会一次write或者send完，如果数据包过大需要多次发送
 	if (copied)
 		tcp_push(sk, flags, mss_now, tp->nonagle);
 	TCP_CHECK_TIMER(sk);
@@ -1345,13 +1345,13 @@ out_err:
  *	this, no blocking and very strange errors 8)
  */
 /*
- * tcp_recv_urg()���ڴӱ����ڴ�����ƿ��еĴ������ݶ�ȡ��
- * �û��ռ��У����û�ͨ��recvϵͳ���ö�ȡ��������ʱ
- * �����á�����˵������:
- * @sk: ����ȡ�����������ڵĴ�����ƿ�
- * @msg: ������֯��ȡ���ݵ���Ϣͷ
- * @len: �û��ռ��ṩ����ĳ���
- * @flags: ��ȡ�������ݵı�־
+ * tcp_recv_urg()用于从保存在传输控制块中的带外数据读取到
+ * 用户空间中，当用户通过recv系统调用读取带外数据时
+ * 被调用。参数说明如下:
+ * @sk: 待读取带外数据所在的传输控制块
+ * @msg: 用来组织读取数据的消息头
+ * @len: 用户空间提供缓存的长度
+ * @flags: 读取带外数据的标志
  */
 static int tcp_recv_urg(struct sock *sk, struct msghdr *msg, int len, int flags)
 {
@@ -1359,20 +1359,20 @@ static int tcp_recv_urg(struct sock *sk, struct msghdr *msg, int len, int flags)
 
 	/* No URG data to read. */
 	/*
-	 * ����Ƿ��д������ݿɶ������������SOCK_URGINLINE
-	 * ��־��˵���������������������������ͨ��������
-	 * ���մ������ݣ���˲���ʹ�ö��������ݵķ�����ȡ
-	 * ���ݡ�����������ݱ�־Ϊ0����û�д������ݣ�����
-	 * ΪTCP_URG_READ��������������ȫ����ȡ����Ҳ����ʹ��
-	 * ��ȡ�������ݵķ�����ȡ���ݣ�������Ч������
+	 * 检测是否有带外数据可读。如果设置了SOCK_URGINLINE
+	 * 标志，说明带外放入正常数据流，即在普通数据流中
+	 * 接收带外数据，因此不能使用读带外数据的方法读取
+	 * 数据。如果带外数据标志为0，即没有带外数据，或者
+	 * 为TCP_URG_READ，即带外数据已全部读取，则也不能使用
+	 * 读取带外数据的方法读取数据，返回无效错误码
 	 */
 	if (sock_flag(sk, SOCK_URGINLINE) || !tp->urg_data ||
 	    tp->urg_data == TCP_URG_READ)
 		return -EINVAL;	/* Yes this is right ! */
 
     /*
-     * ���TCP��û�����ӣ�Ҳ���ܶ�ȡ�������ݣ�
-     * �򷵻�δ���Ӵ����롣
+     * 如果TCP还没有连接，也不能读取带外数据，
+     * 则返回未连接错误码。
      */
 	if (sk->sk_state == TCP_CLOSE && !sock_flag(sk, SOCK_DONE))
 		return -ENOTCONN;
@@ -1386,17 +1386,17 @@ static int tcp_recv_urg(struct sock *sk, struct msghdr *msg, int len, int flags)
 
 		/* Read urgent data. */
 		/*
-		 * ���ڶ�ȡ�˴������ݣ�����ڷ��ص�
-		 * flags������MSG_OOB��־��
+		 * 由于读取了带外数据，因此在返回的
+		 * flags中增加MSG_OOB标志。
 		 */
 		msg->msg_flags |= MSG_OOB;
 
         /*
-		 * ����ṩ��ȡ�������ݵ��û��ռ䳤�ȴ���0����
-		 * �������ݸ��Ƶ��û��ռ䣬ͬʱ���ö�ȡ�Ĵ�������
-		 * ����Ϊ1.����������ṩ��ȡ�������ݵ��û��ռ䳤��
-		 * Ϊ 0����˵����Ҫ�ض����ݣ�����ڷ��ص�flag������
-		 * MSG_TRUNC��־
+		 * 如果提供读取带外数据的用户空间长度大于0，则将
+		 * 带外数据复制到用户空间，同时设置读取的带外数据
+		 * 长度为1.反而，如果提供读取带外数据的用户空间长度
+		 * 为 0，则说明需要截短数据，因此在返回的flag中添加
+		 * MSG_TRUNC标志
 		 */
 		if (len > 0) {
 			if (!(flags & MSG_TRUNC))
@@ -1655,9 +1655,9 @@ int tcp_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 	u32 urg_hole = 0;
 
     /*
-	 * �û������ڶ�ȡ����֮ǰ������Ҫ�Դ��������������
-	 * �ڶ��Ĺ����У����жϲ�������㣬�Ӷ�������ݵĲ�
-	 * ͬ��������Ϊ���صĲ���Ԥ�ϵĺ����
+	 * 用户进程在读取数据之前，首先要对传输层上锁，以免
+	 * 在读的过程中，软中断操作传输层，从而造成数据的不
+	 * 同步甚至更为严重的不可预料的后果。
 	 */
 	lock_sock(sk);
 
@@ -1674,20 +1674,20 @@ int tcp_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 		goto recv_urg;
 
     /*
-	 * �ڰ����ݴӽ��ջ��渴�Ƶ��û��ռ�Ĺ�����,����µ�ǰ�Ѹ���λ��,�������.�����������,��ô�����copied_seq,�����ֻ�ǲ鿴���ݶ�
-	 *���Ǵ�ϵͳ��������������,��ô���ܸ���copied_seq.��������ݸ��Ƶ��û��ռ������,����������ݻ��ǲ鿴�����Ǹ����Ƿ����copied_seq,
-	 * ���������Ǹ��ݽ������ݻ��ǲ鿴����ȡҪ���±�ǵĵ�ַ,������ �ĸ��Ʋ����Ϳ�����ȫ�����Ľ��ջ��ǲ鿴.
+	 * 在把数据从接收缓存复制到用户空间的过程中,会更新当前已复制位置,及段序号.如果接收数据,那么会更新copied_seq,但如果只是查看数据而
+	 *不是从系统缓冲区移走数据,那么不能更新copied_seq.因此在数据复制到用户空间过程中,区别接收数据还是查看数据是根据是否更新copied_seq,
+	 * 所以这里是根据接收数据还是查看来获取要更新标记的地址,而后面 的复制操作就可以完全不关心接收还是查看.
 	 */
 	seq = &tp->copied_seq;
-	if (flags & MSG_PEEK) { //ֻ�ǲ鿴���ݣ��ں˵����ݲ��ᱻɾ��
+	if (flags & MSG_PEEK) { //只是查看数据，内核的数据不会被删除
 		peek_seq = tp->copied_seq;
 		seq = &peek_seq;
 	}
 
 	/*
-	 * �����Ƿ�����MSG_WAITALL��־��ȷ�����ε�����Ҫ�������ݵĳ���.���������MSG_WAITALL��־,���ȡ���ݳ���Ϊ�û�����ʱ���������len.
+	 * 根据是否设置MSG_WAITALL标志来确定本次调用需要接收数据的长度.如果设置了MSG_WAITALL标志,则读取数据长度为用户调用时的输入参数len.
 	 */
-	target = sock_rcvlowat(sk, flags & MSG_WAITALL, len);//�ں���SYSCALL_DEFINE6��Ĭ������flagsΪMSG_WAITALL
+	target = sock_rcvlowat(sk, flags & MSG_WAITALL, len);//在函数SYSCALL_DEFINE6中默认设置flags为MSG_WAITALL
 
 #ifdef CONFIG_NET_DMA
 	tp->ucopy.dma_chan = NULL;
@@ -1715,8 +1715,8 @@ int tcp_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 		u32 offset;
 
 		/* Are we at urgent data? Stop if we have read anything or have SIGURG pending. */
-    /*ͨ��urg_data��urg_seq����⵱ǰ�Ƿ��ȡ����������.����ڶ�����������֮ǰ�Ѿ���ȡ�˲�������,
-    ����ֹ�����������ݵĶ�ȡ.����,����û��������źŴ�����,��Ҳ��ֹ���εĶ�ȡ. */
+    /*通过urg_data和urg_seq来检测当前是否读取到带外数据.如果在读到带外数据之前已经读取了部分数据,
+    则终止本次正常数据的读取.否则,如果用户进程有信号待处理,则也终止本次的读取. */
 		if (tp->urg_data && tp->urg_seq == *seq) {
 			if (copied)
 				break;
@@ -2040,8 +2040,8 @@ recv_urg:
 }
 
 /*
- * ����sock״̬��������õ�״̬��TCP_CLOSE����Ὣsock�ӹ�ϣ�����Ƴ���
- * ����󶨹����ض˿ڣ����ͷ�ռ�ñ��صĶ˿ں�(ֻ�ǴӶ�Ӧ��listen ����ehash��ȡ����������û���ͷſռ�)��
+ * 设置sock状态，如果设置的状态是TCP_CLOSE，则会将sock从哈希表中移除，
+ * 如果绑定过本地端口，则释放占用本地的端口号(只是从对应的listen 或者ehash中取下来，但还没有释放空间)。
  */
 void tcp_set_state(struct sock *sk, int state)
 {
@@ -2057,9 +2057,9 @@ void tcp_set_state(struct sock *sk, int state)
 		if (oldstate == TCP_CLOSE_WAIT || oldstate == TCP_ESTABLISHED)
 			TCP_INC_STATS(sock_net(sk), TCP_MIB_ESTABRESETS);
 
-		sk->sk_prot->unhash(sk);//�����Ǵ�listen hash����ehash���Ƴ�
+		sk->sk_prot->unhash(sk);//这里是从listen hash或者ehash中移除
 		if (inet_csk(sk)->icsk_bind_hash &&
-		    !(sk->sk_userlocks & SOCK_BINDPORT_LOCK)) //��bhash hash���Ƴ����ͷ��Ѿ�ʹ�õĶ˿ڰ���Ϣ���ƿ�inet_bind_bucket
+		    !(sk->sk_userlocks & SOCK_BINDPORT_LOCK)) //从bhash hash中移除，释放已经使用的端口绑定信息控制块inet_bind_bucket
 			inet_put_port(sk);
 		/* fall through */
 	default:
@@ -2114,23 +2114,23 @@ static int tcp_close_state1(struct sock *sk)
 static int tcp_close_state(struct sock *sk)
 {
 	/*
-	 * ͨ��new_state����͵�ǰ��sock״̬����ȡִ�йرպ�
-	 * sock����һ��״̬
+	 * 通过new_state数组和当前的sock状态，获取执行关闭后
+	 * sock的下一个状态
 	 */
 	int next = (int)new_state[sk->sk_state];
 	/*
-	 * ��Ϊ״̬��ȡֵ���Ϊ11������ִ��&������û���κ�Ӱ��
+	 * 因为状态的取值最大为11，所以执行&操作后没有任何影响
 	 */
 	int ns = next & TCP_STATE_MASK;
 
 	/*
-	 * ����sock״̬��������õ�״̬��TCP_CLOSE����Ὣsock�ӹ�ϣ�����Ƴ���
-	 * ����󶨹����ض˿ڣ����ͷ�ռ�ñ��صĶ˿ںš�
+	 * 设置sock状态，如果设置的状态是TCP_CLOSE，则会将sock从哈希表中移除，
+	 * 如果绑定过本地端口，则释放占用本地的端口号。
 	 */
 	tcp_set_state(sk, ns);
 
 	/*
-	 * ���next�а���TCP_ACTION_FIN��־���򷵻�TCP_ACTION_FIN�����򷵻�0
+	 * 如果next中包含TCP_ACTION_FIN标志，则返回TCP_ACTION_FIN，否则返回0
 	 */
 	return next & TCP_ACTION_FIN;
 }
@@ -2141,8 +2141,8 @@ static int tcp_close_state(struct sock *sk)
  *	that we don't receive shut down or sock_set_flag(sk, SOCK_DEAD).
  */
 /*
- * TCP��shutdownϵͳ���õĴ���ӿڲ�ʵ�֣���
- * �׽��ֲ��ʵ��inet_shutdown()����
+ * TCP的shutdown系统调用的传输接口层实现，由
+ * 套接字层的实现inet_shutdown()调用
  */
 void tcp_shutdown(struct sock *sk, int how)
 {
@@ -2153,9 +2153,9 @@ void tcp_shutdown(struct sock *sk, int how)
 	if (!(how & SEND_SHUTDOWN))
 		return;
     /*
-	 * ���û������SEND_SHUTDOWN��־������ʾ���رշ���ͨ��������Ҫ
-	 * ���κδ�������Ϊ����FINʱ��ֻ�Ǳ�ʾ���ٷ��������ˡ�
-	 * ע��:�����жϵ���SEND_SHUTDOWN������SHUTDOWN_MASK��
+	 * 如果没有设置SEND_SHUTDOWN标志，即表示不关闭发送通道，则不需要
+	 * 做任何处理。因为发送FIN时，只是表示不再发送数据了。
+	 * 注意:这里判断的是SEND_SHUTDOWN，不是SHUTDOWN_MASK。
 	 */
 	/* If we've already sent a FIN, or it's a closed state, skip this. */
 	if ((1 << sk->sk_state) &
@@ -2167,7 +2167,7 @@ void tcp_shutdown(struct sock *sk, int how)
 	}
 }
 
-//���ʱ��timeout��SOCK_LINGER��ʱ�����õ�ʱ�䣬������ʱ��Ϊ0����ֱ���ͷŽ��ն��кͷ��Ͷ����е�SKB
+//这个时间timeout是SOCK_LINGER的时候设置的时间，如果这个时间为0，则直接释放接收队列和发送队列中的SKB
 void tcp_close(struct sock *sk, long timeout)
 {
 	struct sk_buff *skb;
@@ -2178,10 +2178,10 @@ void tcp_close(struct sock *sk, long timeout)
 	sk->sk_shutdown = SHUTDOWN_MASK;
 
     /*
-	 * ����Ǽ����׽��֣���Ϊû�н��������ӣ�
-	 * ������跢��FIN�Ȳ���������TCP״̬ΪCLOSE��
-	 * Ȼ����ֹ��������ɺ���ת��adjudge_to_death��
-	 * ������
+	 * 如果是监听套接字，因为没有建立起连接，
+	 * 因此无需发送FIN等操作。设置TCP状态为CLOSE，
+	 * 然后终止监听，完成后跳转到adjudge_to_death处
+	 * 作处理
 	 */
 	if (sk->sk_state == TCP_LISTEN) {
 		tcp_set_state(sk, TCP_CLOSE);
@@ -2198,9 +2198,9 @@ void tcp_close(struct sock *sk, long timeout)
 	 */
 
 	/*
-	 * ��Ϊ�ǹر����ӣ������Ҫ�ͷ��ѽ��յ�
-	 * ���ն����еĶΣ�ͬʱͳ���ͷ��˶�������
-	 * Ȼ����ջ���
+	 * 因为是关闭连接，因此需要释放已接收到
+	 * 接收队列中的段，同时统计释放了多少数据
+	 * 然后回收缓存
 	 */
 	while ((skb = __skb_dequeue(&sk->sk_receive_queue)) != NULL) {
 		u32 len = TCP_SKB_CB(skb)->end_seq - TCP_SKB_CB(skb)->seq -
@@ -2218,12 +2218,12 @@ void tcp_close(struct sock *sk, long timeout)
 	 * advertise a zero window, then kill -9 the FTP client, wheee...
 	 * Note: timeout is always zero in such a case.
 	 */
-	if (data_was_unread) {//���Ӧ�ò�close��ʱ��sock �������滹��δ�������ݣ���ֱ�ӷ���fst
+	if (data_was_unread) {//如果应用层close的时候，sock 队列上面还有未读的数据，则直接发送fst
 		/* Unread data was tossed, zap the connection. */
 		/*
-		 * �ڴ���δ����������´����Ͽ����ӡ����
-		 * �رյ��׽��ֻ���δ��ȡ�����ݣ�����RST
-		 * ������FIN���Է�����ΪFIN��ʾһ������
+		 * 在存在未读数据情况下处理断开连接。如果
+		 * 关闭的套接字还有未读取的数据，则发送RST
+		 * 而不是FIN给对方，因为FIN表示一切正常
 		 */
 		NET_INC_STATS_USER(sock_net(sk), LINUX_MIB_TCPABORTONCLOSE);
 		tcp_set_state(sk, TCP_CLOSE);
@@ -2231,11 +2231,11 @@ void tcp_close(struct sock *sk, long timeout)
 	} else if (sock_flag(sk, SOCK_LINGER) && !sk->sk_lingertime) {
 		/* Check zero linger _after_ checking for unread data. */
 		/*
-		 * ���������SO_LINGERѡ�����ʱʱ��Ϊ0����ֱ��
-		 * ����disconnect�ӿ�tcp_disconnect()�Ͽ���ɾ�����ͷ��ѽ���
-		 * ���ӵ�δ��accept�Ĵ�����ƿ飬ͬʱɾ�����ͷ���
-		 * ���յ��ڽ��ն���(����ʧ�����)�ϵĶ��Լ����Ͷ���
-		 * �ϵĶ�
+		 * 如果设置了SO_LINGER选项，但延时时间为0，则直接
+		 * 调用disconnect接口tcp_disconnect()断开、删除并释放已建立
+		 * 连接但未被accept的传输控制块，同时删除并释放已
+		 * 接收到在接收队列(包括失序队列)上的段以及发送队列
+		 * 上的段
 		 */
 		sk->sk_prot->disconnect(sk, 0);
 		NET_INC_STATS_USER(sock_net(sk), LINUX_MIB_TCPABORTONDATA);
@@ -2266,42 +2266,42 @@ void tcp_close(struct sock *sk, long timeout)
 		 * 						--ANK
 		 */
 		/*
-		 * ������������ֹSO_LINGERѡ���������SO_LINGERѡ��
-		 * ����ʱʱ�䲻Ϊ0��������¾�״̬ת����new_state��
-		 * �ӵ�ǰ״̬ת������Ӧ��״̬�����õ�ת����Ķ���
-		 * �����TCP_ACTION_FIN����(���µ�״̬���Է���FIN��)����
-		 * ����FIN�θ��Զˣ������Ͷ�����δ���͵Ķη��ͳ�ȥ
+		 * 其他情况，如禁止SO_LINGER选项或启用了SO_LINGER选项
+		 * 且延时时间不为0，则根据新旧状态转换表new_state，
+		 * 从当前状态转换到对应的状态，并得到转换后的动作
+		 * 如果是TCP_ACTION_FIN动作(即新的状态可以发送FIN段)，则
+		 * 发送FIN段给对端，将发送队列上未发送的段发送出去
 		 */
 		tcp_send_fin(sk);
 	}
 
     /*
-	 * �ڸ��Զ˷���RST��FIN�κ󣬵ȴ��׽��ֵĹرգ�ֱ��TCP
-	 * ״̬��ΪFIN_WAIT_1��CLOSING��LAST_ACK��ȴ���ʱ.
-	 * ֻ����������SOCK_LINGER��־��sk_lingertime������£�
-	 * �Ż�ȴ����ӹرա�(Linux�ں�Դ������--TCP/IP������)
+	 * 在给对端发送RST或FIN段后，等待套接字的关闭，直到TCP
+	 * 状态不为FIN_WAIT_1，CLOSING、LAST_ACK或等待超时.
+	 * 只有在设置了SOCK_LINGER标志和sk_lingertime的情况下，
+	 * 才会等待连接关闭。(Linux内核源码剖析--TCP/IP上有误)
 	 */
 	sk_stream_wait_close(sk, timeout);
 
 adjudge_to_death:
     /*
-	 * �����׽���ΪDEAD״̬����Ϊ�¶�����
+	 * 设置套接字为DEAD状态，成为孤儿进程
 	 */
 	state = sk->sk_state;
 
 	/*
-	 * ���Ӷ�sock�ṹ�����ã���Ϊ���������һ��FIN����
+	 * 增加对sock结构的引用，因为这里你加了一个FIN报文
 	 */
 	sock_hold(sk);
 
 	/*
-	 * ��sk�ı�־����ΪSOCK_DEAD����socket�ṹ�͵ȴ������з���
+	 * 将sk的标志设置为SOCK_DEAD，从socket结构和等待队列中分离
 	 */
 	sock_orphan(sk);
 
 	/* It is the last release_sock in its life. It will remove backlog. */
 	/*
-	 * �������ر�֮ǰ���ȴ������յ��󱸶����ϵĶ�
+	 * 在真正关闭之前，先处理接收到后备队列上的段
 	 */
 	release_sock(sk);
 
@@ -2310,26 +2310,26 @@ adjudge_to_death:
 	   to finish close. No need to check for user refs.
 	 */
 	/*
-	 * �ڹرմ�����ƿ�ǰ��������ʱ��ֹ�°벿������
-	 * ������ƿ飬����ɲ������ٿ����°벿��������
-	 * ����ƿ�
+	 * 在关闭传输控制块前，需先暂时禁止下半部，锁定
+	 * 传输控制块，等完成操作后再开启下半部，解锁传
+	 * 输控制块
 	 */
 	local_bh_disable();
 	bh_lock_sock(sk);
 
 	/*
-	 * ����ϵͳ�й¶��׽�����
+	 * 更新系统中孤儿套接字数
 	 */
 	WARN_ON(sock_owned_by_user(sk));
 
     /*
-	 * ���Ӵ�����sock�ṹ��������
+	 * 增加待销毁sock结构的数量。
 	 */
 	percpu_counter_inc(sk->sk_prot->orphan_count);
 
     /*
-	 * �����ʱ�ô�����ƿ�TCP״̬�Ѿ�ΪCLOSE��
-	 * ����������������
+	 * 如果此时该传输控制块TCP状态已经为CLOSE，
+	 * 则无需再作处理了
 	 */
 	/* Have we already been destroyed by a softirq or backlog? */
 	if (state != TCP_CLOSE && sk->sk_state == TCP_CLOSE)
@@ -2349,17 +2349,17 @@ adjudge_to_death:
 	 *	linger2	option.					--ANK
 	 */
     /*
-	 * ������FIN_WAIT_2״̬��CLOSE״̬��ת��.
-	 * sock���뵽TCP_FIN_WAIT2״̬���ڷ���FIN����ܵ�ACK��
+	 * 处理从FIN_WAIT_2状态到CLOSE状态的转换.
+	 * sock进入到TCP_FIN_WAIT2状态是在发送FIN后接受到ACK后
 	 */
-	if (sk->sk_state == TCP_FIN_WAIT2) {  //��ǰ��sk_stream_wait_close���timeout����0�����ȴ�һ���¼�����ʱ���ߵ������ʱ������Ѿ��յ�FIN+ACK��
+	if (sk->sk_state == TCP_FIN_WAIT2) {  //在前面sk_stream_wait_close如果timeout大于0，则会等待一段事件，这时候走到这里的时候可能已经收到FIN+ACK了
 		struct tcp_sock *tp = tcp_sk(sk);
 		if (tp->linger2 < 0) {
 		    /*
-			 * ����ô�����ƿ��TCP_LINGER2ѡ��ֵ
-			 * С��0����ʾ������FIN_WAIT_2״̬�ȴ�
-			 * ת����CLOSE״̬��������������Ϊ
-			 * CLOSE״̬��Ȼ����Զ˷���RST��
+			 * 如果该传输控制块的TCP_LINGER2选项值
+			 * 小于0，表示无需再FIN_WAIT_2状态等待
+			 * 转换到CLOSE状态，而是立即设置为
+			 * CLOSE状态，然后给对端发送RST段
 			 */
 			tcp_set_state(sk, TCP_CLOSE);
 			tcp_send_active_reset(sk, GFP_ATOMIC);
@@ -2369,15 +2369,15 @@ adjudge_to_death:
 			const int tmo = tcp_fin_time(sk);
 
             /*
-			 * ����tcp_fin_time������ʱ���ȡ��Ҫ����
-			 * FIN_WAIT_2״̬��ʱ�����������60s����
-			 * ��Ҫ��FIN_WAIT_2��ʱ���������������
-			 * ��tcp_time_wait()��timewait���ƿ�ȡ��tcp_sock����
-			 * ���ƿ飬��FIN_WAIT_2״̬ת����CLOSE״̬
+			 * 根据tcp_fin_time和往返时间获取需要保持
+			 * FIN_WAIT_2状态的时长。如果大于60s，则
+			 * 需要用FIN_WAIT_2定时器来处理，否则调
+			 * 用tcp_time_wait()由timewait控制块取代tcp_sock传输
+			 * 控制块，从FIN_WAIT_2状态转换到CLOSE状态
 			 */
 			if (tmo > TCP_TIMEWAIT_LEN) {
 				inet_csk_reset_keepalive_timer(sk,
-						tmo - TCP_TIMEWAIT_LEN); //����TCP_TIMEWAIT_LEN��ʱ����keepalive��ʱ����ʵ�֣�Ȼ���ڴ������ʱ����ʱ��ʱ�����time_wait��ʱ����
+						tmo - TCP_TIMEWAIT_LEN); //超过TCP_TIMEWAIT_LEN的时间在keepalive定时器中实现，然后在从这个定时器到时的时候进入time_wait定时器中
 			} else {
 				tcp_time_wait(sk, TCP_FIN_WAIT2, tmo);
 				goto out;
@@ -2386,24 +2386,24 @@ adjudge_to_death:
 	}
 
 	/*
-	 * �����ʱδ����CLOSE״̬������Ҫ��⵱ǰ�¶�
-	 * �׽������ͷ��Ͷ��������жε������ܳ��ȡ�
-	 * �����ǰ�¶��׽���������ϵͳ����tcp_max_orphans��
-	 * ���Ͷ��������жε������ܳ��ȳ������ͻ�����
-	 * �������޵���Сֵ���ҵ�ǰ����TCP����㻺����
-	 * ��������ڴ泬�����������ô�С�����Ӳ��
-	 * ���ƣ����������رմ�����ƿ飬��״̬����
-	 * ΪCLOSE��ͬʱ����RST���Զˡ�
+	 * 如果此时未处在CLOSE状态，则需要检测当前孤儿
+	 * 套接字数和发送队列中所有段的数据总长度。
+	 * 如果当前孤儿套接字数超过系统配置tcp_max_orphans，
+	 * 或发送队列中所有段的数据总长度超过发送缓冲区
+	 * 长度上限的最小值，且当前整个TCP传输层缓冲区
+	 * 所分配的内存超过缓冲区可用大小的最高硬性
+	 * 限制，则需立即关闭传输控制块，将状态设置
+	 * 为CLOSE，同时发送RST给对端。
 	 */
 	if (sk->sk_state != TCP_CLOSE) {
 	    /*
-		 * ���ջ���
+		 * 回收缓存
 		 */
 		sk_mem_reclaim(sk);
 
 		/*
-		 * ��������ٵ�sock�ṹ���࣬����ռ�õ��ڴ���࣬
-		 * ��ֱ�ӽ���TCP_CLOSE״̬�����Ҹ��Զ˷���RST��
+		 * 如果待销毁的sock结构过多，或者占用的内存过多，
+		 * 则直接进入TCP_CLOSE状态，并且给对端发送RST包
 		 */
 		if (tcp_too_many_orphans(sk, 0)) {
 			if (net_ratelimit())
@@ -2417,10 +2417,10 @@ adjudge_to_death:
 	}
 
     /*
-	 * �����ʱTCP״̬ΪCLOSE������Ҫ�ͷŴ�����ƿ鼰��ռ��
-	 * ����Դ
+	 * 如果此时TCP状态为CLOSE，则需要释放传输控制块及其占用
+	 * 的资源
 	 */
-	if (sk->sk_state == TCP_CLOSE) //�����ͨ��SO_LINGER�����˵ȴ��رյĳ�ʱʱ�䣬���п����ߵ�����ڵȴ������У��յ��Է�FIN-ACK
+	if (sk->sk_state == TCP_CLOSE) //如果是通过SO_LINGER设置了等待关闭的超时时间，就有可能走到这里，在等待过程中，收到对方FIN-ACK
 		inet_csk_destroy_sock(sk);
 	/* Otherwise, socket is reprieved until protocol close. */
 
@@ -2506,7 +2506,7 @@ int tcp_disconnect(struct sock *sk, int flags)
 /*
  *	Socket option code for TCP.
  */
- //�û��ռ��setsockopt�е�level����ΪSOL_TCP��ʱ���ߵ�����
+ //用户空间的setsockopt中的level设置为SOL_TCP的时候走到这里
 static int do_tcp_setsockopt(struct sock *sk, int level,
 		int optname, char __user *optval, unsigned int optlen)
 {
@@ -2517,7 +2517,7 @@ static int do_tcp_setsockopt(struct sock *sk, int level,
 
 	/* These are data/string values, all the others are ints */
 	switch (optname) {
-	case TCP_CONGESTION: { //ָ��ӵ�������㷨
+	case TCP_CONGESTION: { //指定拥塞控制算法
 		char name[TCP_CA_NAME_MAX];
 
 		if (optlen < 1)
@@ -2799,7 +2799,7 @@ int tcp_setsockopt(struct sock *sk, int level, int optname, char __user *optval,
 {
 	struct inet_connection_sock *icsk = inet_csk(sk);
 
-	if (level != SOL_TCP) //˵����IP������
+	if (level != SOL_TCP) //说明是IP层设置
 		return icsk->icsk_af_ops->setsockopt(sk, level, optname,
 						     optval, optlen);
 	return do_tcp_setsockopt(sk, level, optname, optval, optlen);
@@ -3032,9 +3032,9 @@ int compat_tcp_getsockopt(struct sock *sk, int level, int optname,
 
 EXPORT_SYMBOL(compat_tcp_getsockopt);
 #endif
-//��ֵ��tcp_protocol
+//赋值给tcp_protocol
 /*
-tcp_tso_segment())����TCP�ν�����GSO�ֶΣ��ֶεõ����¶�ͨ��next������ԭ�ȵĶ� ֮��
+tcp_tso_segment())，对TCP段进行软GSO分段，分段得到的新段通过next链表在原先的段 之后。
 */
 struct sk_buff *tcp_tso_segment(struct sk_buff *skb, int features)
 {
@@ -3083,7 +3083,7 @@ struct sk_buff *tcp_tso_segment(struct sk_buff *skb, int features)
 		goto out;
 	}
 
-	segs = skb_segment(skb, features);//����������ѷ�ƬΪskb������������һ��
+	segs = skb_segment(skb, features);//就是这里面把分片为skb的链表连接在一起
 	if (IS_ERR(segs))
 		goto out;
 
@@ -3578,13 +3578,13 @@ void tcp_done(struct sock *sk)
 	tcp_set_state(sk, TCP_CLOSE);
 	tcp_clear_xmit_timers(sk);
 
-    /* ���ùر�״̬�������ǽ����ͺͽ���ͨ�����ر�*/
+    /* 设置关闭状态，这里是将发送和接收通道都关闭*/
 	sk->sk_shutdown = SHUTDOWN_MASK;
 	
     /*
-     * ���SOCK_DEAD��־û�����ã����ʾ�������̺�������
-     * ����������sk->sk_state_change��������ؽ��̣���
-     * ��Ա�����ڴ�����ƿ�״̬����ʱ����
+     * 如果SOCK_DEAD标志没有设置，则表示其他进程和它还有
+     * 关联，调用sk->sk_state_change来唤醒相关进程，该
+     * 成员函数在传输控制块状态更改时调用
      */
 	if (!sock_flag(sk, SOCK_DEAD))
 		sk->sk_state_change(sk);
@@ -3606,7 +3606,7 @@ static int __init set_thash_entries(char *str)
 __setup("thash_entries=", set_thash_entries);
 
 /*
- * ��IPv4Э����ĳ�ʼ������inet_init����
+ * 由IPv4协议族的初始化函数inet_init调用
  */
 void __init tcp_init(void)
 {
@@ -3616,8 +3616,8 @@ void __init tcp_init(void)
 	unsigned long jiffy = jiffies;
 
     /*
-	 * SKB��cb����������tcp_skb_cb�ṹ�Ĵ�С����ΪTCP�����cb
-	 * �д洢һ��tcp_skb_cb�ṹ
+	 * SKB中cb数组必须大于tcp_skb_cb结构的大小，因为TCP层会在cb
+	 * 中存储一个tcp_skb_cb结构
 	 */
 	BUILD_BUG_ON(sizeof(struct tcp_skb_cb) > sizeof(skb->cb));
 
@@ -3625,8 +3625,8 @@ void __init tcp_init(void)
 	percpu_counter_init(&tcp_orphan_count, 0);
 
 	/*
-	 * �������ڷ���inet_bind_bucket�ṹ�ĺ󱸸��ٻ��棬�ýṹ
-	 * ��Ҫ�����洢�����Ѱ󶨶˿ڵ���Ϣ
+	 * 创建用于分配inet_bind_bucket结构的后备高速缓存，该结构
+	 * 主要用来存储管理已绑定端口的信息
 	 */
 	tcp_hashinfo.bind_bucket_cachep =
 		kmem_cache_create("tcp_bind_bucket",
@@ -3656,8 +3656,8 @@ void __init tcp_init(void)
 		panic("TCP: failed to alloc ehash_locks");
 
    	/*
-	 * �������ڴ洢�Ѱ󶨶˿���Ϣ��ɢ�б���������ehash_size(�ڴ���ehash
-	 * ɢ�б�ʱ�õ�)�õ�ɢ�б��Ĵ�Сbhash_size��Ȼ���ʼ��bhashɢ�б�
+	 * 分配用于存储已绑定端口信息的散列表；并根据ehash_size(在创建ehash
+	 * 散列表时得到)得到散列表的大小bhash_size；然后初始化bhash散列表
 	 */
 	tcp_hashinfo.bhash =
 		alloc_large_system_hash("TCP bind",

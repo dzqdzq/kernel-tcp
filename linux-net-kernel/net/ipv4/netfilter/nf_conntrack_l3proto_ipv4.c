@@ -6,7 +6,7 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
-//ipv4Á¬½Ó¸ú×ÙÄ£¿é
+//ipv4è¿æ¥è·Ÿè¸ªæ¨¡å—
 
 #include <linux/types.h>
 #include <linux/ip.h>
@@ -35,7 +35,7 @@ int (*nf_nat_seq_adjust_hook)(struct sk_buff *skb,
 			      enum ip_conntrack_info ctinfo);
 EXPORT_SYMBOL_GPL(nf_nat_seq_adjust_hook);
 
-//»ñÈ¡±¨ÎÄÖĞµÄÔ´IPÄ¿µÄIP
+//è·å–æŠ¥æ–‡ä¸­çš„æºIPç›®çš„IP
 static bool ipv4_pkt_to_tuple(const struct sk_buff *skb, unsigned int nhoff,
 			      struct nf_conntrack_tuple *tuple)
 {
@@ -91,12 +91,12 @@ static int ipv4_get_l4proto(const struct sk_buff *skb, unsigned int nhoff,
 
 
 /*
-¶ÔÓÚÒ»¸öĞÂÁ´½Ó£¬ÔÚipv4_conntrack_in()º¯ÊıÖĞÖ»ÊÇ´´½¨ÁËstruct nf_conn½á¹¹£¬µ«²¢Ã»ÓĞ½«¸Ã½á¹¹¹ÒÔØµ½Á´½Ó¸ú×ÙµÄHash±íÖĞ£¬ÒòÎª´ËÊ±»¹
-²»ÄÜÈ·¶¨¸ÃÁ´½ÓÊÇ·ñ»á±»NF_IP_FORWARDµãÉÏµÄ¹³×Óº¯Êı¹ıÂËµô£¬ËùÒÔ½«¹ÒÔØµ½Hash±íµÄ¹¤×÷·Åµ½ÁËipv4_confirm()º¯ÊıÖĞ¡£
-×ÓÁ´½ÓµÄhelper¹¦ÄÜÒ²ÊÇÔÚ¸Ãº¯ÊıÖĞÊµÏÖµÄ¡£
+å¯¹äºä¸€ä¸ªæ–°é“¾æ¥ï¼Œåœ¨ipv4_conntrack_in()å‡½æ•°ä¸­åªæ˜¯åˆ›å»ºäº†struct nf_connç»“æ„ï¼Œä½†å¹¶æ²¡æœ‰å°†è¯¥ç»“æ„æŒ‚è½½åˆ°é“¾æ¥è·Ÿè¸ªçš„Hashè¡¨ä¸­ï¼Œå› ä¸ºæ­¤æ—¶è¿˜
+ä¸èƒ½ç¡®å®šè¯¥é“¾æ¥æ˜¯å¦ä¼šè¢«NF_IP_FORWARDç‚¹ä¸Šçš„é’©å­å‡½æ•°è¿‡æ»¤æ‰ï¼Œæ‰€ä»¥å°†æŒ‚è½½åˆ°Hashè¡¨çš„å·¥ä½œæ”¾åˆ°äº†ipv4_confirm()å‡½æ•°ä¸­ã€‚
+å­é“¾æ¥çš„helperåŠŸèƒ½ä¹Ÿæ˜¯åœ¨è¯¥å‡½æ•°ä¸­å®ç°çš„ã€‚
 */
 /*
-ipv4_confirm()º¯ÊıÖ÷Òª¸ºÔğÈ·ÈÏÁ´½Ó(¼´½«Á´½Ó¹ÒÈëµ½ÕıÊ½µÄÁ´½Ó±íÖĞ)¡¢Ö´ĞĞhelperº¯Êı¡¢Æô¶¯Á´½Ó³¬Ê±¶¨Ê±Æ÷µÈ
+ipv4_confirm()å‡½æ•°ä¸»è¦è´Ÿè´£ç¡®è®¤é“¾æ¥(å³å°†é“¾æ¥æŒ‚å…¥åˆ°æ­£å¼çš„é“¾æ¥è¡¨ä¸­)ã€æ‰§è¡Œhelperå‡½æ•°ã€å¯åŠ¨é“¾æ¥è¶…æ—¶å®šæ—¶å™¨ç­‰
 */
 static unsigned int ipv4_confirm(unsigned int hooknum,
 				 struct sk_buff *skb,
@@ -156,7 +156,7 @@ static unsigned int ipv4_conntrack_in(unsigned int hooknum,
 }
 
 /*
-ipv4_conntrack_local() ¹ÒÔØÔÚNF_IP_LOCAL_OUTµãÉÏ¡£¸Ãº¯Êı¹¦ÄÜÓëipv4_conntrack_in()º¯Êı»ù±¾ÏàÍ¬£¬µ«ÆäÓÃÀ´´¦Àí±¾»úÖ÷¶¯ÏòÍâ·¢ÆğµÄÁ´½Ó¡£
+ipv4_conntrack_local() æŒ‚è½½åœ¨NF_IP_LOCAL_OUTç‚¹ä¸Šã€‚è¯¥å‡½æ•°åŠŸèƒ½ä¸ipv4_conntrack_in()å‡½æ•°åŸºæœ¬ç›¸åŒï¼Œä½†å…¶ç”¨æ¥å¤„ç†æœ¬æœºä¸»åŠ¨å‘å¤–å‘èµ·çš„é“¾æ¥ã€‚
 */
 static unsigned int ipv4_conntrack_local(unsigned int hooknum,
 					 struct sk_buff *skb,
@@ -312,7 +312,7 @@ getorigdst(struct sock *sk, int optval, void __user *user, int *len)
 #include <linux/netfilter/nfnetlink.h>
 #include <linux/netfilter/nfnetlink_conntrack.h>
 
-//¿½±´L3ÖĞµÄÔ´ºÍÄ¿µÄIPµ½SKB¶ÔÓ¦µÄµØ·½
+//æ‹·è´L3ä¸­çš„æºå’Œç›®çš„IPåˆ°SKBå¯¹åº”çš„åœ°æ–¹
 static int ipv4_tuple_to_nlattr(struct sk_buff *skb,
 				const struct nf_conntrack_tuple *tuple)
 {

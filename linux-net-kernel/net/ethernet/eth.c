@@ -36,7 +36,7 @@
  *		modify it under the terms of the GNU General Public License
  *		as published by the Free Software Foundation; either version
  *		2 of the License, or (at your option) any later version.
- *///ÒÔÌ«ÍøÍøÂçÉè±¸Çı¶¯×¨ÓÃ½Ó¿Ú
+ *///ä»¥å¤ªç½‘ç½‘ç»œè®¾å¤‡é©±åŠ¨ä¸“ç”¨æ¥å£
 #include <linux/module.h>
 #include <linux/types.h>
 #include <linux/kernel.h>
@@ -154,10 +154,10 @@ EXPORT_SYMBOL(eth_rebuild_header);
  * The rule here is that we
  * assume 802.3 if the type field is short enough to be a length.
  * This is normal practice and works for any 'now in use' protocol.
-  ¶øL2Êı¾İÖ¡ÓĞÈıÖÖÀàĞÍ£ºµ¥²¥£¬¶à²¥ºÍ¹ã²¥£¬ÆäÖĞ¹ã²¥¿É¿´×÷¶à²¥µÄÒ»ÖÖÌØÊâÇé¿ö¡£Bit 0ÓÃÓÚ±íÊ¾¶à²¥»¹ÊÇµ¥²¥£¬µ±bit 0Îª1Ê±£¬
-  Îª¶à²¥£¬Îª0Ê±£¬±íÊ¾µ¥²¥¡£
- */ ////»ñÈ¡Á´Â·²ãĞ­ÒéÀàĞÍ  ETH_P_IPµÈ ²Î¿¼http://blog.csdn.net/magina3/article/details/7323265
- //skb->protocol = eth_type_trans(skb, bp->dev);¸Ãº¯Êı¶Ô´¦Àíºóskb>dataÌø¹ıÒÔÌ«Íø±¨Í·£¬ÓÉmac_headerÖ¸Ê¾ÒÔÌ«Íø±¨Í·£ºhttp://www.linuxidc.com/Linux/2011-05/36065.htm
+  è€ŒL2æ•°æ®å¸§æœ‰ä¸‰ç§ç±»å‹ï¼šå•æ’­ï¼Œå¤šæ’­å’Œå¹¿æ’­ï¼Œå…¶ä¸­å¹¿æ’­å¯çœ‹ä½œå¤šæ’­çš„ä¸€ç§ç‰¹æ®Šæƒ…å†µã€‚Bit 0ç”¨äºè¡¨ç¤ºå¤šæ’­è¿˜æ˜¯å•æ’­ï¼Œå½“bit 0ä¸º1æ—¶ï¼Œ
+  ä¸ºå¤šæ’­ï¼Œä¸º0æ—¶ï¼Œè¡¨ç¤ºå•æ’­ã€‚
+ */ ////è·å–é“¾è·¯å±‚åè®®ç±»å‹  ETH_P_IPç­‰ å‚è€ƒhttp://blog.csdn.net/magina3/article/details/7323265
+ //skb->protocol = eth_type_trans(skb, bp->dev);è¯¥å‡½æ•°å¯¹å¤„ç†åskb>dataè·³è¿‡ä»¥å¤ªç½‘æŠ¥å¤´ï¼Œç”±mac_headeræŒ‡ç¤ºä»¥å¤ªç½‘æŠ¥å¤´ï¼šhttp://www.linuxidc.com/Linux/2011-05/36065.htm
 __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev)
 {
 	struct ethhdr *eth;
@@ -168,11 +168,11 @@ __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev)
 	skb_pull_inline(skb, ETH_HLEN);
 	eth = eth_hdr(skb);
 
-	if (unlikely(is_multicast_ether_addr(eth->h_dest))) {   /* Èç¹ûÊÇ¶à²¥µØÖ·£¬¼´bit0Îª1*/
+	if (unlikely(is_multicast_ether_addr(eth->h_dest))) {   /* å¦‚æœæ˜¯å¤šæ’­åœ°å€ï¼Œå³bit0ä¸º1*/
 		if (!compare_ether_addr_64bits(eth->h_dest, dev->broadcast))
-			skb->pkt_type = PACKET_BROADCAST;// //ÓëÉè±¸µÄ¹ã²¥µØÖ·ÏàÍ¬£¬ÔòÖ¡Îª¹ã²¥Ö¡ 
+			skb->pkt_type = PACKET_BROADCAST;// //ä¸è®¾å¤‡çš„å¹¿æ’­åœ°å€ç›¸åŒï¼Œåˆ™å¸§ä¸ºå¹¿æ’­å¸§ 
 		else
-			skb->pkt_type = PACKET_MULTICAST;//ÓëÉè±¸µÄ¹ã²¥µØÖ·²»Í¬£¬ÔòÖ¡Îª¶à²¥Ö¡
+			skb->pkt_type = PACKET_MULTICAST;//ä¸è®¾å¤‡çš„å¹¿æ’­åœ°å€ä¸åŒï¼Œåˆ™å¸§ä¸ºå¤šæ’­å¸§
         
 	}
 
@@ -201,8 +201,8 @@ __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev)
 		return htons(ETH_P_TRAILER);
 
        /*
-        µ±Ğ­ÒéÖµ´óÓÚ136Ê±£¬ÄÇÃ´Õâ¸öÊı¾İÖ¡Ò»¶¨Îªethernet frame 
-        ÒòÎª802.2ºÍ802.3µÄ¶ÔÓ¦ÓòÎªÖ¡³¤£¬¾ùÒªĞ¡ÓÚ»òµÈÓÚ1500£¬¶øethernet frameµÄĞ­ÒéÀàĞÍ¶¼´óÓÚµÈÓÚ1536.
+        å½“åè®®å€¼å¤§äº136æ—¶ï¼Œé‚£ä¹ˆè¿™ä¸ªæ•°æ®å¸§ä¸€å®šä¸ºethernet frame 
+        å› ä¸º802.2å’Œ802.3çš„å¯¹åº”åŸŸä¸ºå¸§é•¿ï¼Œå‡è¦å°äºæˆ–ç­‰äº1500ï¼Œè€Œethernet frameçš„åè®®ç±»å‹éƒ½å¤§äºç­‰äº1536.
         */
 	if (ntohs(eth->h_proto) >= 1536) //> 0X600
 		return eth->h_proto;
@@ -216,7 +216,7 @@ __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev)
 	 *      won't work for fault tolerant netware but does for the rest.
 	 */
         /*
-            µ±IPXÊ¹ÓÃÔ­Ê¼µÄ802.3×÷ÎªÔØÌåÊ±£¬ÆäÍ·Á½¸ö×Ö½Ú×÷Îªchecksum£¬µ«ÊÇÒ»°ã¶¼ÉèÎª0xffff¡£ 
+            å½“IPXä½¿ç”¨åŸå§‹çš„802.3ä½œä¸ºè½½ä½“æ—¶ï¼Œå…¶å¤´ä¸¤ä¸ªå­—èŠ‚ä½œä¸ºchecksumï¼Œä½†æ˜¯ä¸€èˆ¬éƒ½è®¾ä¸º0xffffã€‚ 
             */
 	if (*(unsigned short *)rawp == 0xFFFF)
 		return htons(ETH_P_802_3);
@@ -344,8 +344,8 @@ const struct header_ops eth_header_ops ____cacheline_aligned = {
  * ether_setup - setup Ethernet network device
  * @dev: network device
  * Fill in the fields of the device structure with Ethernet-generic values.
- *///ÒÔÌ«ÍøÉè±¸ÅäÖÃº¯Êı
-void ether_setup(struct net_device *dev)  //ĞŞ¸ÄmtuµÈ²ÎÊı£¬¼ûnet_device_ops£¬ÀıÈç//ÒÔe100ÎªÀı£¬¼ûe100_netdev_ops
+ *///ä»¥å¤ªç½‘è®¾å¤‡é…ç½®å‡½æ•°
+void ether_setup(struct net_device *dev)  //ä¿®æ”¹mtuç­‰å‚æ•°ï¼Œè§net_device_opsï¼Œä¾‹å¦‚//ä»¥e100ä¸ºä¾‹ï¼Œè§e100_netdev_ops
 {
 	dev->header_ops		= &eth_header_ops;
 	dev->type		= ARPHRD_ETHER;
@@ -372,7 +372,7 @@ EXPORT_SYMBOL(ether_setup);
  * size (sizeof_priv).  A 32-byte (not bit) alignment is enforced for
  * this private data area.
  */
-//ÕâÎ»ÒÔÌ«ÍøÉè±¸·ÖÅänet_device½á¹¹£¬  //alloc_netdev·ÖÅäºÃ¿Õ¼äºó£¬µ÷ÓÃregister_netdevÍê³É×¢²á£¬Ğ¶ÔØµÄÊ±ºòunregister_netdeviceºÍfree_netdevÍê³É×¢Ïú²¢ÊÍ·ÅÄÚ´æ
+//è¿™ä½ä»¥å¤ªç½‘è®¾å¤‡åˆ†é…net_deviceç»“æ„ï¼Œ  //alloc_netdevåˆ†é…å¥½ç©ºé—´åï¼Œè°ƒç”¨register_netdevå®Œæˆæ³¨å†Œï¼Œå¸è½½çš„æ—¶å€™unregister_netdeviceå’Œfree_netdevå®Œæˆæ³¨é”€å¹¶é‡Šæ”¾å†…å­˜
 struct net_device *alloc_etherdev_mq(int sizeof_priv, unsigned int queue_count)
 {
 	return alloc_netdev_mq(sizeof_priv, "eth%d", ether_setup, queue_count);

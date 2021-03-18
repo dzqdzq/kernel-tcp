@@ -99,8 +99,8 @@ struct tcp_md5sig_key *tcp_v4_md5_do_lookup(struct sock *sk, __be32 addr)
 }
 #endif
 
-//´æ·ÅÔÚtcp_protµÄh.hashinfoÖĞ  //¸Ã±äÁ¿³õÊ¼»¯¸³ÖµÔÚtcp_init
-struct inet_hashinfo tcp_hashinfo;//tcp_protÌ×½Ó¿ÚºÍIPV6µÄtcpv6_protÔÚÕâ¸öhash±íÖĞ£¬tcpÌ×½Ó×ÖµÄstruct sockÍ¨¹ıinet_hash¼ÓÈëµ½¸ÃhashÖĞ 
+//å­˜æ”¾åœ¨tcp_protçš„h.hashinfoä¸­  //è¯¥å˜é‡åˆå§‹åŒ–èµ‹å€¼åœ¨tcp_init
+struct inet_hashinfo tcp_hashinfo;//tcp_protå¥—æ¥å£å’ŒIPV6çš„tcpv6_protåœ¨è¿™ä¸ªhashè¡¨ä¸­ï¼Œtcpå¥—æ¥å­—çš„struct socké€šè¿‡inet_hashåŠ å…¥åˆ°è¯¥hashä¸­ 
 
 static inline __u32 tcp_v4_init_sequence(struct sk_buff *skb)
 {
@@ -145,11 +145,11 @@ EXPORT_SYMBOL_GPL(tcp_twsk_unique);
 
 /* This will initiate an outgoing connection. */
 /*
- * ÔÚÌ×½Ó×Ö²ã¼ì²âÍê±ØÒªÌõ¼ş£¬ÈçÌ×½Ó×ÖµÄ×´Ì¬µÈÖ®ºó£¬´«Êä
- * ½Ó¿Ú²ãÖĞ»¹Ğè¶Ô´«Êä¿ØÖÆ¿é½øĞĞ¸üÏêÏ¸µÄĞ£Ñé£¬ÈçµØÖ·×åµÄ
- * ÀàĞÍ£¬ÊÇ·ñ»ñÈ¡µ½ÓĞĞ§µÄÂ·ÓÉÈë¿Ú¡£Í¨¹ı¼ì²âºóÉèÖÃ´«Êä¿Ø
- * ÖÆ¿é¸÷×Ö¶ÎÖµ£¬Èç³õÊ¼»¯Ê±¼ä´Á£¬±£´æÄ¿µÄµØÖ·ºÍÄ¿µÄ¶Ë¿Ú
- * µÈ£¬×îºó¹¹Ôì²¢·¢ËÍSYN¶Î¡£
+ * åœ¨å¥—æ¥å­—å±‚æ£€æµ‹å®Œå¿…è¦æ¡ä»¶ï¼Œå¦‚å¥—æ¥å­—çš„çŠ¶æ€ç­‰ä¹‹åï¼Œä¼ è¾“
+ * æ¥å£å±‚ä¸­è¿˜éœ€å¯¹ä¼ è¾“æ§åˆ¶å—è¿›è¡Œæ›´è¯¦ç»†çš„æ ¡éªŒï¼Œå¦‚åœ°å€æ—çš„
+ * ç±»å‹ï¼Œæ˜¯å¦è·å–åˆ°æœ‰æ•ˆçš„è·¯ç”±å…¥å£ã€‚é€šè¿‡æ£€æµ‹åè®¾ç½®ä¼ è¾“æ§
+ * åˆ¶å—å„å­—æ®µå€¼ï¼Œå¦‚åˆå§‹åŒ–æ—¶é—´æˆ³ï¼Œä¿å­˜ç›®çš„åœ°å€å’Œç›®çš„ç«¯å£
+ * ç­‰ï¼Œæœ€åæ„é€ å¹¶å‘é€SYNæ®µã€‚
  */
 int tcp_v4_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len)
 {
@@ -167,7 +167,7 @@ int tcp_v4_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len)
 	if (usin->sin_family != AF_INET)
 		return -EAFNOSUPPORT;
 
-	nexthop = daddr = usin->sin_addr.s_addr;//connectµÄÊ±ºòs_addrÀïÃæ¶ÔÓ¦µÄÊÇÄ¿µÄµØÖ·£¬¼´¶Ô¶ËipµØÖ·
+	nexthop = daddr = usin->sin_addr.s_addr;//connectçš„æ—¶å€™s_addré‡Œé¢å¯¹åº”çš„æ˜¯ç›®çš„åœ°å€ï¼Œå³å¯¹ç«¯ipåœ°å€
 	if (inet->opt && inet->opt->srr) {
 		if (!daddr)
 			return -EINVAL;
@@ -175,8 +175,8 @@ int tcp_v4_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len)
 	}
 
     /*
-	 * µ÷ÓÃip_route_connect()¸ù¾İÏÂÒ»ÌøµØÖ·µÈĞÅÏ¢²éÕÒÄ¿µÄÂ·ÓÉ»º´æÏî£¬Èç¹ûÂ·ÓÉ²éÕÒÃüÖĞ£¬ÔòÉú³ÉÒ»¸öÏàÓ¦µÄÂ·ÓÉ»º´æÏî£¬Õâ¸ö»º´æÏî²»µ«
-	 * ¿ÉÒÔÓÃÓÚµ±Ç°´ı·¢ËÍSYN¶Î£¬¶øÇÒ¶ÔºóĞøµÄËùÓĞÊı¾İ°ü¶¼¿ÉÒÔÆğµ½Ò»¸ö¼ÓËÙÂ·ÓÉ²éÕÒµÄ×÷ÓÃ¡£
+	 * è°ƒç”¨ip_route_connect()æ ¹æ®ä¸‹ä¸€è·³åœ°å€ç­‰ä¿¡æ¯æŸ¥æ‰¾ç›®çš„è·¯ç”±ç¼“å­˜é¡¹ï¼Œå¦‚æœè·¯ç”±æŸ¥æ‰¾å‘½ä¸­ï¼Œåˆ™ç”Ÿæˆä¸€ä¸ªç›¸åº”çš„è·¯ç”±ç¼“å­˜é¡¹ï¼Œè¿™ä¸ªç¼“å­˜é¡¹ä¸ä½†
+	 * å¯ä»¥ç”¨äºå½“å‰å¾…å‘é€SYNæ®µï¼Œè€Œä¸”å¯¹åç»­çš„æ‰€æœ‰æ•°æ®åŒ…éƒ½å¯ä»¥èµ·åˆ°ä¸€ä¸ªåŠ é€Ÿè·¯ç”±æŸ¥æ‰¾çš„ä½œç”¨ã€‚
 	 */
 	tmp = ip_route_connect(&rt, nexthop, inet->inet_saddr,
 			       RT_CONN_FLAGS(sk), sk->sk_bound_dev_if,
@@ -188,23 +188,23 @@ int tcp_v4_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len)
 		return tmp;
 	}
 
-    /*TCP²»ÄÜÊ¹ÓÃÀàĞÍÎª×é²¥»ò¶à²¥µÄÂ·ÓÉ»º´æÏî¡£*/
+    /*TCPä¸èƒ½ä½¿ç”¨ç±»å‹ä¸ºç»„æ’­æˆ–å¤šæ’­çš„è·¯ç”±ç¼“å­˜é¡¹ã€‚*/
 	if (rt->rt_flags & (RTCF_MULTICAST | RTCF_BROADCAST)) {
 		ip_rt_put(rt);
 		return -ENETUNREACH;
 	}
 
-    /* Èç¹ûÃ»ÓĞÆôÓÃÔ´Â·ÓÉÑ¡Ïî£¬ÔòÊ¹ÓÃ»ñÈ¡µ½Â·ÓÉ»º´æÏîÖĞµÄÄ¿µÄµØÖ·¡£*/
+    /* å¦‚æœæ²¡æœ‰å¯ç”¨æºè·¯ç”±é€‰é¡¹ï¼Œåˆ™ä½¿ç”¨è·å–åˆ°è·¯ç”±ç¼“å­˜é¡¹ä¸­çš„ç›®çš„åœ°å€ã€‚*/
 	if (!inet->opt || !inet->opt->srr)
 		daddr = rt->rt_dst;
 
-    /* Èç¹û»¹Î´ÉèÖÃ´«Êä¿ØÖÆ¿éÖĞµÄÔ´µØÖ·£¬ÔòÊ¹ÓÃÂ·ÓÉ»º´æÏîÖĞµÄÔ´µØÖ·¶ÔÆä½øĞĞÉèÖÃ¡£*/
-    //ÕâÀïËµÃ÷ÁË¿Í»§¶ËÔÚÁ¬½ÓµÄÊ±ºò¿ÉÒÔ²»ÓÃÖ¸Ã÷±¾µØIPµØÖ·£¬ÓÉÂ·ÓÉ»º´æÕÒµ½¶ÔÓ¦Ä¿µÄIPµÄÊ±ºò£¬¾Í¿ÉÒÔÈ·¶¨±¾µØIPµØÖ·ÁË¡£
+    /* å¦‚æœè¿˜æœªè®¾ç½®ä¼ è¾“æ§åˆ¶å—ä¸­çš„æºåœ°å€ï¼Œåˆ™ä½¿ç”¨è·¯ç”±ç¼“å­˜é¡¹ä¸­çš„æºåœ°å€å¯¹å…¶è¿›è¡Œè®¾ç½®ã€‚*/
+    //è¿™é‡Œè¯´æ˜äº†å®¢æˆ·ç«¯åœ¨è¿æ¥çš„æ—¶å€™å¯ä»¥ä¸ç”¨æŒ‡æ˜æœ¬åœ°IPåœ°å€ï¼Œç”±è·¯ç”±ç¼“å­˜æ‰¾åˆ°å¯¹åº”ç›®çš„IPçš„æ—¶å€™ï¼Œå°±å¯ä»¥ç¡®å®šæœ¬åœ°IPåœ°å€äº†ã€‚
 	if (!inet->inet_saddr)
 		inet->inet_saddr = rt->rt_src;
 	inet->inet_rcv_saddr = inet->inet_saddr;
 
-    /* Èç¹û´«Êä¿ØÖÆ¿éÖĞµÄÊ±¼ä´ÁºÍÄ¿µÄµØÖ·ÒÑ±»Ê¹ÓÃ¹ı£¬ÔòËµÃ÷¸Ã´«Êä¿ØÖÆ¿éÖ®Ç°ÒÑ½¨Á¢Á¬½Ó²¢½øĞĞ¹ıÍ¨ĞÅ£¬ĞèÖØĞÂ³õÊ¼»¯Ïà¹Ø³ÉÔ±¡£ */
+    /* å¦‚æœä¼ è¾“æ§åˆ¶å—ä¸­çš„æ—¶é—´æˆ³å’Œç›®çš„åœ°å€å·²è¢«ä½¿ç”¨è¿‡ï¼Œåˆ™è¯´æ˜è¯¥ä¼ è¾“æ§åˆ¶å—ä¹‹å‰å·²å»ºç«‹è¿æ¥å¹¶è¿›è¡Œè¿‡é€šä¿¡ï¼Œéœ€é‡æ–°åˆå§‹åŒ–ç›¸å…³æˆå‘˜ã€‚ */
 	if (tp->rx_opt.ts_recent_stamp && inet->inet_daddr != daddr) {
 		/* Reset inherited state */
 		tp->rx_opt.ts_recent	   = 0;
@@ -212,7 +212,7 @@ int tcp_v4_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len)
 		tp->write_seq		   = 0;
 	}
 
-    /* Èç¹ûÆôÓÃÁËsysctl_tw_recycle²¢½ÓÊÕ¹ıÊ±¼ä´ÁÑ¡Ïî£¬´Ó¶Ô¶ËĞÅÏ¢¿éÖĞ»ñÈ¡ÏàÓ¦µÄÖµÀ´³õÊ¼»¯ts_recent_stampºÍts_recent¡£*/
+    /* å¦‚æœå¯ç”¨äº†sysctl_tw_recycleå¹¶æ¥æ”¶è¿‡æ—¶é—´æˆ³é€‰é¡¹ï¼Œä»å¯¹ç«¯ä¿¡æ¯å—ä¸­è·å–ç›¸åº”çš„å€¼æ¥åˆå§‹åŒ–ts_recent_stampå’Œts_recentã€‚*/
 	if (tcp_death_row.sysctl_tw_recycle &&
 	    !tp->rx_opt.ts_recent_stamp && rt->rt_dst == daddr) {
 		struct inet_peer *peer = rt_get_peer(rt);
@@ -243,8 +243,8 @@ int tcp_v4_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len)
 	 * lock select source port, enter ourselves into the hash tables and
 	 * complete initialization after this.
 	 */
-	 /* ½«TCPÉèÖÃÎªSYN_SENT£¬¶¯Ì¬°ó¶¨Ò»¸ö±¾µØ¶Ë¿Ú£¬²¢½«´«Êä¿ØÖÆ¿éÌí¼Óµ½ehashÉ¢ÁĞ±íÖĞ¡£ÓÉÓÚÔÚ¶¯Ì¬·ÖÅä¶Ë¿ÚÊ±£¬Èç¹ûÕÒµ½µÄÊÇÒÑÊ¹ÓÃµÄ¶Ë¿Ú£¬Ôò
-	 * ĞèÔÚTIME_WAIT×´Ì¬ÖĞ½øĞĞÏàÓ¦µÄÈ·ÈÏ£¬Òò´Ëµ÷ÓÃinet_hash_connect()Ê±ĞèÓÃtimewait´«Êä¿ØÖÆ¿éºÍ²ÎÊı¹ÜÀíÆ÷tcp_death_row×÷Îª²ÎÊı¡£*/
+	 /* å°†TCPè®¾ç½®ä¸ºSYN_SENTï¼ŒåŠ¨æ€ç»‘å®šä¸€ä¸ªæœ¬åœ°ç«¯å£ï¼Œå¹¶å°†ä¼ è¾“æ§åˆ¶å—æ·»åŠ åˆ°ehashæ•£åˆ—è¡¨ä¸­ã€‚ç”±äºåœ¨åŠ¨æ€åˆ†é…ç«¯å£æ—¶ï¼Œå¦‚æœæ‰¾åˆ°çš„æ˜¯å·²ä½¿ç”¨çš„ç«¯å£ï¼Œåˆ™
+	 * éœ€åœ¨TIME_WAITçŠ¶æ€ä¸­è¿›è¡Œç›¸åº”çš„ç¡®è®¤ï¼Œå› æ­¤è°ƒç”¨inet_hash_connect()æ—¶éœ€ç”¨timewaitä¼ è¾“æ§åˆ¶å—å’Œå‚æ•°ç®¡ç†å™¨tcp_death_rowä½œä¸ºå‚æ•°ã€‚*/
 	tcp_set_state(sk, TCP_SYN_SENT);
 	err = inet_hash_connect(&tcp_death_row, sk);
 	if (err)
@@ -257,18 +257,18 @@ int tcp_v4_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len)
 
 	/* OK, now commit destination to socket.  */
 	/*
-	 * ÉèÖÃGSOÀàĞÍÎªSKB_GSO_TCPV4£¬²¢¸ù¾İ¸Ã´«Êä
-	 * ¿ØÖÆ¿éµÄÂ·ÓÉÊä³öÉèÖÃÌØĞÔÉèÖÃ´«Êä¿ØÖÆ
-	 * ¿éÖĞÄ¿µÄÂ·ÓÉÍøÂçÉè±¸µÄÌØĞÔ¡£
+	 * è®¾ç½®GSOç±»å‹ä¸ºSKB_GSO_TCPV4ï¼Œå¹¶æ ¹æ®è¯¥ä¼ è¾“
+	 * æ§åˆ¶å—çš„è·¯ç”±è¾“å‡ºè®¾ç½®ç‰¹æ€§è®¾ç½®ä¼ è¾“æ§åˆ¶
+	 * å—ä¸­ç›®çš„è·¯ç”±ç½‘ç»œè®¾å¤‡çš„ç‰¹æ€§ã€‚
 	 */
 	sk->sk_gso_type = SKB_GSO_TCPV4;
 	sk_setup_caps(sk, &rt->u.dst);
 
     /*
-	 * Èç¹ûwrite_seq×Ö¶ÎÖµÎªÁã£¬ÔòËµÃ÷¸Ã´«Êä¿ØÖÆ¿é»¹
-	 * Î´ÉèÖÃ³õÊ¼ĞòºÅ£¬Òò´ËĞèµ÷ÓÃsecure_tcp_sequence_number()£¬
-	 * ¸ù¾İË«·½µÄµØÖ·¡¢¶Ë¿Ú¼ÆËã³õÊ¼ĞòÁĞºÅ£¬Í¬Ê±¸ù¾İ
-	 * ·¢ËÍĞèÒªºÍµ±Ç°Ê±¼äµÃµ½ÓÃÓÚÉèÖÃIPÊ×²¿IDÓòµÄÖµ¡£
+	 * å¦‚æœwrite_seqå­—æ®µå€¼ä¸ºé›¶ï¼Œåˆ™è¯´æ˜è¯¥ä¼ è¾“æ§åˆ¶å—è¿˜
+	 * æœªè®¾ç½®åˆå§‹åºå·ï¼Œå› æ­¤éœ€è°ƒç”¨secure_tcp_sequence_number()ï¼Œ
+	 * æ ¹æ®åŒæ–¹çš„åœ°å€ã€ç«¯å£è®¡ç®—åˆå§‹åºåˆ—å·ï¼ŒåŒæ—¶æ ¹æ®
+	 * å‘é€éœ€è¦å’Œå½“å‰æ—¶é—´å¾—åˆ°ç”¨äºè®¾ç½®IPé¦–éƒ¨IDåŸŸçš„å€¼ã€‚
 	 */
 	if (!tp->write_seq)
 		tp->write_seq = secure_tcp_sequence_number(inet->inet_saddr,
@@ -279,7 +279,7 @@ int tcp_v4_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len)
 	inet->inet_id = tp->write_seq ^ jiffies;
 
     /*
-	 * ×îºóµ÷ÓÃtcp_connect()À´¹¹Ôì²¢·¢ËÍSYN¶Î¡£
+	 * æœ€åè°ƒç”¨tcp_connect()æ¥æ„é€ å¹¶å‘é€SYNæ®µã€‚
 	 */
 	err = tcp_connect(sk);
 	rt = NULL;
@@ -304,10 +304,10 @@ failure:
  * This routine does path mtu discovery as defined in RFC1191.
  */
 /*
- * ICMPÄ£¿é½ÓÊÕµ½"ĞèÒª·ÖÆ¬ICMPÄ¿µÄ²»¿É´ï±¨ÎÄ"µÄÏûÏ¢ºó£¬
- * ¸ù¾İ´«Êä²ãĞ­Òé£¬Èç¹ûÊÇTCP£¬Ôò»áµ÷ÓÃtcp_v4_err()£¬ÔÚ¸Ã
- * º¯ÊıÖĞ½ø¶ø¸ù¾İÀàĞÍICMP_DEST_UNREACHºÍ±àÂëICMP_FRAG_NEEDED
- * µ÷ÓÃdo_pmtu_discovery()½øĞĞÂ·¾¶MTU·¢ÏÖÊ§°Ü´¦Àí¡£
+ * ICMPæ¨¡å—æ¥æ”¶åˆ°"éœ€è¦åˆ†ç‰‡ICMPç›®çš„ä¸å¯è¾¾æŠ¥æ–‡"çš„æ¶ˆæ¯åï¼Œ
+ * æ ¹æ®ä¼ è¾“å±‚åè®®ï¼Œå¦‚æœæ˜¯TCPï¼Œåˆ™ä¼šè°ƒç”¨tcp_v4_err()ï¼Œåœ¨è¯¥
+ * å‡½æ•°ä¸­è¿›è€Œæ ¹æ®ç±»å‹ICMP_DEST_UNREACHå’Œç¼–ç ICMP_FRAG_NEEDED
+ * è°ƒç”¨do_pmtu_discovery()è¿›è¡Œè·¯å¾„MTUå‘ç°å¤±è´¥å¤„ç†ã€‚
  */
 static void do_pmtu_discovery(struct sock *sk, struct iphdr *iph, u32 mtu)
 {
@@ -319,9 +319,9 @@ static void do_pmtu_discovery(struct sock *sk, struct iphdr *iph, u32 mtu)
      * unfragmented).
      */
     /*
-     * ÔÚ¼àÌı×´Ì¬ÏÂ£¬²»ĞèÒª½øĞĞÂ·¾¶MTU·¢ÏÖ£¬ÒòÎªÔÚ¸Ã
-     * ×´Ì¬ÏÂÊä³öµÄSYN+ACK¶Î×ÜÊÇĞ¡ÓÚ536B£¬Òò´ËÊä³öµÄIP
-     * Êı¾İ°ü²»»á±»·ÖÆ¬¡£
+     * åœ¨ç›‘å¬çŠ¶æ€ä¸‹ï¼Œä¸éœ€è¦è¿›è¡Œè·¯å¾„MTUå‘ç°ï¼Œå› ä¸ºåœ¨è¯¥
+     * çŠ¶æ€ä¸‹è¾“å‡ºçš„SYN+ACKæ®µæ€»æ˜¯å°äº536Bï¼Œå› æ­¤è¾“å‡ºçš„IP
+     * æ•°æ®åŒ…ä¸ä¼šè¢«åˆ†ç‰‡ã€‚
      */
     if (sk->sk_state == TCP_LISTEN)
         return;
@@ -333,18 +333,18 @@ static void do_pmtu_discovery(struct sock *sk, struct iphdr *iph, u32 mtu)
      * route, but I think that's acceptable.
      */
     /*
-     * ¼ì²âµ±Ç°´«Êä¿ØÖÆ¿éµÄÂ·ÓÉ»º´æÏîÊÇ·ñ¿ÉÓÃ¡£Èç¹û
-     * Ê§Ğ§£¬Ôò²»¼ÌĞø´¦Àí¡£
+     * æ£€æµ‹å½“å‰ä¼ è¾“æ§åˆ¶å—çš„è·¯ç”±ç¼“å­˜é¡¹æ˜¯å¦å¯ç”¨ã€‚å¦‚æœ
+     * å¤±æ•ˆï¼Œåˆ™ä¸ç»§ç»­å¤„ç†ã€‚
      */
     if ((dst = __sk_dst_check(sk, 0)) == NULL)
         return;
 
     /*
-     * ÔÚÃ»ÓĞËø¶¨Â·ÓÉ»º´æÏîµÄ¶ÈÁ¿ÖµµÄÇé¿öÏÂ£¬½«»ñÈ¡µÄ
-     * ÏÂÒ»ÌøMTU¸üĞÂµ½ÓëÂ·ÓÉÏà¹ØµÄÂ·ÓÉ»º´æÏîµÄ¶ÈÁ¿ÖµÖĞ¡£
-     * Èç¹û´æ´¢ÔÚÂ·ÓÉ»º´æÏîµÄ¶ÈÁ¿ÖµÖĞµÄPTMU´óÓÚÏÂÒ»ÌøµÄ
-     * MTU£¬ÇÒ·¢ËÍ³öµÄIPÊı¾İ°ü½ûÖ¹·ÖÆ¬£¬ÔòĞè±¨¸æÏàÓ¦µÄ
-     * ´íÎó¡£
+     * åœ¨æ²¡æœ‰é”å®šè·¯ç”±ç¼“å­˜é¡¹çš„åº¦é‡å€¼çš„æƒ…å†µä¸‹ï¼Œå°†è·å–çš„
+     * ä¸‹ä¸€è·³MTUæ›´æ–°åˆ°ä¸è·¯ç”±ç›¸å…³çš„è·¯ç”±ç¼“å­˜é¡¹çš„åº¦é‡å€¼ä¸­ã€‚
+     * å¦‚æœå­˜å‚¨åœ¨è·¯ç”±ç¼“å­˜é¡¹çš„åº¦é‡å€¼ä¸­çš„PTMUå¤§äºä¸‹ä¸€è·³çš„
+     * MTUï¼Œä¸”å‘é€å‡ºçš„IPæ•°æ®åŒ…ç¦æ­¢åˆ†ç‰‡ï¼Œåˆ™éœ€æŠ¥å‘Šç›¸åº”çš„
+     * é”™è¯¯ã€‚
      */
     dst->ops->update_pmtu(dst, mtu);
 
@@ -357,9 +357,9 @@ static void do_pmtu_discovery(struct sock *sk, struct iphdr *iph, u32 mtu)
     mtu = dst_mtu(dst);
 
     /*
-     * ÔÚÔÊĞíÂ·¾¶MTU·¢ÏÖµÄÇé¿öÏÂ£¬Èç¹û»º´æÔÚ´«Êä¿ØÖÆ¿é
-     * ÖĞµÄÂ·¾¶MTUÖµ´óÓÚĞÂµÄÖµ£¬ÔòĞè½«ĞÂµÄÂ·¾¶MTUÖµ¸üĞÂ
-     * µ½´«Êä¿ØÖÆ¿éµÄ»º´æÖĞ£¬Í¬Ê±¸üĞÂMSS£¬×îºóÖØ´«¡£
+     * åœ¨å…è®¸è·¯å¾„MTUå‘ç°çš„æƒ…å†µä¸‹ï¼Œå¦‚æœç¼“å­˜åœ¨ä¼ è¾“æ§åˆ¶å—
+     * ä¸­çš„è·¯å¾„MTUå€¼å¤§äºæ–°çš„å€¼ï¼Œåˆ™éœ€å°†æ–°çš„è·¯å¾„MTUå€¼æ›´æ–°
+     * åˆ°ä¼ è¾“æ§åˆ¶å—çš„ç¼“å­˜ä¸­ï¼ŒåŒæ—¶æ›´æ–°MSSï¼Œæœ€åé‡ä¼ ã€‚
      */
     if (inet->pmtudisc != IP_PMTUDISC_DONT &&
         inet_csk(sk)->icsk_pmtu_cookie > mtu) {
@@ -434,13 +434,13 @@ static void do_pmtu_discovery1(struct sock *sk, struct iphdr *iph, u32 mtu)
  *
  */
     /*
-     * Ä¿µÄ²»¿É´ï¡¢Ô´¶Ë±»¹Ø±Õ¡¢³¬Ê±¡¢²ÎÊı´íÎóÕâËÄÖÖÀàĞÍ
-     * µÄ²î´íICMP±¨ÎÄ£¬¶¼ÊÇÓÉÍ¬Ò»¸öº¯Êıicmp_unreach()À´´¦ÀíµÄ£¬
-     * ¶ÔÆäÖĞÄ¿µÄ²»¿É´ï¡¢Ô´¶Ë±»¹Ø±ÕÕâÁ½ÖÖÀàĞÍICMP±¨ÎÄ
-     * ÒòÒªÌáÈ¡Ä³Ğ©ĞÅÏ¢¶øĞè×÷Ò»Ğ©ÌØÊâµÄ´¦Àí£¬¶øÁíÍâ
-     * Ò»Ğ©Ôò²»ĞèÒª£¬¸ù¾İ²î´í±¨ÎÄÖĞµÄĞÅÏ¢Ö±½Óµ÷ÓÃ
-     * ´«Êä²ãµÄ´íÎó´¦ÀíÀı³Ì¡£²Î¼û<LinuxÄÚºËÔ´ÂëÆÊÎö348Ò³>
-     CMP²î´í±¨ÎÄµÄÊı¾İ²¿·Ö°üÀ¨:Ô­Ê¼Êı¾İ±¨µÄIPÊ×²¿ÔÙ¼ÓÉÏÇ°8¸ö×Ö½ÚµÄÊı¾İ²¿·Ö(2×Ö½ÚÔ´¶Ë¿Ú+2×Ö½ÚÄ¿µÄ¶Ë¿Ú+4×Ö½ÚĞòºÅ)
+     * ç›®çš„ä¸å¯è¾¾ã€æºç«¯è¢«å…³é—­ã€è¶…æ—¶ã€å‚æ•°é”™è¯¯è¿™å››ç§ç±»å‹
+     * çš„å·®é”™ICMPæŠ¥æ–‡ï¼Œéƒ½æ˜¯ç”±åŒä¸€ä¸ªå‡½æ•°icmp_unreach()æ¥å¤„ç†çš„ï¼Œ
+     * å¯¹å…¶ä¸­ç›®çš„ä¸å¯è¾¾ã€æºç«¯è¢«å…³é—­è¿™ä¸¤ç§ç±»å‹ICMPæŠ¥æ–‡
+     * å› è¦æå–æŸäº›ä¿¡æ¯è€Œéœ€ä½œä¸€äº›ç‰¹æ®Šçš„å¤„ç†ï¼Œè€Œå¦å¤–
+     * ä¸€äº›åˆ™ä¸éœ€è¦ï¼Œæ ¹æ®å·®é”™æŠ¥æ–‡ä¸­çš„ä¿¡æ¯ç›´æ¥è°ƒç”¨
+     * ä¼ è¾“å±‚çš„é”™è¯¯å¤„ç†ä¾‹ç¨‹ã€‚å‚è§<Linuxå†…æ ¸æºç å‰–æ348é¡µ>
+     CMPå·®é”™æŠ¥æ–‡çš„æ•°æ®éƒ¨åˆ†åŒ…æ‹¬:åŸå§‹æ•°æ®æŠ¥çš„IPé¦–éƒ¨å†åŠ ä¸Šå‰8ä¸ªå­—èŠ‚çš„æ•°æ®éƒ¨åˆ†(2å­—èŠ‚æºç«¯å£+2å­—èŠ‚ç›®çš„ç«¯å£+4å­—èŠ‚åºå·)
      */
 void tcp_v4_err(struct sk_buff *icmp_skb, u32 info)
 {
@@ -459,8 +459,8 @@ void tcp_v4_err(struct sk_buff *icmp_skb, u32 info)
 	struct net *net = dev_net(icmp_skb->dev);
 
     /*
-	 * ¼ì²âICMP±¨ÎÄ³¤¶ÈÊÇ·ñ°üº¬ÁËÔ­Ê¼IPÊ×²¿ºÍÔ­Ê¼IPÊı¾İ°üÖĞ
-	 * Ç°8×Ö½ÚÊı¾İ£¬Èç¹û²»ÍêÕûÔò·µ»Ø
+	 * æ£€æµ‹ICMPæŠ¥æ–‡é•¿åº¦æ˜¯å¦åŒ…å«äº†åŸå§‹IPé¦–éƒ¨å’ŒåŸå§‹IPæ•°æ®åŒ…ä¸­
+	 * å‰8å­—èŠ‚æ•°æ®ï¼Œå¦‚æœä¸å®Œæ•´åˆ™è¿”å›
 	 */
 	if (icmp_skb->len < (iph->ihl << 2) + 8) {
 		ICMP_INC_STATS_BH(net, ICMP_MIB_INERRORS);
@@ -468,11 +468,11 @@ void tcp_v4_err(struct sk_buff *icmp_skb, u32 info)
 	}
 
     /*
-	 * Í¨¹ı´ÓICMP±¨ÎÄÊı¾İÖĞ»ñÈ¡µÄÔ­Ê¼TCPÊ×²¿ÖĞÔ´¶Ë¿ÚºÅºÍIPÊ×²¿
-	 * ÖĞÔ´µØÖ·£¬µÃµ½·¢ËÍ¸ÃTCP±¨ÎÄµÄ´«Êä¿ØÖÆ¿é¡£Èç¹û»ñÈ¡Ê§°Ü£¬
-	 * ÔòËµÃ÷ICMP±¨ÎÄÓĞÎó»ò¸ÃÌ×½Ó×ÖÒÑ¹Ø±Õ£»Èç¹û»ñÈ¡´«Êä¿ØÖÆ¿é
-	 * µÄTCP×´Ì¬ÎªTIME_WAIT£¬ÔòËµÃ÷Ì×½Ó×Ö¼´½«¹Ø±Õ£¬ÕâÁ½ÖÖÇé¿ö
-	 * ¶¼ÎŞĞè½øÒ»²½´¦Àí
+	 * é€šè¿‡ä»ICMPæŠ¥æ–‡æ•°æ®ä¸­è·å–çš„åŸå§‹TCPé¦–éƒ¨ä¸­æºç«¯å£å·å’ŒIPé¦–éƒ¨
+	 * ä¸­æºåœ°å€ï¼Œå¾—åˆ°å‘é€è¯¥TCPæŠ¥æ–‡çš„ä¼ è¾“æ§åˆ¶å—ã€‚å¦‚æœè·å–å¤±è´¥ï¼Œ
+	 * åˆ™è¯´æ˜ICMPæŠ¥æ–‡æœ‰è¯¯æˆ–è¯¥å¥—æ¥å­—å·²å…³é—­ï¼›å¦‚æœè·å–ä¼ è¾“æ§åˆ¶å—
+	 * çš„TCPçŠ¶æ€ä¸ºTIME_WAITï¼Œåˆ™è¯´æ˜å¥—æ¥å­—å³å°†å…³é—­ï¼Œè¿™ä¸¤ç§æƒ…å†µ
+	 * éƒ½æ— éœ€è¿›ä¸€æ­¥å¤„ç†
 	 */
 	sk = inet_lookup(net, &tcp_hashinfo, iph->daddr, th->dest,
 			iph->saddr, th->source, inet_iif(icmp_skb));
@@ -489,8 +489,8 @@ void tcp_v4_err(struct sk_buff *icmp_skb, u32 info)
 	/* If too many ICMPs get dropped on busy
 	 * servers this needs to be solved differently.
 	 *//*
-	 * Èç¹û´ËÊ±¸Ã´«Êä¿ØÖÆ¿é±»ÓÃ»§½ø³ÌËø¶¨(ÈçÓÃ»§½ø³ÌÕıÔÚµ÷ÓÃ
-	 * sendµÈÏµÍ³µ÷ÓÃ)£¬ÔòĞèÀÛ¼ÆÏà¹ØSNMPµÄÍ³¼ÆÁ¿
+	 * å¦‚æœæ­¤æ—¶è¯¥ä¼ è¾“æ§åˆ¶å—è¢«ç”¨æˆ·è¿›ç¨‹é”å®š(å¦‚ç”¨æˆ·è¿›ç¨‹æ­£åœ¨è°ƒç”¨
+	 * sendç­‰ç³»ç»Ÿè°ƒç”¨)ï¼Œåˆ™éœ€ç´¯è®¡ç›¸å…³SNMPçš„ç»Ÿè®¡é‡
 	 */
 	if (sock_owned_by_user(sk))
 		NET_INC_STATS_BH(net, LINUX_MIB_LOCKDROPPEDICMPS);
@@ -504,8 +504,8 @@ void tcp_v4_err(struct sk_buff *icmp_skb, u32 info)
 	}
 
     /*
-         * Èç¹û´«Êä¿ØÖÆ¿é²»ÔÙÕìÌı×´Ì¬£¬ÇÒĞòºÅ²»ÔÙÒÑ·¢ËÍÎ´È·ÈÏµÄÇø¼äÄÚ£¬Ôò
-         * ICMP±¨ÎÄÒì³££¬ÎŞĞè½øÒ»²½´¦Àí
+         * å¦‚æœä¼ è¾“æ§åˆ¶å—ä¸å†ä¾¦å¬çŠ¶æ€ï¼Œä¸”åºå·ä¸å†å·²å‘é€æœªç¡®è®¤çš„åŒºé—´å†…ï¼Œåˆ™
+         * ICMPæŠ¥æ–‡å¼‚å¸¸ï¼Œæ— éœ€è¿›ä¸€æ­¥å¤„ç†
          */
 
 	icsk = inet_csk(sk);
@@ -525,10 +525,10 @@ void tcp_v4_err(struct sk_buff *icmp_skb, u32 info)
 		err = EPROTO;
 		break;
 		/*
-	 * ´¦ÀíÄ¿µÄ²»¿É´ïÀàĞÍ£¬Ê×ÏÈ¼ì²â´úÂëµÄºÏ·¨ĞÔ£¬È»ºó¸ù¾İ
-	 * ´úÂë¾ßÌå´¦Àí:Èç¹ûĞèÒª·ÖÆ¬¶øÉèÖÃÁË²»¿É·ÖÆ¬£¬Ôòµ÷ÓÃ
-	 * do_pmtu_discovery()Ì½²âÂ·¾¶MTU£»ÆäËû±àÂë£¬Ôò»ñÈ¡
-	 * ¶ÔÓ¦µÄ´íÎóÂë
+	 * å¤„ç†ç›®çš„ä¸å¯è¾¾ç±»å‹ï¼Œé¦–å…ˆæ£€æµ‹ä»£ç çš„åˆæ³•æ€§ï¼Œç„¶åæ ¹æ®
+	 * ä»£ç å…·ä½“å¤„ç†:å¦‚æœéœ€è¦åˆ†ç‰‡è€Œè®¾ç½®äº†ä¸å¯åˆ†ç‰‡ï¼Œåˆ™è°ƒç”¨
+	 * do_pmtu_discovery()æ¢æµ‹è·¯å¾„MTUï¼›å…¶ä»–ç¼–ç ï¼Œåˆ™è·å–
+	 * å¯¹åº”çš„é”™è¯¯ç 
 	 */
 	case ICMP_DEST_UNREACH:
 		if (code > NR_ICMP_UNREACH)
@@ -584,14 +584,14 @@ void tcp_v4_err(struct sk_buff *icmp_skb, u32 info)
 		struct request_sock *req, **prev;
 	case TCP_LISTEN:
 	    /*
-		 * Èç¹û´«Êä¿ØÖÆ¿é±»ÓÃ»§½ø³ÌËø¶¨£¬Ôò²»×÷½øÒ»²½´¦Àí
+		 * å¦‚æœä¼ è¾“æ§åˆ¶å—è¢«ç”¨æˆ·è¿›ç¨‹é”å®šï¼Œåˆ™ä¸ä½œè¿›ä¸€æ­¥å¤„ç†
 		 */
 		if (sock_owned_by_user(sk))
 			goto out;
 
         /*
-		 * ÓÉÓÚ´¦ÓÚ¼àÌı×´Ì¬£¬Òò´Ë¸ù¾İÄ¿µÄ¶Ë¿ÚºÅ¡¢Ô´µØÖ·ºÍÄ¿µÄµØÖ·²éÕÒ
-		 * ÕıÔÚÁ¬½ÓµÄ¶Ô¶ËÌ×½Ó×Ö£¬Èç¹û²éÕÒÊ§°ÜÔò²»×÷½øÒ»²½´¦Àí
+		 * ç”±äºå¤„äºç›‘å¬çŠ¶æ€ï¼Œå› æ­¤æ ¹æ®ç›®çš„ç«¯å£å·ã€æºåœ°å€å’Œç›®çš„åœ°å€æŸ¥æ‰¾
+		 * æ­£åœ¨è¿æ¥çš„å¯¹ç«¯å¥—æ¥å­—ï¼Œå¦‚æœæŸ¥æ‰¾å¤±è´¥åˆ™ä¸ä½œè¿›ä¸€æ­¥å¤„ç†
 		 */
 		req = inet_csk_search_req(sk, &prev, th->dest,
 					  iph->daddr, iph->saddr);
@@ -604,8 +604,8 @@ void tcp_v4_err(struct sk_buff *icmp_skb, u32 info)
 		WARN_ON(req->sk);
 
         /*
-		 * Èç¹û·¢ËÍ³öÈ¥TCP¶ÎµÄĞòºÅ²»µÈÓÚ¶Ô¶ËÌ×½Ó×ÖÖĞµÄ·¢ËÍĞòºÅ£¬
-		 * ÔòËµÃ÷ĞòºÅÓĞÎó£¬²»×÷½øÒ»²½´¦Àí
+		 * å¦‚æœå‘é€å‡ºå»TCPæ®µçš„åºå·ä¸ç­‰äºå¯¹ç«¯å¥—æ¥å­—ä¸­çš„å‘é€åºå·ï¼Œ
+		 * åˆ™è¯´æ˜åºå·æœ‰è¯¯ï¼Œä¸ä½œè¿›ä¸€æ­¥å¤„ç†
 		 */
 		if (seq != tcp_rsk(req)->snt_isn) {
 			NET_INC_STATS_BH(net, LINUX_MIB_OUTOFWINDOWICMPS);
@@ -619,7 +619,7 @@ void tcp_v4_err(struct sk_buff *icmp_skb, u32 info)
 		 * errors returned from accept().
 		 */
 		 /*
-		 * É¾³ı²¢ÊÍ·ÅÁ¬½Ó¹ı³ÌÖĞµÄ´«Êä¿ØÖÆ¿é
+		 * åˆ é™¤å¹¶é‡Šæ”¾è¿æ¥è¿‡ç¨‹ä¸­çš„ä¼ è¾“æ§åˆ¶å—
 		 */
 		inet_csk_reqsk_queue_drop(sk, req, prev);
 		goto out;
@@ -628,10 +628,10 @@ void tcp_v4_err(struct sk_buff *icmp_skb, u32 info)
 	case TCP_SYN_RECV:  /* Cannot happen.
 			       It can f.e. if SYNs crossed.
 			     *//*
-		 * Èç¹û´«Êä¿ØÖÆ¿éÃ»ÓĞ±»ÓÃ»§½ø³ÌËø¶¨£¬Ôò½«´íÎóÂëÉèÖÃµ½sk_err£¬
-		 * µ÷ÓÃ¸ÃÌ×½Ó×ÖµÄ´íÎó±¨¸æ½è¿Úº¯Êı£¬¹Ø±ÕÌ×½Ó×Ö£»·ñÔò½«´íÎóÂë
-		 * ÉèÖÃµ½sk_err_soft£¬ÔÚÕâÖÖÇé¿öÏÂÓÃ»§½ø³Ì¿ÉÊ¹ÓÃSO_ERRORÌ×½Ó
-		 * ×ÖÑ¡Ïî»ñÈ¡´íÎóÂë
+		 * å¦‚æœä¼ è¾“æ§åˆ¶å—æ²¡æœ‰è¢«ç”¨æˆ·è¿›ç¨‹é”å®šï¼Œåˆ™å°†é”™è¯¯ç è®¾ç½®åˆ°sk_errï¼Œ
+		 * è°ƒç”¨è¯¥å¥—æ¥å­—çš„é”™è¯¯æŠ¥å‘Šå€Ÿå£å‡½æ•°ï¼Œå…³é—­å¥—æ¥å­—ï¼›å¦åˆ™å°†é”™è¯¯ç 
+		 * è®¾ç½®åˆ°sk_err_softï¼Œåœ¨è¿™ç§æƒ…å†µä¸‹ç”¨æˆ·è¿›ç¨‹å¯ä½¿ç”¨SO_ERRORå¥—æ¥
+		 * å­—é€‰é¡¹è·å–é”™è¯¯ç 
 		 */
 		if (!sock_owned_by_user(sk)) {
 			sk->sk_err = err;
@@ -662,9 +662,9 @@ void tcp_v4_err(struct sk_buff *icmp_skb, u32 info)
 	 */
 
     /*
-	 * µ½ÕâÒ»²½£¬Ôò´«Êä¿ØÖÆ¿éÒ»¶¨²»ÔÙLISTEN¡¢SYN_SENT»òSYN_RECV×´Ì¬£¬
-	 * ´ËÊ±Èç¹û¿ØÖÆ¿éÃ»ÓĞ±»ÓÃ»§½ø³ÌËø¶¨£¬²¢ÇÒÔÊĞí½ÓÊÕÀ©Õ¹µÄ¿É¿¿´íÎó
-	 * ĞÅÏ¢£¬ÔòÉèÖÃµÃµ½µÄ´íÎóÂë£¬È»ºóÍ¨Öª´íÎó£»·ñÔò½«´íÎóÂëÉèÖÃµ½sk_err_soft
+	 * åˆ°è¿™ä¸€æ­¥ï¼Œåˆ™ä¼ è¾“æ§åˆ¶å—ä¸€å®šä¸å†LISTENã€SYN_SENTæˆ–SYN_RECVçŠ¶æ€ï¼Œ
+	 * æ­¤æ—¶å¦‚æœæ§åˆ¶å—æ²¡æœ‰è¢«ç”¨æˆ·è¿›ç¨‹é”å®šï¼Œå¹¶ä¸”å…è®¸æ¥æ”¶æ‰©å±•çš„å¯é é”™è¯¯
+	 * ä¿¡æ¯ï¼Œåˆ™è®¾ç½®å¾—åˆ°çš„é”™è¯¯ç ï¼Œç„¶åé€šçŸ¥é”™è¯¯ï¼›å¦åˆ™å°†é”™è¯¯ç è®¾ç½®åˆ°sk_err_soft
 	 */
 	inet = inet_sk(sk);
 	if (!sock_owned_by_user(sk) && inet->recverr) {
@@ -680,15 +680,15 @@ out:
 }
 
 /*
- * »ùÓÚTCPÓÃ»§Êı¾İµÄÖĞ¼äÀÛ¼ÓºÍ(Èç¹û´æÔÚÊı¾İ)£¬Éú³ÉTCP°üµÄĞ£ÑéºÍ
- */ //ÕâÊÇTCPÊä³öµÄÊ±ºòµÄĞ£ÑéºÍtcp_v4_send_check, TCPÊäÈëµÄÊ±ºò¼ÆËãĞ£ÑéºÍÓÃµÄtcp_v4_checksum_init
+ * åŸºäºTCPç”¨æˆ·æ•°æ®çš„ä¸­é—´ç´¯åŠ å’Œ(å¦‚æœå­˜åœ¨æ•°æ®)ï¼Œç”ŸæˆTCPåŒ…çš„æ ¡éªŒå’Œ
+ */ //è¿™æ˜¯TCPè¾“å‡ºçš„æ—¶å€™çš„æ ¡éªŒå’Œtcp_v4_send_check, TCPè¾“å…¥çš„æ—¶å€™è®¡ç®—æ ¡éªŒå’Œç”¨çš„tcp_v4_checksum_init
 static void __tcp_v4_send_check(struct sk_buff *skb,
 				__be32 saddr, __be32 daddr)
 {
 	struct tcphdr *th = tcp_hdr(skb);
 
     /*
-	 * Èç¹ûTCP°ü±¾ÉíµÄĞ£ÑéÓÉÓ²¼şÀ´Íê³É£¬ÔòÖ»Ö´ĞĞÎ±Ê×²¿Ğ£ÑéºÍ
+	 * å¦‚æœTCPåŒ…æœ¬èº«çš„æ ¡éªŒç”±ç¡¬ä»¶æ¥å®Œæˆï¼Œåˆ™åªæ‰§è¡Œä¼ªé¦–éƒ¨æ ¡éªŒå’Œ
 	 */
 	if (skb->ip_summed == CHECKSUM_PARTIAL) {
 		th->check = ~tcp_v4_check(skb->len, saddr, daddr, 0);
@@ -696,8 +696,8 @@ static void __tcp_v4_send_check(struct sk_buff *skb,
 		skb->csum_offset = offsetof(struct tcphdr, check);
 	} else {
 	    /*
-		 * ¶ÔÓÚÓÃÈí¼şÍê³ÉĞ£ÑéºÍµÄ²Ù×÷£¬Ôò»ùÓÚTCPÓÃ»§Êı¾İµÄÖĞ¼äÀÛ¼ÓºÍ£¬
-		 * Éú³ÉTCP°üµÄĞ£ÑéºÍ
+		 * å¯¹äºç”¨è½¯ä»¶å®Œæˆæ ¡éªŒå’Œçš„æ“ä½œï¼Œåˆ™åŸºäºTCPç”¨æˆ·æ•°æ®çš„ä¸­é—´ç´¯åŠ å’Œï¼Œ
+		 * ç”ŸæˆTCPåŒ…çš„æ ¡éªŒå’Œ
 		 */
 		th->check = tcp_v4_check(skb->len, saddr, daddr,
 					 csum_partial(th,
@@ -708,8 +708,8 @@ static void __tcp_v4_send_check(struct sk_buff *skb,
 
 /* This routine computes an IPv4 TCP checksum. */
 /*
- * »ùÓÚTCPÓÃ»§Êı¾İµÄÖĞ¼äÀÛ¼ÓºÍ(Èç¹û´æÔÚÊı¾İ)£¬Éú³ÉTCP°üµÄĞ£ÑéºÍ
- *///ÕâÊÇTCPÊä³öµÄÊ±ºòµÄĞ£ÑéºÍtcp_v4_send_check, TCPÊäÈëµÄÊ±ºò¼ÆËãĞ£ÑéºÍÓÃµÄtcp_v4_checksum_init
+ * åŸºäºTCPç”¨æˆ·æ•°æ®çš„ä¸­é—´ç´¯åŠ å’Œ(å¦‚æœå­˜åœ¨æ•°æ®)ï¼Œç”ŸæˆTCPåŒ…çš„æ ¡éªŒå’Œ
+ *///è¿™æ˜¯TCPè¾“å‡ºçš„æ—¶å€™çš„æ ¡éªŒå’Œtcp_v4_send_check, TCPè¾“å…¥çš„æ—¶å€™è®¡ç®—æ ¡éªŒå’Œç”¨çš„tcp_v4_checksum_init
 void tcp_v4_send_check(struct sock *sk, struct sk_buff *skb)
 {
 	struct inet_sock *inet = inet_sk(sk);
@@ -1390,9 +1390,9 @@ static struct timewait_sock_ops tcp_timewait_sock_ops = {
 };
 
 /*
- * ·şÎñ¶ËÓÃÀ´´¦Àí¿Í»§¶ËÁ¬½ÓÇëÇóµÄº¯Êı
+ * æœåŠ¡ç«¯ç”¨æ¥å¤„ç†å®¢æˆ·ç«¯è¿æ¥è¯·æ±‚çš„å‡½æ•°
  */
-//·şÎñÆ÷¶ËÊÕµ½SYNºó£¬´´½¨Á¬½Ó¿ØÖÆ¿érequest_sock¡£Ò²¾ÍÊÇÊÕµ½µÚÒ»²½SYNµÄÊ±ºòÖ»ÊÇ½¨Á¢µÄÁ¬½Ó¿ØÖÆ¿érequest_sock£¬µ±ÊÕµ½µÚÈı´ÎackµÄÊ±ºò£¬²Å´´½¨ĞÂµÄstruct sock
+//æœåŠ¡å™¨ç«¯æ”¶åˆ°SYNåï¼Œåˆ›å»ºè¿æ¥æ§åˆ¶å—request_sockã€‚ä¹Ÿå°±æ˜¯æ”¶åˆ°ç¬¬ä¸€æ­¥SYNçš„æ—¶å€™åªæ˜¯å»ºç«‹çš„è¿æ¥æ§åˆ¶å—request_sockï¼Œå½“æ”¶åˆ°ç¬¬ä¸‰æ¬¡ackçš„æ—¶å€™ï¼Œæ‰åˆ›å»ºæ–°çš„struct sock
 int tcp_v4_conn_request(struct sock *sk, struct sk_buff *skb)
 {
 	struct inet_request_sock *ireq;
@@ -1403,14 +1403,14 @@ int tcp_v4_conn_request(struct sock *sk, struct sk_buff *skb)
 	__u32 isn = TCP_SKB_CB(skb)->when;
 	struct dst_entry *dst = NULL;
 #ifdef CONFIG_SYN_COOKIES
-	int want_cookie = 0; //Èç¹ûÆôÓÃÁËcookie»úÖÆ£¬Ôò»áÔÚµÚÈı²½ÊÕµ½ACKµÄÊ±ºòÔÚtcp_v4_hnd_reqÖĞµÄcookie_v4_check¶ÔÖ®Ç°·¢ËÍµÄack+syn½øĞĞ¼ì²é£¬¼ì²é¹ı³Ì¼ûcookie_v4_check
+	int want_cookie = 0; //å¦‚æœå¯ç”¨äº†cookieæœºåˆ¶ï¼Œåˆ™ä¼šåœ¨ç¬¬ä¸‰æ­¥æ”¶åˆ°ACKçš„æ—¶å€™åœ¨tcp_v4_hnd_reqä¸­çš„cookie_v4_checkå¯¹ä¹‹å‰å‘é€çš„ack+synè¿›è¡Œæ£€æŸ¥ï¼Œæ£€æŸ¥è¿‡ç¨‹è§cookie_v4_check
 #else
 #define want_cookie 0 /* Argh, why doesn't gcc optimize this :( */
 #endif
 
 	/* Never answer to SYNs send to broadcast or multicast */
 	/*
-	 * Èç¹ûSYN¶Î·¢ËÍµ½¹ã²¥µØÖ·»ò×é²¥µØÖ·£¬ÔòÖ±½Ó·µ»Ø²»×÷´¦Àí
+	 * å¦‚æœSYNæ®µå‘é€åˆ°å¹¿æ’­åœ°å€æˆ–ç»„æ’­åœ°å€ï¼Œåˆ™ç›´æ¥è¿”å›ä¸ä½œå¤„ç†
 	 */
 	if (skb_rtable(skb)->rt_flags & (RTCF_BROADCAST | RTCF_MULTICAST))
 		goto drop;
@@ -1420,23 +1420,23 @@ int tcp_v4_conn_request(struct sock *sk, struct sk_buff *skb)
 	 * evidently real one.
 	 */
 	/*
-	 * Èç¹ûSYNÇëÇóÁ¬½Ó¶ÓÁĞÒÑÂú²¢ÇÒisnÎªÁã£¬ÔòĞè×öÌØ±ğ´¦Àí¡£
-	 * ÕâÀïµÄisn¾ÍÊÇTCP_SKB_CB(skb)->when£¬¶øTCP_SKB_CB(skb)->when
-	 * ÔÚTCP½ÓÊÕ´¦ÀíÒ»¿ªÊ¼¾Í±»ÇåÁã£¬Òò´ËÕâÀïisnÎªÁã×ÜÊÇ³ÉÁ¢
+	 * å¦‚æœSYNè¯·æ±‚è¿æ¥é˜Ÿåˆ—å·²æ»¡å¹¶ä¸”isnä¸ºé›¶ï¼Œåˆ™éœ€åšç‰¹åˆ«å¤„ç†ã€‚
+	 * è¿™é‡Œçš„isnå°±æ˜¯TCP_SKB_CB(skb)->whenï¼Œè€ŒTCP_SKB_CB(skb)->when
+	 * åœ¨TCPæ¥æ”¶å¤„ç†ä¸€å¼€å§‹å°±è¢«æ¸…é›¶ï¼Œå› æ­¤è¿™é‡Œisnä¸ºé›¶æ€»æ˜¯æˆç«‹
 	 */
 	if (inet_csk_reqsk_queue_is_full(sk) && !isn) {
-#ifdef CONFIG_SYN_COOKIES /* ¸ÃºêÄ¬ÈÏÓĞ¶¨Òå*/
+#ifdef CONFIG_SYN_COOKIES /* è¯¥å®é»˜è®¤æœ‰å®šä¹‰*/
 		/*
-		 * Èç¹ûÆôÓÃÁËsyncookies(CONFIG_SYN_COOKIESÓĞ¶¨Òå)£¬ÔòÉèÖÃÆôÓÃsyncookies±êÖ¾£¬
-		 * ÒÔ±ãÔÚºóĞøµÄ´¦ÀíÖĞÊ¹ÓÃsyncookies¹æÔòÀ´´¦Àí
+		 * å¦‚æœå¯ç”¨äº†syncookies(CONFIG_SYN_COOKIESæœ‰å®šä¹‰)ï¼Œåˆ™è®¾ç½®å¯ç”¨syncookiesæ ‡å¿—ï¼Œ
+		 * ä»¥ä¾¿åœ¨åç»­çš„å¤„ç†ä¸­ä½¿ç”¨syncookiesè§„åˆ™æ¥å¤„ç†
 		 */
 		if (sysctl_tcp_syncookies) {
 			want_cookie = 1;
 		} else
 #endif
 		/*
-		 * Èç¹ûÃ»ÓĞÆôÓÃsyncookies£¬Ôò´ËÊ±²»ÄÜÔÙ½ÓÊÕĞÂµÄSYNÁ¬½ÓÇëÇó£¬
-		 * Ö»ÄÜ¶ªÆú
+		 * å¦‚æœæ²¡æœ‰å¯ç”¨syncookiesï¼Œåˆ™æ­¤æ—¶ä¸èƒ½å†æ¥æ”¶æ–°çš„SYNè¿æ¥è¯·æ±‚ï¼Œ
+		 * åªèƒ½ä¸¢å¼ƒ
 		 */
 		goto drop;
 	}
@@ -1447,73 +1447,73 @@ int tcp_v4_conn_request(struct sock *sk, struct sk_buff *skb)
 	 * timeout.
 	 */
 	/*
-	 * Èç¹ûÁ¬½Ó¶ÓÁĞ³¤¶ÈÒÑ´ïµ½ÉÏÏŞÇÒSYNÇëÇó¶ÓÁĞÖĞÖÁÉÙÓĞÒ»¸öÎÕÊÖ¹ı³ÌÖĞ
-	 * Ã»ÓĞÖØ´«¹ıµÄ¶Î£¬Ôò¶ªÆúµ±Ç°Á¬½ÓÇëÇó.
-	 *  Èç¹û°ëÁ¬½Ó¶ÓÁĞÖĞÎ´ÖØ´«µÄÇëÇó¿éÊıÁ¿´óÓÚ1£¬
-	 * Ôò±íÊ¾Î´À´¿ÉÄÜÓĞ2¸öÍê³ÉµÄÁ¬½Ó£¬ÕâĞ©ĞÂÍê³É
-	 * µÄÁ¬½ÓÒª·Åµ½Á¬½Ó¶ÓÁĞÖĞ£¬µ«´ËÊ±Á¬½Ó¶ÓÁĞÒÑÂú
-	 * ¡£Èç¹ûÔÚ½ÓÊÕµ½Èı´ÎÎÕÊÖÖĞ×îºóµÄACKºóÁ¬½Ó¶ÓÁĞ
-	 * ÖĞÃ»ÓĞ¿ÕÏĞµÄÎ»ÖÃ£¬»áºöÂÔ½ÓÊÕµ½µÄACK°ü£¬Á¬½Ó
-	 * ½¨Á¢»áÍÆ³Ù£¬ËùÒÔ´ËÊ±×îºÃ¶ªµô²¿·ÖĞÂµÄÁ¬½ÓÇë
-	 * Çó£¬¿Õ³ö×ÊÔ´ÒÔÍê³ÉÕıÔÚ½øĞĞµÄÁ¬½Ó½¨Á¢¹ı³Ì¡£
-	 * »¹Òª×¢Òâ£¬Õâ¸öÅĞ¶Ï²¢Ã»ÓĞ¿¼ÂÇ°ëÁ¬½Ó¶ÓÁĞÊÇ·ñ
-	 * ÒÑÂúµÄÎÊÌâ¡£´ÓÕâÀï¿ÉÒÔ¿´³ö£¬¼´Ê¹¿ªÆôÁË
-	 * SYN cookies»úÖÆ²¢²»ÒâÎ¶×ÅÒ»¶¨¿ÉÒÔÍê³ÉÁ¬½ÓµÄ½¨Á¢¡£
+	 * å¦‚æœè¿æ¥é˜Ÿåˆ—é•¿åº¦å·²è¾¾åˆ°ä¸Šé™ä¸”SYNè¯·æ±‚é˜Ÿåˆ—ä¸­è‡³å°‘æœ‰ä¸€ä¸ªæ¡æ‰‹è¿‡ç¨‹ä¸­
+	 * æ²¡æœ‰é‡ä¼ è¿‡çš„æ®µï¼Œåˆ™ä¸¢å¼ƒå½“å‰è¿æ¥è¯·æ±‚.
+	 *  å¦‚æœåŠè¿æ¥é˜Ÿåˆ—ä¸­æœªé‡ä¼ çš„è¯·æ±‚å—æ•°é‡å¤§äº1ï¼Œ
+	 * åˆ™è¡¨ç¤ºæœªæ¥å¯èƒ½æœ‰2ä¸ªå®Œæˆçš„è¿æ¥ï¼Œè¿™äº›æ–°å®Œæˆ
+	 * çš„è¿æ¥è¦æ”¾åˆ°è¿æ¥é˜Ÿåˆ—ä¸­ï¼Œä½†æ­¤æ—¶è¿æ¥é˜Ÿåˆ—å·²æ»¡
+	 * ã€‚å¦‚æœåœ¨æ¥æ”¶åˆ°ä¸‰æ¬¡æ¡æ‰‹ä¸­æœ€åçš„ACKåè¿æ¥é˜Ÿåˆ—
+	 * ä¸­æ²¡æœ‰ç©ºé—²çš„ä½ç½®ï¼Œä¼šå¿½ç•¥æ¥æ”¶åˆ°çš„ACKåŒ…ï¼Œè¿æ¥
+	 * å»ºç«‹ä¼šæ¨è¿Ÿï¼Œæ‰€ä»¥æ­¤æ—¶æœ€å¥½ä¸¢æ‰éƒ¨åˆ†æ–°çš„è¿æ¥è¯·
+	 * æ±‚ï¼Œç©ºå‡ºèµ„æºä»¥å®Œæˆæ­£åœ¨è¿›è¡Œçš„è¿æ¥å»ºç«‹è¿‡ç¨‹ã€‚
+	 * è¿˜è¦æ³¨æ„ï¼Œè¿™ä¸ªåˆ¤æ–­å¹¶æ²¡æœ‰è€ƒè™‘åŠè¿æ¥é˜Ÿåˆ—æ˜¯å¦
+	 * å·²æ»¡çš„é—®é¢˜ã€‚ä»è¿™é‡Œå¯ä»¥çœ‹å‡ºï¼Œå³ä½¿å¼€å¯äº†
+	 * SYN cookiesæœºåˆ¶å¹¶ä¸æ„å‘³ç€ä¸€å®šå¯ä»¥å®Œæˆè¿æ¥çš„å»ºç«‹ã€‚
 	 * 
 	 */
 	if (sk_acceptq_is_full(sk) && inet_csk_reqsk_queue_young(sk) > 1)
 		goto drop;
 
 	/*
-	 * ¿ÉÒÔ½ÓÊÕ²¢´¦ÀíÁ¬½ÓÇëÇó£¬µ÷ÓÃinet_reqsk_alloc()·ÖÅäÒ»¸öÁ¬½ÓÇëÇó
-	 * ¿é£¬ÓÃÓÚ±£´æÁ¬½ÓÇëÇóĞÅÏ¢£¬Í¬Ê±³õÊ¼»¯ÔÚ½¨Á¢Á¬½Ó¹ı³ÌÖĞÓÃÀ´·¢ËÍ
-	 * ACK¡¢RST¶ÎµÄ²Ù×÷¼¯ºÏ£¬ÒÔ±ãÔÚ½¨Á¢Á¬½Ó¹ı³ÌÖĞÄÜ·½±ãµØµ÷ÓÃÕâĞ©½Ó¿Ú
+	 * å¯ä»¥æ¥æ”¶å¹¶å¤„ç†è¿æ¥è¯·æ±‚ï¼Œè°ƒç”¨inet_reqsk_alloc()åˆ†é…ä¸€ä¸ªè¿æ¥è¯·æ±‚
+	 * å—ï¼Œç”¨äºä¿å­˜è¿æ¥è¯·æ±‚ä¿¡æ¯ï¼ŒåŒæ—¶åˆå§‹åŒ–åœ¨å»ºç«‹è¿æ¥è¿‡ç¨‹ä¸­ç”¨æ¥å‘é€
+	 * ACKã€RSTæ®µçš„æ“ä½œé›†åˆï¼Œä»¥ä¾¿åœ¨å»ºç«‹è¿æ¥è¿‡ç¨‹ä¸­èƒ½æ–¹ä¾¿åœ°è°ƒç”¨è¿™äº›æ¥å£
 	 */
 	req = inet_reqsk_alloc(&tcp_request_sock_ops);
 	if (!req)
 		goto drop;
 
 /*
- * Í¨¹ıTCP MD5Ç©ÃûÀ´±£»¤BGP»á»°(RFC2385)²Ù×÷
+ * é€šè¿‡TCP MD5ç­¾åæ¥ä¿æŠ¤BGPä¼šè¯(RFC2385)æ“ä½œ
  */
 #ifdef CONFIG_TCP_MD5SIG
 	tcp_rsk(req)->af_specific = &tcp_request_sock_ipv4_ops;
 #endif
 
 	/*
-	 * Çå³ıTCPÑ¡Ïîºó³õÊ¼»¯mss_clampºÍuser_mss¡£
+	 * æ¸…é™¤TCPé€‰é¡¹ååˆå§‹åŒ–mss_clampå’Œuser_mssã€‚
 	 */
 	tcp_clear_options(&tmp_opt);
 	tmp_opt.mss_clamp = 536;
 	tmp_opt.user_mss  = tcp_sk(sk)->rx_opt.user_mss;
 
 	/*
-	 * ½âÎöSYN¶ÎÖĞµÄTCPÑ¡Ïî
+	 * è§£æSYNæ®µä¸­çš„TCPé€‰é¡¹
 	 */
 	tcp_parse_options(skb, &tmp_opt, 0);
 
 	/*
-	 * Èç¹ûÆôÓÃÁËsyncookies£¬²¢ÇÒ×î½üÒ»´Î½ÓÊÕµ½µÄTCP¶Î(¼´µ±Ç°µÄskb)
-	 * ²»´æÔÚTCPÊ±¼ä´ÁÑ¡Ïî£¬ÔòÇå³ıÒÑ½âÎöµÄTCPÑ¡Ïî
+	 * å¦‚æœå¯ç”¨äº†syncookiesï¼Œå¹¶ä¸”æœ€è¿‘ä¸€æ¬¡æ¥æ”¶åˆ°çš„TCPæ®µ(å³å½“å‰çš„skb)
+	 * ä¸å­˜åœ¨TCPæ—¶é—´æˆ³é€‰é¡¹ï¼Œåˆ™æ¸…é™¤å·²è§£æçš„TCPé€‰é¡¹
 	 */
 	if (want_cookie && !tmp_opt.saw_tstamp)
 		tcp_clear_options(&tmp_opt);
 
 	/*
-	 * ³õÊ¼»¯¸ÃÁ¬½ÓÖĞÊÇ·ñÆôÓÃÊ±¼ä´ÁµÄÑ¡Ïîtstamp_ok
+	 * åˆå§‹åŒ–è¯¥è¿æ¥ä¸­æ˜¯å¦å¯ç”¨æ—¶é—´æˆ³çš„é€‰é¡¹tstamp_ok
 	 */
 	tmp_opt.tstamp_ok = tmp_opt.saw_tstamp;
 
 	/*
-	 * ¸ù¾İ½ÓÊÕµ½SYN¶ÎÖĞµÄÑ¡ÏîºÍĞòºÅÀ´³õÊ¼»¯Á¬½ÓÇëÇó¿éĞÅÏ¢
+	 * æ ¹æ®æ¥æ”¶åˆ°SYNæ®µä¸­çš„é€‰é¡¹å’Œåºå·æ¥åˆå§‹åŒ–è¿æ¥è¯·æ±‚å—ä¿¡æ¯
 	 */
 	tcp_openreq_init(req, &tmp_opt, skb);
 
 	/*
-	 * ³õÊ¼»¯TCP²ã´ÎµÄÁ¬½ÓÇëÇóĞÅÏ¢¿é£¬°üÀ¨Ä¿µÄµØÖ·¡¢Ô´µØÖ·£¬
-	 * ²¢µ÷ÓÃtcp_v4_save_options´ÓIP²ãË½ÓĞ¿ØÖÆ¿éÖĞ»ñÈ¡IP
-	 * Ñ¡Ïî±£´æµ½´«Êä¿ØÖÆ¿éµÄoptÖĞ£¬°üÀ¨MSS¡¢´°¿ÚÀ©´ó
-	 * Òò×Ó¡¢ÏÔÊ½ÓµÈûÍ¨ÖªµÈ
+	 * åˆå§‹åŒ–TCPå±‚æ¬¡çš„è¿æ¥è¯·æ±‚ä¿¡æ¯å—ï¼ŒåŒ…æ‹¬ç›®çš„åœ°å€ã€æºåœ°å€ï¼Œ
+	 * å¹¶è°ƒç”¨tcp_v4_save_optionsä»IPå±‚ç§æœ‰æ§åˆ¶å—ä¸­è·å–IP
+	 * é€‰é¡¹ä¿å­˜åˆ°ä¼ è¾“æ§åˆ¶å—çš„optä¸­ï¼ŒåŒ…æ‹¬MSSã€çª—å£æ‰©å¤§
+	 * å› å­ã€æ˜¾å¼æ‹¥å¡é€šçŸ¥ç­‰
 	 */
 	ireq = inet_rsk(req);
 	ireq->loc_addr = daddr;
@@ -1522,7 +1522,7 @@ int tcp_v4_conn_request(struct sock *sk, struct sk_buff *skb)
 	ireq->opt = tcp_v4_save_options(sk, skb);
 
 	/*
-	 * Èç¹û°²È«¼ì²âÊ§°Ü£¬Ôò¶ªÆú¸ÃSYN¶Î
+	 * å¦‚æœå®‰å…¨æ£€æµ‹å¤±è´¥ï¼Œåˆ™ä¸¢å¼ƒè¯¥SYNæ®µ
 	 */
 	if (security_inet_conn_request(sk, skb, req))
 		goto drop_and_free;
@@ -1532,16 +1532,16 @@ int tcp_v4_conn_request(struct sock *sk, struct sk_buff *skb)
 
 	if (want_cookie) {
 		/*
-		 * Èç¹ûÆô¶¯ÁËsyncookies£¬ÔòÃ¿60Ãë¾¯¸æÒ»´Î¿ÉÄÜÊÜ
-		 * synflood¹¥»÷£¬Í¬Ê±ÓÉ¿Í»§¶ËIPµØÖ·¡¢¿Í»§¶Ë¶Ë¿Ú¡¢
-		 * ·şÎñÆ÷IPµØÖ·¡¢·şÎñÆ÷¶Ë¿Ú¡¢¿Í»§¶Ë³õÊ¼ĞòÁĞºÅ
-		 * µÈÒªËØ¾­hashÔËËãºó¼ÓÃÜµÃµ½·şÎñ¶Ë³õÊ¼»¯ĞòÁĞºÅ
+		 * å¦‚æœå¯åŠ¨äº†syncookiesï¼Œåˆ™æ¯60ç§’è­¦å‘Šä¸€æ¬¡å¯èƒ½å—
+		 * synfloodæ”»å‡»ï¼ŒåŒæ—¶ç”±å®¢æˆ·ç«¯IPåœ°å€ã€å®¢æˆ·ç«¯ç«¯å£ã€
+		 * æœåŠ¡å™¨IPåœ°å€ã€æœåŠ¡å™¨ç«¯å£ã€å®¢æˆ·ç«¯åˆå§‹åºåˆ—å·
+		 * ç­‰è¦ç´ ç»hashè¿ç®—ååŠ å¯†å¾—åˆ°æœåŠ¡ç«¯åˆå§‹åŒ–åºåˆ—å·
 		 */
 #ifdef CONFIG_SYN_COOKIES
 		syn_flood_warning(skb);
 		req->cookie_ts = tmp_opt.tstamp_ok;
 #endif
-		isn = cookie_v4_init_sequence(sk, skb, &req->mss);//Èç¹û¿ªÆôÁËsyncookieÑ¡Ïî£¬ÔòĞèÒª¼ì²éÊÕµ½µÄµÚÈı²½ackºÍÕâ¸öisnÖµÊÇ·ñÒ»ÖÂ
+		isn = cookie_v4_init_sequence(sk, skb, &req->mss);//å¦‚æœå¼€å¯äº†syncookieé€‰é¡¹ï¼Œåˆ™éœ€è¦æ£€æŸ¥æ”¶åˆ°çš„ç¬¬ä¸‰æ­¥ackå’Œè¿™ä¸ªisnå€¼æ˜¯å¦ä¸€è‡´
 	} else if (!isn) {
 		struct inet_peer *peer = NULL;
 
@@ -1555,15 +1555,15 @@ int tcp_v4_conn_request(struct sock *sk, struct sk_buff *skb)
 		 * are made in the function processing timewait state.
 		 */
 		/*
-		 * ½øÈëTIMEWAIT×´Ì¬Ê±£¬´Ó¶Ô¶ËĞÅÏ¢¿éÖĞ»ñÈ¡Ê±¼ä´Á£¬ÔÚĞÂµÄ
-		 * Á¬½ÓÇëÇóÖ®Ç°¼ì²âPAWS
+		 * è¿›å…¥TIMEWAITçŠ¶æ€æ—¶ï¼Œä»å¯¹ç«¯ä¿¡æ¯å—ä¸­è·å–æ—¶é—´æˆ³ï¼Œåœ¨æ–°çš„
+		 * è¿æ¥è¯·æ±‚ä¹‹å‰æ£€æµ‹PAWS
 		 */
 		if (tmp_opt.saw_tstamp &&
 		    tcp_death_row.sysctl_tw_recycle &&
 		    (dst = inet_csk_route_req(sk, req)) != NULL &&
 		    (peer = rt_get_peer((struct rtable *)dst)) != NULL &&
-		    peer->v4daddr == saddr) { //µ±ÆğÁË¿ìËÙ»ØÊÕtw_recycleµÄÊ±ºò£¬ÕâÀï¿ÉÄÜÓĞÎÊÌâ£¬¿ÉÄÜÁ¬½Ó½¨Á¢²»ÉÏ£¬Õë¶ÔTCPÊ±¼ä´ÁPAWSÂ©¶´µÄ´úÂë¡£ ¼û:http://blog.chinaunix.net/uid-736168-id-376061.html
-                //Õë¶ÔTCPÊ±¼ä´ÁPAWSÂ©¶´£¬Ôì³É·şÎñÆ÷¶ËÊÕµ½SYNµÄÊ±ºò²»»ØÊÕSYN+ACK£¬½â¾ö°ì·¨ÊÇ¶Ô·½²»Òª·¢ËÍÊ±¼ä´ÁÑ¡Ïî£¬Í¬Ê±¹Ø±Õtcp_timestamps¼ûtcp_v4_conn_request
+		    peer->v4daddr == saddr) { //å½“èµ·äº†å¿«é€Ÿå›æ”¶tw_recycleçš„æ—¶å€™ï¼Œè¿™é‡Œå¯èƒ½æœ‰é—®é¢˜ï¼Œå¯èƒ½è¿æ¥å»ºç«‹ä¸ä¸Šï¼Œé’ˆå¯¹TCPæ—¶é—´æˆ³PAWSæ¼æ´çš„ä»£ç ã€‚ è§:http://blog.chinaunix.net/uid-736168-id-376061.html
+                //é’ˆå¯¹TCPæ—¶é—´æˆ³PAWSæ¼æ´ï¼Œé€ æˆæœåŠ¡å™¨ç«¯æ”¶åˆ°SYNçš„æ—¶å€™ä¸å›æ”¶SYN+ACKï¼Œè§£å†³åŠæ³•æ˜¯å¯¹æ–¹ä¸è¦å‘é€æ—¶é—´æˆ³é€‰é¡¹ï¼ŒåŒæ—¶å…³é—­tcp_timestampsè§tcp_v4_conn_request
 			if (get_seconds() < peer->tcp_ts_stamp + TCP_PAWS_MSL &&
 			    (s32)(peer->tcp_ts - req->ts_recent) >
 							TCP_PAWS_WINDOW) {
@@ -1573,7 +1573,7 @@ int tcp_v4_conn_request(struct sock *sk, struct sk_buff *skb)
 		}
 		/* Kill the following clause, if you dislike this way. */
 		/*
-		 * Î´Æô¶¯syncookiesµÄÇé¿öÏÂÊÜµ½synflood¹¥»÷£¬Ôò¶ªÆú½ÓÊÕµ½µÄ¶Î
+		 * æœªå¯åŠ¨syncookiesçš„æƒ…å†µä¸‹å—åˆ°synfloodæ”»å‡»ï¼Œåˆ™ä¸¢å¼ƒæ¥æ”¶åˆ°çš„æ®µ
 		 */
 		else if (!sysctl_tcp_syncookies &&
 			 (sysctl_max_syn_backlog - inet_csk_reqsk_queue_len(sk) <
@@ -1593,26 +1593,26 @@ int tcp_v4_conn_request(struct sock *sk, struct sk_buff *skb)
 		}
 
 		/*
-		 * ÓÉÔ´µØÖ·¡¢Ô´¶Ë¿ÚºÅ¡¢Ä¿µÄµØÖ·ÒÔ¼°Ä¿µÄ¶Ë¿Ú¼ÆËã³ö·şÎñ¶Ë
-		 * ³õÊ¼ĞòÁĞºÅ
+		 * ç”±æºåœ°å€ã€æºç«¯å£å·ã€ç›®çš„åœ°å€ä»¥åŠç›®çš„ç«¯å£è®¡ç®—å‡ºæœåŠ¡ç«¯
+		 * åˆå§‹åºåˆ—å·
 		 */
 		isn = tcp_v4_init_sequence(skb);
 	}
 	/*
-	 * ½«¼ÆËãµÃµ½µÄ³õÊ¼ĞòÁĞºÅ´æ·Åµ½Á¬½ÓÇëÇó½×¶ÎµÄ´«Êä¿ØÖÆ¿éÖĞ
+	 * å°†è®¡ç®—å¾—åˆ°çš„åˆå§‹åºåˆ—å·å­˜æ”¾åˆ°è¿æ¥è¯·æ±‚é˜¶æ®µçš„ä¼ è¾“æ§åˆ¶å—ä¸­
 	 */
 	tcp_rsk(req)->snt_isn = isn;
 
 	/*
-	 * µ÷ÓÃ__tcp_v4_send_synack()×éÖ¯²¢·¢ËÍSYN+ACK¶Î¸ø¿Í»§¶Ë£»Èç¹û
-	 * ÆôÓÃÁËsyncookies£¬ÔòÊÇ¸ù¾İĞòºÅÀ´ÅĞ¶ÏÈı´ÎÎÕÊÖµÄ£¬Òò´ËÎŞĞè±£´æ
-	 * Á¬½ÓÇëÇó£¬Ö±½Ó½«ÆäÊÍ·Å
+	 * è°ƒç”¨__tcp_v4_send_synack()ç»„ç»‡å¹¶å‘é€SYN+ACKæ®µç»™å®¢æˆ·ç«¯ï¼›å¦‚æœ
+	 * å¯ç”¨äº†syncookiesï¼Œåˆ™æ˜¯æ ¹æ®åºå·æ¥åˆ¤æ–­ä¸‰æ¬¡æ¡æ‰‹çš„ï¼Œå› æ­¤æ— éœ€ä¿å­˜
+	 * è¿æ¥è¯·æ±‚ï¼Œç›´æ¥å°†å…¶é‡Šæ”¾
 	 */
-	if (tcp_v4_send_synack(sk, req, dst) || want_cookie) //Èç¹ûÊÇcookie£¬ÔòÕæÕıµÄtcp_request_sockÔÚµÚÈı²½ackµÄÊ±ºòÔÚcookie_v4_checkÖĞ´´½¨
+	if (tcp_v4_send_synack(sk, req, dst) || want_cookie) //å¦‚æœæ˜¯cookieï¼Œåˆ™çœŸæ­£çš„tcp_request_sockåœ¨ç¬¬ä¸‰æ­¥ackçš„æ—¶å€™åœ¨cookie_v4_checkä¸­åˆ›å»º
 		goto drop_and_free;
 
 	/*
-	 * ½«Á¬½ÓÇëÇó¿é±£´æµ½Æä¸¸´«Êä¿ØÖÆ¿éÖĞµÄÉ¢ÁĞ±íÖĞ
+	 * å°†è¿æ¥è¯·æ±‚å—ä¿å­˜åˆ°å…¶çˆ¶ä¼ è¾“æ§åˆ¶å—ä¸­çš„æ•£åˆ—è¡¨ä¸­
 	 */
 	inet_csk_reqsk_queue_hash_add(sk, req, TCP_TIMEOUT_INIT);
 	return 0;
@@ -1809,7 +1809,7 @@ drop:
  * The three way handshake has completed - we got a valid synack -
  * now create the new socket.
  */
- //ÊÕµ½TCPÁ¬½ÓµÚÈı²½µÄACKºó£¬´´½¨Ò»¸öĞÂµÄstruct sock,Ò²½Ğ'×Ó'sk
+ //æ”¶åˆ°TCPè¿æ¥ç¬¬ä¸‰æ­¥çš„ACKåï¼Œåˆ›å»ºä¸€ä¸ªæ–°çš„struct sock,ä¹Ÿå«'å­'sk
 struct sock *tcp_v4_syn_recv_sock(struct sock *sk, struct sk_buff *skb,
 				  struct request_sock *req,
 				  struct dst_entry *dst)
@@ -1890,13 +1890,13 @@ exit:
 	return NULL;
 }
 /*
- * ÓÃÀ´´¦Àí×÷Îª½¨Á¢Á¬½ÓÈı´ÎÎÕÊÖÖĞ×îºóÒ»´ÎÎÕÊÖµÄACK¶Î£¬´¦Àí¹ı³ÌÈçÏÂ:
- *  1. ÔÚÇëÇóÁ¬½ÓÉ¢ÁĞ±íÖĞ²éÕÒ¶ÔÓ¦µÄÇëÇóÁ¬½Ó¿é¡£
- *  2. Èç¹ûÕÒµ½£¬Ôò¸ù¾İTCP¶Î±êÖ¾£¬ACK»òRST»òSYN£¬×÷ÏàÓ¦µÄ´¦Àí£¬
- *     Èç¹ûÊÇACK¶ÎÔòÍê³ÉÁ¬½Ó½¨Á¢
- *  3. Èç¹û²éÕÒÎ´¹û£¬Ôò»¹ĞèÔÚehashÉ¢ÁĞ±íÖĞ²éÕÒ¶ÔÓ¦´«Êä¿ØÖÆ¿é£¬
- *     ²¢×÷ÏàÓ¦µÄ´¦Àí¡£Èç¹û»¹ÊÇ²éÕÒ²»µ½Ôò·µ»Ø£¬ÓÉtcp_rcv_state_process
- *     ´¦Àí
+ * ç”¨æ¥å¤„ç†ä½œä¸ºå»ºç«‹è¿æ¥ä¸‰æ¬¡æ¡æ‰‹ä¸­æœ€åä¸€æ¬¡æ¡æ‰‹çš„ACKæ®µï¼Œå¤„ç†è¿‡ç¨‹å¦‚ä¸‹:
+ *  1. åœ¨è¯·æ±‚è¿æ¥æ•£åˆ—è¡¨ä¸­æŸ¥æ‰¾å¯¹åº”çš„è¯·æ±‚è¿æ¥å—ã€‚
+ *  2. å¦‚æœæ‰¾åˆ°ï¼Œåˆ™æ ¹æ®TCPæ®µæ ‡å¿—ï¼ŒACKæˆ–RSTæˆ–SYNï¼Œä½œç›¸åº”çš„å¤„ç†ï¼Œ
+ *     å¦‚æœæ˜¯ACKæ®µåˆ™å®Œæˆè¿æ¥å»ºç«‹
+ *  3. å¦‚æœæŸ¥æ‰¾æœªæœï¼Œåˆ™è¿˜éœ€åœ¨ehashæ•£åˆ—è¡¨ä¸­æŸ¥æ‰¾å¯¹åº”ä¼ è¾“æ§åˆ¶å—ï¼Œ
+ *     å¹¶ä½œç›¸åº”çš„å¤„ç†ã€‚å¦‚æœè¿˜æ˜¯æŸ¥æ‰¾ä¸åˆ°åˆ™è¿”å›ï¼Œç”±tcp_rcv_state_process
+ *     å¤„ç†
  */
 static struct sock *tcp_v4_hnd_req(struct sock *sk, struct sk_buff *skb)
 {
@@ -1906,28 +1906,28 @@ static struct sock *tcp_v4_hnd_req(struct sock *sk, struct sk_buff *skb)
 	struct request_sock **prev;
 	/* Find possible connection requests. */
 	/*
-	 * Èç¹û¸ù¾İÔ´¶Ë¿Ú¡¢Ô´µØÖ·¡¢Ä¿µÄµØÖ·ÔÚ"¸¸"´«Êä¿ØÖÆ¿éµÄÁ¬½ÓÇëÇóÉ¢ÁĞ±í
-	 * ÖĞ²éÕÒÏàÓ¦µÄÁ¬½ÓÇëÇó¿é³É¹¦£¬ÔòËµÃ÷Èı´ÎÎÕÊÖÖĞµÄÇ°Á½´ÎÒÑ¾­Íê³É£¬
-	 * ½ÓÏÂÀ´½øĞĞµÚÈı´ÎÎÕÊÖµÄÈ·ÈÏ
+	 * å¦‚æœæ ¹æ®æºç«¯å£ã€æºåœ°å€ã€ç›®çš„åœ°å€åœ¨"çˆ¶"ä¼ è¾“æ§åˆ¶å—çš„è¿æ¥è¯·æ±‚æ•£åˆ—è¡¨
+	 * ä¸­æŸ¥æ‰¾ç›¸åº”çš„è¿æ¥è¯·æ±‚å—æˆåŠŸï¼Œåˆ™è¯´æ˜ä¸‰æ¬¡æ¡æ‰‹ä¸­çš„å‰ä¸¤æ¬¡å·²ç»å®Œæˆï¼Œ
+	 * æ¥ä¸‹æ¥è¿›è¡Œç¬¬ä¸‰æ¬¡æ¡æ‰‹çš„ç¡®è®¤
 	 */
-	//ÕâÀïÃæËÑË÷µÄÊÇinet_connection_sock->icsk_accept_queueÖĞµÄ°ëÁ¬½Ósyn_table hash±í
+	//è¿™é‡Œé¢æœç´¢çš„æ˜¯inet_connection_sock->icsk_accept_queueä¸­çš„åŠè¿æ¥syn_table hashè¡¨
 	struct request_sock *req = inet_csk_search_req(sk, &prev, th->source,
 						       iph->saddr, iph->daddr);
 	if (req)
 		return tcp_check_req(sk, skb, req, prev);
     
 	 /*
-	 * Èç¹û´«Êä¿ØÖÆ¿é²»ÔÚÁ¬½ÓÇëÇóÉ¢ÁĞ±íÖĞ£¬ÔòÓĞ¿ÉÄÜÔÚehashÉ¢ÁĞ±íÖĞ£¬
-	 * Òò´ËĞèÒªÔÚehashÉ¢ÁĞ±íÖĞ²éÕÒ
+	 * å¦‚æœä¼ è¾“æ§åˆ¶å—ä¸åœ¨è¿æ¥è¯·æ±‚æ•£åˆ—è¡¨ä¸­ï¼Œåˆ™æœ‰å¯èƒ½åœ¨ehashæ•£åˆ—è¡¨ä¸­ï¼Œ
+	 * å› æ­¤éœ€è¦åœ¨ehashæ•£åˆ—è¡¨ä¸­æŸ¥æ‰¾
 	 */
-    //ÕâÀïÃæËÑË÷µÄÊÇÒÑ¾­Èı´ÎÎÕÊÖ³É¹¦µÄÁ¬½Ó¿ØÖÆ¿é
+    //è¿™é‡Œé¢æœç´¢çš„æ˜¯å·²ç»ä¸‰æ¬¡æ¡æ‰‹æˆåŠŸçš„è¿æ¥æ§åˆ¶å—
 	nsk = inet_lookup_established(sock_net(sk), &tcp_hashinfo, iph->saddr,
 			th->source, iph->daddr, th->dest, inet_iif(skb));
 
     /*
-	 * ÔÚehashÉ¢ÁĞ±íÖĞ²éÕÒ³É¹¦µÄÇé¿öÏÂ£¬Èç¹û¸Ã´«Êä¿ØÖÆ¿é²»´¦ÓÚ
-	 * TIME_WAIT×´Ì¬£¬·µ»Ø¸Ã´«Êä¿ØÖÆ¿é£»·ñÔòËµÃ÷½ÓÊÕµ½µÄ¶ÎÎŞĞ§£¬ÒòÎªÁ¬½Ó¶¼ÒÑ¾­½¨Á¢ÆğÀ´ÁË£¬²»Ó¦¸ÃÊÕµ½Èı²¿ÎÕÊÖÖĞµÄ±¨ÎÄ
-	 * ·µ»ØNULL±íÊ¾¶ªÆú¸Ã¶Î
+	 * åœ¨ehashæ•£åˆ—è¡¨ä¸­æŸ¥æ‰¾æˆåŠŸçš„æƒ…å†µä¸‹ï¼Œå¦‚æœè¯¥ä¼ è¾“æ§åˆ¶å—ä¸å¤„äº
+	 * TIME_WAITçŠ¶æ€ï¼Œè¿”å›è¯¥ä¼ è¾“æ§åˆ¶å—ï¼›å¦åˆ™è¯´æ˜æ¥æ”¶åˆ°çš„æ®µæ— æ•ˆï¼Œå› ä¸ºè¿æ¥éƒ½å·²ç»å»ºç«‹èµ·æ¥äº†ï¼Œä¸åº”è¯¥æ”¶åˆ°ä¸‰éƒ¨æ¡æ‰‹ä¸­çš„æŠ¥æ–‡
+	 * è¿”å›NULLè¡¨ç¤ºä¸¢å¼ƒè¯¥æ®µ
 	 */
 	if (nsk) {
 		if (nsk->sk_state != TCP_TIME_WAIT) {
@@ -1946,17 +1946,17 @@ static struct sock *tcp_v4_hnd_req(struct sock *sk, struct sk_buff *skb)
 }
 
 /*
- * ÓÃÓÚTCP¶Î½ÓÊÕĞ£ÑéµÄ³õÊ¼»¯£¬Ö÷ÒªÊÇ¶ÔÎ±Ê×²¿½øĞĞĞ£ÑéºÍµÄ¼ÆËã¡£
- * µ±È»Ò²ÓĞÀıÍâ£¬Èç¹ûĞ£ÑéºÍÓÉÓ²¼şÍê³É£¬ÔòÖ»¶ÔÎ±Ê×²¿½øĞĞĞ£Ñé
- * ¼ì²â¡£¶ÔÓÚÈ«³¤²»³¬¹ı76BµÄTCP°ü£¬ÔòÖ±½Ó½øĞĞÎ±Ê×²¿ºÍÈ«°üĞ£Ñé
- *///ÕâÊÇTCPÊä³öµÄÊ±ºòµÄĞ£ÑéºÍtcp_v4_send_check, TCPÊäÈëµÄÊ±ºò¼ÆËãĞ£ÑéºÍÓÃµÄtcp_v4_checksum_init
+ * ç”¨äºTCPæ®µæ¥æ”¶æ ¡éªŒçš„åˆå§‹åŒ–ï¼Œä¸»è¦æ˜¯å¯¹ä¼ªé¦–éƒ¨è¿›è¡Œæ ¡éªŒå’Œçš„è®¡ç®—ã€‚
+ * å½“ç„¶ä¹Ÿæœ‰ä¾‹å¤–ï¼Œå¦‚æœæ ¡éªŒå’Œç”±ç¡¬ä»¶å®Œæˆï¼Œåˆ™åªå¯¹ä¼ªé¦–éƒ¨è¿›è¡Œæ ¡éªŒ
+ * æ£€æµ‹ã€‚å¯¹äºå…¨é•¿ä¸è¶…è¿‡76Bçš„TCPåŒ…ï¼Œåˆ™ç›´æ¥è¿›è¡Œä¼ªé¦–éƒ¨å’Œå…¨åŒ…æ ¡éªŒ
+ *///è¿™æ˜¯TCPè¾“å‡ºçš„æ—¶å€™çš„æ ¡éªŒå’Œtcp_v4_send_check, TCPè¾“å…¥çš„æ—¶å€™è®¡ç®—æ ¡éªŒå’Œç”¨çš„tcp_v4_checksum_init
 static __sum16 tcp_v4_checksum_init(struct sk_buff *skb)
 {
 	const struct iphdr *iph = ip_hdr(skb);
 
     /*
-	 * Èç¹ûTCP°ü±¾ÉíµÄĞ£ÑéÒÑ¾­ÓÉÓ²¼şÍê³É£¬ÔòÖ»¶ÔÎ±Ê×²¿
-	 * ½øĞĞĞ£Ñé
+	 * å¦‚æœTCPåŒ…æœ¬èº«çš„æ ¡éªŒå·²ç»ç”±ç¡¬ä»¶å®Œæˆï¼Œåˆ™åªå¯¹ä¼ªé¦–éƒ¨
+	 * è¿›è¡Œæ ¡éªŒ
 	 */
 	if (skb->ip_summed == CHECKSUM_COMPLETE) {
 		if (!tcp_v4_check(skb->len, iph->saddr,
@@ -1967,15 +1967,15 @@ static __sum16 tcp_v4_checksum_init(struct sk_buff *skb)
 	}
 
     /*
-	 * ¶ÔÓÚÓÃÈí¼şÍê³ÉĞ£ÑéºÍµÄ²Ù×÷£¬Ê×ÏÈÉú³ÉÎ±Ê×²¿
-	 * µÄ²¿·ÖÀÛ¼ÓºÍ
-	 */ //TCP UDPÎ±Ê×²¿Ğ£Ñé
+	 * å¯¹äºç”¨è½¯ä»¶å®Œæˆæ ¡éªŒå’Œçš„æ“ä½œï¼Œé¦–å…ˆç”Ÿæˆä¼ªé¦–éƒ¨
+	 * çš„éƒ¨åˆ†ç´¯åŠ å’Œ
+	 */ //TCP UDPä¼ªé¦–éƒ¨æ ¡éªŒ
 	skb->csum = csum_tcpudp_nofold(iph->saddr, iph->daddr,
 				       skb->len, IPPROTO_TCP, 0);
 
     /*
-	 * ¶ÔÓÚÈ«³¤²»³¬¹ı76BµÄTCP°üÖ±½Ó½øĞĞĞ£Ñé¡£ÆäËûµÄ°ü£¬
-	 * ÔÚºóĞø²Ù×÷ÖĞÍê³ÉÈ«°üĞ£ÑéºÍ¼ì²â
+	 * å¯¹äºå…¨é•¿ä¸è¶…è¿‡76Bçš„TCPåŒ…ç›´æ¥è¿›è¡Œæ ¡éªŒã€‚å…¶ä»–çš„åŒ…ï¼Œ
+	 * åœ¨åç»­æ“ä½œä¸­å®Œæˆå…¨åŒ…æ ¡éªŒå’Œæ£€æµ‹
 	 */
 	if (skb->len <= 76) {
 		return __skb_checksum_complete(skb);
@@ -1992,10 +1992,10 @@ static __sum16 tcp_v4_checksum_init(struct sk_buff *skb)
  * This is because we cannot sleep with the original spinlock
  * held.
  *//*
- * TCP´«Êä²ã½ÓÊÕµ½¶ÎÖ®ºó£¬¾­¹ıÁË¼òµ¥µÄ
- * Ğ£Ñé£¬²¢È·¶¨½ÓÊÕ´¦Àí¸Ã¶ÎµÄ´«Êä¿ØÖÆ
- * ¿éÖ®ºó£¬³ı·Ç´¦ÓÚFIN_WAIT_2»òTIME_WAIT×´Ì¬£¬
- * ·ñÔò¶¼»áµ÷ÓÃtcp_v4_do_rcv()×÷¾ßÌåµÄ´¦Àí
+ * TCPä¼ è¾“å±‚æ¥æ”¶åˆ°æ®µä¹‹åï¼Œç»è¿‡äº†ç®€å•çš„
+ * æ ¡éªŒï¼Œå¹¶ç¡®å®šæ¥æ”¶å¤„ç†è¯¥æ®µçš„ä¼ è¾“æ§åˆ¶
+ * å—ä¹‹åï¼Œé™¤éå¤„äºFIN_WAIT_2æˆ–TIME_WAITçŠ¶æ€ï¼Œ
+ * å¦åˆ™éƒ½ä¼šè°ƒç”¨tcp_v4_do_rcv()ä½œå…·ä½“çš„å¤„ç†
  */
 int tcp_v4_do_rcv(struct sock *sk, struct sk_buff *skb)
 {
@@ -2025,22 +2025,22 @@ int tcp_v4_do_rcv(struct sock *sk, struct sk_buff *skb)
 	if (skb->len < tcp_hdrlen(skb) || tcp_checksum_complete(skb))
 		goto csum_err;
 
-	if (sk->sk_state == TCP_LISTEN) { //ËµÃ÷ÊÕµ½µÄÊÇÈı´ÎÎÕÊÖµÚÒ»²½SYN»òÕßµÚÈı²½ACK,ÕâÀïÊÇ·şÎñÆ÷¶ËµÄÇé¿ö
+	if (sk->sk_state == TCP_LISTEN) { //è¯´æ˜æ”¶åˆ°çš„æ˜¯ä¸‰æ¬¡æ¡æ‰‹ç¬¬ä¸€æ­¥SYNæˆ–è€…ç¬¬ä¸‰æ­¥ACK,è¿™é‡Œæ˜¯æœåŠ¡å™¨ç«¯çš„æƒ…å†µ
 		struct sock *nsk = tcp_v4_hnd_req(sk, skb);
 		if (!nsk)
 			goto discard;
 
-		if (nsk != sk) {//Èç¹ûÊÇµÚÒ»´ÎÎÕÊÖµÄSYN£¬ÕâÀïµÄnskÓ¦¸ÃÊÇ'¸¸'sk, Èç¹ûÕâÀïÊÇÈı´ÎÎÕÊÖµÄµÚÈı²½ACK£¬ÔòÕâÀïµÄnskÊÇ¡®×Ó'sk
-			if (tcp_child_process(sk, nsk, skb)) { //ÕâÀïÃæ»¹ÊÇ»áµ÷ÓÃtcp_rcv_state_process
+		if (nsk != sk) {//å¦‚æœæ˜¯ç¬¬ä¸€æ¬¡æ¡æ‰‹çš„SYNï¼Œè¿™é‡Œçš„nskåº”è¯¥æ˜¯'çˆ¶'sk, å¦‚æœè¿™é‡Œæ˜¯ä¸‰æ¬¡æ¡æ‰‹çš„ç¬¬ä¸‰æ­¥ACKï¼Œåˆ™è¿™é‡Œçš„nskæ˜¯â€˜å­'sk
+			if (tcp_child_process(sk, nsk, skb)) { //è¿™é‡Œé¢è¿˜æ˜¯ä¼šè°ƒç”¨tcp_rcv_state_process
 				rsk = nsk;
 				goto reset;
 			}
-			return 0; //Èç¹ûÊÇÎÕÊÖµÄµÚÈı²½£¬ÕâÀïÖ±½ÓÍË³ö
-		} //Èç¹ûÊÇÈı´ÎÎÕÊÖÖĞµÄµÚÒ»²½SYN£¬Ôò¼ÌĞøºóÃæµÄ²Ù×÷
+			return 0; //å¦‚æœæ˜¯æ¡æ‰‹çš„ç¬¬ä¸‰æ­¥ï¼Œè¿™é‡Œç›´æ¥é€€å‡º
+		} //å¦‚æœæ˜¯ä¸‰æ¬¡æ¡æ‰‹ä¸­çš„ç¬¬ä¸€æ­¥SYNï¼Œåˆ™ç»§ç»­åé¢çš„æ“ä½œ
 	} else
 		sock_rps_save_rxhash(sk, skb->rxhash);
 
-    //×ßµ½ÕâÀïËµÃ÷Ö»ÄÜÊÇ¿Í»§¶ËÊÕµ½SYN+ACK,»òÕßÊÇ·şÎñÆ÷¶ËÊÕµ½SYN
+    //èµ°åˆ°è¿™é‡Œè¯´æ˜åªèƒ½æ˜¯å®¢æˆ·ç«¯æ”¶åˆ°SYN+ACK,æˆ–è€…æ˜¯æœåŠ¡å™¨ç«¯æ”¶åˆ°SYN
 	TCP_CHECK_TIMER(sk);
 	if (tcp_rcv_state_process(sk, skb, tcp_hdr(skb), skb->len)) {
 		rsk = sk;
@@ -2271,7 +2271,7 @@ int tcp_v4_tw_remember_stamp(struct inet_timewait_sock *tw)
 	return 0;
 }
 
-//ÔÚtcp_prot->initÖĞ±»¸³Öµ¸øinet_connection_sock->icsk_af_ops
+//åœ¨tcp_prot->initä¸­è¢«èµ‹å€¼ç»™inet_connection_sock->icsk_af_ops
 const struct inet_connection_sock_af_ops ipv4_specific = {
 	.queue_xmit	   = ip_queue_xmit,
 	.send_check	   = tcp_v4_send_check,
@@ -2302,7 +2302,7 @@ static const struct tcp_sock_af_ops tcp_sock_ipv4_specific = {
 
 /* NOTE: A lot of things set to zero explicitly by call to
  *       sk_alloc() so need not be done here.
- ËüÖ÷ÒªÊÇ¶Ôtcp_sockºÍinet_connection_sock½øĞĞÒ»Ğ©³õÊ¼»¯£»
+ å®ƒä¸»è¦æ˜¯å¯¹tcp_sockå’Œinet_connection_sockè¿›è¡Œä¸€äº›åˆå§‹åŒ–ï¼›
  */
 static int tcp_v4_init_sock(struct sock *sk)
 {
@@ -2961,9 +2961,9 @@ int tcp4_gro_complete(struct sk_buff *skb)
 }
 EXPORT_SYMBOL(tcp4_gro_complete);
 
-//tcp²ãµÄ·¢ËÍ·â×°º¯ÊıÎªtcp_transmit_skb£¬¸Ãº¯ÊıÖĞ·â×°ÁËTCPÊ×²¿(°üÀ¨Ñ¡Ïî×Ö¶Î)£¬tcp²ã·â×°ºÃºó£¬×ßÏòip²ãµÄ½Ó¿ÚopsÎªipv4_specific
-//TCPĞ­Òé´«Êä²ã²Ù×÷¼¯£¬Õâ¸öºÍÓ¦ÓÃ²ã´´½¨Ì×½Ó×ÖÏà¹Ø£¬¸öÈËÎÒÀí½âÊÇÊôÓÚÌ×½Ó¿Ú²ã¡£TCPÁ¬½Ó½¨Á¢ÒÔ¼°Êı¾İ·¢ËÍµÄopsº¯ÊıÔÚipv4_specific
-struct proto tcp_prot = { //½ÓÊÕµÄÊ±ºòÓÉtcp_protocolÀïÃæµÄrecvº¯ÊıÌø×ªµ½ÕâÀïÃæ             TCPµÄÌ×½Ó¿Ú²ã²Ù×÷¼¯ÔÚinetsw_arrayÊı×éÖĞµÄinet_stream_ops
+//tcpå±‚çš„å‘é€å°è£…å‡½æ•°ä¸ºtcp_transmit_skbï¼Œè¯¥å‡½æ•°ä¸­å°è£…äº†TCPé¦–éƒ¨(åŒ…æ‹¬é€‰é¡¹å­—æ®µ)ï¼Œtcpå±‚å°è£…å¥½åï¼Œèµ°å‘ipå±‚çš„æ¥å£opsä¸ºipv4_specific
+//TCPåè®®ä¼ è¾“å±‚æ“ä½œé›†ï¼Œè¿™ä¸ªå’Œåº”ç”¨å±‚åˆ›å»ºå¥—æ¥å­—ç›¸å…³ï¼Œä¸ªäººæˆ‘ç†è§£æ˜¯å±äºå¥—æ¥å£å±‚ã€‚TCPè¿æ¥å»ºç«‹ä»¥åŠæ•°æ®å‘é€çš„opså‡½æ•°åœ¨ipv4_specific
+struct proto tcp_prot = { //æ¥æ”¶çš„æ—¶å€™ç”±tcp_protocolé‡Œé¢çš„recvå‡½æ•°è·³è½¬åˆ°è¿™é‡Œé¢             TCPçš„å¥—æ¥å£å±‚æ“ä½œé›†åœ¨inetsw_arrayæ•°ç»„ä¸­çš„inet_stream_ops
 	.name			= "TCP",
 	.owner			= THIS_MODULE,
 	.close			= tcp_close,
@@ -2971,14 +2971,14 @@ struct proto tcp_prot = { //½ÓÊÕµÄÊ±ºòÓÉtcp_protocolÀïÃæµÄrecvº¯ÊıÌø×ªµ½ÕâÀïÃæ  
 	.disconnect		= tcp_disconnect,
 	.accept			= inet_csk_accept,
 	.ioctl			= tcp_ioctl,
-	.init			= tcp_v4_init_sock,  //inet_createÖĞÖ´ĞĞ
+	.init			= tcp_v4_init_sock,  //inet_createä¸­æ‰§è¡Œ
 	.destroy		= tcp_v4_destroy_sock,
 	.shutdown		= tcp_shutdown,
 	.setsockopt		= tcp_setsockopt,
 	.getsockopt		= tcp_getsockopt,
 	.recvmsg		= tcp_recvmsg,
 	.backlog_rcv		= tcp_v4_do_rcv,
-	.hash			= inet_hash,  //inet_createÖĞÖ´ĞĞ  //½«¸Ã´«Êä¿ØÖÆ¿ésocketÌí¼Óµ½tcp_hashinfoµÄ¶ÔÓ¦hashÖĞ
+	.hash			= inet_hash,  //inet_createä¸­æ‰§è¡Œ  //å°†è¯¥ä¼ è¾“æ§åˆ¶å—socketæ·»åŠ åˆ°tcp_hashinfoçš„å¯¹åº”hashä¸­
 	.unhash			= inet_unhash,
 	.get_port		= inet_csk_get_port,
 	.enter_memory_pressure	= tcp_enter_memory_pressure,
@@ -2990,7 +2990,7 @@ struct proto tcp_prot = { //½ÓÊÕµÄÊ±ºòÓÉtcp_protocolÀïÃæµÄrecvº¯ÊıÌø×ªµ½ÕâÀïÃæ  
 	.sysctl_wmem		= sysctl_tcp_wmem,
 	.sysctl_rmem		= sysctl_tcp_rmem,
 	.max_header		= MAX_TCP_HEADER,
-	.obj_size		= sizeof(struct tcp_sock),  //inet_initÖĞµÄrc = proto_register(&tcp_prot, 1);È·¶¨ÁË»º´æ£¬ÔÚ´´½¨struct sockµÄÊ±ºòµÄ¿Õ¼ä´óĞ¡¾ÍÊÇÕâ¸öobj_size
+	.obj_size		= sizeof(struct tcp_sock),  //inet_initä¸­çš„rc = proto_register(&tcp_prot, 1);ç¡®å®šäº†ç¼“å­˜ï¼Œåœ¨åˆ›å»ºstruct sockçš„æ—¶å€™çš„ç©ºé—´å¤§å°å°±æ˜¯è¿™ä¸ªobj_size
 	.slab_flags		= SLAB_DESTROY_BY_RCU,
 	.twsk_prot		= &tcp_timewait_sock_ops,
 	.rsk_prot		= &tcp_request_sock_ops,
